@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useHistory } from "react";
 import "./login.css";
 import Form from "react-bootstrap/Form";
 
@@ -8,67 +8,81 @@ function Login() {
   const [selectedUserPassword, setSelectedUserPassword] = useState(""); // State to store the password of the selected user
   const [enteredPassword, setEnteredPassword] = useState(""); // State to store the entered password
 
-  // Fetch users data from the server
-  useEffect(() => {
-    fetch("http://localhost:8081/users")
-      .then((res) => res.json())
-      .then((data) => setData(data))
-      .catch((err) => console.log(err));
-  }, []);
+  function MyComponent() {
+    const history = useHistory();
 
-  // Function to handle selection change
-  const handleSelectionChange = (event) => {
-    const selectedUsername = event.target.value;
-    setSelectedUser(selectedUsername);
+    const handleClick = () => {
+      // Navigate to a different page when the button is clicked
+      history.push("/other-page");
+    };
 
-    // Find the selected user in the data array and set the corresponding password
-    const selectedUserData = data.find((user) => user.role === selectedUsername);
-    setSelectedUserPassword(selectedUserData ? selectedUserData.password : "");
-  };
+    // Fetch users data from the server
+    useEffect(() => {
+      fetch("http://localhost:8081/users")
+        .then((res) => res.json())
+        .then((data) => setData(data))
+        .catch((err) => console.log(err));
+    }, []);
 
-  // Function to handle form submission
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (enteredPassword === selectedUserPassword) {
-      console.log("Password matched!");
-    } else {
-      console.log("Password does not match!");
-    }
-  };
+    // Function to handle selection change
+    const handleSelectionChange = (event) => {
+      const selectedUsername = event.target.value;
+      setSelectedUser(selectedUsername);
 
-  return (
-    <div className="login-body">
-      <div className="left-column">
-        <h1 className="heading">Log In</h1>
-        <br />
-        <Form onSubmit={handleSubmit}>
-          <Form.Label>Username</Form.Label>
-          <Form.Select onChange={handleSelectionChange} value={selectedUser}>
-            <option>Default select</option>
-            {data.map((user, index) => (
-              <option key={index}>{user.role}</option>
-            ))}
-          </Form.Select>
+      // Find the selected user in the data array and set the corresponding password
+      const selectedUserData = data.find(
+        (user) => user.role === selectedUsername
+      );
+      setSelectedUserPassword(
+        selectedUserData ? selectedUserData.password : ""
+      );
+    };
+
+    // Function to handle form submission
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      if (enteredPassword === selectedUserPassword) {
+        console.log("Password matched!");
+      } else {
+        console.log("Password does not match!");
+      }
+    };
+
+    return (
+      <div className="login-body">
+        <div className="left-column">
+          <h1 className="heading">Log In</h1>
           <br />
-          <Form.Label htmlFor="inputPassword5">Password</Form.Label>
-          <Form.Control
-            type="password"
-            id="inputPassword5"
-            value={enteredPassword}
-            onChange={(e) => setEnteredPassword(e.target.value)}
-            aria-describedby="passwordHelpBlock"
-          />
-          <Form.Text id="passwordHelpBlock" muted>
-            Your password must be 8-20 characters long, contain letters and
-            numbers, and must not contain spaces, special characters, or emoji.
-          </Form.Text>
-          <br />
-          <button type="submit">Submit</button>
-        </Form>
+          <Form onSubmit={handleSubmit}>
+            <Form.Label>Username</Form.Label>
+            <Form.Select onChange={handleSelectionChange} value={selectedUser}>
+              <option>Default select</option>
+              {data.map((user, index) => (
+                <option key={index}>{user.role}</option>
+              ))}
+            </Form.Select>
+            <br />
+            <Form.Label htmlFor="inputPassword5">Password</Form.Label>
+            <Form.Control
+              type="password"
+              id="inputPassword5"
+              value={enteredPassword}
+              onChange={(e) => setEnteredPassword(e.target.value)}
+              aria-describedby="passwordHelpBlock"
+            />
+            <Form.Text id="passwordHelpBlock" muted>
+              Your password must be 8-20 characters long, contain letters and
+              numbers, and must not contain spaces, special characters, or
+              emoji.
+            </Form.Text>
+            <br />
+            <button type="submit">Submit</button>
+          </Form>
+        </div>
+        <div className="right-column"></div>
       </div>
-      <div className="right-column"></div>
-    </div>
-  );
+    );
+  }
 }
 
 export default Login;
