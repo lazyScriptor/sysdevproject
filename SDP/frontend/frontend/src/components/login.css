@@ -32,10 +32,10 @@ body, html {
     
 }
 
-
 .right-column {
     flex: 2;
-    background-image: url('path_to_your_image.jpg'); /* Specify your image path */
-    background-size: cover;
+    background-image: url('../assets/constructor.png'); /* Specify your image path */
+    background-size: 70%;
     background-position: center;
+    background-repeat: no-repeat; /* Prevent image from repeating */
 }
