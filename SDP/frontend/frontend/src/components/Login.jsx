@@ -8,14 +8,7 @@ function Login() {
   const [selectedUserPassword, setSelectedUserPassword] = useState(""); // State to store the password of the selected user
   const [enteredPassword, setEnteredPassword] = useState(""); // State to store the entered password
 
-  function MyComponent() {
-    const history = useHistory();
-
-    const handleClick = () => {
-      // Navigate to a different page when the button is clicked
-      history.push("/other-page");
-    };
-
+  
     // Fetch users data from the server
     useEffect(() => {
       fetch("http://localhost:8081/users")
@@ -83,6 +76,6 @@ function Login() {
       </div>
     );
   }
-}
+
 
 export default Login;
