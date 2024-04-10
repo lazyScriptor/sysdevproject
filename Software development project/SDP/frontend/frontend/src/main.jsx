@@ -1,0 +1,68 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import "./index.css";
+
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Admin from "./components/Dashboards/Admin.jsx";
+import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
+import Profiles from "../additionalcomponents/Profiles.jsx";
+
+import Customers from './components/Pages/Customers.jsx'
+import Dashboard from './components/Pages/Dashboard.jsx'
+import Equipment from './components/Pages/Equipment.jsx'
+import Inbox from './components/Pages/Inbox.jsx'
+import Invoice from './components/Pages/Invoice.jsx'
+import Reports from './components/Pages/Reports.jsx'
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    errorElement: <Notfoundd />,
+  },
+  {
+    path: "/Admin",
+    element: <Admin />,
+  },
+  {
+    path: "/profiles",
+    element: <Profiles />,
+  },
+  {
+    path: "profiles/:profileId",
+    element: <Profiles/>
+  },
+  
+  
+  {
+    path: "/customers",
+    element: <Customers />,
+  },
+  {
+    path: "/Dashboard",
+    element: <Dashboard />,
+  },
+  {
+    path: "/Equipments",
+    element: <Equipment />,
+  },
+  {
+    path: "Inbox",
+    element: <Inbox/>
+  },
+  {
+    path: "/Invoice",
+    element: <Invoice />,
+  },
+  {
+    path: "Reports",
+    element: <Reports/>
+  }
+]);
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>
+);
