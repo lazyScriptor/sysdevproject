@@ -52,7 +52,7 @@ function Login() {
 
     if (matchedUser && enteredPassword === matchedUser.password) {
       console.log("Password matched!");
-      navigate("/profiles");
+      navigate("/Dashboard");
     } else {
       console.log("Password does not match!");
     }

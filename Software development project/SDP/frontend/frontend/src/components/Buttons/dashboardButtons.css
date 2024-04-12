@@ -1,15 +1,28 @@
 .category-button {
-
+    
     background-color: transparent;
-    border-radius: 20px;
-   
+    border-radius: 0px 20px 20px 0px;
+  }
+  .category-button .attachment{
+    display: none;
     
   }
+
+  .category-button:hover .attachment{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    position: inherit;
+    margin-left:300px ;
+    
+  }
+
   .category-button:hover{
     border: 1px solid white;
     transition: 300ms ease;
     
   }
+
   .cat{
     color: red;
   }
