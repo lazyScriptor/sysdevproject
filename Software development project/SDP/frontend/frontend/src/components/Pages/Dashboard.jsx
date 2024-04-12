@@ -3,26 +3,14 @@ import Button from "react-bootstrap/Button";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import adminImage from "../../assets/profileImage.jpeg";
 import "../Stylings/Dashboard.css";
-
-import DashboardButtons from '../Buttons/DashboardButtons.jsx'
-
-//icons using for the project
-import {
-  faTableCellsLarge,
-  faHouse,
-  faInbox,
-  faLayerGroup,
-  faUser,
-  faToolbox,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTableCellsLarge, faHouse, faInbox, faLayerGroup, faUser, faToolbox } from "@fortawesome/free-solid-svg-icons";
+import DashboardCategoryBtn from '../Buttons/DashboardButtons.jsx'
 
 function Dashboard() {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div className="dashboard-container">
@@ -59,7 +47,7 @@ function Dashboard() {
               <h5 style={{ border: "1px solid black", textAlign: "center" }}>
                 Admin
               </h5>
-              <h7 style={{ border: "1px solid black" }}>Theekshana</h7>
+              <h6 style={{ border: "1px solid black" }}>Theekshana</h6>
             </div>
           </Offcanvas.Header>
           <button className="close-button" onClick={handleClose}>
@@ -68,16 +56,15 @@ function Dashboard() {
         </div>
         <Offcanvas.Body>
           <div className="offcanvas-body">
-            <DashboardButtons name="Dashboard" icon={faTableCellsLarge} className="cat"/>
-            <DashboardButtons name="Inbox" icon={faInbox}/>
-            <DashboardButtons name="Invoices" icon={faLayerGroup}/>
-            <DashboardButtons name="Customers" icon={faUser}/>
-            <DashboardButtons name="Equipment" icon={faToolbox}/>
-            <DashboardButtons name="Reports" icon={faHouse}/>
+            <DashboardCategoryBtn name="Dashboard" icon={faTableCellsLarge} destination="/Dashboard"/>
+            <DashboardCategoryBtn name="Inbox" icon={faInbox} destination="/Inbox"/>
+            <DashboardCategoryBtn name="Invoices" icon={faLayerGroup} destination="/Invoice"/>
+            <DashboardCategoryBtn name="Customers" icon={faUser} destination="/Customers"/>
+            <DashboardCategoryBtn name="Equipment" icon={faToolbox} destination="/Equipment"/>
+            <DashboardCategoryBtn name="Reports" icon={faHouse} destination="/Reports"/>
           </div>
         </Offcanvas.Body>
       </Offcanvas>
-      
     </div>
   );
 }
