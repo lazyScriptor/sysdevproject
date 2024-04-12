@@ -1,0 +1,15 @@
+.category-button {
+
+    background-color: transparent;
+    border-radius: 20px;
+   
+    
+  }
+  .category-button:hover{
+    border: 1px solid white;
+    transition: 300ms ease;
+    
+  }
+  .cat{
+    color: red;
+  }
