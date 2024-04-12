@@ -1,0 +1,59 @@
+*{
+  background-color: rgb(70, 70, 70);
+  color: white;
+}
+.offcanvas-header-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.close-button {
+  position: absolute;
+  top: 30%;
+  right: -30px; /* Adjust this value as needed */
+  background-color: hsl(0, 0%, 31%);
+  height: 20vh;
+  width: 5vw;
+  border: 0px;
+  padding: 0px;
+}
+.close-button:hover {
+  background-color: rgb(193, 30, 30);
+  transition: 300ms ease-in-out;
+}
+.open-button {
+  position: absolute;
+  top: 30%;
+  left: -10px;
+  height: 40vh;
+  width: 10vw;
+  background-color: hsl(0, 0%, 31%);
+  border: 0px;
+}
+.open-button:hover {
+  background-color: hsl(0, 1%, 33%);
+  transition: 300ms ease-in-out;
+}
+.offcanvas-header {
+}
+.offcanvas-header .profile-image {
+  width: 100px;
+  border: 1px solid black;
+  border-radius: 50%;
+}
+.offcanvas-body {
+  display: flex;
+  gap: 40px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  border: 1px solid black;
+  justify-content: center;
+}
+
+.offcanvas-body .category-button {
+  border: 1px solid black;
+  background-color: transparent;
+  border-radius: 2px;
+}

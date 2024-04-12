@@ -16,7 +16,7 @@ function Login() {
 
 
   useEffect(() => {
-    fetch("http://localhost:8082/users")
+    fetch("http://localhost:8083/users")
       .then((res) => res.json())
       .then((data) => {
         setData(data);
