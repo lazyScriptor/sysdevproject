@@ -52,7 +52,8 @@ function Login() {
 
     if (matchedUser && enteredPassword === matchedUser.password) {
       console.log("Password matched!");
-      navigate("/Dashboard");
+      navigate("/DashboardMain", { state: { username :username ,role:selectedUser} });
+
     } else {
       console.log("Password does not match!");
     }

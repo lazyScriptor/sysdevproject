@@ -1,28 +1,26 @@
 .category-button {
-    
-    background-color: transparent;
-    border-radius: 0px 20px 20px 0px;
-  }
-  .category-button .attachment{
-    display: none;
-    
-  }
+  background-color: transparent;
+  border-radius: 0px 20px 20px 0px;
+  position: relative; /* Ensure proper positioning of the attachment icon */
+}
 
-  .category-button:hover .attachment{
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    position: inherit;
-    margin-left:300px ;
-    
-  }
+.attachment {
+  display: none;
+  position: absolute; /* Position the attachment icon relative to its container */
+  top: 50%; /* Center vertically */
+  right: 5px; 
+  transform: translateY(-50%); /* Center vertically */
+}
 
-  .category-button:hover{
-    border: 1px solid white;
-    transition: 300ms ease;
-    
-  }
+.category-button:hover .attachment {
+  display: inline-block;
+}
 
-  .cat{
-    color: red;
-  }
+.category-button:hover {
+  border: 1px solid white;
+  transition: border 300ms ; /* Apply transition only to border */
+}
+
+.cat {
+  color: red;
+}
