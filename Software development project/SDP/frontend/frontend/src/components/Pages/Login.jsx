@@ -6,15 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AppCustomContext } from "../../App";
 
-
-
 function Login() {
-//components of the passing values
-  const {setUsernamee,setRolee}=useContext(AppCustomContext);
-  
-  
-//passing value components are done
+  //components of the passing values
+  const { setUsernamee, setRolee } = useContext(AppCustomContext);
 
+  //passing value components are done
 
   const [data, setData] = useState([]);
   const [selectedUser, setSelectedUser] = useState(""); // State to store the selected user
@@ -23,14 +19,12 @@ function Login() {
 
   const [username, setUsername] = useState(""); // State to store the entered username
 
-  
-
-
   useEffect(() => {
     fetch("http://localhost:8083/users")
       .then((res) => res.json())
       .then((data) => {
         setData(data);
+        console.log(data)
       })
       .catch((err) => console.log(err));
   }, []);
@@ -63,23 +57,13 @@ function Login() {
 
     if (matchedUser && enteredPassword === matchedUser.password) {
       console.log("Password matched!");
-      navigate("/DashboardMain", { state: { role:selectedUser} });
+      navigate("/DashboardMain", { state: { role: selectedUser } });
       setUsernamee(username);
       setRolee(selectedUser);
-      
-      
-
     } else {
       console.log("Password does not match!");
     }
   };
-
-
-
-
-
-
-
 
   return (
     <div className="login-body">
@@ -115,7 +99,10 @@ function Login() {
           />
 
           <br />
-          <button type="submit">Submit</button>
+          <button className="submit-button" role="button">
+            <span className="text"> Click me</span>
+            <span>Login</span>
+          </button>
         </Form>
       </div>
       <div className="right-column"></div>
