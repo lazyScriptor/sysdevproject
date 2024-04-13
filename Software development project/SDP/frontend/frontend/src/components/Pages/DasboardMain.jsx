@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar.jsx";
 function DasboardMain() {
   return (
     <div>
-      <Sidebar setShow={true} />
+      
       {/*you can specify here wheather you want to open the specific page 
       wior wihout open the side bar component */}
     </div>
