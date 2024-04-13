@@ -9,7 +9,8 @@ import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
 import Profiles from "../additionalcomponents/Profiles.jsx";
 
 import Customers from './components/Pages/Customers.jsx'
-import Dashboard from './components/Pages/Dashboard.jsx'
+import Sidebar from './components/Pages/Sidebar.jsx'
+import DashboardMain from './components/Pages/DasboardMain.jsx'
 import Equipment from './components/Pages/Equipment.jsx'
 import Inbox from './components/Pages/Inbox.jsx'
 import Invoice from './components/Pages/Invoice.jsx'
@@ -40,8 +41,12 @@ const router = createBrowserRouter([
     element: <Customers />,
   },
   {
-    path: "/Dashboard",
-    element: <Dashboard />,
+    path: "/Sidebar",
+    element: <Sidebar />,
+  },
+  {
+    path: "/DashboardMain",
+    element: <DashboardMain />,
   },
   {
     path: "/Equipment",

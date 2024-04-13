@@ -1,9 +1,10 @@
 import React from 'react'
+import Sidebar from './Sidebar.jsx'
 
 function Equipment() {
   return (
     <div>
-      <h1>Equipment</h1>
+      <Sidebar setShow={false}/>
     </div>
   )
 }

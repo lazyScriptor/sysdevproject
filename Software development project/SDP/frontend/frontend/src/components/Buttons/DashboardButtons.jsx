@@ -21,7 +21,7 @@ function DashboardCategoryBtn({ name, icon, destination }) {
         <FontAwesomeIcon
           icon={icon}
           size="xl"
-          style={{ color: "#FFD43B", paddingRight: "10px" }}
+          style={{ color: "#FFD43B", paddingRight: "10px"}}
         />
         {name}
         <FontAwesomeIcon className="attachment" icon={faArrowRight} style={{color: "#ff6a00"}} />
