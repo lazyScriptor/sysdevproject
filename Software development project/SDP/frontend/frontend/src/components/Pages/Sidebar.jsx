@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 
 import Offcanvas from "react-bootstrap/Offcanvas";
 import adminImage from "../../assets/profileImage.jpeg";
@@ -17,24 +16,21 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DashboardCategoryBtn from "../Buttons/DashboardButtons.jsx";
 
-function Sidebar(props) {
-  //login ekenui anith main pges walinui pass karna arguments wenas
-  //login eken ewanne object ekak,main opages wlain ewanne bool value ekak
-  //bool value eka simple wodohta props walta assign wenawa
-  //object eka capture kraganne location hook eken
-  const { showValue } = props;
-  console.log(props)
 
+// context imports
+import { useContext } from "react";
+import { AppCustomContext } from "../../App";
+
+
+
+
+function Sidebar() {
+  //context data
+  const { usernamee ,rolee} = useContext(AppCustomContext);
+  console.log("This is fresh passed username",usernamee)
+  console.log("This is fresh passed role",rolee)
+//context data over
   const [show, setShow] = useState(false);
-
-  const location = useLocation();
-  const username = location.state ? location.state.username : "Dummy user";
-  const role = location.state ? location.state.role : "Dummy role";
-
-  useEffect(() => {
-    setShow(true);
-  }, [showValue]);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -72,8 +68,8 @@ function Sidebar(props) {
                 textAlign: "center",
               }}
             >
-              <h5 style={{ textAlign: "center" ,color:"white"}}>{role}</h5>
-              <h6 style={{color:"white"}}>{username}</h6>
+              <h5 style={{ textAlign: "center" ,color:"white"}}>{rolee}</h5>
+              <h6 style={{color:"white"}}>{usernamee}</h6>
             </div>
           </Offcanvas.Header>
           <button className="close-button" onClick={handleClose}>

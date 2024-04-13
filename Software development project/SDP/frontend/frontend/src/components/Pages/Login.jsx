@@ -1,11 +1,21 @@
 import React, { useEffect, useState } from "react";
 import "../Stylings/login.css";
 import Form from "react-bootstrap/Form";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import { useContext } from "react";
+import { AppCustomContext } from "../../App";
 
 
 
 function Login() {
+//components of the passing values
+  const {setUsernamee,setRolee}=useContext(AppCustomContext);
+  
+  
+//passing value components are done
+
+
   const [data, setData] = useState([]);
   const [selectedUser, setSelectedUser] = useState(""); // State to store the selected user
   const [selectedUserPassword, setSelectedUserPassword] = useState(""); // State to store the password of the selected user
@@ -13,6 +23,7 @@ function Login() {
 
   const [username, setUsername] = useState(""); // State to store the entered username
 
+  
 
 
   useEffect(() => {
@@ -52,12 +63,23 @@ function Login() {
 
     if (matchedUser && enteredPassword === matchedUser.password) {
       console.log("Password matched!");
-      navigate("/DashboardMain", { state: { username :username ,role:selectedUser} });
+      navigate("/DashboardMain", { state: { role:selectedUser} });
+      setUsernamee(username);
+      setRolee(selectedUser);
+      
+      
 
     } else {
       console.log("Password does not match!");
     }
   };
+
+
+
+
+
+
+
 
   return (
     <div className="login-body">
