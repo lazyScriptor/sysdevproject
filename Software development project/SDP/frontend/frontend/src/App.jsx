@@ -10,9 +10,16 @@ import Invoice from "./components/Pages/Invoice.jsx";
 import Reports from "./components/Pages/Reports.jsx";
 import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
 
+import {useState, createContext} from 'react'
+
+export const AppCustomContext = createContext();
+
 function App() {
+  const [usernamee,setUsernamee]=useState('new dummy data');
+  const [rolee,setRolee]=useState('new role data');
   return (
     <>
+    <AppCustomContext.Provider value={{usernamee,setUsernamee,rolee,setRolee}}>
       <Router>
         <Routes>
           {/* Routes without Sidebar */}
@@ -74,6 +81,7 @@ function App() {
           <Route path="*" element={<Notfoundd />} />
         </Routes>
       </Router>
+      </AppCustomContext.Provider>
     </>
   );
 }
