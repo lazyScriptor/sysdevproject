@@ -6,7 +6,7 @@ import Sidebar from './Sidebar.jsx'
 function Customers() {
   return (
     <div>
-      <Sidebar/>
+      
       <h1>customers</h1>
       
     </div>

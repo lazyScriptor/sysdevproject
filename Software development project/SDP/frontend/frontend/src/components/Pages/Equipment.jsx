@@ -4,7 +4,7 @@ import Sidebar from './Sidebar.jsx'
 function Equipment() {
   return (
     <div>
-      <Sidebar setShow={false}/>
+      
     </div>
   )
 }
