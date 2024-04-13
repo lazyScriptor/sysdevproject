@@ -16,20 +16,16 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DashboardCategoryBtn from "../Buttons/DashboardButtons.jsx";
 
-
 // context imports
 import { useContext } from "react";
 import { AppCustomContext } from "../../App";
 
-
-
-
 function Sidebar() {
   //context data
-  const { usernamee ,rolee} = useContext(AppCustomContext);
-  console.log("This is fresh passed username",usernamee)
-  console.log("This is fresh passed role",rolee)
-//context data over
+  const { usernamee, rolee } = useContext(AppCustomContext);
+  console.log("This is fresh passed username", usernamee,"This is fresh passed role", rolee);
+ 
+  //context data over
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -68,8 +64,8 @@ function Sidebar() {
                 textAlign: "center",
               }}
             >
-              <h5 style={{ textAlign: "center" ,color:"white"}}>{rolee}</h5>
-              <h6 style={{color:"white"}}>{usernamee}</h6>
+              <h5 style={{ textAlign: "center", color: "white" }}>{rolee}</h5>
+              <h6 style={{ color: "white" }}>{usernamee}</h6>
             </div>
           </Offcanvas.Header>
           <button className="close-button" onClick={handleClose}>
