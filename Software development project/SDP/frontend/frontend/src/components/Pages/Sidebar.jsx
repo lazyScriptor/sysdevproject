@@ -13,6 +13,8 @@ import {
   faToolbox,
   faBars,
   faXmark,
+  faRightFromBracket,
+  faNewspaper,
 } from "@fortawesome/free-solid-svg-icons";
 import DashboardCategoryBtn from "../Buttons/DashboardButtons.jsx";
 
@@ -23,8 +25,13 @@ import { AppCustomContext } from "../../App";
 function Sidebar() {
   //context data
   const { usernamee, rolee } = useContext(AppCustomContext);
-  console.log("This is fresh passed username", usernamee,"This is fresh passed role", rolee);
- 
+  console.log(
+    "This is fresh passed username",
+    usernamee,
+    "This is fresh passed role",
+    rolee
+  );
+
   //context data over
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -45,31 +52,19 @@ function Sidebar() {
         className="sidebar-container"
       >
         <div className="offcanvas-header-wrapper">
-          <Offcanvas.Header
-            closeButton={false}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-            }}
-          >
+          <Offcanvas.Header closeButton={false}>
             <img
               className="profile-image"
               src={adminImage}
               alt="image not found"
             />
-            <div
-              style={{
-                marginTop: "30px",
-                textAlign: "center",
-              }}
-            >
-              <h5 style={{ textAlign: "center", color: "white" }}>{rolee}</h5>
-              <h6 style={{ color: "white" }}>{usernamee}</h6>
+            <div className="header-text">
+              <h4>{rolee}</h4>
+              <h6>{usernamee}</h6>
             </div>
           </Offcanvas.Header>
           <button className="close-button" onClick={handleClose}>
-            <FontAwesomeIcon icon={faXmark} size="sm" />
+            <FontAwesomeIcon icon={faXmark} size="xs" />
           </button>
         </div>
         <Offcanvas.Body>
@@ -101,7 +96,18 @@ function Sidebar() {
             />
             <DashboardCategoryBtn
               name="Reports"
+              icon={faNewspaper}
+              destination="/Reports"
+            />
+            <hr/>
+            <DashboardCategoryBtn
+              name="Empty"
               icon={faHouse}
+              destination="/Reports"
+            />
+            <DashboardCategoryBtn
+              name="Logout"
+              icon={faRightFromBracket}
               destination="/Reports"
             />
           </div>
