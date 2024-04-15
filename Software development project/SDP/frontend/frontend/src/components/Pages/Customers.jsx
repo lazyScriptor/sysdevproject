@@ -1,34 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
+import Box from "@mui/material/Box";
+import { Button } from "@mui/material";
+
+import { useSnackbar } from "notistack"; // Import useSnackbar hook
+
+import "../Stylings/customers.css";
 
 export default function Customers() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { enqueueSnackbar } = useSnackbar(); // Initialize useSnackbar hook
 
   useEffect(() => {
-  const fetchData = async () => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:8085/customers");
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleDelete = async (customerId, customerFirstName) => {
     try {
-      const response = await axios.get('http://localhost:8083/customers');
-      setData(response.data); // Assuming the response.data is an array of objects
-      console.log(response.data)
+      await axios.delete(`http://localhost:8085/deleteCustomers/${customerId}`);
+      // Show success snackbar message with customer's first name
+      enqueueSnackbar(`Customer :${customerFirstName} deleted successfully!`, {
+        variant: "success",
+      });
+      // Assuming the API returns a success response
+      // You may want to update the data state or trigger a refetch after successful deletion
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error deleting customer:", error);
     }
   };
-
-  fetchData();
-}, []);
-
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -40,37 +58,56 @@ export default function Customers() {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+    <Box sx={{ width: "100%" }}>
+      <Paper elevation={4} sx={{ width: "100%", mb: 2 }}>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size="medium"
+            className="custom-table"
           >
-            <TableHead>
-              <TableRow>
-                <TableCell>Id</TableCell>
-                <TableCell>First Name</TableCell>
-                <TableCell>Last Name</TableCell>
-                <TableCell>NIC</TableCell>
-                <TableCell>Address 1</TableCell>
-                <TableCell>Address 2</TableCell>
-                {/* Add more table headers as needed */}
+            <TableHead className="table-head">
+              <TableRow className="table-row">
+                <TableCell className="table-cell-header">Id</TableCell>
+                <TableCell className="table-cell-header">First Name</TableCell>
+                <TableCell className="table-cell-header">Last Name</TableCell>
+                <TableCell className="table-cell-header">NIC</TableCell>
+                <TableCell className="table-cell-header">Address 1</TableCell>
+                <TableCell className="table-cell-header">Address 2</TableCell>
+                <TableCell className="table-cell-header">Edits</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {data
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell>{row.cus_id}</TableCell>
-                    <TableCell>{row.cus_fname}</TableCell>
-                    <TableCell>{row.cus_lname}</TableCell>
-                    <TableCell>{row.nic}</TableCell>
-                    <TableCell>{row.cus_address1}</TableCell>
-                    <TableCell>{row.cus_address2}</TableCell>
-                    {/* Render other columns similarly */}
+                  <TableRow className="table-body" key={row.cus_id}>
+                    <TableCell className="table-cell-data">
+                      {row.cus_id}
+                    </TableCell>
+                    <TableCell className="table-cell-data">
+                      {row.cus_fname}
+                    </TableCell>
+                    <TableCell className="table-cell-data">
+                      {row.cus_lname}
+                    </TableCell>
+                    <TableCell className="table-cell-data">{row.nic}</TableCell>
+                    <TableCell className="table-cell-data">
+                      {row.cus_address1}
+                    </TableCell>
+                    <TableCell className="table-cell-data">
+                      {row.cus_address2}
+                    </TableCell>
+                    <TableCell className="table-cell-data">
+                      <Button>Edit</Button>
+                      <Button
+                        onClick={() => handleDelete(row.cus_id, row.cus_fname)}
+                        sx={{ color: "red" }}
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
             </TableBody>

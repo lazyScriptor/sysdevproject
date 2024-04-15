@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
-
+import { SnackbarProvider } from "notistack"; // Import SnackbarProvider
 
 // import { createBrowserRouter, RouterProvider } from "react-router-dom";
 // import Admin from "./components/Dashboards/Admin.jsx";
@@ -34,8 +34,7 @@ import App from "./App.jsx";
 //     path: "profiles/:profileId",
 //     element: <Profiles/>
 //   },
-  
-  
+
 //   {
 //     path: "/customers",
 //     element: <Customers />,
@@ -68,7 +67,10 @@ import App from "./App.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    {/* <RouterProvider router={router} /> */}
-    <App/>
+    <SnackbarProvider maxSnack={3}>
+      {/* <RouterProvider router={router} /> */}
+      <App />
+    </SnackbarProvider>
+    ,
   </React.StrictMode>
 );

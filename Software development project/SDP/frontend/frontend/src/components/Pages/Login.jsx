@@ -2,9 +2,13 @@ import React, { useEffect, useState } from "react";
 import "../Stylings/login.css";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
+import image from '../../assets/constructor.png'
 
 import { useContext } from "react";
 import { AppCustomContext } from "../../App";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 function Login() {
   //components of the passing values
@@ -20,11 +24,11 @@ function Login() {
   const [username, setUsername] = useState(""); // State to store the entered username
 
   useEffect(() => {
-    fetch("http://localhost:8083/users")
+    fetch("http://localhost:8085/users")
       .then((res) => res.json())
       .then((data) => {
         setData(data);
-        console.log(data)
+        console.log(data);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -68,12 +72,14 @@ function Login() {
   return (
     <div className="login-body">
       <div className="left-column">
-        <h1 className="heading">Log In</h1>
-        <br />
-        <Form onSubmit={handleSubmit}>
-          <Form.Label>User name</Form.Label>
+        <Form className="form" onSubmit={handleSubmit}>
+          <h1 className="heading">Log In</h1>
+          <Form.Label>
+            <FontAwesomeIcon icon={faUser} style={{ color: "#000000" }} />
+            Username
+          </Form.Label>
           <Form.Control
-            placeholder="User name"
+            placeholder="Username"
             onChange={handleUserNameInput}
             value={username}
           />
@@ -105,7 +111,9 @@ function Login() {
           </button>
         </Form>
       </div>
-      <div className="right-column"></div>
+      <div className="right-column">
+        <img src={image}/>
+      </div>
     </div>
   );
 }

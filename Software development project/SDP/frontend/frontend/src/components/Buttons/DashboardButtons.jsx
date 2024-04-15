@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
-
 function DashboardCategoryBtn({ name, icon, destination }) {
   const navigate = useNavigate();
 
@@ -16,17 +15,20 @@ function DashboardCategoryBtn({ name, icon, destination }) {
   };
 
   return (
-    <>
-      <button className="category-button" onClick={handleClick}>
-        <FontAwesomeIcon
-          icon={icon}
-          size="xl"
-          style={{ color: "#FFD43B", paddingRight: "10px"}}
-        />
-        {name}
-        <FontAwesomeIcon className="attachment" icon={faArrowRight} style={{color: "#ff6a00"}} />
-      </button>
-    </>
+    <button className="category-button" onClick={handleClick}>
+      <FontAwesomeIcon
+        className="fa-icon"
+        icon={icon}
+        size="lg"
+        style={{ color: "#939393" }}
+      />
+      <span className="category-text">{name}</span>
+      <FontAwesomeIcon
+        className="attachment"
+        icon={faArrowRight}
+        style={{ color: "#ff6a00" }}
+      />
+    </button>
   );
 }
 
