@@ -20,26 +20,26 @@
   transition: transform 0.5s ease;
 }
 .close-button:hover {
-  transform: rotate(90deg); /* Rotate the button icon 90 degrees */
-  background-color: #8548eefe;
+   /* Rotate the button icon 90 degrees */
+  background-color: #8548ee44;
   transition: 500ms ease-in-out;
 }
 .open-button {
   position: absolute;
   top: 10%;
   left: -10px;
-  height: 100px;
-  width: 100px;
-  background-color: hsl(0, 0%, 31%);
+  height: 50px;
+  width: 50px;
+  background-color: hsl(0, 0%, 63%);
   border: 0px;
-  border-radius: 50%;
+  border-radius: 10%;
 }
 .open-button::after {
   display: none;
   transition: 1ms ease-in-out;
 }
 .open-button:hover {
-  background-color: hsl(0, 1%, 33%);
+  background-color: #8548ee44;
   transition: 300ms ease-in-out;
 }
 .offcanvas-header {
@@ -60,6 +60,7 @@ h6 {
   margin-bottom: 0px;
   color: #939393;
 }
+
 
 .offcanvas-header .profile-image {
   width: 20%; /* Adjust the width of the profile image as needed */

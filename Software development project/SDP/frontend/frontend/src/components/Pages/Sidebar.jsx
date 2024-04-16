@@ -20,11 +20,15 @@ import DashboardCategoryBtn from "../Buttons/DashboardButtons.jsx";
 
 // context imports
 import { useContext } from "react";
-import { AppCustomContext } from "../../App";
+import { AppCustomContext } from "../../App.jsx";
 
 function Sidebar() {
   //context data
   const { usernamee, rolee } = useContext(AppCustomContext);
+  const [contextUserName,setContextUserName]=useState();
+  const [contextRole,setContextRole]=useState();
+  
+
   console.log(
     "This is fresh passed username",
     usernamee,
@@ -68,6 +72,7 @@ function Sidebar() {
           </button>
         </div>
         <Offcanvas.Body>
+          <hr/>
           <div className="offcanvas-body">
             <DashboardCategoryBtn
               name="Dashboard"

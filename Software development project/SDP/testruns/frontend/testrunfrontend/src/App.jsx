@@ -12,6 +12,11 @@ export const AppCustomeContext = createContext();
 function App() {
   const [name, setName] = useState("Dummy");
 
+
+  const handle=()=>{
+
+  }
+
   return (
     <>
       {/* step 3 */}

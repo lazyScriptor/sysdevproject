@@ -1,19 +1,16 @@
-.custom-table{
-    color :red;
-    
-
+.custom-table {
+  color: red;
 }
 
 .table-head .table-cell-header {
-    color: rgb(106, 106, 106);
-    font-weight: 700;
-    text-align: center;
-    border:1px rgb(238, 237, 237) solid;
-  }
-  .table-body .table-cell-data{
-    color:rgb(144, 144, 144);
-    border:1px rgb(238, 237, 237) solid;
-  }
-  .table-body:hover{
-    background-color: #f3f3f33c;
-  }
+  color: rgb(106, 106, 106);
+  font-weight: 700;
+  text-align: center;
+}
+.table-body .table-cell-data {
+  color: rgb(144, 144, 144);
+  border: 1px rgb(238, 237, 237) solid;
+}
+.table-body:hover {
+  background-color: #f3f3f33c;
+}

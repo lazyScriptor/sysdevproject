@@ -2,29 +2,23 @@ import React, { useEffect, useState } from "react";
 import "../Stylings/login.css";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
-import image from '../../assets/constructor.png'
+import image from "../../assets/constructor.png";
+import Snack from "./Snack";
 
 import { useContext } from "react";
 import { AppCustomContext } from "../../App";
-// import { AppCustomContext2 } from "../../main";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faKey, faUser, faWrench } from "@fortawesome/free-solid-svg-icons";
 
 function Login() {
-  //components of the passing values
   const { setUsernamee, setRolee } = useContext(AppCustomContext);
-  //const { handleClickVariant,setVarient ,varient} = useContext(AppCustomContext2);
-
-
-  //passing value components are done
 
   const [data, setData] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(""); // State to store the selected user
-  const [selectedUserPassword, setSelectedUserPassword] = useState(""); // State to store the password of the selected user
-  const [enteredPassword, setEnteredPassword] = useState(""); // State to store the entered password
-
-  const [username, setUsername] = useState(""); // State to store the entered username
+  const [selectedUser, setSelectedUser] = useState("");
+  const [selectedUserPassword, setSelectedUserPassword] = useState("");
+  const [enteredPassword, setEnteredPassword] = useState("");
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:8085/users")
@@ -35,15 +29,14 @@ function Login() {
       })
       .catch((err) => console.log(err));
   }, []);
+
   const navigate = useNavigate();
 
-  
-
+  //check the roles with the realtime entering username
   const handleSelectionChange = (event) => {
     const selectedRole = event.target.value;
     setSelectedUser(selectedRole);
 
-    // Find the selected user in the data array and set the corresponding password
     const selectedUserData = data.find(
       (user) => user.username === username && user.role === selectedRole
     );
@@ -54,12 +47,11 @@ function Login() {
     const enteredUsername = e.target.value;
     setUsername(enteredUsername);
   };
-  const clickhandle = () => {};
 
+  //Form submit part
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    // Find the user with matching fname and role
     const matchedUser = data.find(
       (user) => user.username === username && user.role === selectedUser
     );
@@ -69,14 +61,32 @@ function Login() {
       navigate("/DashboardMain", { state: { role: selectedUser } });
       setUsernamee(username);
       setRolee(selectedUser);
-
+      //This will not display since the page is refresh
+      setMessage("success");
+      SetMessageContent("Password is correct");
+      setOpen(true);
     } else {
       console.log("Password does not match!");
-      //setVarient('success')
-      //handleClickVariant(varient);
+      // Open the Snackbar with error message
+      setMessage("error");
+      SetMessageContent("Username or Password is incorrect");
+      setOpen(true);
     }
   };
 
+  //Snackbar content
+  const [messageContent, SetMessageContent] = useState();
+  const [message, setMessage] = useState();
+  const [open, setOpen] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+  //snackbar content is over
   return (
     <div className="login-body">
       <div className="left-column">
@@ -84,7 +94,7 @@ function Login() {
           <h1 className="heading">Log In</h1>
           <Form.Label>
             <FontAwesomeIcon icon={faUser} style={{ color: "#000000" }} />
-            Username
+            &nbsp;&nbsp;&nbsp;Username
           </Form.Label>
           <Form.Control
             placeholder="Username"
@@ -92,18 +102,24 @@ function Login() {
             value={username}
           />
           <br />
-          <Form.Label>Role</Form.Label>
+          <Form.Label>
+            <FontAwesomeIcon icon={faWrench} style={{ color: "#000000" }} />
+            &nbsp;&nbsp;&nbsp;Role
+          </Form.Label>
           <Form.Select onChange={handleSelectionChange} value={selectedUser}>
             <option>Default select</option>
             {data
-              .filter((user) => user.username === username) // Filter data based on username
+              .filter((user) => user.username === username)
               .map((user, index) => (
                 <option key={index}>{user.role}</option>
               ))}
           </Form.Select>
 
           <br />
-          <Form.Label htmlFor="inputPassword5">Password</Form.Label>
+          <Form.Label htmlFor="inputPassword5">
+            <FontAwesomeIcon icon={faKey} style={{ color: "#000000" }} />
+            &nbsp;&nbsp;&nbsp;Password
+          </Form.Label>
           <Form.Control
             type="password"
             id="inputPassword5"
@@ -117,10 +133,17 @@ function Login() {
             <span className="text"> Click me</span>
             <span>Login</span>
           </button>
+          {/* Render the Snack component */}
+          <Snack
+            type={message}
+            message={messageContent}
+            open={open}
+            handleClose={handleClose}
+          />
         </Form>
       </div>
       <div className="right-column">
-        <img src={image}/>
+        <img src={image} />
       </div>
     </div>
   );
