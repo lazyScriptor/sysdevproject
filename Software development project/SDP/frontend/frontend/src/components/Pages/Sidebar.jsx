@@ -108,7 +108,7 @@ function Sidebar() {
             <DashboardCategoryBtn
               name="Logout"
               icon={faRightFromBracket}
-              destination="/Reports"
+              destination="/"
             />
           </div>
         </Offcanvas.Body>

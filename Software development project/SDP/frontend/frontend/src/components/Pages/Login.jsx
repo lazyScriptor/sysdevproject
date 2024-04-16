@@ -6,6 +6,7 @@ import image from '../../assets/constructor.png'
 
 import { useContext } from "react";
 import { AppCustomContext } from "../../App";
+// import { AppCustomContext2 } from "../../main";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -13,6 +14,8 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 function Login() {
   //components of the passing values
   const { setUsernamee, setRolee } = useContext(AppCustomContext);
+  //const { handleClickVariant,setVarient ,varient} = useContext(AppCustomContext2);
+
 
   //passing value components are done
 
@@ -33,6 +36,8 @@ function Login() {
       .catch((err) => console.log(err));
   }, []);
   const navigate = useNavigate();
+
+  
 
   const handleSelectionChange = (event) => {
     const selectedRole = event.target.value;
@@ -64,8 +69,11 @@ function Login() {
       navigate("/DashboardMain", { state: { role: selectedUser } });
       setUsernamee(username);
       setRolee(selectedUser);
+
     } else {
       console.log("Password does not match!");
+      //setVarient('success')
+      //handleClickVariant(varient);
     }
   };
 
