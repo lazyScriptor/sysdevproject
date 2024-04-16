@@ -1,24 +1,75 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
-import { SnackbarProvider, useSnackbar } from "notistack"; 
+import { SnackbarProvider } from "notistack"; // Import SnackbarProvider
 
-const Main = () => {
-  const { enqueueSnackbar } = useSnackbar(); 
+// import { createBrowserRouter, RouterProvider } from "react-router-dom";
+// import Admin from "./components/Dashboards/Admin.jsx";
+// import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
+// import Profiles from "../additionalcomponents/Profiles.jsx";
 
-  const handleClickVariant = (variant) => () => {
-    enqueueSnackbar('This is a success message!', { variant });
-  };
+// import Customers from './components/Pages/Customers.jsx'
+// import Sidebar from './components/Pages/Sidebar.jsx'
+// import DashboardMain from './components/Pages/DasboardMain.jsx'
+// import Equipment from './components/Pages/Equipment.jsx'
+// import Inbox from './components/Pages/Inbox.jsx'
+// import Invoice from './components/Pages/Invoice.jsx'
+// import Reports from './components/Pages/Reports.jsx'
 
-  return (
-    <React.StrictMode>
-      <SnackbarProvider maxSnack={3}>
-        <App />
-      </SnackbarProvider>
-    </React.StrictMode>
-  );
-};
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <App />,
+//     errorElement: <Notfoundd />,
+//   },
+//   {
+//     path: "/Admin",
+//     element: <Admin />,
+//   },
+//   {
+//     path: "/profiles",
+//     element: <Profiles />,
+//   },
+//   {
+//     path: "profiles/:profileId",
+//     element: <Profiles/>
+//   },
 
-ReactDOM.createRoot(document.getElementById("root")).render(<Main />);
+//   {
+//     path: "/customers",
+//     element: <Customers />,
+//   },
+//   {
+//     path: "/Sidebar",
+//     element: <Sidebar />,
+//   },
+//   {
+//     path: "/DashboardMain",
+//     element: <DashboardMain />,
+//   },
+//   {
+//     path: "/Equipment",
+//     element: <Equipment />,
+//   },
+//   {
+//     path: "/Inbox",
+//     element: <Inbox/>
+//   },
+//   {
+//     path: "/Invoice",
+//     element: <Invoice />,
+//   },
+//   {
+//     path: "/Reports",
+//     element: <Reports/>
+//   }
+// ]);
 
-export default Main;
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <SnackbarProvider maxSnack={3}>
+      {/* <RouterProvider router={router} /> */}
+      <App />
+    </SnackbarProvider>
+  </React.StrictMode>
+);

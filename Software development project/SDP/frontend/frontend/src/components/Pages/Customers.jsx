@@ -58,13 +58,22 @@ export default function Customers() {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Paper elevation={4} sx={{ width: "100%", mb: 2 }}>
+    <Box
+      sx={{
+        display: "flex",
+        width: "100%",
+        height: "",
+        justifyContent: "center",
+        alignItems: "center",
+        
+      }}
+    >
+      <Paper elevation={4} sx={{ width: "75%", mb: 2, mt: 2, borderRadius: 3 }}>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size="medium"
+            size="small"
             className="custom-table"
           >
             <TableHead className="table-head">
@@ -73,6 +82,7 @@ export default function Customers() {
                 <TableCell className="table-cell-header">First Name</TableCell>
                 <TableCell className="table-cell-header">Last Name</TableCell>
                 <TableCell className="table-cell-header">NIC</TableCell>
+                <TableCell className="table-cell-header">Phone number</TableCell>
                 <TableCell className="table-cell-header">Address 1</TableCell>
                 <TableCell className="table-cell-header">Address 2</TableCell>
                 <TableCell className="table-cell-header">Edits</TableCell>
@@ -93,6 +103,7 @@ export default function Customers() {
                       {row.cus_lname}
                     </TableCell>
                     <TableCell className="table-cell-data">{row.nic}</TableCell>
+                    <TableCell className="table-cell-data">{row.cus_phone_number}</TableCell>
                     <TableCell className="table-cell-data">
                       {row.cus_address1}
                     </TableCell>

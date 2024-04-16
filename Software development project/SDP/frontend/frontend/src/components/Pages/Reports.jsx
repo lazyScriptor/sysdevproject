@@ -1,10 +1,10 @@
 import React from 'react'
-import Sidebar from './Sidebar.jsx'
+import Snack from './Snack.jsx'
 
 function Reports() {
   return (
     <div>
-     
+     <Snack type="info" message="hey"/>
     </div>
   )
 }
