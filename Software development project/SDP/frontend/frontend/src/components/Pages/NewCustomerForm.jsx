@@ -85,8 +85,7 @@ function NewCustomerForm() {
     try {
       const selectedUserData = data.find((user) => user.nic == newNic);
       if (selectedUserData) {
-        setNewId("");
-        setNewPno("");
+        
         setId(selectedUserData.cus_id);
         setNic(selectedUserData.nic);
         setPhoneNumber(selectedUserData.cus_phone_number);
@@ -95,7 +94,7 @@ function NewCustomerForm() {
         setAddress1(selectedUserData.cus_address1);
         setAddress2(selectedUserData.cus_address2);
 
-        console.error("Customer found");
+        console.log("Customer found");
         setMessage("success");
         SetMessageContent("Customer found");
         setOpen(true);
@@ -115,8 +114,7 @@ function NewCustomerForm() {
     try {
       const selectedUserData = data.find((user) => user.cus_id == newId);
       if (selectedUserData) {
-        setNewNic("");
-        setNewPno("");
+        
         setId(selectedUserData.cus_id);
         setNic(selectedUserData.nic);
         setPhoneNumber(selectedUserData.cus_phone_number);
@@ -125,7 +123,7 @@ function NewCustomerForm() {
         setAddress1(selectedUserData.cus_address1);
         setAddress2(selectedUserData.cus_address2);
 
-        console.error("Customer found");
+        console.log("Customer found");
         setMessage("success");
         SetMessageContent("Customer found");
         setOpen(true);
@@ -147,8 +145,7 @@ function NewCustomerForm() {
         (user) => user.cus_phone_number == newPno
       );
       if (selectedUserData) {
-        setNewId("");
-        setNewNic("");
+        
         setId(selectedUserData.cus_id);
         setNic(selectedUserData.nic);
         setPhoneNumber(selectedUserData.cus_phone_number);
@@ -157,7 +154,7 @@ function NewCustomerForm() {
         setAddress1(selectedUserData.cus_address1);
         setAddress2(selectedUserData.cus_address2);
 
-        console.error("Customer found");
+        console.log("Customer found");
         setMessage("success");
         SetMessageContent("Customer found");
         setOpen(true);
@@ -200,31 +197,38 @@ function NewCustomerForm() {
           <Box
             sx={{
               height: "100px",
-              mb: 3,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexDirection: "column",
-              backgroundColor: (theme) => theme.palette.primary[800],
+              backgroundColor: (theme) => theme.palette.primary[50],
               color: "white",
               borderRadius: 3,
+              mb:3,
             }}
           >
             <h1>Client Details</h1>
-
             <p>We'll never share your email.</p>
           </Box>
 
-          <Box sx={{ height: "70px",borderRadius:3 ,backgroundColor: (theme) => theme.palette.primary[50],}}>
+          <Box
+            sx={{
+              height: "70px",
+              borderRadius: 3,
+              backgroundColor: (theme) => theme.palette.primary[50],
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <Box
               sx={{
                 height: "50px",
                 width: "30%",
-
                 borderRadius: 3,
                 display: "flex",
-                alignItems: "start",
-                float: "left",
+                alignItems: "center",
+                justifyContent: "center",
                 pl: 2,
               }}
             >
@@ -234,7 +238,6 @@ function NewCustomerForm() {
                 label="Search by ID"
                 type="search"
                 size="small"
-                sx={{}}
                 onChange={handleOnChangeIdOnlyForSearching}
               />
               <Button
@@ -246,17 +249,17 @@ function NewCustomerForm() {
                   },
                 }}
               >
-                <FontAwesomeIcon variant="primary" icon={faSearch} />
+                <FontAwesomeIcon icon={faSearch} />
               </Button>
             </Box>
             <Box
               sx={{
                 height: "50px",
                 width: "30%",
-
                 borderRadius: 3,
                 display: "flex",
-                float: "left",
+                alignItems: "center",
+                justifyContent: "center",
                 pl: 2,
               }}
             >
@@ -266,7 +269,6 @@ function NewCustomerForm() {
                 label="Search by NIC"
                 type="search"
                 size="small"
-                sx={{}}
                 onChange={handleOnChangeNicOnlyForSearching}
               />
               <Button
@@ -285,11 +287,10 @@ function NewCustomerForm() {
               sx={{
                 height: "50px",
                 width: "40%",
-
                 borderRadius: 3,
                 display: "flex",
-                alignItems: "start",
-                float: "left",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
               <TextField
@@ -298,7 +299,6 @@ function NewCustomerForm() {
                 label="Search by Phone number"
                 type="search"
                 size="small"
-                sx={{ width: "100%" }}
                 onChange={handleOnChangePnoOnlyforSearching}
               />
               <Button
