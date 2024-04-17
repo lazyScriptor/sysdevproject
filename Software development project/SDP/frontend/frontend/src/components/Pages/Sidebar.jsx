@@ -4,6 +4,7 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import adminImage from "../../assets/profileImage.jpeg";
 import "../Stylings/sidebar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import {
   faTableCellsLarge,
   faHouse,
@@ -21,13 +22,13 @@ import DashboardCategoryBtn from "../Buttons/DashboardButtons.jsx";
 // context imports
 import { useContext } from "react";
 import { AppCustomContext } from "../../App.jsx";
+import Button from "@mui/material/Button";
 
 function Sidebar() {
   //context data
   const { usernamee, rolee } = useContext(AppCustomContext);
-  const [contextUserName,setContextUserName]=useState();
-  const [contextRole,setContextRole]=useState();
-  
+  const [contextUserName, setContextUserName] = useState();
+  const [contextRole, setContextRole] = useState();
 
   console.log(
     "This is fresh passed username",
@@ -43,9 +44,18 @@ function Sidebar() {
 
   return (
     <div>
-      <button onClick={handleShow} className="open-button">
+      <Button
+        onClick={handleShow}
+        className="open-button"
+        sx={{
+          borderRadius: 3,
+          "&:hover": {
+            backgroundColor: (theme) => theme.palette.primary[800], // Change to the desired hover color
+          },
+        }}
+      >
         <FontAwesomeIcon icon={faBars} size="xl" style={{ color: "#505050" }} />
-      </button>
+      </Button>
       <Offcanvas
         bsPrefix="offcanvas"
         show={show}
@@ -66,13 +76,27 @@ function Sidebar() {
               <h4>{rolee}</h4>
               <h6>{usernamee}</h6>
             </div>
+            <Button
+              onClick={handleClose}
+              sx={{
+                borderRadius: 3,
+
+                position: "absolute",
+                right: 1,
+                maxWidthwidth: "50px",
+                maxHeight: "400px",
+
+                "&:hover": {
+                  backgroundColor: (theme) => theme.palette.primary[800], // Change to the desired hover color
+                },
+              }}
+            >
+              <FontAwesomeIcon icon={faXmark} size="xs" />
+            </Button>
           </Offcanvas.Header>
-          <button className="close-button" onClick={handleClose}>
-            <FontAwesomeIcon icon={faXmark} size="xs" />
-          </button>
         </div>
         <Offcanvas.Body>
-          <hr/>
+          <hr />
           <div className="offcanvas-body">
             <DashboardCategoryBtn
               name="Dashboard"
@@ -104,7 +128,7 @@ function Sidebar() {
               icon={faNewspaper}
               destination="/Reports"
             />
-            <hr/>
+            <hr />
             <DashboardCategoryBtn
               name="Empty"
               icon={faHouse}
