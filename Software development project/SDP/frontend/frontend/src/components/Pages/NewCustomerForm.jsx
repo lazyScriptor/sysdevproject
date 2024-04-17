@@ -34,6 +34,9 @@ function NewCustomerForm() {
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
 
+  //variable to toogle inputs
+  const [toogle, setToogle] = useState(true);
+
   //Snackbar content
   const [messageContent, SetMessageContent] = useState();
   const [message, setMessage] = useState();
@@ -81,11 +84,43 @@ function NewCustomerForm() {
   };
   //Searchbar functions over
 
+  const handleToogleStatus = () => {
+    setToogle(!toogle);
+  };
+  const handleSaveDetails = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8085/updateCustomerDetails",
+        {
+          id,
+          nic,
+          phoneNumber,
+          fname,
+          lname,
+          address1,
+          address2,
+        }
+      );
+      console.log("Details saved successfully:", response.data);
+
+      setToogle(true);
+    } catch (error) {
+      console.error("Error saving details:", error);
+    }
+  };
+  const handleDeleteCustomer = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8085/deleteCustomers/${id}`);
+      console.log(id)
+      console.log("Details deleted successfully:");
+    } catch (error) {
+      console.error("Error deleting details:", error);
+    }
+  };
   const handleSearchnic = () => {
     try {
       const selectedUserData = data.find((user) => user.nic == newNic);
       if (selectedUserData) {
-        
         setId(selectedUserData.cus_id);
         setNic(selectedUserData.nic);
         setPhoneNumber(selectedUserData.cus_phone_number);
@@ -114,7 +149,6 @@ function NewCustomerForm() {
     try {
       const selectedUserData = data.find((user) => user.cus_id == newId);
       if (selectedUserData) {
-        
         setId(selectedUserData.cus_id);
         setNic(selectedUserData.nic);
         setPhoneNumber(selectedUserData.cus_phone_number);
@@ -145,7 +179,6 @@ function NewCustomerForm() {
         (user) => user.cus_phone_number == newPno
       );
       if (selectedUserData) {
-        
         setId(selectedUserData.cus_id);
         setNic(selectedUserData.nic);
         setPhoneNumber(selectedUserData.cus_phone_number);
@@ -201,10 +234,10 @@ function NewCustomerForm() {
               alignItems: "center",
               justifyContent: "center",
               flexDirection: "column",
-              backgroundColor: (theme) => theme.palette.primary[50],
+              backgroundColor: (theme) => theme.palette.primary[800],
               color: "white",
               borderRadius: 3,
-              mb:3,
+              mb: 3,
             }}
           >
             <h1>Client Details</h1>
@@ -418,66 +451,80 @@ function NewCustomerForm() {
             >
               <Box className="dey">
                 <TextField
+                  disabled={toogle}
                   id="standard-basic"
                   variant="standard"
                   size="small"
                   sx={{ width: "80px" }}
                   value={id}
+                  onChange={(e) => setId(e.target.value)}
                 />
               </Box>
 
               <Box className="dey">
                 <TextField
+                  disabled={toogle}
                   id="standard-basic"
                   variant="standard"
                   size="small"
                   sx={{ color: "red" }}
                   value={fname}
+                  onChange={(e) => setFname(e.target.value)}
                 />
               </Box>
               <Box className="dey">
                 <TextField
+                  disabled={toogle}
                   id="standard-basic"
                   variant="standard"
                   size="small"
                   sx={{ color: "red" }}
                   value={lname}
+                  onChange={(e) => setLname(e.target.value)}
                 />
               </Box>
               <Box className="dey">
                 <TextField
+                  disabled={toogle}
                   id="standard-basic"
                   variant="standard"
                   size="small"
                   sx={{ color: "red" }}
                   value={nic}
+                  onChange={(e) => setNic(e.target.value)}
                 />
               </Box>
               <Box className="dey">
                 <TextField
+                  disabled={toogle}
                   id="standard-basic"
                   variant="standard"
                   size="small"
                   sx={{ color: "red" }}
                   value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
                 />
               </Box>
               <Box className="dey">
                 <TextField
+                  disabled={toogle}
                   id="standard-basic"
                   variant="standard"
                   size="small"
                   sx={{ color: "red" }}
                   value={address1}
+                  onChange={(e) => setAddress1(e.target.value)}
                 />
               </Box>
               <Box className="dey">
                 <TextField
+                  disabled={toogle}
                   id="standard-basic"
                   variant="standard"
                   size="small"
                   sx={{ color: "red" }}
                   value={address2}
+                  onChange={(e) => setAddress2(e.target.value)}
                 />
               </Box>
 
@@ -526,6 +573,21 @@ function NewCustomerForm() {
               */}
             </FormControl>
           </Box>
+          <Button sx={{ mt: 2 }} onClick={handleToogleStatus}>
+            Edit
+          </Button>
+          <Button sx={{ mt: 2, ml: 1 }} onClick={handleSaveDetails}>
+            Save
+          </Button>
+          <Button
+            color="error"
+            sx={{ mt: 2, ml: 2 }}
+            //methana id nathuwa newID use kranne id kiyanne pahala input area eke value eka
+            //NewId kiyanne uda onchange variable ekak
+            onClick={()=>handleDeleteCustomer(newId)}
+          >
+            Delete
+          </Button>
         </Paper>
         <Snack
           type={message}
