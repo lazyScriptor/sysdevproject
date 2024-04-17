@@ -59,13 +59,14 @@ export default function Customers() {
 
   return (
     <Box
+    className="body"
       sx={{
         display: "flex",
         width: "100%",
-        height: "",
+        height: "auto",
         justifyContent: "center",
         alignItems: "center",
-        
+
       }}
     >
       <Paper elevation={4} sx={{ width: "75%", mb: 2, mt: 2, borderRadius: 3 }}>
@@ -133,6 +134,9 @@ export default function Customers() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
+        <Button>
+          heys
+        </Button>
       </Paper>
     </Box>
   );

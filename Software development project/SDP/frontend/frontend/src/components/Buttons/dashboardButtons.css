@@ -53,7 +53,7 @@
 
 .category-button:hover {
   border: 1px solid white;
-  background-color: #8548eefe;
+  background-color: #FFB74D;
   transition: 300ms ease-in-out;
   color: white;
   transform: scale(0.9); /* Zoom effect on hover */

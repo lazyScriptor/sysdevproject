@@ -15,7 +15,7 @@ function DashboardCategoryBtn({ name, icon, destination }) {
   };
 
   return (
-    <button className="category-button" onClick={handleClick}>
+    <button className="category-button" onClick={handleClick} >
       <FontAwesomeIcon
         className="fa-icon"
         icon={icon}

@@ -1,5 +1,6 @@
 import React from "react";
 import { TextField } from "@mui/material";
+import '../Stylings/rootstyles.css'
 
 function FormComponents({ type, width,message }) {
  
