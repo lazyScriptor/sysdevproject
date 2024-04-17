@@ -1,11 +1,11 @@
 import React from 'react'
-import Sidebar from './Sidebar.jsx'
+import BackgroundStyle from './BackgroundStyle.jsx'
 
 function Inbox() {
   return (
     <div>
       
-      <h1>inbox</h1>
+      <BackgroundStyle/>
     </div>
   )
 }

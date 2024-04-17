@@ -82,9 +82,11 @@ function Sidebar() {
                 borderRadius: 3,
 
                 position: "absolute",
-                right: 1,
+                right: "20px",
+                top:"15px",
                 maxWidthwidth: "50px",
-                maxHeight: "400px",
+                maxHeight: "50px",
+
 
                 "&:hover": {
                   backgroundColor: (theme) => theme.palette.primary[800], // Change to the desired hover color

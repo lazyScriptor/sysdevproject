@@ -3,6 +3,7 @@ import "./dashboardButtons.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { Button, Typography } from "@mui/material";
 
 function DashboardCategoryBtn({ name, icon, destination }) {
   const navigate = useNavigate();
@@ -15,20 +16,34 @@ function DashboardCategoryBtn({ name, icon, destination }) {
   };
 
   return (
-    <button className="category-button" onClick={handleClick} >
+    <Button
+    
+      className="category-button"
+      onClick={handleClick}
+      sx={{
+        pl:2,
+        display: "flex",
+        justifyContent: "start",
+        alignContent: "start",
+        backgroundColor: "white",
+        "&:hover": {
+          backgroundColor: (theme) => theme.palette.primary[500] + "!important",
+          "& .MuiTypography-subtitle1": {
+            color: "white",
+          },
+        },
+      }}
+    >
       <FontAwesomeIcon
         className="fa-icon"
         icon={icon}
         size="lg"
         style={{ color: "#939393" }}
       />
-      <span className="category-text">{name}</span>
-      <FontAwesomeIcon
-        className="attachment"
-        icon={faArrowRight}
-        style={{ color: "#ff6a00" }}
-      />
-    </button>
+      <Typography variant="subtitle1" ml={3}>
+        {name}
+      </Typography>
+    </Button>
   );
 }
 
