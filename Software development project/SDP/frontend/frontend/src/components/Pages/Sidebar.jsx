@@ -23,6 +23,7 @@ import DashboardCategoryBtn from "../Buttons/DashboardButtons.jsx";
 import { useContext } from "react";
 import { AppCustomContext } from "../../App.jsx";
 import Button from "@mui/material/Button";
+import { Typography } from "@mui/material";
 
 function Sidebar() {
   //context data
@@ -48,13 +49,24 @@ function Sidebar() {
         onClick={handleShow}
         className="open-button"
         sx={{
-          borderRadius: 3,
+
+          position: "fixed",
+          top: "00px",
+          left: "0px",
+          height:"40px",
+          zIndex: 999, 
+          borderRadius:"0px",
+          backgroundColor: "#00838f2b",
+          border:"solid 1px #00838f",
           "&:hover": {
-            backgroundColor: (theme) => theme.palette.primary[800], // Change to the desired hover color
+            backgroundColor: (theme) => theme.palette.primary[200],
           },
         }}
       >
-        <FontAwesomeIcon icon={faBars} size="xl" style={{ color: "#505050" }} />
+        <Typography sx={{mr:2,color: "#cecececd"}}>
+          Open the side bar
+        </Typography>
+        {/* <FontAwesomeIcon icon={faBars} size="xl" style={{ color: "#505050" }} /> */}
       </Button>
       <Offcanvas
         bsPrefix="offcanvas"
@@ -66,7 +78,7 @@ function Sidebar() {
         className="sidebar-container"
       >
         <div className="offcanvas-header-wrapper">
-          <Offcanvas.Header closeButton={false}>
+          <Offcanvas.Header closeButton={true}>
             <img
               className="profile-image"
               src={adminImage}
@@ -77,8 +89,10 @@ function Sidebar() {
               <h6>{usernamee}</h6>
             </div>
             <Button
+            
               onClick={handleClose}
               sx={{
+                visibility:"hidden",
                 borderRadius: 3,
 
                 position: "absolute",
@@ -86,7 +100,7 @@ function Sidebar() {
                 top:"15px",
                 maxWidthwidth: "50px",
                 maxHeight: "50px",
-
+                
 
                 "&:hover": {
                   backgroundColor: (theme) => theme.palette.primary[800], // Change to the desired hover color

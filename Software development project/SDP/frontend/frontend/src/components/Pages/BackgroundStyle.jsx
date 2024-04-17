@@ -1,9 +1,10 @@
 import React from "react";
 import { Box, Paper } from "@mui/material";
 import "../Stylings/rootstyles.css";
+import Customers from "./Customers";
+import Invoice from "./Invoice";
 
-
-function NewCustomerForm() {
+function BackgroundStyle() {
   return (
     <>
       <Box
@@ -11,19 +12,18 @@ function NewCustomerForm() {
           display: "flex",
           width: "100%",
           height: "auto",
+          minHeight: "100vh",
           justifyContent: "center",
-          alignItems: "start",
+          alignItems: "flex-start", // Align content vertically at the top
+          p:0,
         }}
       >
         <Paper
           elevation={4}
           sx={{
-            width: "50%",
-            p: 1,
-            mb: 2,
-            mt: 2,
+            width: "100%",
+            p: 5,
             borderRadius: 3,
-            gap: "20px",
             minWidth: "500px",
             backgroundColor: (theme) => theme.palette.primary,
           }}
@@ -88,10 +88,41 @@ function NewCustomerForm() {
               }}
             ></Box>
           </Box>
+
+          {/* Divide the last box into two */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              width: "100%",
+            }}
+          >
+            <Box
+              sx={{
+                width: "40%",
+
+                borderRadius: 3,
+                minHeight: "100vh",
+                mr: 2, // Add margin to create space between the two boxes
+              }}
+            >
+              <Invoice />
+            </Box>
+            <Box
+              sx={{
+                width: "60%",
+
+                minHeight: "100vh",
+                borderRadius: 3,
+              }}
+            >
+              <Customers />
+            </Box>
+          </Box>
         </Paper>
       </Box>
     </>
   );
 }
 
-export default NewCustomerForm;
+export default BackgroundStyle;
