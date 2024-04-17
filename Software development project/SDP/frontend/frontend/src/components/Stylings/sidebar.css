@@ -21,19 +21,11 @@
 }
 .close-button:hover {
    /* Rotate the button icon 90 degrees */
-  background-color: #8548ee44;
+  background-color: #cecececd;
   transition: 500ms ease-in-out;
 }
-.open-button {
-  position: absolute;
-  top: 10%;
-  left: -10px;
-  height: 50px;
-  width: 50px;
-  background-color: hsl(0, 0%, 63%);
-  border: 0px;
-  border-radius: 10%;
-}
+
+
 .open-button::after {
   display: none;
   transition: 1ms ease-in-out;

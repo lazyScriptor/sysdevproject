@@ -20,6 +20,11 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import Snack from "./Snack";
 
+import { createContext } from "react";
+export const AppCustomeContext3 = createContext();
+
+
+
 function NewCustomerForm() {
   const [data, setData] = useState([]);
   const [newId, setNewId] = useState("");
@@ -217,10 +222,9 @@ function NewCustomerForm() {
         <Paper
           elevation={4}
           sx={{
-            width: "50%",
+            width: "100%",
             p: 1,
-            mb: 2,
-            mt: 2,
+            mt:1,
             borderRadius: 3,
             gap: "20px",
             minWidth: "500px",
@@ -240,8 +244,8 @@ function NewCustomerForm() {
               mb: 3,
             }}
           >
-            <h1>Client Details</h1>
-            <p>We'll never share your email.</p>
+            <h1>Add new customer</h1>
+            
           </Box>
 
           <Box
@@ -457,7 +461,7 @@ function NewCustomerForm() {
                   size="small"
                   sx={{ width: "80px" }}
                   value={id}
-                  onChange={(e) => setId(e.target.value)}
+                  
                 />
               </Box>
 

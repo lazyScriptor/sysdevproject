@@ -9,6 +9,7 @@ import Navbar from "./components/Navbar";
 //step 2 : create context
 export const AppCustomeContext = createContext();
 
+
 function App() {
   const [name, setName] = useState("Dummy");
 

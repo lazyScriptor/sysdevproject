@@ -18,7 +18,7 @@ import "../Stylings/customers.css";
 export default function Customers() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
   const { enqueueSnackbar } = useSnackbar(); // Initialize useSnackbar hook
 
   useEffect(() => {
@@ -66,10 +66,11 @@ export default function Customers() {
         height: "auto",
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor:"white"
 
       }}
     >
-      <Paper elevation={4} sx={{ width: "75%", mb: 2, mt: 2, borderRadius: 3 }}>
+      <Paper elevation={4} sx={{ width: "100%", mb: 2,mt:1, borderRadius: 3 }}>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -126,7 +127,7 @@ export default function Customers() {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[20, 50, 100]}
           component="div"
           count={data.length}
           rowsPerPage={rowsPerPage}
