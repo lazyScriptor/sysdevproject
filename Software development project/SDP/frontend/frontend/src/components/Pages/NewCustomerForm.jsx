@@ -11,13 +11,14 @@ import {
   Button,
   colors,
 } from "@mui/material";
-import FormComponents from "./FormComponents";
+import "../Stylings/rootstyles.css";
 import { useEffect, useState } from "react";
 
 import "../Stylings/newCustomerForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import Snack from "./Snack";
 
 function NewCustomerForm() {
   const [data, setData] = useState([]);
@@ -33,6 +34,20 @@ function NewCustomerForm() {
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
 
+  //Snackbar content
+  const [messageContent, SetMessageContent] = useState();
+  const [message, setMessage] = useState();
+  const [open, setOpen] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+  //snackbar content is over
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,18 +62,10 @@ function NewCustomerForm() {
     fetchData();
   }, []);
 
-  const handleSearchid = () => {
-    const selectedUserData = data.find((user) => user.cus_id == newId);
-    setNewNic("")
-    setNewPno("")
-    setId(selectedUserData.cus_id);
-    setNic(selectedUserData.nic);
-    setPhoneNumber(selectedUserData.cus_phone_number);
-    setFname(selectedUserData.cus_fname);
-    setLname(selectedUserData.cus_lname);
-    setAddress1(selectedUserData.cus_address1);
-    setAddress2(selectedUserData.cus_address2);
-  };
+  // Search bar functions
+  //Set these 3 values to a new variable insted of using the same variable using to retrieve the input data
+  //because when we enter data to search ID in the search ID field it will be automaticcaly
+  //autofill the CustomerID field with the onChange function .To avoid that we have used seperate variables
 
   const handleOnChangeIdOnlyForSearching = (e) => {
     const enteredText = e.target.value;
@@ -68,36 +75,102 @@ function NewCustomerForm() {
     const enteredText = e.target.value;
     setNewNic(enteredText);
   };
-
-  const handleSearchnic = () => {
-    const selectedUserData = data.find((user) => user.nic == newNic);
-    setNewId("")
-    setNewPno("")
-    setId(selectedUserData.cus_id);
-    setNic(selectedUserData.nic);
-    setPhoneNumber(selectedUserData.cus_phone_number);
-    setFname(selectedUserData.cus_fname);
-    setLname(selectedUserData.cus_lname);
-    setAddress1(selectedUserData.cus_address1);
-    setAddress2(selectedUserData.cus_address2);
-  };
   const handleOnChangePnoOnlyforSearching = (e) => {
     const enteredText = e.target.value;
     setNewPno(enteredText);
   };
+  //Searchbar functions over
+
+  const handleSearchnic = () => {
+    try {
+      const selectedUserData = data.find((user) => user.nic == newNic);
+      if (selectedUserData) {
+        setNewId("");
+        setNewPno("");
+        setId(selectedUserData.cus_id);
+        setNic(selectedUserData.nic);
+        setPhoneNumber(selectedUserData.cus_phone_number);
+        setFname(selectedUserData.cus_fname);
+        setLname(selectedUserData.cus_lname);
+        setAddress1(selectedUserData.cus_address1);
+        setAddress2(selectedUserData.cus_address2);
+
+        console.error("Customer found");
+        setMessage("success");
+        SetMessageContent("Customer found");
+        setOpen(true);
+      } else {
+        console.error("Customer not found");
+        setMessage("error");
+        SetMessageContent("Customer with this NIC not found");
+        setOpen(true);
+      }
+    } catch (error) {
+      // Handle any other errors that may occur
+      console.error("Error searching for user by NIC:", error);
+    }
+  };
+
+  const handleSearchid = () => {
+    try {
+      const selectedUserData = data.find((user) => user.cus_id == newId);
+      if (selectedUserData) {
+        setNewNic("");
+        setNewPno("");
+        setId(selectedUserData.cus_id);
+        setNic(selectedUserData.nic);
+        setPhoneNumber(selectedUserData.cus_phone_number);
+        setFname(selectedUserData.cus_fname);
+        setLname(selectedUserData.cus_lname);
+        setAddress1(selectedUserData.cus_address1);
+        setAddress2(selectedUserData.cus_address2);
+
+        console.error("Customer found");
+        setMessage("success");
+        SetMessageContent("Customer found");
+        setOpen(true);
+      } else {
+        console.error("Customer not found");
+        setMessage("error");
+        SetMessageContent("Customer with this ID not found");
+        setOpen(true);
+      }
+    } catch (error) {
+      // Handle any other errors that may occur
+      console.error("Error searching for user by ID:", error);
+    }
+  };
+
   const handleSearchPno = () => {
-    const selectedUserData = data.find(
-      (user) => user.cus_phone_number == newPno
-    );
-    setNewId("")
-    setNewNic("")
-    setId(selectedUserData.cus_id);
-    setNic(selectedUserData.nic);
-    setPhoneNumber(selectedUserData.cus_phone_number);
-    setFname(selectedUserData.cus_fname);
-    setLname(selectedUserData.cus_lname);
-    setAddress1(selectedUserData.cus_address1);
-    setAddress2(selectedUserData.cus_address2);
+    try {
+      const selectedUserData = data.find(
+        (user) => user.cus_phone_number == newPno
+      );
+      if (selectedUserData) {
+        setNewId("");
+        setNewNic("");
+        setId(selectedUserData.cus_id);
+        setNic(selectedUserData.nic);
+        setPhoneNumber(selectedUserData.cus_phone_number);
+        setFname(selectedUserData.cus_fname);
+        setLname(selectedUserData.cus_lname);
+        setAddress1(selectedUserData.cus_address1);
+        setAddress2(selectedUserData.cus_address2);
+
+        console.error("Customer found");
+        setMessage("success");
+        SetMessageContent("Customer found");
+        setOpen(true);
+      } else {
+        console.error("Customer not found");
+        setMessage("error");
+        SetMessageContent("Customer with this Phone Number not found");
+        setOpen(true);
+      }
+    } catch (error) {
+      // Handle any other errors that may occur
+      console.error("Error searching for user by Phone Number:", error);
+    }
   };
 
   return (
@@ -106,10 +179,9 @@ function NewCustomerForm() {
         sx={{
           display: "flex",
           width: "100%",
-          height: "100vh",
+          height: "auto",
           justifyContent: "center",
           alignItems: "start",
-          paddingBottom: "400px",
         }}
       >
         <Paper
@@ -122,21 +194,20 @@ function NewCustomerForm() {
             borderRadius: 3,
             gap: "20px",
             minWidth: "500px",
-            height: "100vh",
+            backgroundColor: (theme) => theme.palette.primary,
           }}
         >
           <Box
             sx={{
               height: "100px",
-
+              mb: 3,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexDirection: "column",
-              backgroundColor: "#505050",
+              backgroundColor: (theme) => theme.palette.primary[800],
               color: "white",
               borderRadius: 3,
-              mb: 5,
             }}
           >
             <h1>Client Details</h1>
@@ -144,7 +215,7 @@ function NewCustomerForm() {
             <p>We'll never share your email.</p>
           </Box>
 
-          <Box sx={{ p: 1, height: "70px", mb: 2 }}>
+          <Box sx={{ height: "70px",borderRadius:3 ,backgroundColor: (theme) => theme.palette.primary[50],}}>
             <Box
               sx={{
                 height: "50px",
@@ -175,7 +246,7 @@ function NewCustomerForm() {
                   },
                 }}
               >
-                <FontAwesomeIcon icon={faSearch} />
+                <FontAwesomeIcon variant="primary" icon={faSearch} />
               </Button>
             </Box>
             <Box
@@ -227,7 +298,7 @@ function NewCustomerForm() {
                 label="Search by Phone number"
                 type="search"
                 size="small"
-              sx={{width:"100%"}}
+                sx={{ width: "100%" }}
                 onChange={handleOnChangePnoOnlyforSearching}
               />
               <Button
@@ -247,7 +318,7 @@ function NewCustomerForm() {
           {/* Left side Box */}
           <Box
             sx={{
-              height: "100%",
+              height: "auto",
               width: "40%",
 
               borderRadius: 3,
@@ -261,7 +332,7 @@ function NewCustomerForm() {
                 gap: "20px",
 
                 width: "100%",
-                height: "100%",
+
                 display: "flex",
                 ml: 2,
               }}
@@ -331,7 +402,6 @@ function NewCustomerForm() {
           {/* Right side Box */}
           <Box
             sx={{
-              height: "auto",
               width: "60%",
 
               borderRadius: 3,
@@ -351,7 +421,7 @@ function NewCustomerForm() {
                   id="standard-basic"
                   variant="standard"
                   size="small"
-                  sx={{ width: "80px", color: "red" }}
+                  sx={{ width: "80px" }}
                   value={id}
                 />
               </Box>
@@ -457,6 +527,12 @@ function NewCustomerForm() {
             </FormControl>
           </Box>
         </Paper>
+        <Snack
+          type={message}
+          message={messageContent}
+          open={open}
+          handleClose={handleClose}
+        />
       </Box>
     </>
   );

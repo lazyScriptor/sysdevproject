@@ -1,12 +1,10 @@
 import React from 'react'
-import Sidebar from './Sidebar.jsx'
+import '../Stylings/rootstyles.css'
 import NewCustomerForm from './NewCustomerForm.jsx'
 
 function Invoice() {
   return (
-    <div>
      <NewCustomerForm/>
-    </div>
   )
 }
 

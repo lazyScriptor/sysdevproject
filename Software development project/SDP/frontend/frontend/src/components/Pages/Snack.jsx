@@ -6,8 +6,23 @@ import Alert from '@mui/material/Alert';
 function Snack(props) {
   const { type, message, open, handleClose } = props;
 
+  React.useEffect(() => {
+    let timer;
+    if (open) {
+      // Set a timer to close the Snackbar after 3 seconds
+      timer = setTimeout(() => {
+        handleClose();
+      }, 3000);
+    }
+
+    // Clear the timer when the component unmounts or when open changes to false
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [open, handleClose]);
+
   return (
-    <Snackbar open={open} autoHideDuration={2000} onClose={handleClose} >
+    <Snackbar open={open} autoHideDuration={null} onClose={handleClose} >
       <Alert onClose={handleClose} severity={type} variant='filled' sx={{ width: '100%' }}>
         {message}
       </Alert>
@@ -16,4 +31,3 @@ function Snack(props) {
 }
 
 export default Snack;
-//define prop types here later
