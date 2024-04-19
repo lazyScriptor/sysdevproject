@@ -40,7 +40,7 @@ const pool = mysql.createPool({
 //e nisa array destructuring use kranna oni
 
 const [result] =await pool.query("SELECT * FROM user")
-console.log(result)
+
 //mehemma krama lassanata data tika enawa
 
 async function getUsers(){
@@ -52,7 +52,21 @@ async function getUser(id){
     return rows;
 }
 
-const res=await getUsers();
+//const res=await getUsers();
 // dan res eka console.log eke call krath output eka enawa
 //console.log(await getUsers())
-console.log(await getUser(1))
+
+
+async function createUser(id,fname,lname,username,role,nic,pno,add1,add2,password){
+    const [rows] = await pool.query(
+        `INSERT INTO user (user_id, user_first_name, user_last_name, username, role, nic, user_phone_number, user_address1, user_address2, password) VALUES (?,?,?,?,?,?,?,?,?,?);`,
+        [id,fname,lname,username,role,nic,pno,add1,add2,password]
+    )
+
+    return getUser(id)
+    
+}
+
+const funrun= await createUser("209","kamal","fernando","kamal","admin","1223131","0718976568","kahawatta","rathnapura","1234")
+
+console.log(funrun)
