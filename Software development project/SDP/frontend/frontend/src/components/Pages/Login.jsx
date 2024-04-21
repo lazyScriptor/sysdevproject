@@ -25,7 +25,7 @@ function Login() {
       .then((res) => res.json())
       .then((data) => {
         setData(data);
-        console.log(data);
+        console.log("This is the useEffect", data);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -38,7 +38,7 @@ function Login() {
     setSelectedUser(selectedRole);
 
     const selectedUserData = data.find(
-      (user) => user.username === username && user.role === selectedRole
+      (users) => users.username === username && users.role === selectedRole
     );
     setSelectedUserPassword(selectedUserData ? selectedUserData.password : "");
   };
@@ -53,7 +53,7 @@ function Login() {
     event.preventDefault();
 
     const matchedUser = data.find(
-      (user) => user.username === username && user.role === selectedUser
+      (users) => users.username === username && users.role === selectedUser
     );
 
     if (matchedUser && enteredPassword === matchedUser.password) {
@@ -109,9 +109,9 @@ function Login() {
           <Form.Select onChange={handleSelectionChange} value={selectedUser}>
             <option>Default select</option>
             {data
-              .filter((user) => user.username === username)
-              .map((user, index) => (
-                <option key={index}>{user.role}</option>
+              .filter((users) => users.username === username)
+              .map((users, index) => (
+                <option key={index}>{users.role}</option>
               ))}
           </Form.Select>
 
