@@ -1,17 +1,24 @@
-const express = require("express");
-const mysql = require("mysql2");
-const cors = require("cors");
+
+import express from 'express'
+import mysql from 'mysql2'
+import cors from 'cors'
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json()); // Add this line to parse JSON request bodies
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "sysdevdb",
+  host: process.env.HOST,
+  user: process.env.USERNAME,
+  password: process.env.PASSWORD,
+  database: process.env.DATABASE,
 });
+
+console.log("This is the inline user name",process.env.USERNME)
+
+const port = process.env.PORT || 8085
 
 app.get("/", (req, res) => {
   return res.json("From backend side");
@@ -19,7 +26,7 @@ app.get("/", (req, res) => {
 
 // GET request to fetch all users
 app.get("/users", (req, res) => {
-  const sql = "SELECT * FROM user";
+  const sql = "SELECT * FROM users";
   db.query(sql, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
@@ -54,6 +61,7 @@ app.post("/updateCustomerDetails", (req, res) => {
     if (err) return res.json(err);
     console.log(`Customer details updated for ID ${id}`);
     return res.json({ message: `Customer details updated for ID ${id}` });
+    
   });
 });
 // Delete request to delete customer details
@@ -68,6 +76,6 @@ app.post("/updateCustomerDetails", (req, res) => {
 });
 
 
-app.listen(8085, () => {
-  console.log("listening");
+app.listen(port, () => {
+  console.log(`listening to :${port}`);
 });
