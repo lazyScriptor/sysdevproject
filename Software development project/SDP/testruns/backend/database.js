@@ -22,7 +22,7 @@ const pool = mysql.createPool({
     host: "localHost",
     user: "root",
     password: "",
-    database: "sysdevdb",
+    database: "sysdevdb2",
   }).promise()
 
   // Dan node database.js ghla balanna error ekak nattan owlak nathuwa nikan command eka execute wei
@@ -39,17 +39,17 @@ const pool = mysql.createPool({
     // `nic` VARCHAR(12) NOT NULL,
 //e nisa array destructuring use kranna oni
 
-const [result] =await pool.query("SELECT * FROM user")
+export const [result] =await pool.query("SELECT * FROM user")
 
 //mehemma krama lassanata data tika enawa
 
-async function getUsers(){
+export async function getUsers(){
     const [rows] =await pool.query("SELECT * FROM user")
     return rows;
 }
-async function getUser(id){
+export async function getUser(id){
     const [rows] =await pool.query(`SELECT * FROM user WHERE user_id=?`,[id])//untrusted data enter krnna denneha meken
-    return rows;
+    console.log(rows[0].user_id);
 }
 
 //const res=await getUsers();
@@ -57,16 +57,13 @@ async function getUser(id){
 //console.log(await getUsers())
 
 
-async function createUser(id,fname,lname,username,role,nic,pno,add1,add2,password){
+export async function createUser(fname,lname,username,role,nic,pno,add1,add2,password){
     const [rows] = await pool.query(
-        `INSERT INTO user (user_id, user_first_name, user_last_name, username, role, nic, user_phone_number, user_address1, user_address2, password) VALUES (?,?,?,?,?,?,?,?,?,?);`,
-        [id,fname,lname,username,role,nic,pno,add1,add2,password]
+        `INSERT INTO user ( user_first_name, user_last_name, username, role, nic, user_phone_number, user_address1, user_address2, password) VALUES (?,?,?,?,?,?,?,?,?);`,
+        [fname,lname,username,role,nic,pno,add1,add2,password]
     )
-
-    return getUser(id)
-    
+    return getUser(2)
 }
 
-const funrun= await createUser("209","kamal","fernando","kamal","admin","1223131","0718976568","kahawatta","rathnapura","1234")
+//await createUser("kamal","fernando","kamal","admin","1223131","0718976568","kahawatta","rathnapura","1234")
 
-console.log(funrun)
