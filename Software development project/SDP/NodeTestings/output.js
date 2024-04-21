@@ -1,3 +1,6 @@
+// const { default: chalk } = require("chalk");
+import chalk from 'chalk'
+
 // const chalk = require("chalk");
 const x = "x";
 const y = "y";
@@ -146,3 +149,4 @@ console.log("My %s has %d ears", "cat", 2);
 //     clearInterval(timer);
 //   }
 // }, 100);
+console.log(chalk.bgCyan("green colour"))

@@ -72,7 +72,6 @@ function Sidebar() {
         bsPrefix="offcanvas"
         show={show}
         onHide={handleClose}
-        backdrop="static"
         scroll="true"
         placement="start"
         className="sidebar-container"
