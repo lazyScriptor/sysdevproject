@@ -1,19 +1,22 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
   "type": "module",
-  "main": "index.js",
+  "main": "database.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev":"npx nodemon server.js"
   },
   "keywords": [],
   "author": "Theekshana",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.19.2",
     "mysql2": "^3.9.6"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
-  }
+  },
+  "description": ""
 }

@@ -87,3 +87,18 @@ CREATE TABLE IF NOT EXISTS borrowings (
 CREATE INDEX idx_borrowings_member_id ON borrowings (member_id);
 
 ALTER TABLE members ADD COLUMN IF NOT EXISTS email VARCHAR(100) DEFAULT NULL AFTER date_of_birth;
+
+
+--First, ensure that the user_id column in the user table is the primary key:
+
+-- ALTER TABLE user
+-- ADD PRIMARY KEY (user_id);
+
+-- Then, you can add a foreign key constraint with cascading delete on the user_entered_value column in the equipment table:
+
+
+-- ALTER TABLE equipment
+-- ADD CONSTRAINT fk_equipment_user_entered_value
+-- FOREIGN KEY (user_entered_value)
+-- REFERENCES user (user_id)
+-- ON DELETE CASCADE;
