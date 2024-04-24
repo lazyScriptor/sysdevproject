@@ -1,0 +1,1 @@
+sudo lsof -ti:8085 | xargs sudo kill
