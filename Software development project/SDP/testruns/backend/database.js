@@ -44,7 +44,7 @@ export const [result] =await pool.query("SELECT * FROM user")
 //mehemma krama lassanata data tika enawa
 
 export async function getUsers(){
-    const [rows] =await pool.query("SELECT * FROM user")
+    const rows =await pool.query("SELECT * FROM user")
     return rows;
 }
 export async function getUser(id){

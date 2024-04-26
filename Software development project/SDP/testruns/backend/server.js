@@ -11,7 +11,8 @@ app.use((err, req, res, next) => {
 
 app.get("/notes", async (req, res) => {
     const users=await getUsers();
-    res.send(users)
+    res.json(users)
+   
     // try {
     //     const notes = await getUsers();
     //     res.send(notes);
@@ -20,10 +21,15 @@ app.get("/notes", async (req, res) => {
     //     res.status(500).send('Error retrieving notes");
     // }
 });
-app.get("/users",async (req,res)=>{
-    const users= await getUsers();
-    res.send(users)
-})
+app.get("/users", async (req, res) => {
+    try {
+        const users = await getUsers();
+        res.json(users);
+    } catch (error) {
+        console.error('Error retrieving users:', error);
+        res.status(500).json({ error: 'Error retrieving users' });
+    }
+});
 app.listen(8080, () => {
     console.log("listening in port 8080");
 });
