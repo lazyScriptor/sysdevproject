@@ -1,8 +1,9 @@
+import express from "express";
+import mysql from "mysql2";
+import cors from "cors";
+import dotenv from "dotenv";
+import { getUsers } from "./database.js";
 
-import express from 'express'
-import mysql from 'mysql2'
-import cors from 'cors'
-import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
@@ -16,21 +17,23 @@ const db = mysql.createConnection({
   database: process.env.DATABASE,
 });
 
-console.log("This is the inline user name",process.env.USERNME)
+console.log("This is the inline user name", process.env.USERNAME);
 
-const port = process.env.PORT || 8085
+const port = process.env.PORT || 8085;
 
 app.get("/", (req, res) => {
   return res.json("From backend side");
 });
 
 // GET request to fetch all users
-app.get("/users", (req, res) => {
-  const sql = "SELECT * FROM users";
-  db.query(sql, (err, data) => {
-    if (err) return res.json(err);
-    return res.json(data);
-  });
+app.get("/users", async (req, res) => {
+  // const sql = "SELECT * FROM users";
+  // db.query(sql, (err, data) => {
+  //   if (err) return res.json(err);
+  //   return res.json(data);
+  // });
+  const users = await getUsers();
+  return res.json(users);
 });
 
 // GET request to fetch all customers
@@ -56,25 +59,33 @@ app.delete("/deleteCustomers/:customerId", (req, res) => {
 // POST request to update customer details
 app.post("/updateCustomerDetails", (req, res) => {
   const { id, nic, phoneNumber, fname, lname, address1, address2 } = req.body;
-  const sql = "UPDATE customer SET nic = ?, cus_phone_number = ?, cus_fname = ?, cus_lname = ?, cus_address1 = ?, cus_address2 = ? WHERE cus_id = ?";
-  db.query(sql, [nic, phoneNumber, fname, lname, address1, address2, id], (err, result) => {
-    if (err) return res.json(err);
-    console.log(`Customer details updated for ID ${id}`);
-    return res.json({ message: `Customer details updated for ID ${id}` });
-    
-  });
+  const sql =
+    "UPDATE customer SET nic = ?, cus_phone_number = ?, cus_fname = ?, cus_lname = ?, cus_address1 = ?, cus_address2 = ? WHERE cus_id = ?";
+  db.query(
+    sql,
+    [nic, phoneNumber, fname, lname, address1, address2, id],
+    (err, result) => {
+      if (err) return res.json(err);
+      console.log(`Customer details updated for ID ${id}`);
+      return res.json({ message: `Customer details updated for ID ${id}` });
+    }
+  );
 });
 // Delete request to delete customer details
 app.post("/updateCustomerDetails", (req, res) => {
   const { id, nic, phoneNumber, fname, lname, address1, address2 } = req.body;
-  const sql = "UPDATE customer SET nic = ?, cus_phone_number = ?, cus_fname = ?, cus_lname = ?, cus_address1 = ?, cus_address2 = ? WHERE cus_id = ?";
-  db.query(sql, [nic, phoneNumber, fname, lname, address1, address2, id], (err, result) => {
-    if (err) return res.json(err);
-    console.log(`Customer details updated for ID ${id}`);
-    return res.json({ message: `Customer details updated for ID ${id}` });
-  });
+  const sql =
+    "UPDATE customer SET nic = ?, cus_phone_number = ?, cus_fname = ?, cus_lname = ?, cus_address1 = ?, cus_address2 = ? WHERE cus_id = ?";
+  db.query(
+    sql,
+    [nic, phoneNumber, fname, lname, address1, address2, id],
+    (err, result) => {
+      if (err) return res.json(err);
+      console.log(`Customer details updated for ID ${id}`);
+      return res.json({ message: `Customer details updated for ID ${id}` });
+    }
+  );
 });
-
 
 app.listen(port, () => {
   console.log(`listening to :${port}`);

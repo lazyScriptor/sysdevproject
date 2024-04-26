@@ -4,6 +4,7 @@ import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
 import image from "../../assets/constructor.png";
 import Snack from "./Snack";
+import axios from "axios";
 
 import { useContext } from "react";
 import { AppCustomContext } from "../../App";
@@ -20,16 +21,33 @@ function Login() {
   const [enteredPassword, setEnteredPassword] = useState("");
   const [username, setUsername] = useState("");
 
+  // useEffect(() => {
+  //   fetch("http://localhost:8085/users")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setData(data);
+  //       console.log("This is the useEffect", data);
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
+
+  //if you want to use a base URL and do the axios use this 
+  // axios.defaults.baseURL = "http://localhost:8085";
+  // { url: "/users" }
 
   useEffect(() => {
-    fetch("http://localhost:8085/users")
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-        console.log("This is the useEffect", data);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+    try {
+      axios
+        .get("http://localhost:8085/users")
+        .then((res) => setData(res.data));
+    } catch (error) {
+      console.log("error occured in the try catch block",error);
+    }
+  },[]);
+
+  // useEffect(() => {
+  //   console.log(data); // Log data whenever it changes
+  // }, [data]);
 
   const navigate = useNavigate();
 
