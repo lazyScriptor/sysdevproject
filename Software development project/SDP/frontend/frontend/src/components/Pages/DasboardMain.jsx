@@ -1,10 +1,9 @@
 import React from "react";
-import '../Stylings/dashboard.css'
 
 function DasboardMain() {
   return (
     <div>
-    <h1 className="h1name">dashboard</h1>
+    <h1 className="h1name" style={{textAlign:"center"}}>dashboard</h1>
     </div>
   );
 }

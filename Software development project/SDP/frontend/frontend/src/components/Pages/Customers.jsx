@@ -22,21 +22,18 @@ export default function Customers() {
   const { enqueueSnackbar } = useSnackbar(); // Initialize useSnackbar hook
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:8085/customers");
-        setData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+    try {
+      axios
+        .get("http://localhost:8085/customers")
+        .then((res) => setData(res.data))
+    } catch (error) {
+      console.error("error occured in the try catch block",error);
+    }
+  },[]);
 
   const handleDelete = async (customerId, customerFirstName) => {
     try {
-      await axios.delete(`http://localhost:8085/deleteCustomers/${customerId}`);
+      axios.delete(`http://localhost:8085/deleteCustomers/${customerId}`);
       // Show success snackbar message with customer's first name
       enqueueSnackbar(`Customer :${customerFirstName} deleted successfully!`, {
         variant: "success",

@@ -11,6 +11,8 @@ import { AppCustomContext } from "../../App";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faUser, faWrench } from "@fortawesome/free-solid-svg-icons";
+import { Button } from "react-bootstrap/";
+import DashboardCategoryBtn from "../Buttons/DashboardButtons";
 
 function Login() {
   const { setUsernamee, setRolee } = useContext(AppCustomContext);
@@ -39,9 +41,9 @@ function Login() {
     try {
       axios
         .get("http://localhost:8085/users")
-        .then((res) => setData(res.data));
+        .then((res) => setData(res.data))
     } catch (error) {
-      console.log("error occured in the try catch block",error);
+      console.error("error occured in the try catch block",error);
     }
   },[]);
 
@@ -148,10 +150,15 @@ function Login() {
           />
 
           <br />
+
           <button className="submit-button" role="button">
             <span className="text"> Click me</span>
             <span>Login</span>
           </button>
+
+          <Button variant="primary" role="button" onClick={handleSubmit}>Primary</Button>
+          
+
           {/* Render the Snack component */}
           <Snack
             type={message}
