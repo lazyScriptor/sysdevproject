@@ -43,7 +43,7 @@ function BackgroundStyleNew({ children, title, subTitle }) {
             <p>{subTitle}</p>
           </Box>
 
-          <Box
+          {/* <Box
             sx={{
               height: "70px",
               borderRadius: 3,
@@ -85,7 +85,7 @@ function BackgroundStyleNew({ children, title, subTitle }) {
                 justifyContent: "center",
               }}
             ></Box>
-          </Box>
+          </Box> */}
 
           {/* Divide the last box into two */}
           <Box

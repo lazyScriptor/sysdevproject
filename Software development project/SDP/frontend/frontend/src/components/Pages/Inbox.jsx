@@ -1,11 +1,14 @@
 import React from 'react'
-import BackgroundStyle from '../SubComponents/BackgroundStyle'
+import BackgroundStyleNew from '../SubComponents/BackgroundStyleNew'
+
 
 function Inbox() {
   return (
     <>
-      
-      <BackgroundStyle/>
+      <BackgroundStyleNew title={"Inbox"} subTitle={"This is the inbox page"}>
+
+      </BackgroundStyleNew>
+     
     </>
   )
 }

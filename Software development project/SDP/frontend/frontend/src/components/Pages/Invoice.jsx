@@ -6,8 +6,8 @@ import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew.jsx";
 function Invoice() {
   return (
     <>
-      <BackgroundStyleNew>
-        <NewCustomerForm />
+      <BackgroundStyleNew title={"Invoices"} subTitle={"This is the Invoices page"}> 
+        
       </BackgroundStyleNew>
     </>
   );

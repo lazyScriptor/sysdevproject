@@ -10,20 +10,24 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Box from "@mui/material/Box";
 import { Button, TextField } from "@mui/material";
-
-import { useSnackbar } from "notistack"; // Import useSnackbar hook
+import { useSnackbar } from "notistack";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSearch,
+  faSortUp,
+  faSortDown,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function EquipmentTable() {
   const [ID, setID] = useState();
   const [name, setName] = useState();
   const [equipmentArray, setEquipmentArray] = useState([]);
-
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
-  const { enqueueSnackbar } = useSnackbar(); // Initialize useSnackbar hook
+  const [sortDirection, setSortDirection] = useState("asc");
+  const [sortBy, setSortBy] = useState("eq_id");
+  const { enqueueSnackbar } = useSnackbar();
 
   //Database date coloumn to a specific date format
   function formatDate(dateString) {
@@ -32,30 +36,34 @@ export default function EquipmentTable() {
   }
 
   useEffect(() => {
-    try {
-      axios.get("http://localhost:8085/equipment").then((res) => {
-        setData(res.data);
-        console.log(res.data);
-      });
-    } catch (error) {
-      console.error("error occured in the try catch block", error);
-    }
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const res = await axios.get("http://localhost:8085/equipment");
+      setData(res.data);
+    } catch (error) {
+      console.error("error occurred while fetching data:", error);
+    }
+  };
 
   const handleDelete = async (eq_id, eq_name) => {
     try {
       console.log("This is the delete function front end ", eq_id, eq_name);
-      axios.delete(`http://localhost:8085/deleteEquipment/${eq_id}`);
-
-      // Show success snackbar message with customer's first name
-      enqueueSnackbar(`Customer :${eq_name} deleted successfully!`, {
+      await axios.delete(`http://localhost:8085/deleteEquipment/${eq_id}`);
+      enqueueSnackbar(`Equipment: ${eq_name} deleted successfully!`, {
         variant: "success",
       });
-      // Assuming the API returns a success response
-      // You may want to update the data state or trigger a refetch after successful deletion
+      fetchData();
     } catch (error) {
-      console.error("Error deleting customer:", error);
+      console.error("Error deleting equipment:", error);
     }
+  };
+
+  const handleSort = (column) => {
+    setSortBy(column);
+    setSortDirection(sortDirection === "asc" ? "desc" : "asc");
   };
 
   const handleChangePage = (event, newPage) => {
@@ -71,34 +79,59 @@ export default function EquipmentTable() {
     const searchValueID = event.target.value;
     setID(searchValueID);
   };
-  const handleSearchid = (equipmentID) => {
+
+  const handleSearchid = async (equipmentID) => {
     try {
-      axios
-        .get(`http://localhost:8085/getEquipmentbyID/${equipmentID}`)
-        .then((res) => {
-          setData(res.data);
-          console.log(res.data);
-        });
+      const res = await axios.get(
+        `http://localhost:8085/getEquipmentbyID/${equipmentID}`
+      );
+      setData(res.data);
     } catch (error) {
-      console.error("error occured in the try catch block", error);
+      console.error("error occurred while searching by ID:", error);
     }
   };
+
   const handleOnChangeName = (event) => {
     const searchValueName = event.target.value;
     setName(searchValueName);
   };
-  const handleSearchName = (equipmentName) => {
+
+  const handleSearchName = async (equipmentName) => {
     try {
-      axios
-        .get(`http://localhost:8085/getEquipmentbyName/${equipmentName}`)
-        .then((res) => {
-          setData(res.data);
-          console.log(res.data);
-        });
+      const res = await axios.get(
+        `http://localhost:8085/getEquipmentbyName/${equipmentName}`
+      );
+      setData(res.data);
     } catch (error) {
-      console.error("error occured in the try catch block", error);
+      console.error("error occurred while searching by name:", error);
     }
   };
+
+  const sortedData = [...data].sort((a, b) => {
+    let firstValue, secondValue;
+
+    // Handle sorting for different columns
+    switch (sortBy) {
+      case "eq_id":
+        firstValue = parseFloat(a.eq_id); // Convert IDs to numbers if needed
+        secondValue = parseFloat(b.eq_id);
+        break;
+      case "eq_name":
+        firstValue = a.eq_name.toLowerCase(); // Convert names to lowercase for case-insensitive sorting
+        secondValue = b.eq_name.toLowerCase();
+        break;
+      // Add cases for other columns as needed
+      default:
+        firstValue = a[sortBy];
+        secondValue = b[sortBy];
+    }
+
+    if (sortDirection === "asc") {
+      return firstValue - secondValue; // Ascending order
+    } else {
+      return secondValue - firstValue; // Descending order
+    }
+  });
 
   return (
     <Box
@@ -124,7 +157,7 @@ export default function EquipmentTable() {
             className="custom-table"
           >
             <TableHead>
-              <TableRow>
+              <TableRow sx={{backgroundColor: (theme) => theme.palette.primary[50],}}>
                 <TableCell size="medium">
                   <Box
                     sx={{
@@ -144,12 +177,7 @@ export default function EquipmentTable() {
                     />
                     <Button
                       onClick={() => handleSearchid(ID)}
-                      sx={{
-                        pt: 2,
-                        "&:hover": {
-                          color: "green",
-                        },
-                      }}
+                      sx={{ pt: 2, "&:hover": { color: "green" } }}
                     >
                       <FontAwesomeIcon icon={faSearch} />
                     </Button>
@@ -174,54 +202,74 @@ export default function EquipmentTable() {
                     />
                     <Button
                       onClick={() => handleSearchName(name)}
-                      sx={{
-                        pt: 2,
-                        "&:hover": {
-                          color: "green",
-                        },
-                      }}
+                      sx={{ pt: 2, "&:hover": { color: "green" } }}
                     >
                       <FontAwesomeIcon icon={faSearch} />
                     </Button>
                   </Box>
                 </TableCell>
+                <TableCell/>
+                <TableCell/>
+                <TableCell/><TableCell/><TableCell/><TableCell/><TableCell/>
               </TableRow>
-            </TableHead>
-
-            <TableHead className="table-head">
-              <TableRow className="table-row">
-                <TableCell className="table-cell-header" sx={{}}>
+              <TableRow>
+                <TableCell
+                  className="table-cell-header"
+                  onClick={() => handleSort("eq_id")}
+                >
                   Machine
-                  <br /> Id
+                  <br />
+                  Id
                 </TableCell>
-                <TableCell className="table-cell-header">
+                <TableCell
+                  className="table-cell-header"
+                  onClick={() => handleSort("eq_name")}
+                >
                   Machine name
                 </TableCell>
-                <TableCell className="table-cell-header">
+                <TableCell
+                  className="table-cell-header"
+                  onClick={() => handleSort("rental")}
+                >
                   Rental
                   <br />
                   (LKR)
                 </TableCell>
-                <TableCell className="table-cell-header">
+                <TableCell
+                  className="table-cell-header"
+                  onClick={() => handleSort("date_of_purchase")}
+                >
                   Date of <br />
                   purchase
                 </TableCell>
-                <TableCell className="table-cell-header">
+                <TableCell
+                  className="table-cell-header"
+                  onClick={() => handleSort("warranty_date")}
+                >
                   Warranty
                   <br />
                   date
                 </TableCell>
-                <TableCell className="table-cell-header">
+                <TableCell
+                  className="table-cell-header"
+                  onClick={() => handleSort("end_of_warranty_period")}
+                >
                   End of the
                   <br />
                   warranty period
                 </TableCell>
-                <TableCell className="table-cell-header">
+                <TableCell
+                  className="table-cell-header"
+                  onClick={() => handleSort("eq_cost")}
+                >
                   Equipment
                   <br />
                   cost
                 </TableCell>
-                <TableCell className="table-cell-header">
+                <TableCell
+                  className="table-cell-header"
+                  onClick={() => handleSort("defected_status")}
+                >
                   Defected
                   <br />
                   status
@@ -230,7 +278,7 @@ export default function EquipmentTable() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data
+              {sortedData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow className="table-body" key={row.eq_id}>
@@ -275,7 +323,7 @@ export default function EquipmentTable() {
         <TablePagination
           rowsPerPageOptions={[20, 50, 100]}
           component="div"
-          count={data.length}
+          count={sortedData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
