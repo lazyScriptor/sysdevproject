@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import {
   deleteCustomer,
   deleteEquipment,
+  getEquipmentbyID,
+  getEquipmentbyName,
   getCustomerbyID,
   getCustomerbyNIC,
   getCustomerbyPhoneNumber,
@@ -50,6 +52,26 @@ app.get("/equipment", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+app.get("/getEquipmentbyID/:equipmentID", async (req, res) => {
+  try {
+    console.log("Server side getEquipmentbyID", req.params.equipmentID);
+    const equipment = await getEquipmentbyID(req.params.equipmentID);
+    return res.json(equipment);
+  } catch (error) {
+    console.error("Error in getCustomerbyID:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+app.get("/getEquipmentbyName/:equipmentName", async (req, res) => {
+  try {
+    console.log("Server side getEquipmentbyName", req.params.equipmentName);
+    const equipment = await getEquipmentbyName(req.params.equipmentName);
+    return res.json(equipment);
+  } catch (error) {
+    console.error("Error in getCustomerbyID:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 app.get("/getCustomerbyNIC/:nic", async (req, res) => {
   try {
@@ -93,6 +115,7 @@ app.delete("/deleteCustomers/:customerId", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 app.delete("/deleteEquipment/:eq_id", async (req, res) => {
   try {

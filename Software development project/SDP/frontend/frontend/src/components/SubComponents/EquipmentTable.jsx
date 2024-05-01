@@ -16,6 +16,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 export default function EquipmentTable() {
+  const [ID, setID] = useState();
+  const [name,setName]=useState();
+  const [equipmentArray, setEquipmentArray] = useState([]);
+
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
@@ -63,6 +67,40 @@ export default function EquipmentTable() {
     setPage(0);
   };
 
+  const handleOnChangeId= (event) => {
+    const searchValueID = event.target.value;
+    setID(searchValueID);
+  };
+  const handleSearchid = (equipmentID) => {
+    try {
+      axios
+        .get(`http://localhost:8085/getEquipmentbyID/${equipmentID}`)
+        .then((res) => {
+          setData(res.data);
+          console.log(res.data);
+        });
+    } catch (error) {
+      console.error("error occured in the try catch block", error);
+    }
+  };
+  const handleOnChangeName=(event)=>{
+    const searchValueName = event.target.value;
+    setName(searchValueName);
+  }
+  const handleSearchName = (equipmentName)=>{
+    try {
+        axios
+          .get(`http://localhost:8085/getEquipmentbyName/${equipmentName}`)
+          .then((res) => {
+            setData(res.data);
+            console.log(res.data);
+          });
+      } catch (error) {
+        console.error("error occured in the try catch block", error);
+      }
+    };
+  
+
   return (
     <Box
       className="body"
@@ -89,18 +127,24 @@ export default function EquipmentTable() {
             <TableHead>
               <TableRow>
                 <TableCell size="medium">
-                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     <TextField
-                      sx={{ }}
+                      sx={{}}
                       id="standard-search"
                       variant="standard"
                       label="Search by ID"
                       type="search"
                       size="small"
-                      // onChange={handleOnChangeIdOnlyForSearching}
+                      onChange={handleOnChangeId}
                     />
                     <Button
-                      // onClick={handleSearchid}
+                      onClick={() => handleSearchid(ID)}
                       sx={{
                         pt: 2,
                         "&:hover": {
@@ -113,185 +157,24 @@ export default function EquipmentTable() {
                   </Box>
                 </TableCell>
                 <TableCell size="medium">
-                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     <TextField
-                      sx={{  }}
+                      sx={{}}
                       id="standard-search"
                       variant="standard"
                       label="Search by ID"
                       type="search"
                       size="small"
-                      // onChange={handleOnChangeIdOnlyForSearching}
+                      onChange={handleOnChangeName}
                     />
                     <Button
-                      // onClick={handleSearchid}
-                      sx={{
-                        pt: 2,
-                        "&:hover": {
-                          color: "green",
-                        },
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faSearch} />
-                    </Button>
-                  </Box>
-                </TableCell>
-                <TableCell size="medium">
-                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
-                    <TextField
-                      sx={{  }}
-                      id="standard-search"
-                      variant="standard"
-                      label="Search by ID"
-                      type="search"
-                      size="small"
-                      // onChange={handleOnChangeIdOnlyForSearching}
-                    />
-                    <Button
-                      // onClick={handleSearchid}
-                      sx={{
-                        pt: 2,
-                        "&:hover": {
-                          color: "green",
-                        },
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faSearch} />
-                    </Button>
-                  </Box>
-                </TableCell>
-                <TableCell size="medium">
-                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
-                    <TextField
-                      sx={{ }}
-                      id="standard-search"
-                      variant="standard"
-                      label="Search by ID"
-                      type="search"
-                      size="small"
-                      // onChange={handleOnChangeIdOnlyForSearching}
-                    />
-                    <Button
-                      // onClick={handleSearchid}
-                      sx={{
-                        pt: 2,
-                        "&:hover": {
-                          color: "green",
-                        },
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faSearch} />
-                    </Button>
-                  </Box>
-                </TableCell>
-                <TableCell size="medium">
-                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
-                    <TextField
-                      sx={{  }}
-                      id="standard-search"
-                      variant="standard"
-                      label="Search by ID"
-                      type="search"
-                      size="small"
-                      // onChange={handleOnChangeIdOnlyForSearching}
-                    />
-                    <Button
-                      // onClick={handleSearchid}
-                      sx={{
-                        pt: 2,
-                        "&:hover": {
-                          color: "green",
-                        },
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faSearch} />
-                    </Button>
-                  </Box>
-                </TableCell>
-                <TableCell size="medium">
-                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
-                    <TextField
-                      sx={{  }}
-                      id="standard-search"
-                      variant="standard"
-                      label="Search by ID"
-                      type="search"
-                      size="small"
-                      // onChange={handleOnChangeIdOnlyForSearching}
-                    />
-                    <Button
-                      // onClick={handleSearchid}
-                      sx={{
-                        pt: 2,
-                        "&:hover": {
-                          color: "green",
-                        },
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faSearch} />
-                    </Button>
-                  </Box>
-                </TableCell><TableCell size="medium">
-                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
-                    <TextField
-                      sx={{ }}
-                      id="standard-search"
-                      variant="standard"
-                      label="Search by ID"
-                      type="search"
-                      size="small"
-                      // onChange={handleOnChangeIdOnlyForSearching}
-                    />
-                    <Button
-                      // onClick={handleSearchid}
-                      sx={{
-                        pt: 2,
-                        "&:hover": {
-                          color: "green",
-                        },
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faSearch} />
-                    </Button>
-                  </Box>
-                </TableCell>
-                <TableCell size="medium">
-                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
-                    <TextField
-                      sx={{  }}
-                      id="standard-search"
-                      variant="standard"
-                      label="Search by ID"
-                      type="search"
-                      size="small"
-                      // onChange={handleOnChangeIdOnlyForSearching}
-                    />
-                    <Button
-                      // onClick={handleSearchid}
-                      sx={{
-                        pt: 2,
-                        "&:hover": {
-                          color: "green",
-                        },
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faSearch} />
-                    </Button>
-                  </Box>
-                </TableCell>
-                <TableCell size="medium">
-                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
-                    <TextField
-                      sx={{  }}
-                      id="standard-search"
-                      variant="standard"
-                      label="Search by ID"
-                      type="search"
-                      size="small"
-                      // onChange={handleOnChangeIdOnlyForSearching}
-                    />
-                    <Button
-                      // onClick={handleSearchid}
+                      onClick={() => handleSearchName(name)}
                       sx={{
                         pt: 2,
                         "&:hover": {

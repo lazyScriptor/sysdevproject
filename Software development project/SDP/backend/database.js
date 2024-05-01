@@ -32,23 +32,47 @@ export async function getEquipment() {
   const [equipment] = await pool.query("SELECT * FROM equipment");
   return equipment;
 }
+export async function getEquipmentbyID(id) {
+  const [equipment] = await pool.query(
+    "SELECT * FROM equipment WHERE eq_id =?",
+    [id]
+  );
+  console.log(equipment);
+  return equipment;
+}
+export async function getEquipmentbyName(name) {
+  const [equipment] = await pool.query(
+    "SELECT * FROM equipment WHERE eq_name LIKE ?",
+    [`%${name}%`]
+  );
+  console.log(equipment);
+  return equipment;
+}
 
 export async function getCustomerbyNIC(nic) {
-  const [customers] = await pool.query("SELECT * FROM customer WHERE nic =?",[nic]);
+  const [customers] = await pool.query("SELECT * FROM customer WHERE nic =?", [
+    nic,
+  ]);
   console.log(customers);
   return customers;
 }
 export async function getCustomerbyID(id) {
-  const [customers] = await pool.query("SELECT * FROM customer WHERE cus_id =?",[id]);
-  console.log(customers);
-  return customers;
-}
-export async function getCustomerbyPhoneNumber(phoneNumber) {
-  const [customers] = await pool.query("SELECT * FROM customer WHERE cus_phone_number =?",[phoneNumber]);
+  const [customers] = await pool.query(
+    "SELECT * FROM customer WHERE cus_id =?",
+    [id]
+  );
   console.log(customers);
   return customers;
 }
 
+export async function getCustomerbyPhoneNumber(phoneNumber) {
+  const [customers] = await pool.query(
+    "SELECT * FROM customer WHERE cus_phone_number =?",
+    [phoneNumber]
+  );
+  console.log(customers);
+  return customers;
+}
 
 export async function deleteCustomer(id) {
   try {

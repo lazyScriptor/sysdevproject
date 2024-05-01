@@ -9,7 +9,7 @@ import Inbox from "./components/Pages/Inbox.jsx";
 import Invoice from "./components/Pages/Invoice.jsx";
 import Reports from "./components/Pages/Reports.jsx";
 import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
-import './index.css'
+// import './index.css'
 
 import { useState, createContext } from "react";
 
