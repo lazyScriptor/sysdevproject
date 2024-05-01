@@ -21,7 +21,6 @@ import axios from "axios";
 import Snack from "./Snack";
 
 import { createContext } from "react";
-import TypesExample from "./BootstrapButton";
 import { useSnackbar } from "notistack";
 export const AppCustomeContext3 = createContext();
 
@@ -597,7 +596,6 @@ function NewCustomerForm() {
           >
             Delete
           </Button>
-          <TypesExample />
         </Paper>
         <Snack
           type={message}

@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Paper } from "@mui/material";
 import "../Stylings/rootstyles.css";
 import Customers from "../Pages/Customers";
-import Invoice from "../Pages/Invoice";
+import NewCustomerForm from "../Pages/NewCustomerForm";
 
 function BackgroundStyle() {
   return (
@@ -106,7 +106,7 @@ function BackgroundStyle() {
                 mr: 2, // Add margin to create space between the two boxes
               }}
             >
-              <Invoice />
+              <NewCustomerForm />
             </Box>
             <Box
               sx={{

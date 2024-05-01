@@ -17,7 +17,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 export default function EquipmentTable() {
   const [ID, setID] = useState();
-  const [name,setName]=useState();
+  const [name, setName] = useState();
   const [equipmentArray, setEquipmentArray] = useState([]);
 
   const [data, setData] = useState([]);
@@ -67,7 +67,7 @@ export default function EquipmentTable() {
     setPage(0);
   };
 
-  const handleOnChangeId= (event) => {
+  const handleOnChangeId = (event) => {
     const searchValueID = event.target.value;
     setID(searchValueID);
   };
@@ -83,23 +83,22 @@ export default function EquipmentTable() {
       console.error("error occured in the try catch block", error);
     }
   };
-  const handleOnChangeName=(event)=>{
+  const handleOnChangeName = (event) => {
     const searchValueName = event.target.value;
     setName(searchValueName);
-  }
-  const handleSearchName = (equipmentName)=>{
+  };
+  const handleSearchName = (equipmentName) => {
     try {
-        axios
-          .get(`http://localhost:8085/getEquipmentbyName/${equipmentName}`)
-          .then((res) => {
-            setData(res.data);
-            console.log(res.data);
-          });
-      } catch (error) {
-        console.error("error occured in the try catch block", error);
-      }
-    };
-  
+      axios
+        .get(`http://localhost:8085/getEquipmentbyName/${equipmentName}`)
+        .then((res) => {
+          setData(res.data);
+          console.log(res.data);
+        });
+    } catch (error) {
+      console.error("error occured in the try catch block", error);
+    }
+  };
 
   return (
     <Box
@@ -168,7 +167,7 @@ export default function EquipmentTable() {
                       sx={{}}
                       id="standard-search"
                       variant="standard"
-                      label="Search by ID"
+                      label="Search by Name"
                       type="search"
                       size="small"
                       onChange={handleOnChangeName}
@@ -282,7 +281,6 @@ export default function EquipmentTable() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-        <Button>heys</Button>
       </Paper>
     </Box>
   );

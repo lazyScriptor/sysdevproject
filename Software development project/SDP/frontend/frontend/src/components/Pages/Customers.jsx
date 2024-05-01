@@ -25,11 +25,11 @@ export default function Customers() {
     try {
       axios
         .get("http://localhost:8085/customers")
-        .then((res) => setData(res.data))
+        .then((res) => setData(res.data));
     } catch (error) {
-      console.error("error occured in the try catch block",error);
+      console.error("error occured in the try catch block", error);
     }
-  },[]);
+  }, []);
 
   const handleDelete = async (customerId, customerFirstName) => {
     try {
@@ -56,18 +56,20 @@ export default function Customers() {
 
   return (
     <Box
-    className="body"
+      className="body"
       sx={{
         display: "flex",
         width: "100%",
         height: "auto",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor:"white"
-
+        backgroundColor: "white",
       }}
     >
-      <Paper elevation={4} sx={{ width: "100%", mb: 2,mt:1, borderRadius: 3 }}>
+      <Paper
+        elevation={4}
+        sx={{ width: "100%", mb: 2, mt: 1, borderRadius: 3 }}
+      >
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -81,7 +83,9 @@ export default function Customers() {
                 <TableCell className="table-cell-header">First Name</TableCell>
                 <TableCell className="table-cell-header">Last Name</TableCell>
                 <TableCell className="table-cell-header">NIC</TableCell>
-                <TableCell className="table-cell-header">Phone number</TableCell>
+                <TableCell className="table-cell-header">
+                  Phone number
+                </TableCell>
                 <TableCell className="table-cell-header">Address 1</TableCell>
                 <TableCell className="table-cell-header">Address 2</TableCell>
                 <TableCell className="table-cell-header">Edits</TableCell>
@@ -102,7 +106,9 @@ export default function Customers() {
                       {row.cus_lname}
                     </TableCell>
                     <TableCell className="table-cell-data">{row.nic}</TableCell>
-                    <TableCell className="table-cell-data">{row.cus_phone_number}</TableCell>
+                    <TableCell className="table-cell-data">
+                      {row.cus_phone_number}
+                    </TableCell>
                     <TableCell className="table-cell-data">
                       {row.cus_address1}
                     </TableCell>
@@ -132,9 +138,6 @@ export default function Customers() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-        <Button>
-          heys
-        </Button>
       </Paper>
     </Box>
   );
