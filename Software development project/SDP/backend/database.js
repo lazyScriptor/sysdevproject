@@ -60,6 +60,16 @@ export async function deleteCustomer(id) {
     throw error;
   }
 }
+export async function deleteEquipment(id) {
+  try {
+    await pool.query("DELETE FROM equipment WHERE eq_id = ?", [id]);
+    console.log(`Deleted equipment with ID ${id}`);
+    return { message: `Deleted equipment with ID ${id}` };
+  } catch (error) {
+    console.error("Error deleting equipment db connection:", error);
+    throw error;
+  }
+}
 export async function updateCustomerDetails(bodydata) {
   const { id, nic, phoneNumber, fname, lname, address1, address2 } = bodydata;
   try {

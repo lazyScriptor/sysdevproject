@@ -9,11 +9,11 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Box from "@mui/material/Box";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
 import { useSnackbar } from "notistack"; // Import useSnackbar hook
-
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 export default function EquipmentTable() {
   const [data, setData] = useState([]);
@@ -21,27 +21,30 @@ export default function EquipmentTable() {
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const { enqueueSnackbar } = useSnackbar(); // Initialize useSnackbar hook
 
+  //Database date coloumn to a specific date format
+  function formatDate(dateString) {
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  }
+
   useEffect(() => {
     try {
-      axios
-        .get("http://localhost:8085/equipment")
-        .then((res) => {setData(res.data)
-        console.log(res.data)})
-        
-        
+      axios.get("http://localhost:8085/equipment").then((res) => {
+        setData(res.data);
+        console.log(res.data);
+      });
     } catch (error) {
-      console.error("error occured in the try catch block",error);
+      console.error("error occured in the try catch block", error);
     }
-    
-  },[]);
- 
-  
+  }, []);
 
-  const handleDelete = async (customerId, customerFirstName) => {
+  const handleDelete = async (eq_id, eq_name) => {
     try {
-      axios.delete(`http://localhost:8085/deleteCustomers/${customerId}`);
+      console.log("This is the delete function front end ", eq_id, eq_name);
+      axios.delete(`http://localhost:8085/deleteEquipment/${eq_id}`);
+
       // Show success snackbar message with customer's first name
-      enqueueSnackbar(`Customer :${customerFirstName} deleted successfully!`, {
+      enqueueSnackbar(`Customer :${eq_name} deleted successfully!`, {
         variant: "success",
       });
       // Assuming the API returns a success response
@@ -62,18 +65,20 @@ export default function EquipmentTable() {
 
   return (
     <Box
-    className="body"
+      className="body"
       sx={{
         display: "flex",
         width: "100%",
         height: "auto",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor:"white"
-
+        backgroundColor: "white",
       }}
     >
-      <Paper elevation={4} sx={{ width: "100%", mb: 2,mt:1, borderRadius: 3 }}>
+      <Paper
+        elevation={4}
+        sx={{ width: "100%", mb: 2, mt: 1, borderRadius: 3 }}
+      >
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -81,16 +86,265 @@ export default function EquipmentTable() {
             size="small"
             className="custom-table"
           >
+            <TableHead>
+              <TableRow>
+                <TableCell size="medium">
+                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
+                    <TextField
+                      sx={{ }}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeIdOnlyForSearching}
+                    />
+                    <Button
+                      // onClick={handleSearchid}
+                      sx={{
+                        pt: 2,
+                        "&:hover": {
+                          color: "green",
+                        },
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell size="medium">
+                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
+                    <TextField
+                      sx={{  }}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeIdOnlyForSearching}
+                    />
+                    <Button
+                      // onClick={handleSearchid}
+                      sx={{
+                        pt: 2,
+                        "&:hover": {
+                          color: "green",
+                        },
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell size="medium">
+                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
+                    <TextField
+                      sx={{  }}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeIdOnlyForSearching}
+                    />
+                    <Button
+                      // onClick={handleSearchid}
+                      sx={{
+                        pt: 2,
+                        "&:hover": {
+                          color: "green",
+                        },
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell size="medium">
+                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
+                    <TextField
+                      sx={{ }}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeIdOnlyForSearching}
+                    />
+                    <Button
+                      // onClick={handleSearchid}
+                      sx={{
+                        pt: 2,
+                        "&:hover": {
+                          color: "green",
+                        },
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell size="medium">
+                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
+                    <TextField
+                      sx={{  }}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeIdOnlyForSearching}
+                    />
+                    <Button
+                      // onClick={handleSearchid}
+                      sx={{
+                        pt: 2,
+                        "&:hover": {
+                          color: "green",
+                        },
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell size="medium">
+                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
+                    <TextField
+                      sx={{  }}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeIdOnlyForSearching}
+                    />
+                    <Button
+                      // onClick={handleSearchid}
+                      sx={{
+                        pt: 2,
+                        "&:hover": {
+                          color: "green",
+                        },
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell><TableCell size="medium">
+                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
+                    <TextField
+                      sx={{ }}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeIdOnlyForSearching}
+                    />
+                    <Button
+                      // onClick={handleSearchid}
+                      sx={{
+                        pt: 2,
+                        "&:hover": {
+                          color: "green",
+                        },
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell size="medium">
+                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
+                    <TextField
+                      sx={{  }}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeIdOnlyForSearching}
+                    />
+                    <Button
+                      // onClick={handleSearchid}
+                      sx={{
+                        pt: 2,
+                        "&:hover": {
+                          color: "green",
+                        },
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell size="medium">
+                  <Box sx={{ display: "flex" ,alignItems:"center",justifyContent:"center"}}>
+                    <TextField
+                      sx={{  }}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeIdOnlyForSearching}
+                    />
+                    <Button
+                      // onClick={handleSearchid}
+                      sx={{
+                        pt: 2,
+                        "&:hover": {
+                          color: "green",
+                        },
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+
             <TableHead className="table-head">
               <TableRow className="table-row">
-                <TableCell className="table-cell-header">Id</TableCell>
-                <TableCell className="table-cell-header">First Name</TableCell>
-                <TableCell className="table-cell-header">Last Name</TableCell>
-                <TableCell className="table-cell-header">NIC</TableCell>
-                <TableCell className="table-cell-header">Phone number</TableCell>
-                <TableCell className="table-cell-header">Address 1</TableCell>
-                <TableCell className="table-cell-header">Address 2</TableCell>
-                <TableCell className="table-cell-header">Edits</TableCell>
+                <TableCell className="table-cell-header" sx={{}}>
+                  Machine
+                  <br /> Id
+                </TableCell>
+                <TableCell className="table-cell-header">
+                  Machine name
+                </TableCell>
+                <TableCell className="table-cell-header">
+                  Rental
+                  <br />
+                  (LKR)
+                </TableCell>
+                <TableCell className="table-cell-header">
+                  Date of <br />
+                  purchase
+                </TableCell>
+                <TableCell className="table-cell-header">
+                  Warranty
+                  <br />
+                  date
+                </TableCell>
+                <TableCell className="table-cell-header">
+                  End of the
+                  <br />
+                  warranty period
+                </TableCell>
+                <TableCell className="table-cell-header">
+                  Equipment
+                  <br />
+                  cost
+                </TableCell>
+                <TableCell className="table-cell-header">
+                  Defected
+                  <br />
+                  status
+                </TableCell>
+                <TableCell className="table-cell-header">Edit</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -107,10 +361,14 @@ export default function EquipmentTable() {
                     <TableCell className="table-cell-data">
                       {row.rental}
                     </TableCell>
-                    <TableCell className="table-cell-data">{row.date_of_purchase}</TableCell>
-                    <TableCell className="table-cell-data">{row.warranty_date}</TableCell>
                     <TableCell className="table-cell-data">
-                      {row.end_of_warranty_period}
+                      {formatDate(row.date_of_purchase)}
+                    </TableCell>
+                    <TableCell className="table-cell-data">
+                      {formatDate(row.warranty_date)}
+                    </TableCell>
+                    <TableCell className="table-cell-data">
+                      {formatDate(row.end_of_warranty_period)}
                     </TableCell>
                     <TableCell className="table-cell-data">
                       {row.eq_cost}
@@ -121,7 +379,7 @@ export default function EquipmentTable() {
                     <TableCell className="table-cell-data">
                       <Button>Edit</Button>
                       <Button
-                        onClick={() => handleDelete(row.cus_id, row.cus_fname)}
+                        onClick={() => handleDelete(row.eq_id, row.eq_name)}
                         sx={{ color: "red" }}
                       >
                         Delete
@@ -141,9 +399,7 @@ export default function EquipmentTable() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-        <Button>
-          heys
-        </Button>
+        <Button>heys</Button>
       </Paper>
     </Box>
   );
