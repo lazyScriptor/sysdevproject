@@ -1,12 +1,18 @@
-import React from 'react'
-import Snack from './Snack.jsx'
+import React from "react";
+import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew.jsx";
+import { Button } from "@mui/material";
+
 
 function Reports() {
+  
   return (
-    <div>
-     <Snack type="info" message="hey"/>
-    </div>
-  )
+    <>
+      <BackgroundStyleNew title="Reports" subTitle="This is the reports page">
+        
+        
+      </BackgroundStyleNew>
+    </>
+  );
 }
 
-export default Reports
+export default Reports;

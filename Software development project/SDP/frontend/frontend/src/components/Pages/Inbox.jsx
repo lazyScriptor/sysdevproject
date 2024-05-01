@@ -1,5 +1,5 @@
 import React from 'react'
-import BackgroundStyle from './BackgroundStyle.jsx'
+import BackgroundStyle from '../SubComponents/BackgroundStyle'
 
 function Inbox() {
   return (

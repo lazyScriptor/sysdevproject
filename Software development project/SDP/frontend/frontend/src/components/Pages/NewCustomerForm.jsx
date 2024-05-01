@@ -21,10 +21,11 @@ import axios from "axios";
 import Snack from "./Snack";
 
 import { createContext } from "react";
+import TypesExample from "./BootstrapButton";
+import { useSnackbar } from "notistack";
 export const AppCustomeContext3 = createContext();
 
 function NewCustomerForm() {
-  const [bla, setBla] = useState([]);
   const [data, setData] = useState([]);
   const [newId, setNewId] = useState("");
   const [newNic, setNewNic] = useState("");
@@ -45,30 +46,35 @@ function NewCustomerForm() {
   const [messageContent, SetMessageContent] = useState();
   const [message, setMessage] = useState();
   const [open, setOpen] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
+
     setOpen(false);
   };
   //snackbar content is over
 
-  // useEffect(() => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:8085/customers");
+        setData(response.data);
+        console.log("data loaded", response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-  // useEffect(() => {
-  //   try {
-  //     axios
-  //       .get("http://localhost:8085/customers")
-  //       .then((res) => setData(res.data));
-  //   } catch (error) {
-  //     console.error("error occured in the try catch block", error);
-  //   }
-  // }, []);
+    fetchData();
+  }, []);
+
   // Search bar functions
   //Set these 3 values to a new variable insted of using the same variable using to retrieve the input data
   //because when we enter data to search ID in the search ID field it will be automaticcaly
-  //autofill the CustomerID field with the onChange function .To avoid that we have used seperate variables
+  //autofill the CustomerID field with the onChange function .To avoid that, we have used seperate variables
 
   const handleOnChangeIdOnlyForSearching = (e) => {
     const enteredText = e.target.value;
@@ -87,190 +93,125 @@ function NewCustomerForm() {
   const handleToogleStatus = () => {
     setToogle(!toogle);
   };
-  const handleSaveDetails = async (response) => {
+  const handleSaveDetails = async () => {
     try {
-      await axios.post("http://localhost:8085/updateCustomerDetails", {
-        id,
-        nic,
-        phoneNumber,
-        fname,
-        lname,
-        address1,
-        address2,
-      });
-      console.log("Details saved successfully:", response);
+      const response = await axios.post(
+        "http://localhost:8085/updateCustomerDetails",
+        {
+          id,
+          nic,
+          phoneNumber,
+          fname,
+          lname,
+          address1,
+          address2,
+        }
+      );
+      console.log("Details saved successfully:", response.data);
 
-      setToogle(!toogle);
+      setToogle(true);
     } catch (error) {
       console.error("Error saving details:", error);
     }
   };
-  const handleDeleteCustomer = async (id) => {
-    try {
-      await axios.delete(`http://localhost:8085/deleteCustomers/${id}`);
-      console.log(id);
-      console.log("Details deleted successfully:");
-    } catch (error) {
-      console.error("Error deleting details:", error);
-    }
-  };
-  const handleDataFill = (firstCustomer) => {
-    setId(firstCustomer.cus_id); // Set the cus_id directly
-    setNic(firstCustomer.nic);
-    setPhoneNumber(firstCustomer.cus_phone_number);
-    setFname(firstCustomer.cus_fname);
-    setLname(firstCustomer.cus_lname);
-    setAddress1(firstCustomer.cus_address1);
-    setAddress2(firstCustomer.cus_address2);
-
-    console.log("Customer found");
-    setMessage("success");
-    SetMessageContent("Customer found");
-    setOpen(true);
-  };
-
-  const handleSearchnic = async (nic) => {
+  const handleDeleteCustomer = async (id, variant, fname) => {
     try {
       await axios
-        .get(`http://localhost:8085/getCustomerbyNIC/${nic}`)
-        .then((res) => {
-          const customerData = res.data;
-          if (customerData && customerData.length > 0) {
-            const firstCustomer = customerData[0]; // Get the first customer from the array
-            handleDataFill(firstCustomer);
-            console.log("This is the first then", firstCustomer);
-          } else {
-            console.log("No customer data found");
-          }
+        .delete(`http://localhost:8085/deleteCustomers/${id}`)
+        .then(() => {
+          console.log("Frontend executed successfully");
+          enqueueSnackbar(`Customer : ${fname} deleted successfully`, {
+            variant,
+          });
         });
-      // .then(() => {
-      //   console.log(`handle Search is working with --> ${data}`);
-      // });
     } catch (error) {
-      console.log("handleSearch NIC error");
-    }
-
-    // try {
-    //   const selectedUserData = data.find((user) => user.nic == newNic);
-    //   if (selectedUserData) {
-    //     // setId(selectedUserData.cus_id);
-    //     setNic(selectedUserData.nic);
-    //     setPhoneNumber(selectedUserData.cus_phone_number);
-    //     setFname(selectedUserData.cus_fname);
-    //     setLname(selectedUserData.cus_lname);
-    //     setAddress1(selectedUserData.cus_address1);
-    //     setAddress2(selectedUserData.cus_address2);
-
-    //     console.log("Customer found");
-    //     setMessage("success");
-    //     SetMessageContent("Customer found");
-    //     setOpen(true);
-    //   } else {
-    //     console.error("Customer not found");
-    //     setMessage("error");
-    //     SetMessageContent("Customer with this NIC not found");
-    //     setOpen(true);
-    //   }
-    // } catch (error) {
-    //   // Handle any other errors that may occur
-    //   console.error("Error searching for user by NIC:", error);
-    // }
-  };
-
-  const handleSearchid = async (id) => {
-    // try {
-    //   const selectedUserData = data.find((user) => user.cus_id == newId);
-    //   if (selectedUserData) {
-    //     setId(selectedUserData.cus_id);
-    //     setNic(selectedUserData.nic);
-    //     setPhoneNumber(selectedUserData.cus_phone_number);
-    //     setFname(selectedUserData.cus_fname);
-    //     setLname(selectedUserData.cus_lname);
-    //     setAddress1(selectedUserData.cus_address1);
-    //     setAddress2(selectedUserData.cus_address2);
-
-    //     console.log("Customer found");
-    //     setMessage("success");
-    //     SetMessageContent("Customer found");
-    //     setOpen(true);
-    //   } else {
-    //     console.error("Customer not found");
-    //     setMessage("error");
-    //     SetMessageContent("Customer with this ID not found");
-    //     setOpen(true);
-    //   }
-    // } catch (error) {
-    //   // Handle any other errors that may occur
-    //   console.error("Error searching for user by ID:", error);
-    // }
-
-    try {
-      await axios
-        .get(`http://localhost:8085/getCustomerbyID/${id}`)
-        .then((res) => {
-          const customerData = res.data;
-          if (customerData && customerData.length > 0) {
-            const firstCustomer = customerData[0]; // Get the first customer from the array
-            handleDataFill(firstCustomer);
-            console.log("This is the first then", firstCustomer);
-          } else {
-            console.log("No customer data found");
-          }
-        });
-      // .then(() => {
-      //   console.log(`handle Search is working with --> ${data}`);
-      // });
-    } catch (error) {
-      console.log("handleSearch Id error");
+      console.error("Frontend error occured", error);
     }
   };
 
-  const handleSearchPno = async (phoneNumber) => {
-    // try {
-    //   const selectedUserData = data.find(
-    //     (user) => user.cus_phone_number == newPno
-    //   );
-    //   if (selectedUserData) {
-    //     setId(selectedUserData.cus_id);
-    //     setNic(selectedUserData.nic);
-    //     setPhoneNumber(selectedUserData.cus_phone_number);
-    //     setFname(selectedUserData.cus_fname);
-    //     setLname(selectedUserData.cus_lname);
-    //     setAddress1(selectedUserData.cus_address1);
-    //     setAddress2(selectedUserData.cus_address2);
-
-    //     console.log("Customer found");
-    //     setMessage("success");
-    //     SetMessageContent("Customer found");
-    //     setOpen(true);
-    //   } else {
-    //     console.error("Customer not found");
-    //     setMessage("error");
-    //     SetMessageContent("Customer with this Phone Number not found");
-    //     setOpen(true);
-    //   }
-    // } catch (error) {
-    //   // Handle any other errors that may occur
-    //   console.error("Error searching for user by Phone Number:", error);
-    // }
+  const handleSearchnic = () => {
     try {
-      await axios
-        .get(`http://localhost:8085/getCustomerbyPhoneNumber/${phoneNumber}`)
-        .then((res) => {
-          const customerData = res.data;
-          if (customerData && customerData.length > 0) {
-            const firstCustomer = customerData[0]; // Get the first customer from the array
-            handleDataFill(firstCustomer);
-            console.log("This is the first then", firstCustomer);
-          } else {
-            console.log("No customer data found");
-          }
-        });
-      // .then(() => {
-      //   console.log(`handle Search is working with --> ${data}`);
-      // });
+      const selectedUserData = data.find((user) => user.nic == newNic);
+      if (selectedUserData) {
+        setId(selectedUserData.cus_id);
+        setNic(selectedUserData.nic);
+        setPhoneNumber(selectedUserData.cus_phone_number);
+        setFname(selectedUserData.cus_fname);
+        setLname(selectedUserData.cus_lname);
+        setAddress1(selectedUserData.cus_address1);
+        setAddress2(selectedUserData.cus_address2);
+
+        console.log("Customer found");
+        setMessage("success");
+        SetMessageContent("Customer found");
+        setOpen(true);
+      } else {
+        console.error("Customer not found");
+        setMessage("error");
+        SetMessageContent("Customer with this NIC not found");
+        setOpen(true);
+      }
     } catch (error) {
-      console.log("handleSearch Id error");
+      // Handle any other errors that may occur
+      console.error("Error searching for user by NIC:", error);
+    }
+  };
+
+  const handleSearchid = () => {
+    try {
+      const selectedUserData = data.find((user) => user.cus_id == newId);
+      if (selectedUserData) {
+        setId(selectedUserData.cus_id);
+        setNic(selectedUserData.nic);
+        setPhoneNumber(selectedUserData.cus_phone_number);
+        setFname(selectedUserData.cus_fname);
+        setLname(selectedUserData.cus_lname);
+        setAddress1(selectedUserData.cus_address1);
+        setAddress2(selectedUserData.cus_address2);
+
+        console.log("Customer found");
+        setMessage("success");
+        SetMessageContent("Customer found");
+        setOpen(true);
+      } else {
+        console.error("Customer not found");
+        setMessage("error");
+        SetMessageContent("Customer with this ID not found");
+        setOpen(true);
+      }
+    } catch (error) {
+      // Handle any other errors that may occur
+      console.error("Error searching for user by ID:", error);
+    }
+  };
+
+  const handleSearchPno = () => {
+    try {
+      const selectedUserData = data.find(
+        (user) => user.cus_phone_number == newPno
+      );
+      if (selectedUserData) {
+        setId(selectedUserData.cus_id);
+        setNic(selectedUserData.nic);
+        setPhoneNumber(selectedUserData.cus_phone_number);
+        setFname(selectedUserData.cus_fname);
+        setLname(selectedUserData.cus_lname);
+        setAddress1(selectedUserData.cus_address1);
+        setAddress2(selectedUserData.cus_address2);
+
+        console.log("Customer found");
+        setMessage("success");
+        SetMessageContent("Customer found");
+        setOpen(true);
+      } else {
+        console.error("Customer not found");
+        setMessage("error");
+        SetMessageContent("Customer with this Phone Number not found");
+        setOpen(true);
+      }
+    } catch (error) {
+      // Handle any other errors that may occur
+      console.error("Error searching for user by Phone Number:", error);
     }
   };
 
@@ -343,7 +284,7 @@ function NewCustomerForm() {
                 onChange={handleOnChangeIdOnlyForSearching}
               />
               <Button
-                onClick={() => handleSearchid(newId)}
+                onClick={handleSearchid}
                 sx={{
                   pt: 2,
                   "&:hover": {
@@ -374,7 +315,7 @@ function NewCustomerForm() {
                 onChange={handleOnChangeNicOnlyForSearching}
               />
               <Button
-                onClick={() => handleSearchnic(newNic)}
+                onClick={handleSearchnic}
                 sx={{
                   pt: 2,
                   "&:hover": {
@@ -404,7 +345,7 @@ function NewCustomerForm() {
                 onChange={handleOnChangePnoOnlyforSearching}
               />
               <Button
-                onClick={() => handleSearchPno(newPno)}
+                onClick={handleSearchPno}
                 sx={{
                   pt: 2,
                   "&:hover": {
@@ -652,10 +593,11 @@ function NewCustomerForm() {
             sx={{ mt: 2, ml: 2 }}
             //methana id nathuwa newID use kranne id kiyanne pahala input area eke value eka
             //NewId kiyanne uda onchange variable ekak
-            onClick={() => handleDeleteCustomer(newId)}
+            onClick={() => handleDeleteCustomer(newId, "success", fname)}
           >
             Delete
           </Button>
+          <TypesExample />
         </Paper>
         <Snack
           type={message}

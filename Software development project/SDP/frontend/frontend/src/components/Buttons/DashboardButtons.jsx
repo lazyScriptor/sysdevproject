@@ -26,7 +26,7 @@ function DashboardCategoryBtn({ name, icon, destination }) {
         justifyContent: "start",
         alignContent: "start",
         backgroundColor: "white",
-        borderRadius:3,
+        borderRadius:2,
         "&:hover": {
           backgroundColor: (theme) => theme.palette.primary[500],
           "& .MuiTypography-subtitle1": {

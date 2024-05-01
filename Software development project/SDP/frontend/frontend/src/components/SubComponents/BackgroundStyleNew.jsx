@@ -1,10 +1,8 @@
 import React from "react";
 import { Box, Paper } from "@mui/material";
 import "../Stylings/rootstyles.css";
-import Customers from "./Customers";
-import Invoice from "./Invoice";
 
-function BackgroundStyle() {
+function BackgroundStyleNew({ children, title, subTitle }) {
   return (
     <>
       <Box
@@ -15,7 +13,7 @@ function BackgroundStyle() {
           minHeight: "100vh",
           justifyContent: "center",
           alignItems: "flex-start", // Align content vertically at the top
-          p:0,
+          p: 0,
         }}
       >
         <Paper
@@ -41,8 +39,8 @@ function BackgroundStyle() {
               mb: 3,
             }}
           >
-            <h1>Client Details</h1>
-            <p>We'll never share your email.</p>
+            <h1>{title}</h1>
+            <p>{subTitle}</p>
           </Box>
 
           <Box
@@ -95,29 +93,10 @@ function BackgroundStyle() {
               display: "flex",
               flexDirection: "row",
               width: "100%",
+              height: "100vh",
             }}
           >
-            <Box
-              sx={{
-                width: "40%",
-
-                borderRadius: 3,
-                minHeight: "100vh",
-                mr: 2, // Add margin to create space between the two boxes
-              }}
-            >
-              <Invoice />
-            </Box>
-            <Box
-              sx={{
-                width: "60%",
-
-                minHeight: "100vh",
-                borderRadius: 3,
-              }}
-            >
-              <Customers />
-            </Box>
+            {children}
           </Box>
         </Paper>
       </Box>
@@ -125,4 +104,4 @@ function BackgroundStyle() {
   );
 }
 
-export default BackgroundStyle;
+export default BackgroundStyleNew;

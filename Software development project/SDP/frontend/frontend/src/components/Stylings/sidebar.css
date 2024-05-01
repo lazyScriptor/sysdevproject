@@ -25,7 +25,6 @@
   transition: 500ms ease-in-out;
 }
 
-
 .open-button::after {
   display: none;
   transition: 1ms ease-in-out;
@@ -39,7 +38,6 @@
   flex-direction: row;
   align-items: flex-start;
   margin-top: 12px;
-
 }
 
 .offcanvas-header .header-text {

@@ -7,6 +7,7 @@ import {
   getCustomerbyNIC,
   getCustomerbyPhoneNumber,
   getCustomers,
+  getEquipment,
   getUsers,
   updateCustomerDetails,
 } from "./database.js";
@@ -21,7 +22,6 @@ app.use(express.json()); // Add this line to parse JSON request bodies
 //   password: process.env.PASSWORD,
 //   database: process.env.DATABASE,
 // });
-
 // console.log("This is the inline user name", process.env.USERNAME);
 
 app.get("/", (req, res) => {
@@ -35,7 +35,9 @@ app.get("/users", async (req, res) => {
   //   if (err) return res.json(err);
   //   return res.json(data);
   // });
+  console.log("Before functionn execute in the express app")
   const users = await getUsers();
+  console.log("After functionn execute in the express app")
   return res.json(users);
 });
 
@@ -47,6 +49,15 @@ app.get("/customers", async (req, res) => {
   //   return res.json(data);
   // });
   const customers = await getCustomers();
+  return res.json(customers);
+});
+app.get("/equipment", async (req, res) => {
+  // const sql = "SELECT * FROM customer";
+  // db.query(sql, (err, data) => {
+  //   if (err) return res.json(err);
+  //   return res.json(data);
+  // });
+  const customers = await getEquipment();
   return res.json(customers);
 });
 

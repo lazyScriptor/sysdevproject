@@ -6,6 +6,7 @@ dotenv.config();
 // insted of createconnection, Overall, using createPool simplifies connection
 // management by handling the opening, closing, and reuse of connections automatically,
 // which can improve the efficiency and scalability of your application.
+
 const pool = mysql
   .createPool({
     host: process.env.HOST,
@@ -25,6 +26,11 @@ export async function getUsers() {
 export async function getCustomers() {
   const [customers] = await pool.query("SELECT * FROM customer");
   return customers;
+}
+
+export async function getEquipment() {
+  const [equipment] = await pool.query("SELECT * FROM equipment");
+  return equipment;
 }
 
 export async function getCustomerbyNIC(nic) {
