@@ -10,15 +10,16 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSort } from "@fortawesome/free-solid-svg-icons";
 
 import { useSnackbar } from "notistack"; // Import useSnackbar hook
-
-// import "../Stylings/customers.css";
 
 export default function CustomerTable() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [order, setOrder] = useState("asc");
   const { enqueueSnackbar } = useSnackbar(); // Initialize useSnackbar hook
 
   useEffect(() => {
@@ -27,13 +28,13 @@ export default function CustomerTable() {
         .get("http://localhost:8085/customers")
         .then((res) => setData(res.data));
     } catch (error) {
-      console.error("error occured in the try catch block", error);
+      console.error("error occurred in the try catch block", error);
     }
   }, []);
 
   const handleDelete = async (customerId, customerFirstName) => {
     try {
-      axios.delete(`http://localhost:8085/deleteCustomers/${customerId}`);
+      await axios.delete(`http://localhost:8085/deleteCustomers/${customerId}`);
       // Show success snackbar message with customer's first name
       enqueueSnackbar(`Customer :${customerFirstName} deleted successfully!`, {
         variant: "success",
@@ -54,6 +55,15 @@ export default function CustomerTable() {
     setPage(0);
   };
 
+  const handleSort = () => {
+    setOrder(order === "asc" ? "desc" : "asc");
+    setData(
+      data.slice().sort((a, b) => {
+        return order === "asc" ? a.cus_id - b.cus_id : b.cus_id - a.cus_id;
+      })
+    );
+  };
+
   return (
     <Box
       className="body"
@@ -64,10 +74,11 @@ export default function CustomerTable() {
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "white",
+        borderRadius: 3,
       }}
     >
       <Paper
-        elevation={4}
+        elevation={1}
         sx={{ width: "100%", mb: 2, mt: 1, borderRadius: 3 }}
       >
         <TableContainer>
@@ -78,8 +89,26 @@ export default function CustomerTable() {
             className="custom-table"
           >
             <TableHead className="table-head">
-              <TableRow className="table-row" sx={{backgroundColor: (theme) => theme.palette.primary[50],height:"10vh"}}>
-                <TableCell size="medium" className="table-cell-header">Id</TableCell>
+              <TableRow
+                className="table-row"
+                sx={{
+                  backgroundColor: (theme) => theme.palette.primary[100],
+                  height: "10vh",
+                  borderRadius: 3,
+                }}
+              >
+                <TableCell
+                  className="table-cell-header"
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: (theme) => theme.palette.primary[200],
+                      cursor: "pointer",
+                    },
+                  }}
+                  onClick={handleSort}
+                >
+                  Id <FontAwesomeIcon icon={faSort} />
+                </TableCell>
                 <TableCell className="table-cell-header">First Name</TableCell>
                 <TableCell className="table-cell-header">Last Name</TableCell>
                 <TableCell className="table-cell-header">NIC</TableCell>

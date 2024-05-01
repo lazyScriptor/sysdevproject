@@ -14,8 +14,9 @@ import { useSnackbar } from "notistack";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSearch,
-  faSortUp,
-  faSortDown,
+  faSort,
+  faSquareCheck,
+  faSquareXmark
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function EquipmentTable() {
@@ -24,7 +25,7 @@ export default function EquipmentTable() {
   const [equipmentArray, setEquipmentArray] = useState([]);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDirection, setSortDirection] = useState("asc");
   const [sortBy, setSortBy] = useState("eq_id");
   const { enqueueSnackbar } = useSnackbar();
@@ -157,7 +158,9 @@ export default function EquipmentTable() {
             className="custom-table"
           >
             <TableHead>
-              <TableRow sx={{backgroundColor: (theme) => theme.palette.primary[50],}}>
+              <TableRow
+                sx={{ backgroundColor: (theme) => theme.palette.primary[100] }}
+              >
                 <TableCell size="medium">
                   <Box
                     sx={{
@@ -208,18 +211,30 @@ export default function EquipmentTable() {
                     </Button>
                   </Box>
                 </TableCell>
-                <TableCell/>
-                <TableCell/>
-                <TableCell/><TableCell/><TableCell/><TableCell/><TableCell/>
+                <TableCell />
+                <TableCell />
+                <TableCell />
+                <TableCell />
+                <TableCell />
+                <TableCell />
+                <TableCell />
               </TableRow>
-              <TableRow>
+              <TableRow
+                sx={{
+                  backgroundColor: (theme) => theme.palette.primary[100],
+                }}
+              >
                 <TableCell
                   className="table-cell-header"
                   onClick={() => handleSort("eq_id")}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: (theme) => theme.palette.primary[200],
+                      cursor: "pointer",
+                    },
+                  }}
                 >
-                  Machine
-                  <br />
-                  Id
+                  Machine Id <FontAwesomeIcon icon={faSort} />
                 </TableCell>
                 <TableCell
                   className="table-cell-header"
@@ -230,10 +245,14 @@ export default function EquipmentTable() {
                 <TableCell
                   className="table-cell-header"
                   onClick={() => handleSort("rental")}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: (theme) => theme.palette.primary[200],
+                      cursor: "pointer",
+                    },
+                  }}
                 >
-                  Rental
-                  <br />
-                  (LKR)
+                  Rental (LKR) <FontAwesomeIcon icon={faSort} />
                 </TableCell>
                 <TableCell
                   className="table-cell-header"
@@ -261,18 +280,26 @@ export default function EquipmentTable() {
                 <TableCell
                   className="table-cell-header"
                   onClick={() => handleSort("eq_cost")}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: (theme) => theme.palette.primary[200],
+                      cursor: "pointer",
+                    },
+                  }}
                 >
-                  Equipment
-                  <br />
-                  cost
+                  Equipment cost <FontAwesomeIcon icon={faSort} />
                 </TableCell>
                 <TableCell
                   className="table-cell-header"
                   onClick={() => handleSort("defected_status")}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: (theme) => theme.palette.primary[200],
+                      cursor: "pointer",
+                    },
+                  }}
                 >
-                  Defected
-                  <br />
-                  status
+                  Defected status <FontAwesomeIcon icon={faSort} />
                 </TableCell>
                 <TableCell className="table-cell-header">Edit</TableCell>
               </TableRow>
@@ -304,7 +331,17 @@ export default function EquipmentTable() {
                       {row.eq_cost}
                     </TableCell>
                     <TableCell className="table-cell-data">
-                      {row.defected_status}
+                      {row.defected_status == 0 ? (
+                        <FontAwesomeIcon
+                          icon={faSquareCheck}
+                          style={{ color: "#26c6d9" }}
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faSquareXmark}
+                          style={{ color: "#ff0000" }}
+                        />
+                      )}
                     </TableCell>
                     <TableCell className="table-cell-data">
                       <Button>Edit</Button>
@@ -321,7 +358,7 @@ export default function EquipmentTable() {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[20, 50, 100]}
+          rowsPerPageOptions={[10, 50, 100]}
           component="div"
           count={sortedData.length}
           rowsPerPage={rowsPerPage}

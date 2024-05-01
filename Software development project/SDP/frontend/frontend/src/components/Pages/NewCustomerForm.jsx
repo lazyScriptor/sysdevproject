@@ -257,7 +257,7 @@ function NewCustomerForm() {
             sx={{
               height: "70px",
               borderRadius: 3,
-              backgroundColor: (theme) => theme.palette.primary[50],
+              backgroundColor: (theme) => theme.palette.primary[100],
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
