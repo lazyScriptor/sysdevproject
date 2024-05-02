@@ -50,7 +50,7 @@ function NewCustomerForm() {
   const [address2, setAddress2] = useState("");
 
   //variable to toogle inputs
-  const [toogle, setToogle] = useState(true);
+  const [toogle, setToogle] = useState(false);
 
   //Snackbar content
   const [messageContent, SetMessageContent] = useState();
@@ -89,7 +89,7 @@ function NewCustomerForm() {
   //2.In the new customer form i used a useEffect hook and set the userData in the dependency array to 
   //trigger the use Effect when the user data change.which means when the edit button pressed
 
-  
+
   useEffect(() => {
     setId(userData.cus_id);
     setFname(userData.cus_fname);
@@ -116,7 +116,7 @@ function NewCustomerForm() {
   const handleOnChangePnoOnlyforSearching = (e) => {
     const enteredText = e.target.value;
     setNewPno(enteredText);
-  };
+  };2
   //Searchbar functions over
 
   const handleToogleStatus = () => {

@@ -64,6 +64,24 @@ export async function getCustomerbyID(id) {
   console.log(customers);
   return customers;
 }
+export async function getCustomerbyFirstName(FirstName) {
+  console.log("Backend first name ",FirstName)
+  const [customers] = await pool.query(
+    "SELECT * FROM customer WHERE cus_fname LIKE ?",
+    [`%${FirstName}%`]
+    
+  );
+  console.log("backend" ,customers);
+  return customers;
+}
+export async function getCustomerbyLastName(LastName) {
+  const [customers] = await pool.query(
+    "SELECT * FROM customer WHERE cus_lname LIKE ?",
+    [`%${LastName}%`]
+  );
+  console.log(customers);
+  return customers;
+}
 
 export async function getCustomerbyPhoneNumber(phoneNumber) {
   const [customers] = await pool.query(

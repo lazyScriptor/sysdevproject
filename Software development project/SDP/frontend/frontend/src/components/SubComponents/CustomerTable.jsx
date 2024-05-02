@@ -9,13 +9,13 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Box from "@mui/material/Box";
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, useStepContext } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSort, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faSort, faSearch ,faPlus} from "@fortawesome/free-solid-svg-icons";
 
 import { useSnackbar } from "notistack"; // Import useSnackbar hook
 import OverlayDialogBox from "./OverlayDialogBox";
-import {CustomerPopupContext} from "../../Contexts/CustomerPopupContext";
+import { CustomerPopupContext } from "../../Contexts/CustomerPopupContext";
 
 export default function CustomerTable() {
   const { boolvalue, setBoolvalue, userData, setUserData } =
@@ -26,6 +26,14 @@ export default function CustomerTable() {
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [order, setOrder] = useState("asc");
   const { enqueueSnackbar } = useSnackbar(); // Initialize useSnackbar hook
+
+  const [SId, setSId] = useState(2);
+  const [SNIC, SetSNIC] = useState();
+  const [SPhoneNumber, SetSPhoneNumber] = useState();
+  const [SFirstName, SetSFirstName] = useState("");
+  const [SLastName, SetSLastName] = useState("");
+  const [SAddress1, SetSAddress1] = useState();
+  const [SAddress2, SetSAddress2] = useState();
 
   useEffect(() => {
     try {
@@ -38,6 +46,67 @@ export default function CustomerTable() {
     }
   }, []);
 
+  const handleSearchid = async (SId) => {
+    try {
+      await axios
+        .get(`http://localhost:8085/getCustomerbyID/${SId}`)
+        .then((res) => {
+          const customerData = res.data;
+          setData(res.data);
+        });
+    } catch (error) {
+      console.log("handleSearch Id error");
+    }
+  };
+  const handleSearchnic = async (SNIC) => {
+    try {
+      await axios
+        .get(`http://localhost:8085/getCustomerbyNIC/${SNIC}`)
+        .then((res) => {
+          const customerData = res.data;
+          setData(res.data);
+        });
+    } catch (error) {
+      console.log("handleSearch Id error");
+    }
+  };
+  const handleSearchFname = async (SFirstName) => {
+    try {
+      await axios
+        .get(`http://localhost:8085/getCustomerbyFirstName/${SFirstName}`)
+        .then((res) => {
+          const customerData = res.data;
+          setData(res.data);
+        });
+    } catch (error) {
+      console.log("handleSearch Id error");
+    }
+  };
+  const handleSearchLname = async (SLastName) => {
+    try {
+      await axios
+        .get(`http://localhost:8085/getCustomerbyLastName/${SLastName}`)
+        .then((res) => {
+          const customerData = res.data;
+          setData(res.data);
+        });
+    } catch (error) {
+      console.log("handleSearch Id error");
+    }
+  };
+  const handleSearchPhoneNumber = async (SPhoneNumber) => {
+    const phoneNumber = SPhoneNumber;
+    try {
+      await axios
+        .get(`http://localhost:8085/getCustomerbyPhoneNumber/${phoneNumber}`)
+        .then((res) => {
+          const customerData = res.data;
+          setData(res.data);
+        });
+    } catch (error) {
+      console.log("handleSearch Id error");
+    }
+  };
   const handleDelete = async (customerId, customerFirstName) => {
     try {
       await axios.delete(`http://localhost:8085/deleteCustomers/${customerId}`);
@@ -50,10 +119,6 @@ export default function CustomerTable() {
     } catch (error) {
       console.error("Error deleting customer:", error);
     }
-  };
-
-  const handleEdit = () => {
-    setOpenPopup(true);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -117,10 +182,10 @@ export default function CustomerTable() {
                       label="Search by ID"
                       type="search"
                       size="small"
-                      // onChange={handleOnChangeId}
+                      onChange={(e) => setSId(e.target.value)}
                     />
                     <Button
-                      // onClick={() => handleSearchid(ID)}
+                      onClick={() => handleSearchid(SId)}
                       sx={{ pt: 2, "&:hover": { color: "green" } }}
                     >
                       <FontAwesomeIcon icon={faSearch} />
@@ -139,13 +204,13 @@ export default function CustomerTable() {
                       sx={{}}
                       id="standard-search"
                       variant="standard"
-                      label="Search by ID"
+                      label="Search by FirstName"
                       type="search"
                       size="small"
-                      // onChange={handleOnChangeId}
+                      onChange={(e) => SetSFirstName(e.target.value)}
                     />
                     <Button
-                      // onClick={() => handleSearchid(ID)}
+                      onClick={() => handleSearchFname(SFirstName)}
                       sx={{ pt: 2, "&:hover": { color: "green" } }}
                     >
                       <FontAwesomeIcon icon={faSearch} />
@@ -164,13 +229,13 @@ export default function CustomerTable() {
                       sx={{}}
                       id="standard-search"
                       variant="standard"
-                      label="Search by ID"
+                      label="Search by LastName"
                       type="search"
                       size="small"
-                      // onChange={handleOnChangeId}
+                      onChange={(e) => SetSLastName(e.target.value)}
                     />
                     <Button
-                      // onClick={() => handleSearchid(ID)}
+                      onClick={() => handleSearchLname(SLastName)}
                       sx={{ pt: 2, "&:hover": { color: "green" } }}
                     >
                       <FontAwesomeIcon icon={faSearch} />
@@ -189,13 +254,13 @@ export default function CustomerTable() {
                       sx={{}}
                       id="standard-search"
                       variant="standard"
-                      label="Search by ID"
+                      label="Search by NIC"
                       type="search"
                       size="small"
-                      // onChange={handleOnChangeId}
+                      onChange={(e) => SetSNIC(e.target.value)}
                     />
                     <Button
-                      // onClick={() => handleSearchid(ID)}
+                      onClick={() => handleSearchnic(SNIC)}
                       sx={{ pt: 2, "&:hover": { color: "green" } }}
                     >
                       <FontAwesomeIcon icon={faSearch} />
@@ -214,13 +279,13 @@ export default function CustomerTable() {
                       sx={{}}
                       id="standard-search"
                       variant="standard"
-                      label="Search by ID"
+                      label="Search by Phone Number"
                       type="search"
                       size="small"
-                      // onChange={handleOnChangeId}
+                      onChange={(e) => SetSPhoneNumber(e.target.value)}
                     />
                     <Button
-                      // onClick={() => handleSearchid(ID)}
+                      onClick={() => handleSearchPhoneNumber(SPhoneNumber)}
                       sx={{ pt: 2, "&:hover": { color: "green" } }}
                     >
                       <FontAwesomeIcon icon={faSearch} />
@@ -285,10 +350,34 @@ export default function CustomerTable() {
                       alignItems: "center",
                       justifyContent: "center",
                     }}
-                  ></Box>
+                  >
+                    <Button
+                      sx={{ mt: 3 ,borderRadius:3}}
+                      variant="contained"
+                      
+                      onClick={() => {
+                        setBoolvalue(!boolvalue)
+                      
+
+
+                        setUserData({
+                          cus_id: "",
+                          cus_fname: "",
+                          cus_lname: "",
+                          nic: "",
+                          cus_phone_number: "",
+                          cus_address1: "",
+                          cus_address2: "",
+                        })
+                      }}
+                    >
+                      <FontAwesomeIcon style={{marginRight:"10px"}} icon={faPlus} />
+                      Add new
+                    </Button>
+                  </Box>
                 </TableCell>
               </TableRow>
-              
+
               <TableRow
                 className="table-row"
                 sx={{

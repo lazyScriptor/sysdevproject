@@ -13,6 +13,8 @@ import {
   getEquipment,
   getUsers,
   updateCustomerDetails,
+  getCustomerbyFirstName,
+  getCustomerbyLastName,
 } from "./database.js";
 
 const app = express();
@@ -88,6 +90,26 @@ app.get("/getCustomerbyID/:id", async (req, res) => {
   try {
     console.log("Server side getCustomerbyID", req.params.id);
     const customers = await getCustomerbyID(req.params.id);
+    return res.json(customers);
+  } catch (error) {
+    console.error("Error in getCustomerbyID:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+app.get("/getCustomerbyFirstName/:SFirstName", async (req, res) => {
+  try {
+    console.log("Server side getCustomerbyFirstName", req.params.SFirstName);
+    const customers = await getCustomerbyFirstName(req.params.SFirstName);
+    return res.json(customers);
+  } catch (error) {
+    console.error("Error in getCustomerbyID:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+app.get("/getCustomerbyLastName/:SLastName", async (req, res) => {
+  try {
+    console.log("Server side getCustomerbyLastName", req.params.SLastName);
+    const customers = await getCustomerbyLastName(req.params.SLastName);
     return res.json(customers);
   } catch (error) {
     console.error("Error in getCustomerbyID:", error);
