@@ -15,6 +15,7 @@ import {
   updateCustomerDetails,
   getCustomerbyFirstName,
   getCustomerbyLastName,
+  createCustomer,
 } from "./database.js";
 
 const app = express();
@@ -85,6 +86,19 @@ app.get("/getCustomerbyNIC/:nic", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+app.post("/createCustomer", async (req, res) => {
+  try {
+    const customerDetails = await createCustomer(req.body);
+    console.log("Updated customer details:", req.body);
+    return res.json({
+      message: `Customer details updated for the customer with id : ${req.body.id}`,
+    });
+  } catch (error) {
+    console.error("Error in updateCustomerDetails:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 app.get("/getCustomerbyID/:id", async (req, res) => {
   try {

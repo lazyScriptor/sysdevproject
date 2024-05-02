@@ -65,13 +65,12 @@ export async function getCustomerbyID(id) {
   return customers;
 }
 export async function getCustomerbyFirstName(FirstName) {
-  console.log("Backend first name ",FirstName)
+  console.log("Backend first name ", FirstName);
   const [customers] = await pool.query(
     "SELECT * FROM customer WHERE cus_fname LIKE ?",
     [`%${FirstName}%`]
-    
   );
-  console.log("backend" ,customers);
+  console.log("backend", customers);
   return customers;
 }
 export async function getCustomerbyLastName(LastName) {
@@ -99,6 +98,20 @@ export async function deleteCustomer(id) {
     return { message: `Deleted customer with ID ${id}` };
   } catch (error) {
     console.error("Error deleting customer db connection:", error);
+    throw error;
+  }
+}
+export async function createCustomer(bodydata) {
+  const { nic, phoneNumber, fname, lname, address1, address2 } = bodydata;
+  try {
+    await pool.query(
+      "INSERT INTO customer ( cus_fname, cus_lname, nic, cus_phone_number, cus_address1, cus_address2) VALUES(?,?,?,?,?,?)",
+      [nic, phoneNumber, fname, lname, address1, address2]
+    );
+    console.log(`Created customer `);
+    return { message: `Created customer` };
+  } catch (error) {
+    console.error("Error creating customer db connection:", error);
     throw error;
   }
 }

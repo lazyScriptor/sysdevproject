@@ -246,6 +246,27 @@ function NewCustomerForm() {
     }
   };
 
+  const handleCreate = async()=>{
+    try {
+     await axios.post(
+        "http://localhost:8085/createCustomer",
+        {
+          nic,
+          phoneNumber,
+          fname,
+          lname,
+          address1,
+          address2,
+        }
+      );
+      console.log("Details created successfully:");
+
+      setToogle(true);
+    } catch (error) {
+      console.error("Error creating details:", error);
+    }
+  }
+
   return (
     <>
       <Box
@@ -282,7 +303,7 @@ function NewCustomerForm() {
               mb: 3,
             }}
           >
-            <h1>Add new customer</h1>
+            <h1>Add/Edit Customers</h1>
           </Box>
 
           <Box
@@ -492,7 +513,7 @@ function NewCustomerForm() {
             >
               <Box className="dey">
                 <TextField
-                  disabled={toogle}
+                  disabled={true}
                   id="standard-basic"
                   variant="standard"
                   size="small"
@@ -627,6 +648,9 @@ function NewCustomerForm() {
             onClick={() => handleDeleteCustomer(id, "success", fname)}
           >
             Delete
+          </Button>
+          <Button sx={{ mt: 2, ml: 2 }} onClick={handleCreate}>
+            Create
           </Button>
         </Paper>
         <Snack
