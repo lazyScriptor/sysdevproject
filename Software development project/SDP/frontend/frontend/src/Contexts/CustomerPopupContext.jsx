@@ -1,5 +1,5 @@
 import { createContext } from "react";
 
-// Define your constants
+// Define your contexts
 export const CustomerPopupContext = createContext();
-export const debuggs = createContext();
+export const CustomerFunctionsContext = createContext();

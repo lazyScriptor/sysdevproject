@@ -288,6 +288,7 @@ export default function CustomerTable() {
                   ></Box>
                 </TableCell>
               </TableRow>
+              
               <TableRow
                 className="table-row"
                 sx={{

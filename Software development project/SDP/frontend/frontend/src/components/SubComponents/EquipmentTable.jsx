@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -19,6 +19,8 @@ import {
   faSquareXmark
 } from "@fortawesome/free-solid-svg-icons";
 
+
+
 export default function EquipmentTable() {
   const [ID, setID] = useState();
   const [name, setName] = useState();
@@ -30,6 +32,8 @@ export default function EquipmentTable() {
   const [sortBy, setSortBy] = useState("eq_id");
   const { enqueueSnackbar } = useSnackbar();
 
+
+
   //Database date coloumn to a specific date format
   function formatDate(dateString) {
     const options = { year: "numeric", month: "short", day: "numeric" };
@@ -37,6 +41,7 @@ export default function EquipmentTable() {
   }
 
   useEffect(() => {
+    
     fetchData();
   }, []);
 
