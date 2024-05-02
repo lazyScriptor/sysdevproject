@@ -3,7 +3,7 @@ import Dialog from "@mui/material/Dialog";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { useContext } from "react";
-import CustomerPopupContext from "../../Contexts/CustomerPopupContext";
+import {CustomerPopupContext} from "../../Contexts/CustomerPopupContext";
 import NewCustomerForm from "../Pages/NewCustomerForm";
 
 export default function OverlayDialogBox() {

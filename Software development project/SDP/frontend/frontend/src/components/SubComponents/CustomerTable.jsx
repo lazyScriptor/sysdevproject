@@ -15,7 +15,7 @@ import { faSort, faSearch } from "@fortawesome/free-solid-svg-icons";
 
 import { useSnackbar } from "notistack"; // Import useSnackbar hook
 import OverlayDialogBox from "./OverlayDialogBox";
-import CustomerPopupContext from "../../Contexts/CustomerPopupContext";
+import {CustomerPopupContext} from "../../Contexts/CustomerPopupContext";
 
 export default function CustomerTable() {
   const { boolvalue, setBoolvalue, userData, setUserData } =

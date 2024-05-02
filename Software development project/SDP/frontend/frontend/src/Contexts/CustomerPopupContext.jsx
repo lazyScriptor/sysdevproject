@@ -1,6 +1,5 @@
-import React from "react";
 import { createContext } from "react";
 
-const CustomerPopupContext=createContext();
-
-export default CustomerPopupContext;
+// Define your constants
+export const CustomerPopupContext = createContext();
+export const debuggs = createContext();

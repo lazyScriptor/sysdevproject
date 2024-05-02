@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import "../Stylings/rootstyles.css";
 import { useEffect, useState ,useContext} from "react";
-import CustomerPopupContext from "../../Contexts/CustomerPopupContext";
+import {CustomerPopupContext} from "../../Contexts/CustomerPopupContext";
 
 import "../Stylings/newCustomerForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
