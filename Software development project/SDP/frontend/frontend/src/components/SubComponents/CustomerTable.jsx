@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -14,8 +14,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSort } from "@fortawesome/free-solid-svg-icons";
 
 import { useSnackbar } from "notistack"; // Import useSnackbar hook
+import NewCustomerForm from "../Pages/NewCustomerForm";
+import BackdropCustomerForm from "./BackdropCustomerForm";
+import OverlayDialogBox from "./OverlayDialogBox";
+import CustomerPopupContext from "../../Contexts/CustomerPopupContext";
 
 export default function CustomerTable() {
+  const [openPopup, setOpenPopup] = useState(false);
+  const { boolvalue, setBoolvalue , userData, setUserData } = useContext(CustomerPopupContext);
+
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
@@ -27,6 +34,7 @@ export default function CustomerTable() {
       axios
         .get("http://localhost:8085/customers")
         .then((res) => setData(res.data));
+      console.log(boolvalue);
     } catch (error) {
       console.error("error occurred in the try catch block", error);
     }
@@ -44,6 +52,10 @@ export default function CustomerTable() {
     } catch (error) {
       console.error("Error deleting customer:", error);
     }
+  };
+
+  const handleEdit = () => {
+    setOpenPopup(true);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -78,7 +90,7 @@ export default function CustomerTable() {
       }}
     >
       <Paper
-        elevation={1}
+        elevation={4}
         sx={{ width: "100%", mb: 2, mt: 1, borderRadius: 3 }}
       >
         <TableContainer>
@@ -145,7 +157,16 @@ export default function CustomerTable() {
                       {row.cus_address2}
                     </TableCell>
                     <TableCell className="table-cell-data">
-                      <Button>Edit</Button>
+                      <Button
+                        onClick={async () => {
+                          setBoolvalue(!boolvalue);
+                          console.log(boolvalue);
+                         await setUserData(row);
+                        }}
+                      >
+                        Edit
+                      </Button>
+
                       <Button
                         onClick={() => handleDelete(row.cus_id, row.cus_fname)}
                         sx={{ color: "red" }}
@@ -168,6 +189,8 @@ export default function CustomerTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+
+      <OverlayDialogBox />
     </Box>
   );
 }

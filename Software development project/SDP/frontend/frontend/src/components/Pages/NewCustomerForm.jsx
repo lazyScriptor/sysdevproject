@@ -12,7 +12,8 @@ import {
   colors,
 } from "@mui/material";
 import "../Stylings/rootstyles.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState ,useContext} from "react";
+import CustomerPopupContext from "../../Contexts/CustomerPopupContext";
 
 import "../Stylings/newCustomerForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,7 +25,10 @@ import { createContext } from "react";
 import { useSnackbar } from "notistack";
 export const AppCustomeContext3 = createContext();
 
+
 function NewCustomerForm() {
+  const { boolvalue, setBoolvalue , userData, setUserData } = useContext(CustomerPopupContext);
+
   const [data, setData] = useState([]);
   const [newId, setNewId] = useState("");
   const [newNic, setNewNic] = useState("");
@@ -62,6 +66,7 @@ function NewCustomerForm() {
         const response = await axios.get("http://localhost:8085/customers");
         setData(response.data);
         console.log("data loaded", response.data);
+        console.log("Context data :",userData)
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -69,6 +74,15 @@ function NewCustomerForm() {
 
     fetchData();
   }, []);
+  useEffect(()=>{
+    setId(userData.cus_id)
+    setFname(userData.cus_fname)
+    setLname(userData.cus_lname)
+    setNic(userData.nic)
+    setPhoneNumber(userData.cus_phone_number)
+    setAddress1(userData.cus_address1)
+    setAddress2(userData.cus_address2)
+  },[userData])
 
   // Search bar functions
   //Set these 3 values to a new variable insted of using the same variable using to retrieve the input data
@@ -88,6 +102,7 @@ function NewCustomerForm() {
     setNewPno(enteredText);
   };
   //Searchbar functions over
+  
 
   const handleToogleStatus = () => {
     setToogle(!toogle);
@@ -592,7 +607,7 @@ function NewCustomerForm() {
             sx={{ mt: 2, ml: 2 }}
             //methana id nathuwa newID use kranne id kiyanne pahala input area eke value eka
             //NewId kiyanne uda onchange variable ekak
-            onClick={() => handleDeleteCustomer(newId, "success", fname)}
+            onClick={() => handleDeleteCustomer(id, "success", fname)}
           >
             Delete
           </Button>

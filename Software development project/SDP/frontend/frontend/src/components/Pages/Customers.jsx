@@ -4,11 +4,16 @@ import "../Stylings/rootstyles.css";
 import NewCustomerForm from "./NewCustomerForm";
 import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew";
 import CustomerTable from "../SubComponents/CustomerTable";
+import CustomerContextProvider from "../../Contexts/CustomerPopupContextProvider";
 
 function Customers() {
   return (
     <>
-      <BackgroundStyleNew title={"Customer Details"} subTitle={"This is the customer page"}>
+     <CustomerContextProvider>
+      <BackgroundStyleNew
+        title={"Customer Details"}
+        subTitle={"This is the customer page"}
+      >
         {/* Divide the last box into two */}
         <Box
           sx={{
@@ -36,10 +41,13 @@ function Customers() {
               borderRadius: 3,
             }}
           >
-            <CustomerTable />
+           
+              <CustomerTable />
+            
           </Box>
         </Box>
       </BackgroundStyleNew>
+      </CustomerContextProvider>
     </>
   );
 }
