@@ -9,19 +9,17 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Box from "@mui/material/Box";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSort } from "@fortawesome/free-solid-svg-icons";
+import { faSort, faSearch } from "@fortawesome/free-solid-svg-icons";
 
 import { useSnackbar } from "notistack"; // Import useSnackbar hook
-import NewCustomerForm from "../Pages/NewCustomerForm";
-import BackdropCustomerForm from "./BackdropCustomerForm";
 import OverlayDialogBox from "./OverlayDialogBox";
 import CustomerPopupContext from "../../Contexts/CustomerPopupContext";
 
 export default function CustomerTable() {
-  const [openPopup, setOpenPopup] = useState(false);
-  const { boolvalue, setBoolvalue , userData, setUserData } = useContext(CustomerPopupContext);
+  const { boolvalue, setBoolvalue, userData, setUserData } =
+    useContext(CustomerPopupContext);
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
@@ -102,6 +100,195 @@ export default function CustomerTable() {
           >
             <TableHead className="table-head">
               <TableRow
+                sx={{ backgroundColor: (theme) => theme.palette.primary[100] }}
+              >
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TextField
+                      sx={{}}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeId}
+                    />
+                    <Button
+                      // onClick={() => handleSearchid(ID)}
+                      sx={{ pt: 2, "&:hover": { color: "green" } }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TextField
+                      sx={{}}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeId}
+                    />
+                    <Button
+                      // onClick={() => handleSearchid(ID)}
+                      sx={{ pt: 2, "&:hover": { color: "green" } }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TextField
+                      sx={{}}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeId}
+                    />
+                    <Button
+                      // onClick={() => handleSearchid(ID)}
+                      sx={{ pt: 2, "&:hover": { color: "green" } }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TextField
+                      sx={{}}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeId}
+                    />
+                    <Button
+                      // onClick={() => handleSearchid(ID)}
+                      sx={{ pt: 2, "&:hover": { color: "green" } }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TextField
+                      sx={{}}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeId}
+                    />
+                    <Button
+                      // onClick={() => handleSearchid(ID)}
+                      sx={{ pt: 2, "&:hover": { color: "green" } }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TextField
+                      sx={{}}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeId}
+                    />
+                    <Button
+                      // onClick={() => handleSearchid(ID)}
+                      sx={{ pt: 2, "&:hover": { color: "green" } }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      // width:"400px"
+                    }}
+                  >
+                    <TextField
+                      sx={{}}
+                      id="standard-search"
+                      variant="standard"
+                      label="Search by ID"
+                      type="search"
+                      size="small"
+                      // onChange={handleOnChangeId}
+                    />
+                    <Button
+                      // onClick={() => handleSearchid(ID)}
+                      sx={{ pt: 2, "&:hover": { color: "green" } }}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  ></Box>
+                </TableCell>
+              </TableRow>
+              <TableRow
                 className="table-row"
                 sx={{
                   backgroundColor: (theme) => theme.palette.primary[100],
@@ -157,22 +344,32 @@ export default function CustomerTable() {
                       {row.cus_address2}
                     </TableCell>
                     <TableCell className="table-cell-data">
-                      <Button
-                        onClick={async () => {
-                          setBoolvalue(!boolvalue);
-                          console.log(boolvalue);
-                         await setUserData(row);
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                       >
-                        Edit
-                      </Button>
+                        <Button
+                          onClick={async () => {
+                            setBoolvalue(!boolvalue);
+                            console.log(boolvalue);
+                            await setUserData(row);
+                          }}
+                        >
+                          Edit
+                        </Button>
 
-                      <Button
-                        onClick={() => handleDelete(row.cus_id, row.cus_fname)}
-                        sx={{ color: "red" }}
-                      >
-                        Delete
-                      </Button>
+                        <Button
+                          onClick={() =>
+                            handleDelete(row.cus_id, row.cus_fname)
+                          }
+                          sx={{ color: "red" }}
+                        >
+                          Delete
+                        </Button>
+                      </Box>
                     </TableCell>
                   </TableRow>
                 ))}

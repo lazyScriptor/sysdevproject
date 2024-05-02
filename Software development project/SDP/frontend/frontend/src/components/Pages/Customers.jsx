@@ -14,38 +14,7 @@ function Customers() {
         title={"Customer Details"}
         subTitle={"This is the customer page"}
       >
-        {/* Divide the last box into two */}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            width: "100%",
-          }}
-        >
-          <Box
-            sx={{
-              width: "40%",
-
-              borderRadius: 3,
-              minHeight: "100vh",
-              mr: 2, // Add margin to create space between the two boxes
-            }}
-          >
-            <NewCustomerForm />
-          </Box>
-          <Box
-            sx={{
-              width: "60%",
-
-              minHeight: "100vh",
-              borderRadius: 3,
-            }}
-          >
-           
-              <CustomerTable />
-            
-          </Box>
-        </Box>
+        <CustomerTable/>
       </BackgroundStyleNew>
       </CustomerContextProvider>
     </>

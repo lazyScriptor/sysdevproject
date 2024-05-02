@@ -3,7 +3,7 @@ import CustomerPopupContext from "./CustomerPopupContext";
 
 const CustomerContextProvider = ({ children }) => {
     const [userData, setUserData] = useState({
-        cus_id: 0,
+        cus_id: "",
         cus_fname: "",
         cus_lname: "",
         nic: "",
