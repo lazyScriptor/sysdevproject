@@ -90,6 +90,22 @@ export async function getCustomerbyPhoneNumber(phoneNumber) {
   console.log(customers);
   return customers;
 }
+export async function getCustomerbyAddress1(SAddress1) {
+  const [customers] = await pool.query(
+    "SELECT * FROM customer WHERE cus_address1 LIKE ?",
+    [`%${SAddress1}%`]
+  );
+  console.log(customers);
+  return customers;
+}
+export async function getCustomerbyAddress2(SAddress2) {
+  const [customers] = await pool.query(
+    "SELECT * FROM customer WHERE cus_address2 LIKE ?",
+    [`%${SAddress2}%`]
+  );
+  console.log(customers);
+  return customers;
+}
 
 export async function deleteCustomer(id) {
   try {
@@ -101,7 +117,7 @@ export async function deleteCustomer(id) {
     throw error;
   }
 }
-export async function createCustomer(bodydata) {
+export async function setCustomer(bodydata) {
   const { nic, phoneNumber, fname, lname, address1, address2 } = bodydata;
   try {
     await pool.query(

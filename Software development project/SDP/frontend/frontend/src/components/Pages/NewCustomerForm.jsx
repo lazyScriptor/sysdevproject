@@ -16,7 +16,7 @@ import { useEffect, useState, useContext } from "react";
 import {
   CustomerFunctionsContext,
   CustomerPopupContext,
-} from "../../Contexts/CustomerPopupContext";
+} from "../../Contexts/Contexts";
 
 import "../Stylings/newCustomerForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -86,9 +86,8 @@ function NewCustomerForm() {
   //then in the customer table ,when the edit button pressed
   //1.it retrieve the specific customer object with the id and set that object ( object name is row in the customer table)
   //to the userData context variable.
-  //2.In the new customer form i used a useEffect hook and set the userData in the dependency array to 
+  //2.In the new customer form i used a useEffect hook and set the userData in the dependency array to
   //trigger the use Effect when the user data change.which means when the edit button pressed
-
 
   useEffect(() => {
     setId(userData.cus_id);
@@ -116,7 +115,8 @@ function NewCustomerForm() {
   const handleOnChangePnoOnlyforSearching = (e) => {
     const enteredText = e.target.value;
     setNewPno(enteredText);
-  };2
+  };
+  2;
   //Searchbar functions over
 
   const handleToogleStatus = () => {
@@ -246,26 +246,23 @@ function NewCustomerForm() {
     }
   };
 
-  const handleCreate = async()=>{
+  const handleCreate = async () => {
     try {
-     await axios.post(
-        "http://localhost:8085/createCustomer",
-        {
-          nic,
-          phoneNumber,
-          fname,
-          lname,
-          address1,
-          address2,
-        }
-      );
+      await axios.post("http://localhost:8085/createCustomer", {
+        nic,
+        phoneNumber,
+        fname,
+        lname,
+        address1,
+        address2,
+      });
       console.log("Details created successfully:");
 
       setToogle(true);
     } catch (error) {
       console.error("Error creating details:", error);
     }
-  }
+  };
 
   return (
     <>
@@ -634,24 +631,43 @@ function NewCustomerForm() {
               */}
             </FormControl>
           </Box>
-          <Button sx={{ mt: 2 }} onClick={handleToogleStatus}>
-            Edit
-          </Button>
-          <Button sx={{ mt: 2, ml: 1 }} onClick={handleSaveDetails}>
-            Save
-          </Button>
-          <Button
-            color="error"
-            sx={{ mt: 2, ml: 2 }}
-            //methana id nathuwa newID use kranne id kiyanne pahala input area eke value eka
-            //NewId kiyanne uda onchange variable ekak
-            onClick={() => handleDeleteCustomer(id, "success", fname)}
-          >
-            Delete
-          </Button>
-          <Button sx={{ mt: 2, ml: 2 }} onClick={handleCreate}>
-            Create
-          </Button>
+
+
+          <div style={{}}>
+
+
+
+            <Box sx={{ justifyContent:"end" }}>
+              <Button sx={{ mt: 2 }} onClick={handleToogleStatus}>
+                Edit
+              </Button>
+              <Button sx={{ mt: 2, ml: 1 }} onClick={handleSaveDetails}>
+                Save
+              </Button>
+              <Button
+                color="error"
+                sx={{ mt: 2, ml: 2 }}
+                onClick={() => handleDeleteCustomer(id, "success", fname)}
+              >
+                Delete
+              </Button>
+            </Box>
+
+
+
+
+
+            <Button sx={{ mt: 2 }} onClick={handleCreate}>
+              Create
+            </Button>
+
+
+
+          </div>
+
+
+
+
         </Paper>
         <Snack
           type={message}

@@ -15,7 +15,9 @@ import {
   updateCustomerDetails,
   getCustomerbyFirstName,
   getCustomerbyLastName,
-  createCustomer,
+  setCustomer,
+  getCustomerbyAddress1,
+  getCustomerbyAddress2,
 } from "./database.js";
 
 const app = express();
@@ -88,8 +90,8 @@ app.get("/getCustomerbyNIC/:nic", async (req, res) => {
 });
 app.post("/createCustomer", async (req, res) => {
   try {
-    const customerDetails = await createCustomer(req.body);
-    console.log("Updated customer details:", req.body);
+    const customerDetails = await setCustomer(req.body);
+    console.log("created customer details:", req.body);
     return res.json({
       message: `Customer details updated for the customer with id : ${req.body.id}`,
     });
@@ -116,7 +118,7 @@ app.get("/getCustomerbyFirstName/:SFirstName", async (req, res) => {
     const customers = await getCustomerbyFirstName(req.params.SFirstName);
     return res.json(customers);
   } catch (error) {
-    console.error("Error in getCustomerbyID:", error);
+    console.error("Error in getCustomerbyFirstName:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -126,14 +128,14 @@ app.get("/getCustomerbyLastName/:SLastName", async (req, res) => {
     const customers = await getCustomerbyLastName(req.params.SLastName);
     return res.json(customers);
   } catch (error) {
-    console.error("Error in getCustomerbyID:", error);
+    console.error("Error in getCustomerbyLastName:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
 app.get("/getCustomerbyPhoneNumber/:phoneNumber", async (req, res) => {
   try {
-    console.log("Server side getCustomerbyID", req.params.phoneNumber);
+    console.log("Server side getCustomerbyphoneNumber", req.params.phoneNumber);
     const customers = await getCustomerbyPhoneNumber(req.params.phoneNumber);
     return res.json(customers);
   } catch (error) {
@@ -141,6 +143,32 @@ app.get("/getCustomerbyPhoneNumber/:phoneNumber", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+
+app.get("/getCustomerbyAddress1/:SAddress1", async (req, res) => {
+  try {
+    console.log("Server side getCustomerbySAddress1", req.params.SAddress1);
+    const customers = await getCustomerbyAddress1(req.params.SAddress1);
+    return res.json(customers);
+  } catch (error) {
+    console.error("Error in getCustomerbySAddress1:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+app.get("/getCustomerbyAddress2/:SAddress2", async (req, res) => {
+  try {
+    console.log("Server side getCustomerbyLastName", req.params.SAddress2);
+    const customers = await getCustomerbyAddress2(req.params.SAddress2);
+    return res.json(customers);
+  } catch (error) {
+    console.error("Error in getCustomerbyID:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+
 
 app.delete("/deleteCustomers/:customerId", async (req, res) => {
   try {

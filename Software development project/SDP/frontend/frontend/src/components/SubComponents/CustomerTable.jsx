@@ -11,11 +11,11 @@ import TableRow from "@mui/material/TableRow";
 import Box from "@mui/material/Box";
 import { Button, TextField, useStepContext } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSort, faSearch ,faPlus} from "@fortawesome/free-solid-svg-icons";
+import { faSort, faSearch, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import { useSnackbar } from "notistack"; // Import useSnackbar hook
 import OverlayDialogBox from "./OverlayDialogBox";
-import { CustomerPopupContext } from "../../Contexts/CustomerPopupContext";
+import { CustomerPopupContext } from "../../Contexts/Contexts";
 
 export default function CustomerTable() {
   const { boolvalue, setBoolvalue, userData, setUserData } =
@@ -95,6 +95,7 @@ export default function CustomerTable() {
     }
   };
   const handleSearchPhoneNumber = async (SPhoneNumber) => {
+    //API variable is phoneNumber thats why this convertion has done
     const phoneNumber = SPhoneNumber;
     try {
       await axios
@@ -107,6 +108,33 @@ export default function CustomerTable() {
       console.log("handleSearch Id error");
     }
   };
+
+  const handleSearchAddress1 = async (SAddress1) => {
+    try {
+      await axios
+
+        .get(`http://localhost:8085/getCustomerbyAddress1/${SAddress1}`)
+        .then((res) => {
+          const customerData = res.data;
+          setData(res.data);
+        });
+    } catch (error) {
+      console.log("handleSearch Address1 error");
+    }
+  };
+  const handleSearchAddress2 = async (SAddress2) => {
+    try {
+      await axios
+        .get(`http://localhost:8085/getCustomerbyAddress2/${SAddress2}`)
+        .then((res) => {
+          const customerData = res.data;
+          setData(res.data);
+        });
+    } catch (error) {
+      console.log("handleSearch Address2 error");
+    }
+  };
+
   const handleDelete = async (customerId, customerFirstName) => {
     try {
       await axios.delete(`http://localhost:8085/deleteCustomers/${customerId}`);
@@ -304,13 +332,13 @@ export default function CustomerTable() {
                       sx={{}}
                       id="standard-search"
                       variant="standard"
-                      label="Search by ID"
+                      label="Search by Address1"
                       type="search"
                       size="small"
-                      // onChange={handleOnChangeId}
+                      onChange={(e) => SetSAddress1(e.target.value)}
                     />
                     <Button
-                      // onClick={() => handleSearchid(ID)}
+                      onClick={() => handleSearchAddress1(SAddress1)}
                       sx={{ pt: 2, "&:hover": { color: "green" } }}
                     >
                       <FontAwesomeIcon icon={faSearch} />
@@ -333,10 +361,10 @@ export default function CustomerTable() {
                       label="Search by ID"
                       type="search"
                       size="small"
-                      // onChange={handleOnChangeId}
+                      onChange={(e) => SetSAddress2(e.target.value)}
                     />
                     <Button
-                      // onClick={() => handleSearchid(ID)}
+                      onClick={() => handleSearchAddress2(SAddress2)}
                       sx={{ pt: 2, "&:hover": { color: "green" } }}
                     >
                       <FontAwesomeIcon icon={faSearch} />
@@ -352,13 +380,10 @@ export default function CustomerTable() {
                     }}
                   >
                     <Button
-                      sx={{ mt: 3 ,borderRadius:3}}
+                      sx={{ mt: 3, borderRadius: 3 }}
                       variant="contained"
-                      
                       onClick={() => {
-                        setBoolvalue(!boolvalue)
-                      
-
+                        setBoolvalue(!boolvalue);
 
                         setUserData({
                           cus_id: "",
@@ -368,10 +393,13 @@ export default function CustomerTable() {
                           cus_phone_number: "",
                           cus_address1: "",
                           cus_address2: "",
-                        })
+                        });
                       }}
                     >
-                      <FontAwesomeIcon style={{marginRight:"10px"}} icon={faPlus} />
+                      <FontAwesomeIcon
+                        style={{ marginRight: "10px" }}
+                        icon={faPlus}
+                      />
                       Add new
                     </Button>
                   </Box>
@@ -382,7 +410,7 @@ export default function CustomerTable() {
                 className="table-row"
                 sx={{
                   backgroundColor: (theme) => theme.palette.primary[100],
-                  height: "10vh",
+                  height: "6vh",
                   borderRadius: 3,
                 }}
               >

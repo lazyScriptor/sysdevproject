@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {CustomerFunctionsContext} from "./CustomerPopupContext";
+import {CustomerFunctionsContext} from "./Contexts";
 
 export default function CustomerFunctionsContextProvider({children}){
     const [nameee,setNameee]=useState("initial");

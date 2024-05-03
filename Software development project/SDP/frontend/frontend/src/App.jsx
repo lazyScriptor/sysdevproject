@@ -14,7 +14,6 @@ import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
 import { useState, createContext } from "react";
 
 import { ThemeProvider, createTheme } from "@mui/material";
-import { CustomerFunctionsContext } from "./Contexts/CustomerPopupContext.jsx";
 import CustomerFunctionsContextProvider from "./Contexts/CustomerFunctionsContextProvider.jsx";
 
 export const AppCustomContext = createContext();
@@ -27,28 +26,28 @@ function App() {
     // Define your theme here
     palette: {
       primary: {
-        50: "#e0f7fa",
-        100: "#b2ebf2",
-        200: "#80deea",
-        300: "#4dd0e1",
-        400: "#26c6da",
-        500: "#00bcd4",
-        600: "#00acc1",
-        700: "#0097a7",
-        800: "#00838f",
-        900: "#006064",
+        // 50: "#e0f7fa",
+        // 100: "#b2ebf2",
+        // 200: "#80deea",
+        // 300: "#4dd0e1",
+        // 400: "#26c6da",
+        // 500: "#00bcd4",
+        // 600: "#00acc1",
+        // 700: "#0097a7",
+        // 800: "#00838f",
+        // 900: "#006064",
 
         //Blue shades
-        // 50: "#e3f2fd",
-        // 100: "#bbdefb",
-        // 200: "#90caf9",
-        // 300: "#64b5f6",
-        // 400: "#42a5f5",
-        // 500: "#2196f3",
-        // 600: "#1e88e5",
-        // 700: "#1976d2",
-        // 800: "#1565c0",
-        // 900: "#0d47a1",
+        50: "#e3f2fd",
+        100: "#bbdefb",
+        200: "#90caf9",
+        300: "#64b5f6",
+        400: "#42a5f5",
+        500: "#2196f3",
+        600: "#1e88e5",
+        700: "#1976d2",
+        800: "#1565c0",
+        900: "#0d47a1",
 
         // purpleShades
         // 50: "#f3e5f5",

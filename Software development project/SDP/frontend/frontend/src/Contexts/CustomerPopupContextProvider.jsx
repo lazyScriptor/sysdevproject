@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {CustomerPopupContext}  from "./CustomerPopupContext";
+import {CustomerPopupContext}  from "./Contexts";
 
 const CustomerContextProvider = ({ children }) => {
     const [userData, setUserData] = useState({
