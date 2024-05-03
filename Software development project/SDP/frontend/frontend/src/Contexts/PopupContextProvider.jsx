@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import {CustomerPopupContext}  from "./Contexts";
+import {PopupContext}  from "./Contexts";
 
-const CustomerContextProvider = ({ children }) => {
+const ContextProvider = ({ children }) => {
     const [userData, setUserData] = useState({
         cus_id: "",
         cus_fname: "",
@@ -15,9 +15,9 @@ const CustomerContextProvider = ({ children }) => {
   const [boolvalue,setBoolvalue]=useState(false);
   
   return (
-    <CustomerPopupContext.Provider value={{boolvalue,setBoolvalue, userData, setUserData }}>
+    <PopupContext.Provider value={{boolvalue,setBoolvalue, userData, setUserData }}>
      {children}
-    </CustomerPopupContext.Provider>
+    </PopupContext.Provider>
   );
 };
-export default CustomerContextProvider;
+export default ContextProvider;

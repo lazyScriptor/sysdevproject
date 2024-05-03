@@ -13,15 +13,21 @@ import { Button, TextField } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faPlus,
   faSearch,
   faSort,
   faSquareCheck,
-  faSquareXmark
+  faSquareXmark,
 } from "@fortawesome/free-solid-svg-icons";
-
+import OverlayDialogBox from "./OverlayDialogBox";
+import NewCustomerForm from "../Pages/NewCustomerForm";
+import { PopupContext } from "../../Contexts/Contexts";
+import EquipmentForm from "./EquipmentForm";
 
 
 export default function EquipmentTable() {
+  const {boolvalue,setBoolvalue, userData, setUserData}=useContext(PopupContext);
+
   const [ID, setID] = useState();
   const [name, setName] = useState();
   const [equipmentArray, setEquipmentArray] = useState([]);
@@ -32,8 +38,6 @@ export default function EquipmentTable() {
   const [sortBy, setSortBy] = useState("eq_id");
   const { enqueueSnackbar } = useSnackbar();
 
-
-
   //Database date coloumn to a specific date format
   function formatDate(dateString) {
     const options = { year: "numeric", month: "short", day: "numeric" };
@@ -41,7 +45,6 @@ export default function EquipmentTable() {
   }
 
   useEffect(() => {
-    
     fetchData();
   }, []);
 
@@ -216,13 +219,35 @@ export default function EquipmentTable() {
                     </Button>
                   </Box>
                 </TableCell>
-                <TableCell />
-                <TableCell />
-                <TableCell />
-                <TableCell />
-                <TableCell />
-                <TableCell />
-                <TableCell />
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Button
+                      sx={{ mt: 1, borderRadius: 3 }}
+                      variant="contained"
+                      onClick={() => {
+                        setBoolvalue(!boolvalue);
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        style={{ marginRight: "10px" }}
+                        icon={faPlus}
+                      />
+                      Add new
+                    </Button>
+                  </Box>
+                </TableCell>
               </TableRow>
               <TableRow
                 sx={{
@@ -372,6 +397,9 @@ export default function EquipmentTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+    <OverlayDialogBox>
+      <EquipmentForm/>
+    </OverlayDialogBox>
     </Box>
   );
 }

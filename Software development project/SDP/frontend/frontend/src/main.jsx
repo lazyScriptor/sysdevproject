@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { SnackbarProvider } from "notistack"; // Import SnackbarProvider
+import ContextProvider from "./Contexts/PopupContextProvider.jsx";
 
 // import { createBrowserRouter, RouterProvider } from "react-router-dom";
 // import Admin from "./components/Dashboards/Admin.jsx";
@@ -67,9 +68,11 @@ import { SnackbarProvider } from "notistack"; // Import SnackbarProvider
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <SnackbarProvider maxSnack={3}>
-      {/* <RouterProvider router={router} /> */}
-      <App />
-    </SnackbarProvider>
+    <ContextProvider>
+      <SnackbarProvider maxSnack={3}>
+        {/* <RouterProvider router={router} /> */}
+        <App />
+      </SnackbarProvider>
+    </ContextProvider>
   </React.StrictMode>
 );

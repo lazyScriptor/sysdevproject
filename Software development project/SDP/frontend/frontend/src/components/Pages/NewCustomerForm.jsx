@@ -13,10 +13,7 @@ import {
 } from "@mui/material";
 import "../Stylings/rootstyles.css";
 import { useEffect, useState, useContext } from "react";
-import {
-  CustomerFunctionsContext,
-  CustomerPopupContext,
-} from "../../Contexts/Contexts";
+import { PopupContext } from "../../Contexts/Contexts";
 
 import "../Stylings/newCustomerForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -30,11 +27,7 @@ export const AppCustomeContext3 = createContext();
 
 function NewCustomerForm() {
   const { boolvalue, setBoolvalue, userData, setUserData } =
-    useContext(CustomerPopupContext);
-
-  const { nameee, setNameee, handleSearchidContext } = useContext(
-    CustomerFunctionsContext
-  );
+    useContext(PopupContext);
 
   const [data, setData] = useState([]);
   const [newId, setNewId] = useState("");
@@ -268,6 +261,7 @@ function NewCustomerForm() {
     <>
       <Box
         sx={{
+          border:"solid 1px ",
           display: "flex",
           width: "100%",
           height: "auto",
@@ -279,7 +273,7 @@ function NewCustomerForm() {
           elevation={4}
           sx={{
             width: "100%",
-            p: 1,
+            p:2,
             mt: 1,
             borderRadius: 3,
             gap: "20px",
@@ -302,7 +296,7 @@ function NewCustomerForm() {
           >
             <h1>Add/Edit Customers</h1>
           </Box>
-
+          {/* Upper Search bar Start*/}
           <Box
             sx={{
               height: "70px",
@@ -406,238 +400,157 @@ function NewCustomerForm() {
               </Button>
             </Box>
           </Box>
-
-          {/* Left side Box */}
-          <Box
-            sx={{
-              height: "auto",
-              width: "40%",
-
-              borderRadius: 3,
-              display: "flex",
-              alignItems: "start",
-              float: "left",
-            }}
-          >
-            <FormControl
+          {/* Upper Search bar End */}
+          <Box sx={{ p: 2}}>
+            {/* Left side Box */}
+            <Box
               sx={{
-                gap: "20px",
-
-                width: "100%",
-
+                height: "auto",
+                width: "40%",
+                borderRadius: 3,
                 display: "flex",
-                ml: 2,
+                alignItems: "start",
+                float: "left",
               }}
             >
-              <Box className="dey">
-                <FormLabel htmlFor="my-input">Customer ID</FormLabel>
-              </Box>
-              <Box className="dey">
-                <FormLabel htmlFor="my-input">Customer First name</FormLabel>
-              </Box>
-              <Box className="dey">
-                <FormLabel htmlFor="my-input">Customer Last name</FormLabel>
-              </Box>
-              <Box className="dey">
-                <FormLabel htmlFor="my-input">Customer NIC</FormLabel>
-              </Box>
-              <Box className="dey">
-                <FormLabel htmlFor="my-input">Customer Phone number</FormLabel>
-              </Box>
-              <Box className="dey">
-                <FormLabel htmlFor="my-input">
-                  Customer Address line 1
-                </FormLabel>
-              </Box>
-              <Box className="dey">
-                <FormLabel htmlFor="my-input">
-                  Customer Address line 2
-                </FormLabel>
-              </Box>
-              {/* <FormLabel htmlFor="my-input">Email address</FormLabel>
-              <FormLabel htmlFor="my-input">Email address</FormLabel>
-              <TextField
-                label="NIC"
-                id="standard-basic"
-                defaultValue=""
-                variant="standard"
-                size="small"
-              />
-              <TextField
-                label="NIC"
-                id="standard-basic"
-                defaultValue=""
-                variant="standard"
-                size="small"
-              />
-              <TextField
-                label="NIC"
-                id="standard-basic"
-                defaultValue=""
-                variant="standard"
-                size="small"
-              />
-              <TextField
-                label="NIC"
-                id="standard-basic"
-                defaultValue=""
-                variant="standard"
-                size="small"
-              /> 
+              <FormControl
+                sx={{
+                  gap: "20px",
 
-              <FormHelperText id="my-helper-text">
-                We'll never share your email.
-              </FormHelperText>
-              */}
-            </FormControl>
-          </Box>
-          {/* Right side Box */}
-          <Box
-            sx={{
-              width: "60%",
+                  width: "100%",
 
-              borderRadius: 3,
-              display: "flex",
-              float: "right",
-              flexDirection: "column",
-            }}
-          >
-            <FormControl
+                  display: "flex",
+                }}
+              >
+                <Box className="dey">
+                  <FormLabel htmlFor="my-input">Customer ID</FormLabel>
+                </Box>
+                <Box className="dey">
+                  <FormLabel htmlFor="my-input">Customer First name</FormLabel>
+                </Box>
+                <Box className="dey">
+                  <FormLabel htmlFor="my-input">Customer Last name</FormLabel>
+                </Box>
+                <Box className="dey">
+                  <FormLabel htmlFor="my-input">Customer NIC</FormLabel>
+                </Box>
+                <Box className="dey">
+                  <FormLabel htmlFor="my-input">
+                    Customer Phone number
+                  </FormLabel>
+                </Box>
+                <Box className="dey">
+                  <FormLabel htmlFor="my-input">
+                    Customer Address line 1
+                  </FormLabel>
+                </Box>
+                <Box className="dey">
+                  <FormLabel htmlFor="my-input">
+                    Customer Address line 2
+                  </FormLabel>
+                </Box>
+              </FormControl>
+            </Box>
+            {/* Right side Box */}
+            <Box
               sx={{
-                gap: "20px",
-                width: "100%",
+                width: "60%",
+
+                borderRadius: 3,
+                display: "flex",
+                float: "right",
+                flexDirection: "column",
               }}
             >
-              <Box className="dey">
-                <TextField
-                  disabled={true}
-                  id="standard-basic"
-                  variant="standard"
-                  size="small"
-                  sx={{ width: "80px" }}
-                  value={id}
-                />
-              </Box>
+              <FormControl
+                sx={{
+                  pl: 10,
+                  gap: "20px",
+                  width: "100%",
+                }}
+              >
+                <Box className="dey">
+                  <TextField
+                    disabled={true}
+                    id="standard-basic"
+                    variant="outlined"
+                    size="small"
+                    sx={{ width: "80px" }}
+                    value={id}
+                  />
+                </Box>
 
-              <Box className="dey">
-                <TextField
-                  disabled={toogle}
-                  id="standard-basic"
-                  variant="standard"
-                  size="small"
-                  sx={{ color: "red" }}
-                  value={fname}
-                  onChange={(e) => setFname(e.target.value)}
-                />
-              </Box>
-              <Box className="dey">
-                <TextField
-                  disabled={toogle}
-                  id="standard-basic"
-                  variant="standard"
-                  size="small"
-                  sx={{ color: "red" }}
-                  value={lname}
-                  onChange={(e) => setLname(e.target.value)}
-                />
-              </Box>
-              <Box className="dey">
-                <TextField
-                  disabled={toogle}
-                  id="standard-basic"
-                  variant="standard"
-                  size="small"
-                  sx={{ color: "red" }}
-                  value={nic}
-                  onChange={(e) => setNic(e.target.value)}
-                />
-              </Box>
-              <Box className="dey">
-                <TextField
-                  disabled={toogle}
-                  id="standard-basic"
-                  variant="standard"
-                  size="small"
-                  sx={{ color: "red" }}
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                />
-              </Box>
-              <Box className="dey">
-                <TextField
-                  disabled={toogle}
-                  id="standard-basic"
-                  variant="standard"
-                  size="small"
-                  sx={{ color: "red" }}
-                  value={address1}
-                  onChange={(e) => setAddress1(e.target.value)}
-                />
-              </Box>
-              <Box className="dey">
-                <TextField
-                  disabled={toogle}
-                  id="standard-basic"
-                  variant="standard"
-                  size="small"
-                  sx={{ color: "red" }}
-                  value={address2}
-                  onChange={(e) => setAddress2(e.target.value)}
-                />
-              </Box>
-
-              {/*
-              <FormLabel htmlFor="my-input">Email address</FormLabel>
-              <FormLabel htmlFor="my-input">Email address</FormLabel>
-              <TextField
-                label="NIC"
-                id="standard-basic"
-                defaultValue=""
-                variant="standard"
-                size="small"
-              />
-              <TextField
-                label="NIC"
-                id="standard-basic"
-                defaultValue=""
-                variant="standard"
-                size="small"
-              />
-              <TextField
-                label="NIC"
-                id="standard-basic"
-                defaultValue=""
-                variant="standard"
-                size="small"
-              />
-              <TextField
-                label="NIC"
-                id="standard-basic"
-                defaultValue=""
-                variant="standard"
-                size="small"
-              />
-              <TextField
-                label="NIC"
-                id="standard-basic"
-                defaultValue=""
-                variant="standard"
-                size="small"
-              />
-
-              <FormHelperText id="my-helper-text">
-                We'll never share your email.
-              </FormHelperText>
-              */}
-            </FormControl>
+                <Box className="dey">
+                  <TextField
+                    disabled={toogle}
+                    id="standard-basic"
+                    variant="outlined"
+                    size="small"
+                    sx={{ color: "red" }}
+                    value={fname}
+                    onChange={(e) => setFname(e.target.value)}
+                  />
+                </Box>
+                <Box className="dey">
+                  <TextField
+                    disabled={toogle}
+                    id="standard-basic"
+                    variant="outlined"
+                    size="small"
+                    sx={{ color: "red" }}
+                    value={lname}
+                    onChange={(e) => setLname(e.target.value)}
+                  />
+                </Box>
+                <Box className="dey">
+                  <TextField
+                    disabled={toogle}
+                    id="standard-basic"
+                    variant="outlined"
+                    size="small"
+                    sx={{ color: "red" }}
+                    value={nic}
+                    onChange={(e) => setNic(e.target.value)}
+                  />
+                </Box>
+                <Box className="dey">
+                  <TextField
+                    disabled={toogle}
+                    id="standard-basic"
+                    variant="outlined"
+                    size="small"
+                    sx={{ color: "red" }}
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                  />
+                </Box>
+                <Box className="dey">
+                  <TextField
+                    disabled={toogle}
+                    id="standard-basic"
+                    variant="outlined"
+                    size="small"
+                    sx={{ color: "red" }}
+                    value={address1}
+                    onChange={(e) => setAddress1(e.target.value)}
+                  />
+                </Box>
+                <Box className="dey">
+                  <TextField
+                    disabled={toogle}
+                    id="standard-basic"
+                    variant="outlined"
+                    size="small"
+                    sx={{ color: "red" }}
+                    value={address2}
+                    onChange={(e) => setAddress2(e.target.value)}
+                  />
+                </Box>
+              </FormControl>
+            </Box>
           </Box>
-
-
-          <div style={{}}>
-
-
-
-            <Box sx={{ justifyContent:"end" }}>
+          <Box sx={{ p: 3 }}>
+            <Box>
               <Button sx={{ mt: 2 }} onClick={handleToogleStatus}>
                 Edit
               </Button>
@@ -653,21 +566,10 @@ function NewCustomerForm() {
               </Button>
             </Box>
 
-
-
-
-
-            <Button sx={{ mt: 2 }} onClick={handleCreate}>
+            <Button variant="contained" sx={{ mt: 2 }} onClick={handleCreate}>
               Create
             </Button>
-
-
-
-          </div>
-
-
-
-
+          </Box>
         </Paper>
         <Snack
           type={message}

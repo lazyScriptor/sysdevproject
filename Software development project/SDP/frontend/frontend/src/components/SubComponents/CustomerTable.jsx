@@ -15,11 +15,13 @@ import { faSort, faSearch, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import { useSnackbar } from "notistack"; // Import useSnackbar hook
 import OverlayDialogBox from "./OverlayDialogBox";
-import { CustomerPopupContext } from "../../Contexts/Contexts";
+import { PopupContext } from "../../Contexts/Contexts";
+import NewCustomerForm from "../Pages/NewCustomerForm";
 
 export default function CustomerTable() {
   const { boolvalue, setBoolvalue, userData, setUserData } =
-    useContext(CustomerPopupContext);
+    useContext(PopupContext);
+
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
@@ -40,7 +42,8 @@ export default function CustomerTable() {
       axios
         .get("http://localhost:8085/customers")
         .then((res) => setData(res.data));
-      console.log(boolvalue);
+        console.log("This is the cotext ",boolvalue)
+      
     } catch (error) {
       console.error("error occurred in the try catch block", error);
     }
@@ -470,10 +473,10 @@ export default function CustomerTable() {
                         }}
                       >
                         <Button
-                          onClick={async () => {
+                          onClick={ () => {
                             setBoolvalue(!boolvalue);
                             console.log(boolvalue);
-                            await setUserData(row);
+                             setUserData(row);
                           }}
                         >
                           Edit
@@ -505,7 +508,9 @@ export default function CustomerTable() {
         />
       </Paper>
 
-      <OverlayDialogBox />
+      <OverlayDialogBox>
+        <NewCustomerForm/>
+      </OverlayDialogBox>
     </Box>
   );
 }

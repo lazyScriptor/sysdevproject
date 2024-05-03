@@ -55,8 +55,7 @@ function Sidebar() {
           height:"40px",
           zIndex: 999, 
           borderRadius:"0px",
-          backgroundColor: "#00838f2b",
-          border:"solid 1px #00838f",
+          backgroundColor: (theme) => theme.palette.primary[50],
           "&:hover": {
             backgroundColor: (theme) => theme.palette.primary[200],
           },

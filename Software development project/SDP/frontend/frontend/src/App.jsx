@@ -14,7 +14,7 @@ import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
 import { useState, createContext } from "react";
 
 import { ThemeProvider, createTheme } from "@mui/material";
-import CustomerFunctionsContextProvider from "./Contexts/CustomerFunctionsContextProvider.jsx";
+
 
 export const AppCustomContext = createContext();
 
@@ -38,28 +38,28 @@ function App() {
         // 900: "#006064",
 
         //Blue shades
-        50: "#e3f2fd",
-        100: "#bbdefb",
-        200: "#90caf9",
-        300: "#64b5f6",
-        400: "#42a5f5",
-        500: "#2196f3",
-        600: "#1e88e5",
-        700: "#1976d2",
-        800: "#1565c0",
-        900: "#0d47a1",
+        // 50: "#e3f2fd",
+        // 100: "#bbdefb",
+        // 200: "#90caf9",
+        // 300: "#64b5f6",
+        // 400: "#42a5f5",
+        // 500: "#2196f3",
+        // 600: "#1e88e5",
+        // 700: "#1976d2",
+        // 800: "#1565c0",
+        // 900: "#0d47a1",
 
         // purpleShades
-        // 50: "#f3e5f5",
-        // 100: "#e1bee7",
-        // 200: "#ce93d8",
-        // 300: "#ba68c8",
-        // 400: "#ab47bc",
-        // 500: "#9c27b0",
-        // 600: "#8e24aa",
-        // 700: "#7b1fa2",
-        // 800: "#6a1b9a",
-        // 900: "#4a148c",
+        50: "#f3e5f5",
+        100: "#e1bee7",
+        200: "#ce93d8",
+        300: "#ba68c8",
+        400: "#ab47bc",
+        500: "#9c27b0",
+        600: "#8e24aa",
+        700: "#7b1fa2",
+        800: "#6a1b9a",
+        900: "#4a148c",
 
         //orange shades
         // 50: "#FFF3E0",
@@ -88,75 +88,75 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CustomerFunctionsContextProvider>
-        <AppCustomContext.Provider
-          value={{ usernamee, setUsernamee, rolee, setRolee }}
-        >
-          <Router>
-            <Routes>
-              {/* Routes without Sidebar */}
-              <Route path="/" element={<Login />} />
-              {/* Other routes with Sidebar */}
-              <Route
-                path="/customers"
-                element={
-                  <>
-                    <Sidebar />
-                    <Customers />
-                  </>
-                }
-              />
-              <Route
-                path="/DashboardMain"
-                element={
-                  <>
-                    <Sidebar />
-                    <DashboardMain />
-                  </>
-                }
-              />
-              <Route
-                path="/Equipment"
-                element={
-                  <>
-                    <Sidebar />
-                    <Equipment />
-                  </>
-                }
-              />
-              <Route
-                path="/Inbox"
-                element={
-                  <>
-                    <Sidebar />
-                    <Inbox />
-                  </>
-                }
-              />
-              <Route
-                path="/Invoice"
-                element={
-                  <>
-                    <Sidebar />
-                    <Invoice />
-                  </>
-                }
-              />
-              <Route
-                path="/Reports"
-                element={
-                  <>
-                    <Sidebar />
-                    <Reports />
-                  </>
-                }
-              />
-              {/* 404 Route */}
-              <Route path="*" element={<Notfoundd />} />
-            </Routes>
-          </Router>
-        </AppCustomContext.Provider>
-      </CustomerFunctionsContextProvider>
+     
+      <AppCustomContext.Provider
+        value={{ usernamee, setUsernamee, rolee, setRolee }}
+      >
+        <Router>
+          <Routes>
+            {/* Routes without Sidebar */}
+            <Route path="/" element={<Login />} />
+            {/* Other routes with Sidebar */}
+            <Route
+              path="/customers"
+              element={
+                <>
+                  <Sidebar />
+                  <Customers />
+                </>
+              }
+            />
+            <Route
+              path="/DashboardMain"
+              element={
+                <>
+                  <Sidebar />
+                  <DashboardMain />
+                </>
+              }
+            />
+            <Route
+              path="/Equipment"
+              element={
+                <>
+                  <Sidebar />
+                  <Equipment />
+                </>
+              }
+            />
+            <Route
+              path="/Inbox"
+              element={
+                <>
+                  <Sidebar />
+                  <Inbox />
+                </>
+              }
+            />
+            <Route
+              path="/Invoice"
+              element={
+                <>
+                  <Sidebar />
+                  <Invoice />
+                </>
+              }
+            />
+            <Route
+              path="/Reports"
+              element={
+                <>
+                  <Sidebar />
+                  <Reports />
+                </>
+              }
+            />
+            {/* 404 Route */}
+            <Route path="*" element={<Notfoundd />} />
+          </Routes>
+        </Router>
+      </AppCustomContext.Provider>
+      
     </ThemeProvider>
   );
 }
