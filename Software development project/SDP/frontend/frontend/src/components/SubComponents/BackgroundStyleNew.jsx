@@ -8,9 +8,8 @@ function BackgroundStyleNew({ children, title, subTitle }) {
       <Box
         sx={{
           display: "flex",
-          width: "100%",
-          height: "auto",
-          minHeight: "100vh",
+          width: "100vw",
+          height: "100vh",
           justifyContent: "center",
           alignItems: "flex-start", // Align content vertically at the top
           p: 0,
@@ -21,7 +20,7 @@ function BackgroundStyleNew({ children, title, subTitle }) {
           sx={{
             width: "100%",
             p: 5,
-            height: "auto",
+            height: "100%",
             minHeight: "100vh",
             borderRadius: 3,
             minWidth: "500px",

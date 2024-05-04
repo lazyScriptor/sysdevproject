@@ -143,9 +143,9 @@ function Sidebar() {
             />
             <hr />
             <DashboardCategoryBtn
-              name="Empty"
+              name="Settings"
               icon={faHouse}
-              destination="/Reports"
+              destination="/Settings"
             />
             <DashboardCategoryBtn
               name="Logout"

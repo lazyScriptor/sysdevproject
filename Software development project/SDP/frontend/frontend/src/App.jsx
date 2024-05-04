@@ -9,12 +9,13 @@ import Inbox from "./components/Pages/Inbox.jsx";
 import Invoice from "./components/Pages/Invoice.jsx";
 import Reports from "./components/Pages/Reports.jsx";
 import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
-// import './index.css'
+import './index.css'
 
 import { useState, createContext } from "react";
 
 import { ThemeProvider, createTheme } from "@mui/material";
 import NewLogin from "./components/Pages/NewLogin.jsx";
+import Settings from "./components/Pages/Settings.jsx";
 
 
 export const AppCustomContext = createContext();
@@ -39,16 +40,16 @@ function App() {
         // 900: "#006064",
 
         //Blue shades
-        // 50: "#e3f2fd",
-        // 100: "#bbdefb",
-        // 200: "#90caf9",
-        // 300: "#64b5f6",
-        // 400: "#42a5f5",
-        // 500: "#2196f3",
-        // 600: "#1e88e5",
-        // 700: "#1976d2",
-        // 800: "#1565c0",
-        // 900: "#0d47a1",
+        50: "#e3f2fd",
+        100: "#bbdefb",
+        200: "#90caf9",
+        300: "#64b5f6",
+        400: "#42a5f5",
+        500: "#2196f3",
+        600: "#1e88e5",
+        700: "#1976d2",
+        800: "#1565c0",
+        900: "#0d47a1",
 
         // purpleShades
         // 50: "#f3e5f5",
@@ -63,16 +64,18 @@ function App() {
         // 900: "#4a148c",
 
         //orange shades
-        50: "#FFF3E0",
-        100: "#FFE0B2",
-        200: "#FFCC80",
-        300: "#FFB74D",
-        400: "#FFA726",
-        500: "#FF9800",
-        600: "#FB8C00",
-        700: "#F57C00",
-        800: "#EF6C00",
-        900: "#E65100",
+        // 50: "#FFF3E0",
+        // 100: "#FFE0B2",
+        // 200: "#FFCC80",
+        // 300: "#FFB74D",
+        // 400: "#FFA726",
+        // 500: "#FF9800",
+        // 600: "#FB8C00",
+        // 700: "#F57C00",
+        // 800: "#EF6C00",
+        // 900: "#E65100",
+
+
         error:"#ff0000",
         monochromic: "#00C9B6",
       },
@@ -91,7 +94,7 @@ function App() {
     <ThemeProvider theme={theme}>
      
       <AppCustomContext.Provider
-        value={{ usernamee, setUsernamee, rolee, setRolee }}
+        value={{ usernamee, setUsernamee, rolee, setRolee ,theme }}
       >
         <Router>
           <Routes>
@@ -149,6 +152,15 @@ function App() {
                 <>
                   <Sidebar />
                   <Reports />
+                </>
+              }
+            />
+            <Route
+              path="/Settings"
+              element={
+                <>
+                  <Sidebar />
+                  <Settings />
                 </>
               }
             />
