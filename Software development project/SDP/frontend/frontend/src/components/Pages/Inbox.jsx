@@ -1,16 +1,15 @@
-import React from 'react'
-import NewLogin from './NewLogin'
-import BackgroundStyleNew from '../SubComponents/BackgroundStyleNew'
-
-
+import React from "react";
+import NewLogin from "./NewLogin";
+import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew";
 
 function Inbox() {
   return (
     <>
-  
-     <NewLogin/>
+      <BackgroundStyleNew title={"Inbox"}  subTitle={"This is the inbox page"}>
+        
+      </BackgroundStyleNew>
     </>
-  )
+  );
 }
 
-export default Inbox
+export default Inbox;

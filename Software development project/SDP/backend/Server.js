@@ -43,8 +43,10 @@ app.get("/users", async (req, res) => {
 app.get("/loginValidate",async (req,res)=>{
   try{
     console.log("express app ",req.query.username)
-    const response = await loginValidate(req.body)
-    console.log("This is the response ",res)
+    
+    const response = await loginValidate(req.query)
+    console.log("This is the response ",(response))
+    return(res.json(response))
   }catch(error){
     console.log("Error in loginValidate",error)
   }

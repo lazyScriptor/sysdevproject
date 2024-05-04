@@ -17,10 +17,19 @@ const pool = mysql
   .promise();
 const port = process.env.PORT || 8085;
 
-
-export async function loginValidate(userObject){
-  const [user] = await pool.query("Select username,role,password from users where username=?",userObject.userName)
-  console.log(user)
+export async function loginValidate(userObject) {
+  console.log(userObject.username)
+  const [user] = await pool.query(
+    "SELECT username, role, password FROM users WHERE username = ? AND role = ? ",
+    [userObject.username, userObject.role]
+  );
+  console.log("this is the selected user :",user)
+  if(userObject.password===user[0].password) {
+    console.log("Successful",user)
+    return ["/DashboardMain"]
+  }else{
+    return ["/"]
+  }
 }
 export async function getUsers() {
   const [users] = await pool.query("SELECT * FROM users");
@@ -113,10 +122,9 @@ export async function getCustomerbyAddress2(SAddress2) {
 }
 
 export async function getUserRole(userName) {
-  const [user] = await pool.query(
-    "SELECT role FROM users WHERE username=?",
-    [userName]
-  );
+  const [user] = await pool.query("SELECT role FROM users WHERE username=?", [
+    userName,
+  ]);
   console.log(user);
   return user;
 }
