@@ -18,6 +18,8 @@ import {
   setCustomer,
   getCustomerbyAddress1,
   getCustomerbyAddress2,
+  getUserRole,
+  loginValidate,
 } from "./database.js";
 
 const app = express();
@@ -37,6 +39,16 @@ app.get("/users", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+app.get("/loginValidate",async (req,res)=>{
+  try{
+    console.log("express app ",req.query.username)
+    const response = await loginValidate(req.body)
+    console.log("This is the response ",res)
+  }catch(error){
+    console.log("Error in loginValidate",error)
+  }
+})
 
 app.get("/customers", async (req, res) => {
   try {
@@ -168,7 +180,16 @@ app.get("/getCustomerbyAddress2/:SAddress2", async (req, res) => {
 });
 
 
+app.get('/getUserRole/:userName',async(req,res)=>{
+  try{
+    const userRole = await getUserRole(req.params.userName)
+    console.log("express ",userRole)
+    return res.json(userRole)
+    
+  }catch{
 
+  }
+})
 
 app.delete("/deleteCustomers/:customerId", async (req, res) => {
   try {

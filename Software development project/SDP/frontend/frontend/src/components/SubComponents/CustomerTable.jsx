@@ -361,7 +361,7 @@ export default function CustomerTable() {
                       sx={{}}
                       id="standard-search"
                       variant="standard"
-                      label="Search by ID"
+                      label="Search by Address2"
                       type="search"
                       size="small"
                       onChange={(e) => SetSAddress2(e.target.value)}

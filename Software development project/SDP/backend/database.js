@@ -17,6 +17,11 @@ const pool = mysql
   .promise();
 const port = process.env.PORT || 8085;
 
+
+export async function loginValidate(userObject){
+  const [user] = await pool.query("Select username,role,password from users where username=?",userObject.userName)
+  console.log(user)
+}
 export async function getUsers() {
   const [users] = await pool.query("SELECT * FROM users");
   console.log(users);
@@ -105,6 +110,15 @@ export async function getCustomerbyAddress2(SAddress2) {
   );
   console.log(customers);
   return customers;
+}
+
+export async function getUserRole(userName) {
+  const [user] = await pool.query(
+    "SELECT role FROM users WHERE username=?",
+    [userName]
+  );
+  console.log(user);
+  return user;
 }
 
 export async function deleteCustomer(id) {

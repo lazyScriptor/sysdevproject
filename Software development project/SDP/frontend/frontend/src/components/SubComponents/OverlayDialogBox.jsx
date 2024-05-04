@@ -3,10 +3,10 @@ import Dialog from "@mui/material/Dialog";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { useContext } from "react";
-import {PopupContext} from "../../Contexts/Contexts";
+import { PopupContext } from "../../Contexts/Contexts";
 import NewCustomerForm from "../Pages/NewCustomerForm";
 
-export default function OverlayDialogBox({children}) {
+export default function OverlayDialogBox({ children }) {
   const { boolvalue, setBoolvalue, userData, setUserData } =
     useContext(PopupContext);
   const theme = useTheme();
@@ -19,14 +19,12 @@ export default function OverlayDialogBox({children}) {
   return (
     <>
       <Dialog
-     maxWidth="xl"
-     
-      sx={{}}
+        maxWidth="xl"
+        sx={{}}
         fullScreen={fullScreen}
         open={boolvalue}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
-        
       >
         {children}
       </Dialog>

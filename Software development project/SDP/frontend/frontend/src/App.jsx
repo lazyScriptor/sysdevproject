@@ -72,7 +72,7 @@ function App() {
         // 700: "#F57C00",
         // 800: "#EF6C00",
         // 900: "#E65100",
-
+        error:"#ff0000",
         monochromic: "#00C9B6",
       },
       secondary: {
