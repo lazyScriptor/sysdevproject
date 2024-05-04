@@ -23,9 +23,10 @@ function Invoice() {
           backgroundColor: "white",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
+          justifyContent:"space-evenly",
           Width: "100%",
           minHeight: "100vh",
+          border:"solid 2px green"
         }}
       >
         {/* Row1 */}
@@ -88,11 +89,10 @@ function Invoice() {
 
         {/* Row2 */}
         <Box
-          minHeight={500}
           sx={{
             display: "flex",
             width: "100%",
-            minheight: "30%",
+            minheight: "40%",
           }}
         >
           {/*Row2 Leftmost box */}
@@ -248,7 +248,7 @@ function Invoice() {
               }}
             >
               <Box sx={{ width: "90%"}}>
-                <Typography variant="h5" gutterBottom>
+                <Typography sx={{textAlign:"center"}} variant="h5" gutterBottom>
                   Add / Remove / Handover
                 </Typography>
                 <Typography
@@ -334,22 +334,19 @@ function Invoice() {
                 p: 3,
                 borderRadius: 3,
                 height: "30%",
+                
               }}
             >
-              <Box sx={{width:"100%"}}>
+              <Box sx={{width:"100%",display:"flex",flexDirection:"column",justifyContent:"space-evenly"}}>
                 <Typography sx={{textAlign:"center"}}variant="h5" gutterBottom>
                   Handover Id Card
                 </Typography>
                 <Box sx={{width:"100%",display:"flex",justifyContent:"space-evenly"}}>
+                  <FormLabel sx={{pt:1}}>Hand over</FormLabel>
                   <Button>
                     Add
                   </Button>
-                  <Button>
-                    Remove
-                  </Button>
-                  <Button>
-                    Handover
-                  </Button>
+                  <Checkbox disabled checked sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}/>
                 </Box>
               </Box>
               
