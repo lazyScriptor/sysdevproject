@@ -122,9 +122,7 @@ export async function getCustomerbyAddress2(SAddress2) {
 }
 
 export async function getUserRole(userName) {
-  const [user] = await pool.query("SELECT role FROM users WHERE username=?", [
-    userName,
-  ]);
+  const [user] = await pool.query(`SELECT role FROM users WHERE username=?`, [userName]);
   console.log(user);
   return user;
 }

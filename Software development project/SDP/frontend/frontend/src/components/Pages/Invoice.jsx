@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faUpload } from "@fortawesome/free-solid-svg-icons";
 import Checkbox from "@mui/material/Checkbox";
 import CustomerTable from "../SubComponents/CustomerTable.jsx";
-import InvoiceDataGrid from "../SubComponents/InvoiceDataGrid.jsx";
+
 
 function Invoice() {
   return (
@@ -384,7 +384,7 @@ function Invoice() {
               width: "60%",
             }}
           >
-           <InvoiceDataGrid/>
+          
           </Box>
           {/*Row3 rightmost box */}
           <Box
@@ -395,7 +395,7 @@ function Invoice() {
               width: "25%",
             }}
           >
-           <InvoiceDataGrid/>
+    
           </Box>
         </Box>
       </Box>
