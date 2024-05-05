@@ -247,10 +247,10 @@ function NewCustomerForm() {
   const handleCreate = async () => {
     try {
       await axios.post("http://localhost:8085/createCustomer", {
-        nic,
-        phoneNumber,
         fname,
         lname,
+        nic,
+        phoneNumber,
         address1,
         address2,
       });

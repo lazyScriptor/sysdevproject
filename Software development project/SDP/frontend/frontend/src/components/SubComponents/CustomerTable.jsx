@@ -97,9 +97,7 @@ export default function CustomerTable() {
       console.log("handleSearch Id error");
     }
   };
-  const handleSearchPhoneNumber = async (SPhoneNumber) => {
-    //API variable is phoneNumber thats why this convertion has done
-    const phoneNumber = SPhoneNumber;
+  const handleSearchPhoneNumber = async (phoneNumber) => {
     try {
       await axios
         .get(`http://localhost:8085/getCustomerbyPhoneNumber/${phoneNumber}`)

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import "../Stylings/rootstyles.css";
 import NewCustomerForm from "./NewCustomerForm.jsx";
 import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew.jsx";
@@ -14,9 +14,43 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faUpload } from "@fortawesome/free-solid-svg-icons";
 import Checkbox from "@mui/material/Checkbox";
 import CustomerTable from "../SubComponents/CustomerTable.jsx";
+import { PopupContext } from "../../Contexts/Contexts.jsx";
+import OverlayDialogBox from "../SubComponents/OverlayDialogBox.jsx";
+import axios from "axios";
 
 
 function Invoice() {
+
+  const [phoneNumber,setPhoneNumber]=useState("")
+  const [data,setData]=useState({
+    cus_fname:"",
+    cus_address1:"",
+    cus_address2:"",
+    nic:"",
+    cus_phone_number:""
+  });
+  console.log(data.cus_fname)
+
+
+  const { boolvalue, setBoolvalue, userData, setUserData } =
+    useContext(PopupContext);
+
+    const handleSearchPhoneNumber = async (phoneNumber) => {
+      try {
+        await axios
+          .get(`http://localhost:8085/getCustomerbyPhoneNumber/${phoneNumber}`)
+          .then((res) => {
+            console.log(res.data[0])
+            setData(res.data[0]);
+          })
+          
+          
+      } catch (error) {
+        console.log("handleSearch Id error");
+      }
+    };
+  
+
   return (
     <>
       <Box
@@ -160,6 +194,7 @@ function Invoice() {
                   sx={{
                     display: "flex",
                     flexDirection: "row",
+                    alignItems:"center",
                     width: "100%",
                     gap: 2,
                   }}
@@ -167,14 +202,16 @@ function Invoice() {
                   {/* 2nd row middle box right - searchbar and search button only */}
                  
                     <TextField
+                    onChange={(e)=>setPhoneNumber(e.target.value)}
                       sx={{ width: "350px" }}
                       id="outlined-basic"
-                      label="Search with id"
+                      label="Search with phone number or NIC"
                       variant="outlined"
                     />
-                    <Button sx={{borderRadius:"50%"}}><FontAwesomeIcon icon={faSearch}/></Button>
+                    <Button onClick={()=>handleSearchPhoneNumber(phoneNumber)}><FontAwesomeIcon icon={faSearch}/></Button>
+                    <Button variant="outlined" size="small" onClick={()=>{setBoolvalue(!boolvalue)}}>Advance<br/>search</Button>
                   
-                  <Button
+                  <Button 
                     sx={{ color: (theme) => theme.palette.primary.error }}
                   >
                     Clear
@@ -184,25 +221,31 @@ function Invoice() {
                 <Box>
                   <TextField
                     fullWidth
+                    disabled
                     sx={{}}
+                    value={data.cus_fname}
                     id="outlined-basic"
-                    label="Customer Name"
+                    label=""
                     variant="outlined"
                   />
                 </Box>
                 <Box>
                   <TextField
                     fullWidth
+                    disabled
                     sx={{}}
+                    value={`${data.cus_address1}  ${data.cus_address2}`}
                     id="outlined-basic"
-                    label="Address"
+                    label=""
                     variant="outlined"
                   />
                 </Box>
                 <Box sx={{ display: "flex", gap: 4 }}>
                   <TextField
                     sx={{}}
+                    disabled
                     id="outlined-basic"
+                    value={data.nic}
                     label={<FontAwesomeIcon icon={faUpload} />}
                     variant="outlined"
                   />
@@ -212,9 +255,11 @@ function Invoice() {
                 <Box>
                   <TextField
                     fullWidth
+                    disabled
                     sx={{}}
+                    value={data.cus_phone_number}
                     id="outlined-basic"
-                    label="Phone number"
+                    label=""
                     variant="outlined"
                   />
                 </Box>
@@ -399,6 +444,9 @@ function Invoice() {
           </Box>
         </Box>
       </Box>
+      <OverlayDialogBox>
+        <NewCustomerForm/>
+      </OverlayDialogBox>
     </>
   );
 }

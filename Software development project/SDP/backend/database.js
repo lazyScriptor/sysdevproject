@@ -98,8 +98,8 @@ export async function getCustomerbyLastName(LastName) {
 
 export async function getCustomerbyPhoneNumber(phoneNumber) {
   const [customers] = await pool.query(
-    "SELECT * FROM customer WHERE cus_phone_number =?",
-    [phoneNumber]
+    "SELECT * FROM customer WHERE cus_phone_number =? OR nic=?",
+    [phoneNumber,phoneNumber]
   );
   console.log(customers);
   return customers;
@@ -142,7 +142,7 @@ export async function setCustomer(bodydata) {
   try {
     await pool.query(
       "INSERT INTO customer ( cus_fname, cus_lname, nic, cus_phone_number, cus_address1, cus_address2) VALUES(?,?,?,?,?,?)",
-      [nic, phoneNumber, fname, lname, address1, address2]
+      [fname, lname, nic, phoneNumber, address1, address2]
     );
     console.log(`Created customer `);
     return { message: `Created customer` };

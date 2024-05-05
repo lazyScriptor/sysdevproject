@@ -20,7 +20,6 @@ export default function OverlayDialogBox({ children }) {
     <>
       <Dialog
         maxWidth="xl"
-        sx={{}}
         fullScreen={fullScreen}
         open={boolvalue}
         onClose={handleClose}
