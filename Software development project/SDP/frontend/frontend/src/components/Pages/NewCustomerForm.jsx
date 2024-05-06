@@ -29,11 +29,6 @@ function NewCustomerForm() {
   const { boolvalue, setBoolvalue, userData, setUserData } =
     useContext(PopupContext);
 
-    const [editButtonState,setEditButtonState]=useState(true);
-    const [deleteButtonState,setDeleteButtonState]=useState(true);
-    const [saveButtonState,setSaveButtonState]=useState(true);
-    const [createButtonState,setCreateButtonState]=useState(true)
-
   const [data, setData] = useState([]);
   const [newId, setNewId] = useState("");
   const [newNic, setNewNic] = useState("");

@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { SnackbarProvider } from "notistack"; // Import SnackbarProvider
 import ContextProvider from "./Contexts/PopupContextProvider.jsx";
+import InvoiceContextProvider from "./Contexts/InvoiceContextProvider.jsx";
 
 // import { createBrowserRouter, RouterProvider } from "react-router-dom";
 // import Admin from "./components/Dashboards/Admin.jsx";
@@ -69,10 +70,12 @@ import ContextProvider from "./Contexts/PopupContextProvider.jsx";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ContextProvider>
+      <InvoiceContextProvider>
       <SnackbarProvider maxSnack={3}>
         {/* <RouterProvider router={router} /> */}
         <App />
       </SnackbarProvider>
+      </InvoiceContextProvider>
     </ContextProvider>
   </React.StrictMode>
 );

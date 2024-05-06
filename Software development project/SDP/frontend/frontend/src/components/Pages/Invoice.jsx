@@ -14,21 +14,36 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faUpload } from "@fortawesome/free-solid-svg-icons";
 import Checkbox from "@mui/material/Checkbox";
 import CustomerTable from "../SubComponents/CustomerTable.jsx";
-import { PopupContext } from "../../Contexts/Contexts.jsx";
+import { InvoiceContext, PopupContext } from "../../Contexts/Contexts.jsx";
 import OverlayDialogBox from "../SubComponents/OverlayDialogBox.jsx";
 import axios from "axios";
+import InvoiceRightSide from "../SubComponents/InvoiceRightSide.jsx";
 
 
 function Invoice() {
-
+  const {equipmentObject,setEquipmentObject}=useContext(InvoiceContext);
   const [phoneNumber,setPhoneNumber]=useState("")
+  const [clearData,setClearData]=useState({
+    cus_fname:"",
+    cus_address1:"",
+    cus_address2:"",
+    nic:"",
+    cus_phone_number:"",
+    Cus:""
+  });
   const [data,setData]=useState({
     cus_fname:"",
     cus_address1:"",
     cus_address2:"",
     nic:"",
-    cus_phone_number:""
+    cus_phone_number:"",
+    Cus:""
   });
+  const [newObject,setNewObject]=useState({bata:{
+    ...data,
+    eqdata : equipmentObject.eq_name || "",
+  }});
+  
   console.log(data.cus_fname)
 
 
@@ -47,6 +62,7 @@ function Invoice() {
           
       } catch (error) {
         console.log("handleSearch Id error");
+        console.log("This is the new Object",newObject.bata)
       }
     };
   
@@ -211,7 +227,7 @@ function Invoice() {
                     <Button onClick={()=>handleSearchPhoneNumber(phoneNumber)}><FontAwesomeIcon icon={faSearch}/></Button>
                     <Button variant="outlined" size="small" onClick={()=>{setBoolvalue(!boolvalue)}}>Advance<br/>search</Button>
                   
-                  <Button 
+                  <Button onClick={()=>{setData(clearData)}}
                     sx={{ color: (theme) => theme.palette.primary.error }}
                   >
                     Clear
@@ -282,121 +298,7 @@ function Invoice() {
               width: "25%",
             }}
           >
-            <Paper
-              elevation={3}
-              sx={{
-                width: "95%",
-                display: "flex",
-                justifyContent: "center",
-                p: 1,
-                borderRadius: 3,
-                height: "70%",
-              }}
-            >
-              <Box sx={{ width: "90%"}}>
-                <Typography sx={{textAlign:"center"}} variant="h5" gutterBottom>
-                  Add / Remove / Handover
-                </Typography>
-                <Typography
-                  sx={{ textAlign: "center" }}
-                  variant="h5"
-                  gutterBottom
-                >
-                  Equipment
-                </Typography>
-                <Box gap={2} sx={{ display:"flex",flexDirection:"column",height:"auto"}}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      width: "100%",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        width: "40%",
-                        alignItems: "center",
-                      }}
-                    >
-                      <FormLabel htmlFor="my-input">Equipment Id</FormLabel>
-                    </Box>
-                    <Box sx={{ width: "60%" }}>
-                      <TextField
-                        sx={{ width: "100%" }}
-                        id="outlined-basic"
-                        label="Search machine id"
-                        variant="outlined"
-                      />
-                    </Box>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      width: "100%",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        width: "40%",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <FormLabel htmlFor="my-input">Equipment Name</FormLabel>
-                    </Box>
-                    <Box sx={{ width: "60%" }}>
-                      <TextField
-                        sx={{ width: "100%" }}
-                        id="outlined-basic"
-                        variant="outlined"
-                      />
-                    </Box>
-                  </Box>
-                </Box>
-
-
-
-                <Box sx={{display:"flex",justifyContent:"space-between",p:3}}>
-                  <Button>
-                    Add
-                  </Button>
-                  <Button>
-                    Remove
-                  </Button>
-                  <Button>
-                    Handover
-                  </Button>
-                </Box>
-              </Box>
-            </Paper>
-            <Paper
-              elevation={3}
-              sx={{
-                width: "95%",
-                display: "flex",
-                justifyContent: "center",
-                p: 3,
-                borderRadius: 3,
-                height: "30%",
-                
-              }}
-            >
-              <Box sx={{width:"100%",display:"flex",flexDirection:"column",justifyContent:"space-evenly"}}>
-                <Typography sx={{textAlign:"center"}}variant="h5" gutterBottom>
-                  Handover Id Card
-                </Typography>
-                <Box sx={{width:"100%",display:"flex",justifyContent:"space-evenly"}}>
-                  <FormLabel sx={{pt:1}}>Hand over</FormLabel>
-                  <Button>
-                    Add
-                  </Button>
-                  <Checkbox disabled checked sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}/>
-                </Box>
-              </Box>
-              
-            </Paper>
+            <InvoiceRightSide/>
           </Box>
         </Box>
 
@@ -429,7 +331,6 @@ function Invoice() {
               width: "60%",
             }}
           >
-          
           </Box>
           {/*Row3 rightmost box */}
           <Box
