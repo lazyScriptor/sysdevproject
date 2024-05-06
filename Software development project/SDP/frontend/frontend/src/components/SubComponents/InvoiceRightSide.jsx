@@ -9,13 +9,17 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { useContext, useState } from "react";
-import { InvoiceContext } from "../../Contexts/Contexts";
+import { AlertComponentContext, InvoiceContext } from "../../Contexts/Contexts";
+import MousePopOver from "./AlertComponents/MousePopOver";
 
 function InvoiceRightSide() {
+  const { snackHandleClickVariant } = useContext(AlertComponentContext);
+  const { equipmentObject, setEquipmentObject ,checkState,setCheckState} = useContext(InvoiceContext);
 
-const {equipmentObject,setEquipmentObject}=useContext(InvoiceContext);
-  const [eqObject, setEqObject] = useState({});
-  const [eq, setEq] = useState('');
+  const [array, setArray] = useState({});
+  const [eqObject, setEqObject] = useState({});//local array of equipment
+  const [eq, setEq] = useState("");//eq name
+ 
 
   const handleSearch = async (value) => {
     console.log("value frontend", value);
@@ -23,144 +27,164 @@ const {equipmentObject,setEquipmentObject}=useContext(InvoiceContext);
       const res = await axios.get(
         `http://localhost:8085/getEquipmentbyID/${value}`
       );
-      if(res.data[0]==undefined)setEq("")
-      setEqObject(res.data[0]);
+      if (res.data[0] == undefined) setEq(""); //if the retrieved value is undefined, set the eq name phrase to ""
+      setEqObject(res.data[0]); //assign data to the local variable
       console.log("After retrieval", res.data[0]);
-      setEq(res.data[0].eq_name);
-      setEquipmentObject(res.data[0])
+      setEq(res.data[0].eq_name); //just to display in the field
+      setEquipmentObject(res.data[0]); //pass retrieved data directly to the CONTEXT object
+
+      snackHandleClickVariant(
+        `Equipment found :${res.data[0].eq_name}`,
+        "success"
+      );
     } catch (error) {
       console.error("error occurred while searching by ID:", error);
     }
   };
 
+
+  const handleAdd = () => {
+    setCheckState(!checkState);
+    // setEquipmentObject({
+    //   ...equipmentObject,
+    //   idData: checkState,
+    // });
+    console.log(checkState)
+  };
+
+  const handleProceedtoPayment =()=>{
+
+  }
+ 
+
   return (
     <>
-      
-        <Paper
-          elevation={3}
-          sx={{
-            width: "95%",
-            display: "flex",
-            justifyContent: "center",
-            p: 1,
-            borderRadius: 3,
-            height: "70%",
-          }}
-        >
-          <Box sx={{ width: "90%" }}>
-            <Typography sx={{ textAlign: "center" }} variant="h5" gutterBottom>
-              Add / Remove / Handover
-            </Typography>
-            <Typography sx={{ textAlign: "center" }} variant="h5" gutterBottom>
-              Equipment
-            </Typography>
+      <Paper
+        elevation={3}
+        sx={{
+          width: "95%",
+          display: "flex",
+          justifyContent: "center",
+          p: 1,
+          borderRadius: 3,
+          height: "70%",
+        }}
+      >
+        <Box sx={{ width: "90%" }}>
+          <Typography sx={{ textAlign: "center" }} variant="h5" gutterBottom>
+            Add / Remove / Handover
+          </Typography>
+          <Typography sx={{ textAlign: "center" }} variant="h5" gutterBottom>
+            Equipment
+          </Typography>
+          <Box
+            gap={2}
+            sx={{ display: "flex", flexDirection: "column", height: "auto" }}
+          >
             <Box
-              gap={2}
-              sx={{ display: "flex", flexDirection: "column", height: "auto" }}
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                width: "100%",
+              }}
             >
               <Box
                 sx={{
                   display: "flex",
-                  flexDirection: "row",
-                  width: "100%",
+                  width: "40%",
+                  alignItems: "center",
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    width: "40%",
-                    alignItems: "center",
-                  }}
-                >
-                  <FormLabel htmlFor="my-input">Equipment Id</FormLabel>
-                </Box>
-                <Box sx={{ width: "60%" }}>
-                  <TextField
-                    onChange={(e) => handleSearch(e.target.value)}
-                    sx={{ width: "100%" }}
-                    id="outlined-basic"
-                    label="Search machine id"
-                    variant="outlined"
-                  />
-                </Box>
+                <FormLabel htmlFor="my-input">Equipment Id</FormLabel>
               </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  width: "100%",
-                }}
-              >
-                <Box
-                  sx={{
-                    width: "40%",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <FormLabel htmlFor="my-input">Equipment Name</FormLabel>
-                </Box>
-                <Box sx={{ width: "60%" }}>
-                  <TextField
-                    disabled
-                    sx={{ width: "100%" }}
-                    id="outlined-basic"
-                    variant="outlined"
-                    value={eq}
-                  />
-                </Box>
+              <Box sx={{ width: "60%" }}>
+                <TextField
+                  onChange={(e) => handleSearch(e.target.value)}
+                  sx={{ width: "100%" }}
+                  id="outlined-basic"
+                  label="Search machine id"
+                  variant="outlined"
+                />
               </Box>
             </Box>
-
             <Box
-              sx={{ display: "flex", justifyContent: "space-between", p: 3 }}
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                width: "100%",
+              }}
             >
-              <Button>Add</Button>
-              <Button>Remove</Button>
-              <Button>Handover</Button>
+              <Box
+                sx={{
+                  width: "40%",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <FormLabel htmlFor="my-input">Equipment Name</FormLabel>
+              </Box>
+              <Box sx={{ width: "60%" }}>
+                <TextField
+                  disabled
+                  sx={{ width: "100%" }}
+                  id="outlined-basic"
+                  variant="outlined"
+                  value={eq}
+                />
+              </Box>
             </Box>
           </Box>
-        </Paper>
-        <Paper
-          elevation={3}
+
+          <Box sx={{ display: "flex", justifyContent: "space-between", p: 3 }}>
+            <Button>Add</Button>
+            <Button>Remove</Button>
+            <Button>Handover</Button>
+          </Box>
+        </Box>
+      </Paper>
+      <Paper
+        elevation={3}
+        sx={{
+          width: "95%",
+          display: "flex",
+          justifyContent: "center",
+          p: 3,
+          borderRadius: 3,
+          height: "30%",
+        }}
+      >
+        <Box
           sx={{
-            width: "95%",
+            width: "100%",
             display: "flex",
-            justifyContent: "center",
-            p: 3,
-            borderRadius: 3,
-            height: "30%",
+            flexDirection: "column",
+            justifyContent: "space-evenly",
           }}
         >
+          <Typography sx={{ textAlign: "center" }} variant="h5" gutterBottom>
+            Id card Status
+          </Typography>
           <Box
             sx={{
               width: "100%",
               display: "flex",
-              flexDirection: "column",
               justifyContent: "space-evenly",
+              alignItems: "center",
             }}
           >
-            <Typography sx={{ textAlign: "center" }} variant="h5" gutterBottom>
-              Handover Id Card
-            </Typography>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "space-evenly",
-              }}
-            >
-              <FormLabel sx={{ pt: 1 }}>Hand over</FormLabel>
-              <Button>Add</Button>
-              <Checkbox
-                disabled
-                checked
-                sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
-              />
-            </Box>
+            <MousePopOver
+              message={"HandOver status"}
+              popOverContent={`Press Add button to select`}
+            />
+            <Button onClick={handleAdd}>Add</Button>
+            <Checkbox
+            
+              checked={checkState}
+              sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+            />
           </Box>
-        </Paper>
-     
+        </Box>
+      </Paper>
     </>
   );
 }

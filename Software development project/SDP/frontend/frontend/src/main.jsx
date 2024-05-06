@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import { SnackbarProvider } from "notistack"; // Import SnackbarProvider
 import ContextProvider from "./Contexts/PopupContextProvider.jsx";
 import InvoiceContextProvider from "./Contexts/InvoiceContextProvider.jsx";
+import AlertComponentsContextProvider from "./Contexts/AlertComponentsContextProvider.jsx";
 
 // import { createBrowserRouter, RouterProvider } from "react-router-dom";
 // import Admin from "./components/Dashboards/Admin.jsx";
@@ -70,12 +71,14 @@ import InvoiceContextProvider from "./Contexts/InvoiceContextProvider.jsx";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ContextProvider>
-      <InvoiceContextProvider>
-      <SnackbarProvider maxSnack={3}>
-        {/* <RouterProvider router={router} /> */}
-        <App />
-      </SnackbarProvider>
-      </InvoiceContextProvider>
+      <AlertComponentsContextProvider>
+        <InvoiceContextProvider>
+          <SnackbarProvider maxSnack={3}>
+            {/* <RouterProvider router={router} /> */}
+            <App />
+          </SnackbarProvider>
+        </InvoiceContextProvider>
+      </AlertComponentsContextProvider>
     </ContextProvider>
   </React.StrictMode>
 );

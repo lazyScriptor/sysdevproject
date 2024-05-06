@@ -60,20 +60,20 @@ function NewCustomerForm() {
   };
   //snackbar content is over
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:8085/customers");
-        setData(response.data);
-        console.log("data loaded", response.data);
-        console.log("Context data :", userData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get("http://localhost:8085/customers");
+  //       setData(response.data);
+  //       console.log("data loaded", response.data);
+  //       console.log("Context data :", userData);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   //in the context provider i have created an object called userData and assigned null values
   //then in the customer table ,when the edit button pressed
@@ -261,7 +261,7 @@ function NewCustomerForm() {
     <>
       <Box
         sx={{
-          border:"solid 1px ",
+          
           display: "flex",
           width: "100%",
           height: "auto",

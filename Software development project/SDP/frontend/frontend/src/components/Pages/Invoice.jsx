@@ -18,54 +18,59 @@ import { InvoiceContext, PopupContext } from "../../Contexts/Contexts.jsx";
 import OverlayDialogBox from "../SubComponents/OverlayDialogBox.jsx";
 import axios from "axios";
 import InvoiceRightSide from "../SubComponents/InvoiceRightSide.jsx";
-
+import InvoiceTable from "../SubComponents/InvoiceTable.jsx";
 
 function Invoice() {
-  const {equipmentObject,setEquipmentObject}=useContext(InvoiceContext);
-  const [phoneNumber,setPhoneNumber]=useState("")
-  const [clearData,setClearData]=useState({
-    cus_fname:"",
-    cus_address1:"",
-    cus_address2:"",
-    nic:"",
-    cus_phone_number:"",
-    Cus:""
+  const { equipmentObject, setEquipmentObject, checkState } =
+    useContext(InvoiceContext);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [clearData, setClearData] = useState({
+    cus_fname: "",
+    cus_address1: "",
+    cus_address2: "",
+    nic: "",
+    cus_phone_number: "",
+    Cus: "",
   });
-  const [data,setData]=useState({
-    cus_fname:"",
-    cus_address1:"",
-    cus_address2:"",
-    nic:"",
-    cus_phone_number:"",
-    Cus:""
+  const [data, setData] = useState({
+    cus_fname: "",
+    cus_address1: "",
+    cus_address2: "",
+    nic: "",
+    cus_phone_number: "",
+    Cus: "",
   });
-  const [newObject,setNewObject]=useState({bata:{
-    ...data,
-    eqdata : equipmentObject.eq_name || "",
-  }});
-  
-  console.log(data.cus_fname)
+  const [newObject, setNewObject] = useState({
+    bata: {
+      ...data,
+      eqdata: equipmentObject.eq_name || "",
+    },
+  });
 
+  const handleProceedPayment = () => {
+    setEquipmentObject({
+      ...equipmentObject,
+      ...data,
+      idStat: checkState,
+    });
+    console.log(equipmentObject);
+  };
 
   const { boolvalue, setBoolvalue, userData, setUserData } =
     useContext(PopupContext);
 
-    const handleSearchPhoneNumber = async (phoneNumber) => {
-      try {
-        await axios
-          .get(`http://localhost:8085/getCustomerbyPhoneNumber/${phoneNumber}`)
-          .then((res) => {
-            console.log(res.data[0])
-            setData(res.data[0]);
-          })
-          
-          
-      } catch (error) {
-        console.log("handleSearch Id error");
-        console.log("This is the new Object",newObject.bata)
-      }
-    };
-  
+  const handleSearchPhoneNumber = async (phoneNumber) => {
+    try {
+      await axios
+        .get(`http://localhost:8085/getCustomerbyPhoneNumber/${phoneNumber}`)
+        .then((res) => {
+          console.log(res.data[0]);
+          setData(res.data[0]);
+        });
+    } catch (error) {
+      console.log("handleSearch Id error", error);
+    }
+  };
 
   return (
     <>
@@ -74,10 +79,9 @@ function Invoice() {
           backgroundColor: "white",
           display: "flex",
           flexDirection: "column",
-          justifyContent:"space-evenly",
+          justifyContent: "space-evenly",
           Width: "100%",
           minHeight: "100vh",
-          border:"solid 2px green"
         }}
       >
         {/* Row1 */}
@@ -122,13 +126,12 @@ function Invoice() {
           <Box
             sx={{
               display: "flex",
-              justifyContent:"space-evenly",
+              justifyContent: "space-evenly",
               alignItems: "center",
               width: "25%",
               gap: 2,
             }}
           >
-            
             <Button variant="contained">Create new</Button>
             {/* Invoice text box */}
             <Box>
@@ -210,24 +213,39 @@ function Invoice() {
                   sx={{
                     display: "flex",
                     flexDirection: "row",
-                    alignItems:"center",
+                    alignItems: "center",
                     width: "100%",
                     gap: 2,
                   }}
                 >
                   {/* 2nd row middle box right - searchbar and search button only */}
-                 
-                    <TextField
-                    onChange={(e)=>setPhoneNumber(e.target.value)}
-                      sx={{ width: "350px" }}
-                      id="outlined-basic"
-                      label="Search with phone number or NIC"
-                      variant="outlined"
-                    />
-                    <Button onClick={()=>handleSearchPhoneNumber(phoneNumber)}><FontAwesomeIcon icon={faSearch}/></Button>
-                    <Button variant="outlined" size="small" onClick={()=>{setBoolvalue(!boolvalue)}}>Advance<br/>search</Button>
-                  
-                  <Button onClick={()=>{setData(clearData)}}
+
+                  <TextField
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    sx={{ width: "350px" }}
+                    id="outlined-basic"
+                    label="Search with phone number or NIC"
+                    variant="outlined"
+                  />
+                  <Button onClick={() => handleSearchPhoneNumber(phoneNumber)}>
+                    <FontAwesomeIcon icon={faSearch} />
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => {
+                      setBoolvalue(!boolvalue);
+                    }}
+                  >
+                    Advance
+                    <br />
+                    search
+                  </Button>
+
+                  <Button
+                    onClick={() => {
+                      setData(clearData);
+                    }}
                     sx={{ color: (theme) => theme.palette.primary.error }}
                   >
                     Clear
@@ -265,8 +283,10 @@ function Invoice() {
                     label={<FontAwesomeIcon icon={faUpload} />}
                     variant="outlined"
                   />
-                  <Checkbox defaultChecked /><FormLabel sx={{pt:2}}>Physical</FormLabel>
-                  <Checkbox /><FormLabel sx={{pt:2}}>Digital</FormLabel>
+                  <Checkbox defaultChecked />
+                  <FormLabel sx={{ pt: 2 }}>Physical</FormLabel>
+                  <Checkbox />
+                  <FormLabel sx={{ pt: 2 }}>Digital</FormLabel>
                 </Box>
                 <Box>
                   <TextField
@@ -280,7 +300,7 @@ function Invoice() {
                   />
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <Button variant="contained">
+                  <Button variant="contained" onClick={handleProceedPayment}>
                     Proceed to <br />
                     payment
                   </Button>
@@ -298,7 +318,7 @@ function Invoice() {
               width: "25%",
             }}
           >
-            <InvoiceRightSide/>
+            <InvoiceRightSide />
           </Box>
         </Box>
 
@@ -320,7 +340,7 @@ function Invoice() {
               width: "15%",
             }}
           >
-           Row 3 coloumn 1
+            Row 3 coloumn 1
           </Box>
           {/*Row3 middle box */}
           <Box
@@ -329,8 +349,10 @@ function Invoice() {
               justifyContent: "center",
               alignItems: "center",
               width: "60%",
+              p: 3,
             }}
           >
+            <InvoiceTable />
           </Box>
           {/*Row3 rightmost box */}
           <Box
@@ -340,13 +362,11 @@ function Invoice() {
               alignItems: "center",
               width: "25%",
             }}
-          >
-    
-          </Box>
+          ></Box>
         </Box>
       </Box>
       <OverlayDialogBox>
-        <NewCustomerForm/>
+        <NewCustomerForm />
       </OverlayDialogBox>
     </>
   );
