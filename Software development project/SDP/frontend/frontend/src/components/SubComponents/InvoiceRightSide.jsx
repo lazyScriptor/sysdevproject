@@ -5,6 +5,8 @@ import {
   FormLabel,
   Checkbox,
   TextField,
+  Chip,
+  Stack,
   Button,
 } from "@mui/material";
 import axios from "axios";
@@ -14,12 +16,20 @@ import MousePopOver from "./AlertComponents/MousePopOver";
 
 function InvoiceRightSide() {
   const { snackHandleClickVariant } = useContext(AlertComponentContext);
-  const { equipmentObject, setEquipmentObject ,checkState,setCheckState} = useContext(InvoiceContext);
+  const {
+    equipmentObject,
+    setEquipmentObject,
+    checkState,
+    setCheckState,
+    eqArray,
+    setEqArray,
+  } = useContext(InvoiceContext);
 
   const [array, setArray] = useState({});
-  const [eqObject, setEqObject] = useState({});//local array of equipment
-  const [eq, setEq] = useState("");//eq name
- 
+  const [eqObject, setEqObject] = useState({}); //local array of equipment
+  const [eq, setEq] = useState(""); //eq name
+  const [EqIdValue, setEqIdValue] = useState();
+  const [numChips, setNumChips] = useState(0); // Initial number of chips
 
   const handleSearch = async (value) => {
     console.log("value frontend", value);
@@ -42,20 +52,21 @@ function InvoiceRightSide() {
     }
   };
 
-
-  const handleAdd = () => {
+  const handleIdAdd = () => {
     setCheckState(!checkState);
     // setEquipmentObject({
     //   ...equipmentObject,
     //   idData: checkState,
     // });
-    console.log(checkState)
+    console.log(checkState);
   };
 
-  const handleProceedtoPayment =()=>{
-
-  }
- 
+  const handleAddEquipment = (value) => {
+    setEqArray((prevState) => [...prevState, value]);
+    setNumChips((prevNumChips) => prevNumChips + 1);
+    const lastElement = eqArray[eqArray.length - 1];
+    console.log("val", eqArray, "This is a ", lastElement);
+  };
 
   return (
     <>
@@ -99,7 +110,10 @@ function InvoiceRightSide() {
               </Box>
               <Box sx={{ width: "60%" }}>
                 <TextField
-                  onChange={(e) => handleSearch(e.target.value)}
+                  onChange={(e) => {
+                    handleSearch(e.target.value);
+                    setEqIdValue(e.target.value);
+                  }}
                   sx={{ width: "100%" }}
                   id="outlined-basic"
                   label="Search machine id"
@@ -136,10 +150,20 @@ function InvoiceRightSide() {
           </Box>
 
           <Box sx={{ display: "flex", justifyContent: "space-between", p: 3 }}>
-            <Button>Add</Button>
+            <Button onClick={() => handleAddEquipment(EqIdValue)}>Add</Button>
             <Button>Remove</Button>
             <Button>Handover</Button>
           </Box>
+          <Stack direction="row" spacing={1} >
+            {/* Render the number of chips based on the state */}
+            {Array.from({ length: numChips }, (_, index) => (
+              <Chip
+                key={index}
+                label={`${eqArray[eqArray.length - 1 - index]}  `}
+                color={"primary"}variant="outlined" 
+              />
+            ))}
+          </Stack>
         </Box>
       </Paper>
       <Paper
@@ -176,9 +200,8 @@ function InvoiceRightSide() {
               message={"HandOver status"}
               popOverContent={`Press Add button to select`}
             />
-            <Button onClick={handleAdd}>Add</Button>
+            <Button onClick={handleIdAdd}>Add</Button>
             <Checkbox
-            
               checked={checkState}
               sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
             />

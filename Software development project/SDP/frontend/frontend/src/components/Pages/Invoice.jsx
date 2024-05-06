@@ -21,7 +21,8 @@ import InvoiceRightSide from "../SubComponents/InvoiceRightSide.jsx";
 import InvoiceTable from "../SubComponents/InvoiceTable.jsx";
 
 function Invoice() {
-  const { equipmentObject, setEquipmentObject, checkState } =
+  
+  const { equipmentObject, setEquipmentObject, checkState ,eqArray} =
     useContext(InvoiceContext);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [clearData, setClearData] = useState({
@@ -48,10 +49,12 @@ function Invoice() {
   });
 
   const handleProceedPayment = () => {
+   
     setEquipmentObject({
       ...equipmentObject,
       ...data,
       idStat: checkState,
+      eq_id:eqArray
     });
     console.log(equipmentObject);
   };
