@@ -21,8 +21,7 @@ import InvoiceRightSide from "../SubComponents/InvoiceRightSide.jsx";
 import InvoiceTable from "../SubComponents/InvoiceTable.jsx";
 
 function Invoice() {
-  
-  const { equipmentObject, setEquipmentObject, checkState ,eqArray} =
+  const { equipmentObject, setEquipmentObject, checkState, eqArray } =
     useContext(InvoiceContext);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [clearData, setClearData] = useState({
@@ -41,22 +40,35 @@ function Invoice() {
     cus_phone_number: "",
     Cus: "",
   });
-  const [newObject, setNewObject] = useState({
-    bata: {
-      ...data,
-      eqdata: equipmentObject.eq_name || "",
-    },
-  });
+  // const [newObject, setNewObject] = useState({
+  //   bata: {
+  //     ...data,
+  //     eqdata: equipmentObject.eq_name || "",
+  //   },
+  // });
 
   const handleProceedPayment = () => {
-   
-    setEquipmentObject({
+    setEquipmentObject((equipmentObject) => {
+      ({
+        ...equipmentObject,
+        eq_id:eqArray,
+        ...data,
+        
+      });
+      // console.log(...equipmentObject, ...data);
+    });
+
+    // setEquipmentObject({
+    //   ...equipmentObject,
+    //   ...data,
+    //   eq_id: eqArray,
+    // });
+    console.log({
       ...equipmentObject,
       ...data,
-      idStat: checkState,
-      eq_id:eqArray
+
+      eq_id: eqArray,
     });
-    console.log(equipmentObject);
   };
 
   const { boolvalue, setBoolvalue, userData, setUserData } =

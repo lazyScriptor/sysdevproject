@@ -41,7 +41,7 @@ function InvoiceRightSide() {
       setEqObject(res.data[0]); //assign data to the local variable
       console.log("After retrieval", res.data[0]);
       setEq(res.data[0].eq_name); //just to display in the field
-      setEquipmentObject(res.data[0]); //pass retrieved data directly to the CONTEXT object
+      // setEquipmentObject(res.data[0]); //pass retrieved data directly to the CONTEXT object
 
       snackHandleClickVariant(
         `Equipment found :${res.data[0].eq_name}`,
@@ -53,19 +53,39 @@ function InvoiceRightSide() {
   };
 
   const handleIdAdd = () => {
-    setCheckState(!checkState);
+    console.log("prev checkstate", checkState);
+    setCheckState((checkState) => {
+      // console.log(!checkState)
+      checkState = !checkState;
+      setEquipmentObject((equipmentObject) => {
+        return { ...equipmentObject, idData: checkState };
+      });
+      return checkState;
+    });
+    console.log("Afeter checkstat", !checkState);
+
+    //handleAddEquipment description eka wagema methanath EquipmentObject kiyana context eke thyena object ekata
+    //aluthin idData eka add wela,checkState eka change krna parak gane value eka change wela object ekata
+    //append wenawa
+
+    //Me krla thyenne uda widihata SHALLOW copy ekak gannathuwa directly append krala
     // setEquipmentObject({
     //   ...equipmentObject,
     //   idData: checkState,
     // });
-    console.log(checkState);
   };
 
   const handleAddEquipment = (value) => {
-    setEqArray((prevState) => [...prevState, value]);
+    //prevState kiyanne seEqArray eken set wena Array ekata adaala SHALOW copy ekak.Ekiyanne mulinma eka empty string ekak
+    //ita passe me function ekata pass krana value eka ekiyanne aluthin add wena machine ID eka digatma ARRAY ekak widihata
+    //add wenawa.Array ekak widihata dd wenne mama arrow function eken passe Box brackets dala kiyala thyenne
+    //array ekak return kranna kiyala ekai
+    setEqArray((prevState) => {
+      console.log([...prevState, value]); //consolelog the array with the UPDATER function otherwise realtime update won't work
+      return [...prevState, value];
+    });
     setNumChips((prevNumChips) => prevNumChips + 1);
     const lastElement = eqArray[eqArray.length - 1];
-    console.log("val", eqArray, "This is a ", lastElement);
   };
 
   return (
@@ -154,13 +174,14 @@ function InvoiceRightSide() {
             <Button>Remove</Button>
             <Button>Handover</Button>
           </Box>
-          <Stack direction="row" spacing={1} >
+          <Stack direction="row" spacing={1}>
             {/* Render the number of chips based on the state */}
             {Array.from({ length: numChips }, (_, index) => (
               <Chip
                 key={index}
                 label={`${eqArray[eqArray.length - 1 - index]}  `}
-                color={"primary"}variant="outlined" 
+                color={"primary"}
+                variant="outlined"
               />
             ))}
           </Stack>
