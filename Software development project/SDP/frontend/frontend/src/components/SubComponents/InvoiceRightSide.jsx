@@ -76,17 +76,18 @@ function InvoiceRightSide() {
   };
 
   const handleAddEquipment = (value) => {
+    
     //prevState kiyanne seEqArray eken set wena Array ekata adaala SHALOW copy ekak.Ekiyanne mulinma eka empty string ekak
     //ita passe me function ekata pass krana value eka ekiyanne aluthin add wena machine ID eka digatma ARRAY ekak widihata
     //add wenawa.Array ekak widihata dd wenne mama arrow function eken passe Box brackets dala kiyala thyenne
     //array ekak return kranna kiyala ekai
+    
     setEqArray((prevState) => {
       console.log([...prevState, value]); //consolelog the array with the UPDATER function otherwise realtime update won't work
       return [...prevState, value];
     });
     setNumChips((prevNumChips) => prevNumChips + 1);
-    const lastElement = eqArray[eqArray.length - 1];
-  };
+  }
 
   return (
     <>

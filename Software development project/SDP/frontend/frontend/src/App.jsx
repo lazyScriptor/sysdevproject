@@ -17,7 +17,6 @@ import { ThemeProvider, createTheme } from "@mui/material";
 import NewLogin from "./components/Pages/NewLogin.jsx";
 import Settings from "./components/Pages/Settings.jsx";
 
-
 export const AppCustomContext = createContext();
 
 function App() {
@@ -52,31 +51,30 @@ function App() {
         // 900: "#0d47a1",
 
         // purpleShades
-        50: "#f3e5f5",
-        100: "#e1bee7",
-        200: "#ce93d8",
-        300: "#ba68c8",
-        400: "#ab47bc",
-        500: "#9c27b0",
-        600: "#8e24aa",
-        700: "#7b1fa2",
-        800: "#6a1b9a",
-        900: "#4a148c",
+        // 50: "#f3e5f5",
+        // 100: "#e1bee7",
+        // 200: "#ce93d8",
+        // 300: "#ba68c8",
+        // 400: "#ab47bc",
+        // 500: "#9c27b0",
+        // 600: "#8e24aa",
+        // 700: "#7b1fa2",
+        // 800: "#6a1b9a",
+        // 900: "#4a148c",
 
         //orange shades
-        // 50: "#FFF3E0",
-        // 100: "#FFE0B2",
-        // 200: "#FFCC80",
-        // 300: "#FFB74D",
-        // 400: "#FFA726",
-        // 500: "#FF9800",
-        // 600: "#FB8C00",
-        // 700: "#F57C00",
-        // 800: "#EF6C00",
-        // 900: "#E65100",
+        50: "#FFF3E0",
+        100: "#FFE0B2",
+        200: "#FFCC80",
+        300: "#FFB74D",
+        400: "#FFA726",
+        500: "#FF9800",
+        600: "#FB8C00",
+        700: "#F57C00",
+        800: "#EF6C00",
+        900: "#E65100",
 
-
-        error:"#ff0000",
+        error: "#ff0000",
         monochromic: "#00C9B6",
       },
       secondary: {
@@ -92,9 +90,8 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-     
       <AppCustomContext.Provider
-        value={{ usernamee, setUsernamee, rolee, setRolee ,theme }}
+        value={{ usernamee, setUsernamee, rolee, setRolee, theme }}
       >
         <Router>
           <Routes>
@@ -169,7 +166,6 @@ function App() {
           </Routes>
         </Router>
       </AppCustomContext.Provider>
-      
     </ThemeProvider>
   );
 }

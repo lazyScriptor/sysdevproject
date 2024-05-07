@@ -1,39 +1,31 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import * as React from "react";
+import PropTypes from "prop-types";
+import Box from "@mui/material/Box";
+import Collapse from "@mui/material/Collapse";
+import IconButton from "@mui/material/IconButton";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { useContext } from "react";
+import { InvoiceContext } from "../../Contexts/Contexts";
+import { useState } from "react";
 
 function createData(name, calories, fat, carbs, protein, price) {
   return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [
-      {
-        date: '2020-01-05',
-        customerId: '11091700',
-        amount: 3,
-      },
-      {
-        date: '2020-01-02',
-        customerId: 'Anonymous',
-        amount: 1,
-      },
-    ],
+    name: name,
+    calories: calories,
+    fat: fat,
+    carbs: carbs,
+    protein: protein,
+    price: price,
+    history: [],
   };
 }
 
@@ -43,7 +35,7 @@ function Row(props) {
 
   return (
     <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -54,10 +46,10 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.name}
+          {row.cus_id}
         </TableCell>
-        <TableCell align="right">{row.calories}</TableCell>
-        <TableCell align="right">{row.fat}</TableCell>
+        <TableCell align="right">{row.isData}</TableCell>
+        <TableCell align="right">{row.eq_id}</TableCell>
         <TableCell align="right">{row.carbs}</TableCell>
         <TableCell align="right">{row.protein}</TableCell>
       </TableRow>
@@ -77,7 +69,7 @@ function Row(props) {
                     <TableCell align="right">Total price ($)</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
+                {/* <TableBody>
                   {row.history.map((historyRow) => (
                     <TableRow key={historyRow.date}>
                       <TableCell component="th" scope="row">
@@ -90,7 +82,7 @@ function Row(props) {
                       </TableCell>
                     </TableRow>
                   ))}
-                </TableBody>
+                </TableBody> */}
               </Table>
             </Box>
           </Collapse>
@@ -100,33 +92,54 @@ function Row(props) {
   );
 }
 
-Row.propTypes = {
-  row: PropTypes.shape({
-    calories: PropTypes.number.isRequired,
-    carbs: PropTypes.number.isRequired,
-    fat: PropTypes.number.isRequired,
-    history: PropTypes.arrayOf(
-      PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
-      }),
-    ).isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    protein: PropTypes.number.isRequired,
-  }).isRequired,
-};
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
-  createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
-  createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
-  createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
-];
+// Row.propTypes = {
+//   row: PropTypes.shape({
+//     calories: PropTypes.number,
+//     carbs: PropTypes.number,
+//     fat: PropTypes.number,
+//     // history: PropTypes.arrayOf(
+//     //   PropTypes.shape({
+//     //     amount: PropTypes.number.isRequired,
+//     //     customerId: PropTypes.string.isRequired,
+//     //     date: PropTypes.string.isRequired,
+//     //   }),
+//     // ),
+//     name: PropTypes.string,
+//     price: PropTypes.number,
+//     protein: PropTypes.number,
+//   }),
+// };
 
 export default function CollapsibleTable() {
+  const {
+    equipmentObject,
+    setEquipmentObject,
+    checkState,
+    setCheckState,
+    eqArray,
+    setEqArray,
+  } = useContext(InvoiceContext);
+  const { name, s, a } = equipmentObject;
+  const [len, setLen] = useState();
+
+
+
+  const rows = Array.from({ length: len }, (_, index) => ({
+    cus_id: equipmentObject.cus_id,
+    isData: equipmentObject.isData,
+    eq_id: equipmentObject.eq_id[index], // Assuming eq_id is an array
+  }));
+
+  
+  const handlef = () => {
+    setLen(
+      equipmentObject.eq_id === undefined ? 0 : equipmentObject.eq_id.length
+    );
+
+    console.log(equipmentObject);
+    console.log("This is length", len);
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
@@ -146,6 +159,7 @@ export default function CollapsibleTable() {
           ))}
         </TableBody>
       </Table>
+      <button onClick={handlef}></button>
     </TableContainer>
   );
 }

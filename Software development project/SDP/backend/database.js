@@ -18,17 +18,17 @@ const pool = mysql
 const port = process.env.PORT || 8085;
 
 export async function loginValidate(userObject) {
-  console.log(userObject.username)
+  console.log(userObject.username);
   const [user] = await pool.query(
     "SELECT username, role, password FROM users WHERE username = ? AND role = ? ",
     [userObject.username, userObject.role]
   );
-  console.log("this is the selected user :",user)
-  if(userObject.password===user[0].password) {
-    console.log("Successful",user)
-    return ["/DashboardMain"]
-  }else{
-    return ["/"]
+  console.log("this is the selected user :", user);
+  if (userObject.password === user[0].password) {
+    console.log("Successful", user);
+    return ["/DashboardMain"];
+  } else {
+    return ["/"];
   }
 }
 export async function getUsers() {
@@ -99,7 +99,7 @@ export async function getCustomerbyLastName(LastName) {
 export async function getCustomerbyPhoneNumber(phoneNumber) {
   const [customers] = await pool.query(
     "SELECT * FROM customer WHERE cus_phone_number =? OR nic=?",
-    [phoneNumber,phoneNumber]
+    [phoneNumber, phoneNumber]
   );
   console.log(customers);
   return customers;
@@ -122,7 +122,9 @@ export async function getCustomerbyAddress2(SAddress2) {
 }
 
 export async function getUserRole(userName) {
-  const [user] = await pool.query(`SELECT role FROM users WHERE username=?`, [userName]);
+  const [user] = await pool.query(`SELECT role FROM users WHERE username=?`, [
+    userName,
+  ]);
   console.log(user);
   return user;
 }
@@ -171,4 +173,37 @@ export async function updateCustomerDetails(bodydata) {
   } catch (error) {
     console.error("Error in the updateCustomerDetails db connection", error);
   }
+}
+export async function getInvoiceId() {
+  try {
+    await pool.query(
+      "INSERT INTO invoice (inv_advance,inv_special_message,inv_idcardstatus) VALUES (?,?,?)",
+      [0, "", 0],
+      (error, results, fields) => {
+        if (error) {
+          console.error("Error creating new statement:", error);
+          return;
+        }
+        console.log("New statement created successfully!");
+      }
+    );
+
+    const [invoiceId] = await pool.query(
+      "SELECT MAX(inv_id) AS largest_invoice_number FROM invoice"
+    );
+    console.log("back", invoiceId[0].largest_invoice_number);
+    return invoiceId[0].largest_invoice_number;
+  } catch (error) {
+    console.error("Error in the updateCustomerDetails db connection", error);
+  }
+}
+export async function getInvoiceDetails(invoiceId) {
+  const [invoice] = await pool.query(
+    `SELECT * FROM customerInvoice WHERE cusinv_invid=?`,
+    [invoiceId]
+  );
+
+  const customerDetails = getCustomerbyID(invoice[0].cusinv_cusid);
+  console.log("backend",customerDetails)
+  return customerDetails;
 }

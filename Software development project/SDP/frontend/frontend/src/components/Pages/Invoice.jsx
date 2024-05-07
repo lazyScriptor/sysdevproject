@@ -24,6 +24,11 @@ function Invoice() {
   const { equipmentObject, setEquipmentObject, checkState, eqArray } =
     useContext(InvoiceContext);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [invoiceId, setInvoiceId] = useState();
+  const [currentDate, setCurrentDate] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
+  const [invoiceIdSearch, setInvoiceIdSearch] = useState();
   const [clearData, setClearData] = useState({
     cus_fname: "",
     cus_address1: "",
@@ -38,7 +43,7 @@ function Invoice() {
     cus_address2: "",
     nic: "",
     cus_phone_number: "",
-    Cus: "",
+    cus_id: "",
   });
   // const [newObject, setNewObject] = useState({
   //   bata: {
@@ -48,26 +53,25 @@ function Invoice() {
   // });
 
   const handleProceedPayment = () => {
-    setEquipmentObject((equipmentObject) => {
-      ({
-        ...equipmentObject,
-        eq_id:eqArray,
-        ...data,
-        
-      });
-      // console.log(...equipmentObject, ...data);
-    });
+    // setEquipmentObject((equipmentObject) => {
+    //   ({
+    //     ...equipmentObject,
+    //     eq_id: eqArray,
+    //     cus_id: data.cus_id,
+    //   });
+    //   // console.log(...equipmentObject, ...data);
+    //   console.log({
 
-    // setEquipmentObject({
-    //   ...equipmentObject,
-    //   ...data,
-    //   eq_id: eqArray,
+    //     ...equipmentObject,
+    //     // eq_id: eqArray,
+    //     // cus_id: data.cus_id,
+    //   },"This is the equipment object");
     // });
-    console.log({
-      ...equipmentObject,
-      ...data,
 
+    setEquipmentObject({
+      ...equipmentObject,
       eq_id: eqArray,
+      cus_id: data.cus_id,
     });
   };
 
@@ -84,6 +88,35 @@ function Invoice() {
         });
     } catch (error) {
       console.log("handleSearch Id error", error);
+    }
+  };
+  const handleCreateNew = async () => {
+    try {
+      await axios.get("http://localhost:8085/invoiceIdRetrieve").then((res) => {
+        setInvoiceId(res.data + 1);
+      });
+    } catch (error) {
+      console.log("handleSearch Createinvoice error", error);
+    }
+  };
+  const handleInvoiceSearch = async (invoiceIdSearch) => {
+    try {
+      console.log(invoiceIdSearch);
+      await axios
+        .get(`http://localhost:8085/invoiceDataRetrieve/${invoiceIdSearch}`)
+        .then((res) => {
+          console.log(res.data);
+          setData({
+            cus_fname: res.data.cus_fname,
+            cus_address1: res.data.cus_address1,
+            cus_address2: res.data.cus_address2,
+            nic: res.data.nic,
+            cus_phone_number: res.data.cus_phone_number,
+            Cus: res.data.cus_id,
+          });
+        });
+    } catch (error) {
+      console.log("handleSearch Createinvoice error", error);
     }
   };
 
@@ -130,12 +163,15 @@ function Invoice() {
             }}
           >
             <TextField
+              onChange={(e) => setInvoiceIdSearch(e.target.value)}
               sx={{ width: "350px" }}
               id="outlined-basic"
-              label="Search with id"
+              label="Search with invoice Id"
               variant="outlined"
             />
-            <Button>Update</Button>
+            <Button onClick={() => handleInvoiceSearch(invoiceIdSearch)}>
+              Search
+            </Button>
           </Box>
           {/*Row1 rightmost box */}
           <Box
@@ -147,11 +183,13 @@ function Invoice() {
               gap: 2,
             }}
           >
-            <Button variant="contained">Create new</Button>
+            <Button onClick={handleCreateNew} variant="contained">
+              Create new
+            </Button>
             {/* Invoice text box */}
             <Box>
-              <h5>Invoice ID: 001</h5>
-              <h6>Date: 2023 - 12 -30</h6>
+              <h5>Invoice ID: {invoiceId}</h5>
+              <h6>{currentDate}</h6>
             </Box>
           </Box>
         </Box>
