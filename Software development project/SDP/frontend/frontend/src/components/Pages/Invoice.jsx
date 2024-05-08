@@ -19,16 +19,27 @@ import OverlayDialogBox from "../SubComponents/OverlayDialogBox.jsx";
 import axios from "axios";
 import InvoiceRightSide from "../SubComponents/InvoiceRightSide.jsx";
 import InvoiceTable from "../SubComponents/InvoiceTable.jsx";
+import { useEffect } from "react";
 
 function Invoice() {
-  const { equipmentObject, setEquipmentObject, checkState, eqArray } =
+  const { equipmentObject, setEquipmentObject, checkState, eqArray,invoiceObject,setInvoiceObject,
+    updateValue } =
     useContext(InvoiceContext);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [invoiceId, setInvoiceId] = useState();
+  const [invoiceId, setInvoiceId] = useState("0000");
   const [currentDate, setCurrentDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
   const [invoiceIdSearch, setInvoiceIdSearch] = useState();
+  
+useEffect(()=>{
+ 
+  // invoiceObject.name="kamal";
+  // console.log(invoiceObject.name)
+  // invoiceObject.name="nimal"
+  // console.log(invoiceObject)
+},)
+
   const [clearData, setClearData] = useState({
     cus_fname: "",
     cus_address1: "",
@@ -53,6 +64,7 @@ function Invoice() {
   // });
 
   const handleProceedPayment = () => {
+    console.log(invoiceObject)
     // setEquipmentObject((equipmentObject) => {
     //   ({
     //     ...equipmentObject,
@@ -83,14 +95,21 @@ function Invoice() {
       await axios
         .get(`http://localhost:8085/getCustomerbyPhoneNumber/${phoneNumber}`)
         .then((res) => {
-          console.log(res.data[0]);
-          setData(res.data[0]);
+           setData(res.data[0]);
+            updateValue("cusId",res.data[0].cus_id)
+          // invoiceObject.c=3;
+          // console.log(invoiceObject.eqArray)
+          // console.log("This is the ",invoiceObject.cusId)
+         
         });
+        
+        console.log(invoiceObject)
     } catch (error) {
       console.log("handleSearch Id error", error);
     }
   };
   const handleCreateNew = async () => {
+
     try {
       await axios.get("http://localhost:8085/invoiceIdRetrieve").then((res) => {
         setInvoiceId(res.data + 1);
@@ -299,7 +318,9 @@ function Invoice() {
                     onClick={() => {
                       setData(clearData);
                     }}
-                    sx={{ color: (theme) => theme.palette.primary.error }}
+                    sx={{color:(theme)=>theme.palette.primary.error[400],
+                      backgroundColor:(theme)=>theme.palette.primary.error[10],
+                    }}
                   >
                     Clear
                   </Button>

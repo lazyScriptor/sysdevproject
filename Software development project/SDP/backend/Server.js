@@ -56,6 +56,7 @@ app.get("/loginValidate", async (req, res) => {
 
 app.get("/customers", async (req, res) => {
   try {
+    console.log(req)
     const customers = await getCustomers();
     return res.json(customers);
   } catch (error) {

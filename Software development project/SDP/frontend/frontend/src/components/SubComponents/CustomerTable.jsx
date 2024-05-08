@@ -22,7 +22,6 @@ export default function CustomerTable() {
   const { boolvalue, setBoolvalue, userData, setUserData } =
     useContext(PopupContext);
 
-
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
@@ -39,11 +38,9 @@ export default function CustomerTable() {
 
   useEffect(() => {
     try {
-      axios
-        .get("http://localhost:8085/customers")
-        .then((res) => setData(res.data));
-        console.log("This is the cotext ",boolvalue)
-      
+      axios.get("http://localhost:8085/customers").then((res) => {
+        setData(res.data);
+      });
     } catch (error) {
       console.error("error occurred in the try catch block", error);
     }
@@ -54,7 +51,6 @@ export default function CustomerTable() {
       await axios
         .get(`http://localhost:8085/getCustomerbyID/${SId}`)
         .then((res) => {
-          const customerData = res.data;
           setData(res.data);
         });
     } catch (error) {
@@ -471,10 +467,10 @@ export default function CustomerTable() {
                         }}
                       >
                         <Button
-                          onClick={ () => {
+                          onClick={() => {
                             setBoolvalue(!boolvalue);
                             console.log(boolvalue);
-                             setUserData(row);
+                            setUserData(row);
                           }}
                         >
                           Edit
@@ -507,7 +503,7 @@ export default function CustomerTable() {
       </Paper>
 
       <OverlayDialogBox>
-        <NewCustomerForm/>
+        <NewCustomerForm />
       </OverlayDialogBox>
     </Box>
   );

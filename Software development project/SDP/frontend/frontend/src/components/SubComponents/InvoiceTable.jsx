@@ -136,8 +136,10 @@ export default function CollapsibleTable() {
       equipmentObject.eq_id === undefined ? 0 : equipmentObject.eq_id.length
     );
 
-    console.log(equipmentObject);
-    console.log("This is length", len);
+
+    
+    console.log(typeof equipmentObject.eq_id[0],equipmentObject);
+   
   };
 
   return (
@@ -155,11 +157,11 @@ export default function CollapsibleTable() {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <Row key={row.name} row={row} />
+            <Row key={row.eq_id} row={row} />
           ))}
         </TableBody>
       </Table>
-      <button onClick={handlef}></button>
+      <button onClick={handlef}>click me to see eq list</button>
     </TableContainer>
   );
 }
