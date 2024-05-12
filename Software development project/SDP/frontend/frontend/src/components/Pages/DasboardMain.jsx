@@ -6,7 +6,7 @@ import { AuthContext } from "../../Contexts/Contexts";
 import axios from "axios";
 
 function DasboardMain() {
-  const { isAuthenticated, setIsAuthenticated, handle } =
+  const { isAuthenticated, setIsAuthenticated, userRole, setUserRole } =
   useContext(AuthContext);
 const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ const navigate = useNavigate();
   return (
     <>
     <BackgroundStyleNew title={"Dashboard"} subTitle={"This is the dashboard page"}>
-      
+      {userRole === 'admin'? (<><h1>yeeess: {userRole}</h1></>) : "noo"}
     </BackgroundStyleNew>
     </>
   );

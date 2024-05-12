@@ -134,8 +134,8 @@ function App() {
               element={
                 <>
                   <AuthContextProvider>
-                    <DashboardMain />
                     <Sidebar />
+                    <DashboardMain />
                   </AuthContextProvider>
                 </>
               }

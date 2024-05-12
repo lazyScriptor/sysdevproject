@@ -23,7 +23,7 @@ function NewLogin() {
   const [toogle, settoogle] = useState(false);
 
   const [logInStatus, setLogInStatus] = useState(false);
-  const { isAuthenticated, setIsAuthenticated, handle } =
+  const { isAuthenticated, setIsAuthenticated, userRole, setUserRole } =
     useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -96,6 +96,7 @@ function NewLogin() {
             localStorage.setItem("token", res.data.token);
             setLogInStatus(true);
             setIsAuthenticated(true);
+            setUserRole(res.data.result)
             navigate("/dashboardmain");
           }
 

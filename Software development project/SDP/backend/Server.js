@@ -72,12 +72,13 @@ app.get("/loginValidate", async (req, res) => {
     console.log("This is the response ", response);
 
     const id = response[1][0].user_id;
-    console.log("id is", id);
+    const userRole = response[1][0].role
+    console.log("id is", id,"username is ",userRole);
     const token = jwt.sign({ id }, "jwtSecret", {
       expiresIn: 300,
     });
 
-    return res.json({ auth: true, token: token, result: response });
+    return res.json({ auth: true, token: token, result: userRole });
   } catch (error) {
     console.log("wrong", { auth: false, message: "express failed auth false" });
     return res.json({ auth: false, message: "express failed auth false" });
