@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   FormLabel,
@@ -11,9 +11,9 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowsRotate, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faArrowsRotate, faL, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import image from "../../assets/constructor.png";
+import { AuthContext } from "../../Contexts/Contexts";
 
 function NewLogin() {
   const [userName, setUserName] = useState("Dummu username");
@@ -22,7 +22,21 @@ function NewLogin() {
   const [usernameArray, setUsernameArray] = useState([]);
   const [toogle, settoogle] = useState(false);
 
+  const [logInStatus, setLogInStatus] = useState(false);
+  const { isAuthenticated, setIsAuthenticated, handle } =
+    useContext(AuthContext);
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+
+    setIsAuthenticated(false)
+    //meka oni wenne session eka madde token eka clear karot.kelinma login ekata enawa.ethanadi authenticated
+    //variable eka 0 krnawa
+    // if (!localStorage.getItem("token") || !isAuthenticated) {
+    //   navigate("/");
+    // }
+  }, []);
 
   const handleSubmit = async (userName, password, selectValue) => {
     //Then, on the server side, you need to adjust the route to accept
@@ -55,6 +69,17 @@ function NewLogin() {
       role: selectValue,
     };
     console.log("object", requestUserObjects);
+
+    await axios
+      .get("http://localhost:8085/isUserAuth", {
+        headers: {
+          "x-access-token": localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        console.log("token details ", response);
+      });
+
     try {
       await axios
         .get(`http://localhost:8085/loginValidate`, {
@@ -62,13 +87,36 @@ function NewLogin() {
         })
         .then((res) => {
           console.log("This is the response", res.data);
+          if (!res.data.auth) {
+            setLogInStatus(false);
+
+            setIsAuthenticated(false);
+          } else {
+            console.log("elsepart", res.data.auth);
+            localStorage.setItem("token", res.data.token);
+            setLogInStatus(true);
+            setIsAuthenticated(true);
+            navigate("/dashboardmain");
+          }
 
           //I have taken the login URL from backend for security enhancing
-          navigate(`${res.data[0]}`, { state: { role: selectValue } });
+          //   navigate(`${res.data[0]}`, { state: { role: selectValue } });
         });
     } catch (error) {
       console.error("Login frontend error", error);
     }
+  };
+
+  const handleAuth = () => {
+    axios
+      .get("http://localhost:8085/isUserAuth", {
+        headers: {
+          "x-access-token": localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        console.log(response);
+      });
   };
 
   const handleUserNameOnChange = async (userName) => {
@@ -77,7 +125,7 @@ function NewLogin() {
   const handleSelectChange = (event) => {
     setSelectValue(event.target.value);
   };
-  
+
   const handleIconSearch = async () => {
     settoogle(true);
 
@@ -102,7 +150,7 @@ function NewLogin() {
     <>
       <Box
         sx={{
-          backgroundColor:( (theme) => theme.palette.primary[50] ),
+          backgroundColor: (theme) => theme.palette.primary[50],
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -179,13 +227,10 @@ function NewLogin() {
                 </Box>
               </Box>
               {/* Select while box */}
-              <Box
-              sx={{width:"100%"}}
-              >
-                <FormLabel sx={{mr:3}}>Select the role :</FormLabel>
+              <Box sx={{ width: "100%" }}>
+                <FormLabel sx={{ mr: 3 }}>Select the role :</FormLabel>
                 <Select
-                fullWidth
-                
+                  fullWidth
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={selectValue || ""}
@@ -202,7 +247,7 @@ function NewLogin() {
                   ))}
                 </Select>
               </Box>
-                {/* Password box */}
+              {/* Password box */}
               <Box>
                 <FormLabel>Enter Password</FormLabel>
                 <TextField
@@ -233,7 +278,7 @@ function NewLogin() {
             }}
           >
             {/* Your content for the right box */}
-            <img
+            {/* <img
               src={image}
               alt="Description of your image"
               style={{
@@ -242,10 +287,24 @@ function NewLogin() {
                 width: "auto",
                 height: "auto",
               }}
-            />
+            /> */}
           </Box>
         </Box>
       </Box>
+      {logInStatus == true ? (
+        <>
+          <button onClick={handleAuth}>hey</button>{" "}
+          <button
+            onClick={() => {
+              localStorage.removeItem("token");
+              setLogInStatus(false);
+              setIsAuthenticated(false);
+            }}
+          >
+            logout
+          </button>
+        </>
+      ) : null}
     </>
   );
 }

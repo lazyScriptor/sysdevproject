@@ -20,13 +20,16 @@ const port = process.env.PORT || 8085;
 export async function loginValidate(userObject) {
   console.log(userObject.username);
   const [user] = await pool.query(
-    "SELECT username, role, password FROM users WHERE username = ? AND role = ? ",
+    "SELECT username, role, password ,user_id FROM users WHERE username = ? AND role = ? ",
     [userObject.username, userObject.role]
   );
   console.log("this is the selected user :", user);
+
+  const id = user[0].user_id;
+
   if (userObject.password === user[0].password) {
     console.log("Successful", user);
-    return ["/DashboardMain"];
+    return ["/DashboardMain", user];
   } else {
     return ["/"];
   }

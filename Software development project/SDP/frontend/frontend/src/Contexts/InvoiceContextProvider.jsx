@@ -8,6 +8,10 @@ export default function InvoiceContextProvider({ children }) {
   const [invoiceObject, setInvoiceObject] = useState({
 
   });
+  const clearObject = () => {
+    setInvoiceObject({});
+  };
+
   const updateValue = (value,newVaalue) => {
     setInvoiceObject((preObject)=>({ ...preObject, [value]: newVaalue }));
   };
@@ -23,7 +27,8 @@ export default function InvoiceContextProvider({ children }) {
         setEqArray,
         invoiceObject,
         setInvoiceObject,
-        updateValue
+        updateValue,
+        clearObject
       }}
     >
       {children}

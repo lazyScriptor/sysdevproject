@@ -16,6 +16,7 @@ import { useState, createContext } from "react";
 import { ThemeProvider, createTheme } from "@mui/material";
 import NewLogin from "./components/Pages/NewLogin.jsx";
 import Settings from "./components/Pages/Settings.jsx";
+import AuthContextProvider from "./Contexts/AuthContextProvider.jsx";
 
 export const AppCustomContext = createContext();
 
@@ -51,7 +52,7 @@ function App() {
         // 900: "#0d47a1",
 
         // purpleShades
-        
+
         50: "#f3e5f5",
         100: "#e1bee7",
         200: "#ce93d8",
@@ -76,7 +77,7 @@ function App() {
         // 900: "#E65100",
 
         error: {
-          10:"#ffe6e6",
+          10: "#ffe6e6",
           50: "#FFCCCC",
           100: "#FF9999",
           200: "#FF6666",
@@ -107,14 +108,24 @@ function App() {
         <Router>
           <Routes>
             {/* Routes without Sidebar */}
-            <Route path="/" element={<NewLogin />} />
+
+            <Route
+              path="/"
+              element={
+                <AuthContextProvider>
+                  <NewLogin />
+                </AuthContextProvider>
+              }
+            />
             {/* Other routes with Sidebar */}
             <Route
               path="/customers"
               element={
                 <>
-                  <Sidebar />
-                  <Customers />
+                  <AuthContextProvider>
+                    <Sidebar />
+                    <Customers />
+                  </AuthContextProvider>
                 </>
               }
             />
@@ -122,8 +133,10 @@ function App() {
               path="/DashboardMain"
               element={
                 <>
-                  <Sidebar />
-                  <DashboardMain />
+                  <AuthContextProvider>
+                    <DashboardMain />
+                    <Sidebar />
+                  </AuthContextProvider>
                 </>
               }
             />
@@ -131,8 +144,10 @@ function App() {
               path="/Equipment"
               element={
                 <>
-                  <Sidebar />
-                  <Equipment />
+                  <AuthContextProvider>
+                    <Sidebar />
+                    <Equipment />
+                  </AuthContextProvider>
                 </>
               }
             />
@@ -140,8 +155,10 @@ function App() {
               path="/Inbox"
               element={
                 <>
-                  <Sidebar />
-                  <Inbox />
+                  <AuthContextProvider>
+                    <Sidebar />
+                    <Inbox />
+                  </AuthContextProvider>
                 </>
               }
             />
@@ -149,8 +166,10 @@ function App() {
               path="/Invoice"
               element={
                 <>
-                  <Sidebar />
-                  <Invoice />
+                  <AuthContextProvider>
+                    <Sidebar />
+                    <Invoice />
+                  </AuthContextProvider>
                 </>
               }
             />
@@ -158,8 +177,10 @@ function App() {
               path="/Reports"
               element={
                 <>
-                  <Sidebar />
-                  <Reports />
+                  <AuthContextProvider>
+                    <Sidebar />
+                    <Reports />
+                  </AuthContextProvider>
                 </>
               }
             />
@@ -167,8 +188,10 @@ function App() {
               path="/Settings"
               element={
                 <>
-                  <Sidebar />
-                  <Settings />
+                  <AuthContextProvider>
+                    <Sidebar />
+                    <Settings />
+                  </AuthContextProvider>
                 </>
               }
             />

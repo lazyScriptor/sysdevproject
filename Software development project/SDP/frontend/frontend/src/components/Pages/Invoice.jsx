@@ -22,7 +22,7 @@ import InvoiceTable from "../SubComponents/InvoiceTable.jsx";
 import { useEffect } from "react";
 
 function Invoice() {
-  const { equipmentObject, setEquipmentObject, checkState, eqArray,invoiceObject,setInvoiceObject,
+  const { equipmentObject, setEquipmentObject, checkState, eqArray,invoiceObject,setInvoiceObject,clearObject,
     updateValue } =
     useContext(InvoiceContext);
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -109,7 +109,7 @@ useEffect(()=>{
     }
   };
   const handleCreateNew = async () => {
-
+    clearObject();
     try {
       await axios.get("http://localhost:8085/invoiceIdRetrieve").then((res) => {
         setInvoiceId(res.data + 1);

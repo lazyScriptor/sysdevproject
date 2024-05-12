@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 import {
   deleteCustomer,
   deleteEquipment,
@@ -42,21 +43,50 @@ app.get("/users", async (req, res) => {
   }
 });
 
+const verifyJWT = (req, res, next) => {
+  const token = req.headers["x-access-token"];
+  if (!token) {
+    res.json({ auth: false, message: "failed" });
+  } else {
+    jwt.verify(token, "jwtSecret", (err, decoded) => {
+      if (err) {
+        res.json({ auth: false, message: "U failed to authencticate" });
+      } else {
+        req.userId = decoded.id;
+        console.log("veriy jwt else part ", req.userId, token);
+        next();
+      }
+    });
+  }
+};
+
+app.get("/isUserAuth", verifyJWT, (req, res) => {
+  return res.json({ auth: true, message: "You have a valid token" });
+});
+
 app.get("/loginValidate", async (req, res) => {
   try {
     console.log("express app ", req.query.username);
 
     const response = await loginValidate(req.query);
     console.log("This is the response ", response);
-    return res.json(response);
+
+    const id = response[1][0].user_id;
+    console.log("id is", id);
+    const token = jwt.sign({ id }, "jwtSecret", {
+      expiresIn: 300,
+    });
+
+    return res.json({ auth: true, token: token, result: response });
   } catch (error) {
-    console.log("Error in loginValidate", error);
+    console.log("wrong", { auth: false, message: "express failed auth false" });
+    return res.json({ auth: false, message: "express failed auth false" });
   }
 });
 
 app.get("/customers", async (req, res) => {
   try {
-    console.log(req)
+    console.log(req);
     const customers = await getCustomers();
     return res.json(customers);
   } catch (error) {
@@ -226,7 +256,7 @@ app.get("/invoiceIdRetrieve", async (req, res) => {
   try {
     console.log("req");
     const invoiceId = await getInvoiceId();
-    console.log("Express",invoiceId)
+    console.log("Express", invoiceId);
     return res.json(invoiceId);
   } catch (error) {
     return res.status(500).json({ error: "Internal Server Error" });
@@ -235,8 +265,10 @@ app.get("/invoiceIdRetrieve", async (req, res) => {
 app.get("/invoiceDataRetrieve/:invoiceIdSearch", async (req, res) => {
   try {
     console.log("reqaaa");
-    const [customerDetails] = await getInvoiceDetails(req.params.invoiceIdSearch);
-    console.log("Expressaaaa",customerDetails)
+    const [customerDetails] = await getInvoiceDetails(
+      req.params.invoiceIdSearch
+    );
+    console.log("Expressaaaa", customerDetails);
     return res.json(customerDetails);
   } catch (error) {
     return res.status(500).json({ error: "Internal Server Error" });
