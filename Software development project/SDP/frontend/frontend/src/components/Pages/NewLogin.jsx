@@ -11,7 +11,11 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowsRotate, faL, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowsRotate,
+  faL,
+  faSearch,
+} from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Contexts/Contexts";
 
@@ -30,13 +34,14 @@ function NewLogin() {
 
   useEffect(() => {
 
-    setIsAuthenticated(false)
+    setIsAuthenticated(false);
+    localStorage.clear();
     //meka oni wenne session eka madde token eka clear karot.kelinma login ekata enawa.ethanadi authenticated
     //variable eka 0 krnawa
     // if (!localStorage.getItem("token") || !isAuthenticated) {
     //   navigate("/");
     // }
-  }, []);
+  }, [localStorage.getItem("token")]);
 
   const handleSubmit = async (userName, password, selectValue) => {
     //Then, on the server side, you need to adjust the route to accept
@@ -96,7 +101,12 @@ function NewLogin() {
             localStorage.setItem("token", res.data.token);
             setLogInStatus(true);
             setIsAuthenticated(true);
-            setUserRole(res.data.result)
+            // After successful login
+            localStorage.setItem("userRole", res.data.result);
+            localStorage.setItem("username", res.data.username);
+
+
+            setUserRole(res.data.result);
             navigate("/dashboardmain");
           }
 

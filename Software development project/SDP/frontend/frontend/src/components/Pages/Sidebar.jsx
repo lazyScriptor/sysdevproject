@@ -48,29 +48,31 @@ function Sidebar() {
         onClick={handleShow}
         className="open-button"
         sx={{
-
           position: "fixed",
           top: "00px",
           left: "0px",
-          height:"40px",
-          zIndex: 999, 
-          borderRadius:"0px",
+          height: "40px",
+          zIndex: 999,
+          borderRadius: "0px",
           backgroundColor: (theme) => theme.palette.primary[50],
           "&:hover": {
             backgroundColor: (theme) => theme.palette.primary[200],
           },
         }}
       >
-        <Typography sx={{mr:2,color: "#cecececd"}}>
+        <Typography sx={{ mr: 2, color: "#cecececd" }}>
           Open the side bar
         </Typography>
         {/* <FontAwesomeIcon icon={faBars} size="xl" style={{ color: "#505050" }} /> */}
       </Button>
       <Offcanvas
+        name="Disable backdrop"
+        scroll={true}
+        backdrop={false}
+        backdropClassName="backedrop"
         bsPrefix="offcanvas"
         show={show}
         onHide={handleClose}
-        scroll="true"
         placement="start"
         className="sidebar-container"
       >
@@ -82,22 +84,20 @@ function Sidebar() {
               alt="image not found"
             />
             <div className="header-text">
-              <h4>{rolee}</h4>
-              <h6>{usernamee}</h6>
+              <h4>{localStorage.getItem("userRole")}</h4>
+              <h6>{localStorage.getItem("username")}</h6>
             </div>
             <Button
-            
               onClick={handleClose}
               sx={{
-                visibility:"hidden",
+                visibility: "hidden",
                 borderRadius: 3,
 
                 position: "absolute",
                 right: "20px",
-                top:"15px",
+                top: "15px",
                 maxWidthwidth: "50px",
                 maxHeight: "50px",
-                
 
                 "&:hover": {
                   backgroundColor: (theme) => theme.palette.primary[800], // Change to the desired hover color

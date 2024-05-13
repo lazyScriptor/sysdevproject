@@ -9,7 +9,7 @@ import Inbox from "./components/Pages/Inbox.jsx";
 import Invoice from "./components/Pages/Invoice.jsx";
 import Reports from "./components/Pages/Reports.jsx";
 import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
-// import './index.css'
+import './index.css'
 
 import { useState, createContext } from "react";
 
@@ -17,6 +17,7 @@ import { ThemeProvider, createTheme } from "@mui/material";
 import NewLogin from "./components/Pages/NewLogin.jsx";
 import Settings from "./components/Pages/Settings.jsx";
 import AuthContextProvider from "./Contexts/AuthContextProvider.jsx";
+import NavBarComponent from "./components/Pages/NavBarComponent.jsx";
 
 export const AppCustomContext = createContext();
 
@@ -106,98 +107,80 @@ function App() {
         value={{ usernamee, setUsernamee, rolee, setRolee, theme }}
       >
         <Router>
-          <Routes>
-            {/* Routes without Sidebar */}
+          <AuthContextProvider>
+            <Routes>
+              {/* Routes without Sidebar */}
 
-            <Route
-              path="/"
-              element={
-                <AuthContextProvider>
-                  <NewLogin />
-                </AuthContextProvider>
-              }
-            />
-            {/* Other routes with Sidebar */}
-            <Route
-              path="/customers"
-              element={
-                <>
-                  <AuthContextProvider>
+              <Route path="/" element={<NewLogin />} />
+              {/* Other routes with Sidebar */}
+              <Route
+                path="/customers"
+                element={
+                  <>
                     <Sidebar />
                     <Customers />
-                  </AuthContextProvider>
-                </>
-              }
-            />
-            <Route
-              path="/DashboardMain"
-              element={
-                <>
-                  <AuthContextProvider>
+                  </>
+                }
+              />
+              <Route
+                path="/DashboardMain"
+                element={
+                  <>
                     <Sidebar />
                     <DashboardMain />
-                  </AuthContextProvider>
-                </>
-              }
-            />
-            <Route
-              path="/Equipment"
-              element={
-                <>
-                  <AuthContextProvider>
+                  </>
+                }
+              />
+              <Route
+                path="/Equipment"
+                element={
+                  <>
                     <Sidebar />
                     <Equipment />
-                  </AuthContextProvider>
-                </>
-              }
-            />
-            <Route
-              path="/Inbox"
-              element={
-                <>
-                  <AuthContextProvider>
+                  </>
+                }
+              />
+              <Route
+                path="/Inbox"
+                element={
+                  <>
                     <Sidebar />
                     <Inbox />
-                  </AuthContextProvider>
-                </>
-              }
-            />
-            <Route
-              path="/Invoice"
-              element={
-                <>
-                  <AuthContextProvider>
+                  </>
+                }
+              />
+              <Route
+                path="/Invoice"
+                element={
+                  <>
+                  <NavBarComponent/>
                     <Sidebar />
                     <Invoice />
-                  </AuthContextProvider>
-                </>
-              }
-            />
-            <Route
-              path="/Reports"
-              element={
-                <>
-                  <AuthContextProvider>
+                  </>
+                }
+              />
+              <Route
+                path="/Reports"
+                element={
+                  <>
                     <Sidebar />
                     <Reports />
-                  </AuthContextProvider>
-                </>
-              }
-            />
-            <Route
-              path="/Settings"
-              element={
-                <>
-                  <AuthContextProvider>
+                  </>
+                }
+              />
+              <Route
+                path="/Settings"
+                element={
+                  <>
                     <Sidebar />
                     <Settings />
-                  </AuthContextProvider>
-                </>
-              }
-            />
-            {/* 404 Route */}
-            <Route path="*" element={<Notfoundd />} />
-          </Routes>
+                  </>
+                }
+              />
+              {/* 404 Route */}
+              <Route path="*" element={<Notfoundd />} />
+            </Routes>
+          </AuthContextProvider>
         </Router>
       </AppCustomContext.Provider>
     </ThemeProvider>

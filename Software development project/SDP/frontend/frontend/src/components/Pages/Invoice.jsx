@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "../Stylings/rootstyles.css";
 import NewCustomerForm from "./NewCustomerForm.jsx";
 import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew.jsx";
@@ -14,31 +14,49 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faUpload } from "@fortawesome/free-solid-svg-icons";
 import Checkbox from "@mui/material/Checkbox";
 import CustomerTable from "../SubComponents/CustomerTable.jsx";
-import { InvoiceContext, PopupContext } from "../../Contexts/Contexts.jsx";
+import {
+  AuthContext,
+  InvoiceContext,
+  PopupContext,
+} from "../../Contexts/Contexts.jsx";
 import OverlayDialogBox from "../SubComponents/OverlayDialogBox.jsx";
 import axios from "axios";
 import InvoiceRightSide from "../SubComponents/InvoiceRightSide.jsx";
 import InvoiceTable from "../SubComponents/InvoiceTable.jsx";
-import { useEffect } from "react";
+import NavBarComponent from "./NavBarComponent.jsx";
 
 function Invoice() {
-  const { equipmentObject, setEquipmentObject, checkState, eqArray,invoiceObject,setInvoiceObject,clearObject,
-    updateValue } =
-    useContext(InvoiceContext);
+  const {
+    equipmentObject,
+    setEquipmentObject,
+    checkState,
+    eqArray,
+    invoiceObject,
+    setInvoiceObject,
+    clearObject,
+    updateValue,
+  } = useContext(InvoiceContext);
+  const { setIsAuthenticated } = useContext(AuthContext);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [invoiceId, setInvoiceId] = useState("0000");
   const [currentDate, setCurrentDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
   const [invoiceIdSearch, setInvoiceIdSearch] = useState();
-  
-useEffect(()=>{
- 
-  // invoiceObject.name="kamal";
-  // console.log(invoiceObject.name)
-  // invoiceObject.name="nimal"
-  // console.log(invoiceObject)
-},)
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      navigate("/");
+      setIsAuthenticated(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    // invoiceObject.name="kamal";
+    // console.log(invoiceObject.name)
+    // invoiceObject.name="nimal"
+    // console.log(invoiceObject)
+  });
 
   const [clearData, setClearData] = useState({
     cus_fname: "",
@@ -64,7 +82,7 @@ useEffect(()=>{
   // });
 
   const handleProceedPayment = () => {
-    console.log(invoiceObject)
+    console.log(invoiceObject);
     // setEquipmentObject((equipmentObject) => {
     //   ({
     //     ...equipmentObject,
@@ -95,15 +113,14 @@ useEffect(()=>{
       await axios
         .get(`http://localhost:8085/getCustomerbyPhoneNumber/${phoneNumber}`)
         .then((res) => {
-           setData(res.data[0]);
-            updateValue("cusId",res.data[0].cus_id)
+          setData(res.data[0]);
+          updateValue("cusId", res.data[0].cus_id);
           // invoiceObject.c=3;
           // console.log(invoiceObject.eqArray)
           // console.log("This is the ",invoiceObject.cusId)
-         
         });
-        
-        console.log(invoiceObject)
+
+      console.log(invoiceObject);
     } catch (error) {
       console.log("handleSearch Id error", error);
     }
@@ -141,6 +158,7 @@ useEffect(()=>{
 
   return (
     <>
+    
       <Box
         sx={{
           backgroundColor: "white",
@@ -318,8 +336,10 @@ useEffect(()=>{
                     onClick={() => {
                       setData(clearData);
                     }}
-                    sx={{color:(theme)=>theme.palette.primary.error[400],
-                      backgroundColor:(theme)=>theme.palette.primary.error[10],
+                    sx={{
+                      color: (theme) => theme.palette.primary.error[400],
+                      backgroundColor: (theme) =>
+                        theme.palette.primary.error[10],
                     }}
                   >
                     Clear

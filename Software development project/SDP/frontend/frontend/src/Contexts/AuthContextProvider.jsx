@@ -17,7 +17,8 @@ function AuthContextProvider({ children }) {
     );
     // // Check if token exists when component mounts
 
-    if (isAuthenticated==false || !localStorage.getItem("token")) {
+    if (!localStorage.getItem("token")) {
+      setIsAuthenticated(false)
       navigate("/");
     }
   }, [isAuthenticated]);

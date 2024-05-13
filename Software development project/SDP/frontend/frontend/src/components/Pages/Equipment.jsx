@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew";
 import EquipmentTable from "../SubComponents/EquipmentTable";
 
 
 function Equipment() {
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      navigate("/");
+      setIsAuthenticated(false);
+    }
+  }, []);
   return (
     <>
       <BackgroundStyleNew
@@ -11,7 +17,7 @@ function Equipment() {
         subTitle={"This is the equipment page"}
       >
         <>
-          <EquipmentTable/>
+          <EquipmentTable />
         </>
       </BackgroundStyleNew>
     </>
