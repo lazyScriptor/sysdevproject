@@ -9,7 +9,7 @@ import Inbox from "./components/Pages/Inbox.jsx";
 import Invoice from "./components/Pages/Invoice.jsx";
 import Reports from "./components/Pages/Reports.jsx";
 import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
-import './index.css'
+// import "./index.css";
 
 import { useState, createContext } from "react";
 
@@ -117,6 +117,7 @@ function App() {
                 path="/customers"
                 element={
                   <>
+                  
                     <Sidebar />
                     <Customers />
                   </>
@@ -126,6 +127,7 @@ function App() {
                 path="/DashboardMain"
                 element={
                   <>
+               
                     <Sidebar />
                     <DashboardMain />
                   </>
@@ -135,6 +137,7 @@ function App() {
                 path="/Equipment"
                 element={
                   <>
+            
                     <Sidebar />
                     <Equipment />
                   </>
@@ -153,7 +156,6 @@ function App() {
                 path="/Invoice"
                 element={
                   <>
-                  <NavBarComponent/>
                     <Sidebar />
                     <Invoice />
                   </>
@@ -163,6 +165,7 @@ function App() {
                 path="/Reports"
                 element={
                   <>
+                 
                     <Sidebar />
                     <Reports />
                   </>
@@ -172,6 +175,7 @@ function App() {
                 path="/Settings"
                 element={
                   <>
+              
                     <Sidebar />
                     <Settings />
                   </>

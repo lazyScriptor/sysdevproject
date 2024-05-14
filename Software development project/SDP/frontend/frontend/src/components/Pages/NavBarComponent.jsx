@@ -56,9 +56,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function NavBarComponent() {
+export default function NavBarComponent(props) {
+  const { show, setShow } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [isClicked, setIsClicked] = React.useState();
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -78,6 +80,9 @@ export default function NavBarComponent() {
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
+  };
+  const handleIconButtonClick = () => {
+    setShow(!show)
   };
 
   const menuId = "primary-search-account-menu";
@@ -155,23 +160,19 @@ export default function NavBarComponent() {
   );
 
   return (
-    <Box sx={{ flexGrow:1 }}>
-        
-      <AppBar position="static">
-     
+    <Box sx={{ flexGrow: 1, paddingLeft: show ? "250px" : "auto" ,transition: 'padding-left 0.3s ease-in-out'}}>
+      <AppBar position="static" sx={{backgroundColor:(theme)=>theme.palette.primary[50]}}>
         <Toolbar>
-        <Box sx={{display:"flex",marginLeft:"200px"}}>
           <IconButton
             size="large"
             edge="start"
             color="inherit"
             aria-label="open drawer"
             sx={{ mr: 2 }}
+            onClick={handleIconButtonClick}
           >
             <MenuIcon />
           </IconButton>
-
-
 
           <Typography
             variant="h6"
@@ -182,8 +183,6 @@ export default function NavBarComponent() {
             MUI
           </Typography>
 
-
-
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -193,9 +192,8 @@ export default function NavBarComponent() {
               inputProps={{ "aria-label": "search" }}
             />
           </Search>
-          </Box>
 
-          <Box sx={{ flexGrow: 1}} />
+          <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton
               size="large"
@@ -206,7 +204,7 @@ export default function NavBarComponent() {
                 <MailIcon />
               </Badge>
             </IconButton>
-            
+
             <IconButton
               size="large"
               aria-label="show 17 new notifications"

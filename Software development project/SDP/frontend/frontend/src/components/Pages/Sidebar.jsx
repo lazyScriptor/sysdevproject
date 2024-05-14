@@ -3,6 +3,7 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import adminImage from "../../assets/profileImage.jpeg";
 import "../Stylings/sidebar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import WidgetsIcon from '@mui/icons-material/Widgets';
 
 import {
   faTableCellsLarge,
@@ -23,6 +24,7 @@ import { useContext } from "react";
 import { AppCustomContext } from "../../App.jsx";
 import Button from "@mui/material/Button";
 import { Typography } from "@mui/material";
+import NavBarComponent from "./NavBarComponent.jsx";
 
 function Sidebar() {
   //context data
@@ -38,13 +40,17 @@ function Sidebar() {
   );
 
   //context data over
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   return (
     <div>
-      <Button
+      <Button sx={{position:"absolute",backgroundColor:""}} onClick={()=>setShow(!show)}>
+          <WidgetsIcon fontSize="large" sx={{colorL:"red"}}/>
+      </Button>
+      {/* <NavBarComponent show={show} setShow={setShow}/> */}
+      {/* <Button
         onClick={handleShow}
         className="open-button"
         sx={{
@@ -64,7 +70,7 @@ function Sidebar() {
           Open the side bar
         </Typography>
         {/* <FontAwesomeIcon icon={faBars} size="xl" style={{ color: "#505050" }} /> */}
-      </Button>
+      {/* </Button> */} 
       <Offcanvas
         name="Disable backdrop"
         scroll={true}

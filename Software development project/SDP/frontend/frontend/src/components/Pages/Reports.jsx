@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew.jsx";
 import { AuthContext } from "../../Contexts/Contexts.jsx";
+import NavBarComponent from "./NavBarComponent.jsx";
 
 function Reports() {
   const { setIsAuthenticated } = useContext(AuthContext);
@@ -12,6 +13,7 @@ function Reports() {
   }, []);
   return (
     <>
+
       <BackgroundStyleNew
         title="Reports"
         subTitle="This is the reports page"
