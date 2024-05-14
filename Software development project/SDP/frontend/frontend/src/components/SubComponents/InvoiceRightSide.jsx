@@ -88,13 +88,14 @@ function InvoiceRightSide() {
   };
 
   const handleAddEquipment = (eqValue, borrowedQty) => {
-    // let newValue = parseInt(eqValue);
+    //Makt the eq id integer .Default value is a string
+    let newValue = parseInt(eqValue);
     //create a new array and add each items (id and borrowed qty ) as a new value
     setEqObject((prev) => {
       const updatedEqObject = [
         ...prev,
         {
-          id: eqValue,
+          id: newValue,
           borrowedQty: borrowedQty,
         },
       ];
@@ -104,33 +105,14 @@ function InvoiceRightSide() {
       return updatedEqObject;
     });
     //incrementing the number of chips
-    setNumChips((prevNumChips) => prevNumChips + 1);
-  
-    // setEqArray((prevState) => {
-    //   const newArray = [...prevState];
-    //   newArray[newArray.length] = newValue;
-    //   updateValue("eqArray", newArray);
-    //   console.log("right side", invoiceObject);
-    //   return newArray;
-    // });
-  
-  };
+    setNumChips((prevNumChips) => prevNumChips + 1)
+    };
   
 
   return (
     <>
-      <Paper
-        elevation={3}
-        sx={{
-          width: "95%",
-          display: "flex",
-          justifyContent: "center",
-          pt: 3,
-          borderRadius: 3,
-          height: "70%",
-        }}
-      >
-        <Box sx={{ width: "90%" }}>
+     
+        <Box sx={{ width: "100%" ,p:1,height:"100%"}}>
           <Typography sx={{ textAlign: "center" }} variant="h5" gutterBottom>
             Add / Remove / Handover
           </Typography>
@@ -251,18 +233,8 @@ function InvoiceRightSide() {
             ))}
           </Stack>
         </Box>
-      </Paper>
-      <Paper
-        elevation={3}
-        sx={{
-          width: "95%",
-          display: "flex",
-          justifyContent: "center",
-          p: 0,
-          borderRadius: 3,
-          height: "30%",
-        }}
-      >
+  
+    
         <Box
           sx={{
             width: "100%",
@@ -294,7 +266,7 @@ function InvoiceRightSide() {
             />
           </Box>
         </Box>
-      </Paper>
+
     </>
   );
 }

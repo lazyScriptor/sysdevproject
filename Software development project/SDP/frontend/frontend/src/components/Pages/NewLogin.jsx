@@ -18,6 +18,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Contexts/Contexts";
+import LoginFormMUI from "./LoginFormMUI";
+import image from '../../assets/constructor.png'
 
 function NewLogin() {
   const [userName, setUserName] = useState("Dummu username");
@@ -153,6 +155,7 @@ function NewLogin() {
           setUsernameArray(res.data);
         });
     } catch (error) {
+      
       console.log("handleSearch NIC error");
     }
   };
@@ -161,7 +164,7 @@ function NewLogin() {
     <>
       <Box
         sx={{
-          backgroundColor: (theme) => theme.palette.primary[50],
+          backgroundColor: "white",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -191,92 +194,7 @@ function NewLogin() {
             }}
             minHeight={"inherit"}
           >
-            <Paper
-              elevation={3}
-              sx={{
-                width: "400px",
-                borderRadius: 3,
-                p: 6,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "start",
-                flexDirection: "column",
-                gap: 5,
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
-              }}
-            >
-              {/* Username Whole Box */}
-              <Box width={"100%"}>
-                <FormLabel>Enter Username</FormLabel>
-                <Box
-                  sx={{
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  <TextField
-                    fullWidth
-                    id="Username"
-                    label=""
-                    variant="outlined"
-                    onChange={(e) => handleUserNameOnChange(e.target.value)}
-                  />{" "}
-                  {toogle == true ? (
-                    <FontAwesomeIcon
-                      icon={faArrowsRotate}
-                      spin
-                      onClick={handleIconSearch}
-                    />
-                  ) : (
-                    <FontAwesomeIcon
-                      icon={faArrowsRotate}
-                      onClick={handleIconSearch}
-                    />
-                  )}
-                </Box>
-              </Box>
-              {/* Select while box */}
-              <Box sx={{ width: "100%" }}>
-                <FormLabel sx={{ mr: 3 }}>Select the role :</FormLabel>
-                <Select
-                  fullWidth
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={selectValue || ""}
-                  onChange={(event) => handleSelectChange(event)}
-                  label="name"
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  {usernameArray.map((users, index) => (
-                    <MenuItem value={users.role} key={index}>
-                      {users.role}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Box>
-              {/* Password box */}
-              <Box>
-                <FormLabel>Enter Password</FormLabel>
-                <TextField
-                  fullWidth
-                  id="outlined-basic"
-                  label=""
-                  variant="outlined"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </Box>
-
-              <Button
-                variant="contained"
-                onClick={() => handleSubmit(userName, password, selectValue)}
-              >
-                Login
-              </Button>
-            </Paper>
+            <LoginFormMUI/>
           </Box>
           {/* Right box */}
           <Box
@@ -289,7 +207,7 @@ function NewLogin() {
             }}
           >
             {/* Your content for the right box */}
-            {/* <img
+            <img
               src={image}
               alt="Description of your image"
               style={{
@@ -298,7 +216,7 @@ function NewLogin() {
                 width: "auto",
                 height: "auto",
               }}
-            /> */}
+            />
           </Box>
         </Box>
       </Box>

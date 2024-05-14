@@ -17,8 +17,10 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@hookform/resolvers": "^3.3.4",
     "@mui/icons-material": "^5.15.16",
-    "@mui/material": "^5.15.16",
+    "@mui/lab": "^5.0.0-alpha.170",
+    "@mui/material": "^5.15.17",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
@@ -27,9 +29,11 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.4",
     "react-router-dom": "^6.22.3",
     "react-virtuoso": "^4.7.10",
-    "styled-components": "^6.1.9"
+    "styled-components": "^6.1.9",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@syncfusion/ej2-react-grids": "^25.1.42",

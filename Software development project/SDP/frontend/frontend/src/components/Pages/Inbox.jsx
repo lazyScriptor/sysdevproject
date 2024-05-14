@@ -4,6 +4,7 @@ import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Contexts/Contexts";
 import NavBarComponent from "./NavBarComponent";
+import InvoiceNew from "./Invoice/InvoiceNew";
 
 function Inbox() {
   const { setIsAuthenticated } = useContext(AuthContext);
@@ -17,12 +18,7 @@ function Inbox() {
   }, []);
   return (
     <>
-      <BackgroundStyleNew
-        title={"Inbox"}
-        subTitle={"This is the inbox page"}
-      >
-       
-      </BackgroundStyleNew>
+      <InvoiceNew/>
     </>
   );
 }

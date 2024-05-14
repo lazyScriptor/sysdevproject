@@ -24,12 +24,14 @@ import axios from "axios";
 import InvoiceRightSide from "../SubComponents/InvoiceRightSide.jsx";
 import InvoiceTable from "../SubComponents/InvoiceTable.jsx";
 import NavBarComponent from "./NavBarComponent.jsx";
+import InvoiceLeftSide from "../SubComponents/InvoiceLeftSide.jsx";
 
 function Invoice() {
   const {
     equipmentObject,
     setEquipmentObject,
     checkState,
+    setCheckState,
     eqArray,
     invoiceObject,
     setInvoiceObject,
@@ -51,13 +53,6 @@ function Invoice() {
     }
   }, []);
 
-  useEffect(() => {
-    // invoiceObject.name="kamal";
-    // console.log(invoiceObject.name)
-    // invoiceObject.name="nimal"
-    // console.log(invoiceObject)
-  });
-
   const [clearData, setClearData] = useState({
     cus_fname: "",
     cus_address1: "",
@@ -68,41 +63,29 @@ function Invoice() {
   });
   const [data, setData] = useState({
     cus_fname: "",
-    cus_address1: "",
+    cus_address1: " ",
     cus_address2: "",
     nic: "",
     cus_phone_number: "",
     cus_id: "",
   });
-  // const [newObject, setNewObject] = useState({
-  //   bata: {
-  //     ...data,
-  //     eqdata: equipmentObject.eq_name || "",
-  //   },
-  // });
 
   const handleProceedPayment = () => {
     console.log(invoiceObject);
-    // setEquipmentObject((equipmentObject) => {
-    //   ({
-    //     ...equipmentObject,
-    //     eq_id: eqArray,
-    //     cus_id: data.cus_id,
-    //   });
-    //   // console.log(...equipmentObject, ...data);
-    //   console.log({
-
-    //     ...equipmentObject,
-    //     // eq_id: eqArray,
-    //     // cus_id: data.cus_id,
-    //   },"This is the equipment object");
-    // });
-
     setEquipmentObject({
       ...equipmentObject,
       eq_id: eqArray,
       cus_id: data.cus_id,
     });
+
+    console.log("prev checkstate", checkState);
+    setCheckState((checkState) => {
+      // console.log(!checkState)
+      checkState = !checkState;
+      updateValue("idStatus", checkState);
+      return checkState;
+    });
+    console.log("Afeter checkstat", !checkState);
   };
 
   const { boolvalue, setBoolvalue, userData, setUserData } =
@@ -122,7 +105,12 @@ function Invoice() {
 
       console.log(invoiceObject);
     } catch (error) {
-      console.log("handleSearch Id error", error);
+      //When error occured in the above phase,despite of that ,text field is retrieving retrieveddata objects cus_fname,
+      //when there is a error in retriving that data,it passes that cus_fname as anobject and text field can't retireve the value
+      //which will leads to an application error.So when an error occured ,in the catch block im set that data object
+      //with the previous null data
+      setData(clearData);
+      console.error("handle Search Phone number block", error);
     }
   };
   const handleCreateNew = async () => {
@@ -155,27 +143,43 @@ function Invoice() {
       console.log("handleSearch Createinvoice error", error);
     }
   };
+  const handleIdAdd = () => {
+    console.log("prev checkstate", checkState);
+    setCheckState((checkState) => {
+      // console.log(!checkState)
+      checkState = !checkState;
+      updateValue("idStatus", checkState);
+      return checkState;
+    });
+    console.log("Afeter checkstat", !checkState);
+  };
 
+  const handlecheck =(e)=>{
+    console.log("value ",e.target.value,checkState)
+  }
   return (
     <>
+      {/* First Column: 61.8
+Second Column: 38.2
+Third Column: 23.6 */}
 
       <Box
         sx={{
           backgroundColor: "white",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-evenly",
+          justifyContent: "end",
           Width: "100%",
           minHeight: "100vh",
         }}
       >
         {/* Row1 */}
         <Box
-          minHeight={100}
           sx={{
             display: "flex",
             width: "100%",
-            height: "30%",
+            minHeight: "10vh",
+            border: "solid 2px green",
           }}
         >
           {/*Row1 Leftmost box */}
@@ -184,7 +188,7 @@ function Invoice() {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              width: "15%",
+              width: "23.6%",
             }}
           ></Box>
           {/*Row1 middle box */}
@@ -193,7 +197,7 @@ function Invoice() {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              width: "60%",
+              width: "52.4%",
               gap: 2,
               pl: 5,
               pr: 5,
@@ -216,7 +220,7 @@ function Invoice() {
               display: "flex",
               justifyContent: "space-evenly",
               alignItems: "center",
-              width: "25%",
+              width: "23.6%",
               gap: 2,
             }}
           >
@@ -236,19 +240,18 @@ function Invoice() {
           sx={{
             display: "flex",
             width: "100%",
-            minheight: "40%",
+            minHeight: "60vh",
           }}
         >
           {/*Row2 Leftmost box */}
           <Box
             sx={{
               display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "15%",
+              flexDirection: "column",
+              width: "23.6%",
             }}
           >
-            Row 2 coloumn 1
+            <InvoiceRightSide />
           </Box>
           {/*Row2 middle box */}
 
@@ -258,7 +261,7 @@ function Invoice() {
               justifyContent: "center",
               alignItems: "center",
               flexDirection: "row",
-              width: "60%",
+              width: "52.4%",
             }}
           >
             <Paper
@@ -377,7 +380,12 @@ function Invoice() {
                     label={<FontAwesomeIcon icon={faUpload} />}
                     variant="outlined"
                   />
-                  <Checkbox defaultChecked />
+                  <Checkbox
+                    // checked={checkState === "true"} // Convert the string value to a boolean
+                    onChange={(e)=>handlecheck(e)}
+
+                    // sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+                  />
                   <FormLabel sx={{ pt: 2 }}>Physical</FormLabel>
                   <Checkbox />
                   <FormLabel sx={{ pt: 2 }}>Digital</FormLabel>
@@ -409,7 +417,7 @@ function Invoice() {
               display: "flex",
               flexDirection: "column",
               gap: 3,
-              width: "25%",
+              width: "23.6%",
             }}
           >
             <InvoiceRightSide />
@@ -422,7 +430,7 @@ function Invoice() {
           sx={{
             display: "flex",
             width: "100%",
-            minheight: "30%",
+            height: "30vh",
           }}
         >
           {/*Row3 Leftmost box */}
