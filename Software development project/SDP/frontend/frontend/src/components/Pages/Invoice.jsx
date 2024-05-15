@@ -50,7 +50,7 @@ function Invoice() {
     //   navigate("/");
     //   setIsAuthenticated(false);
     // }
-    console.log(invoiceObject)
+    console.log(invoiceObject);
   }, [invoiceObject]);
   const [data, setData] = useState({
     cus_fname: "",
@@ -71,15 +71,8 @@ function Invoice() {
   });
 
   const handleProceedPayment = () => {
-    setCheckState((checkState) => {
-      // console.log(!checkState)
-      checkState = !checkState;
-      updateValue("idStatus", checkState);
-      updateValue("eqdetails",eqObject);
-      updateValue("Customer details",data)
-      return checkState;
-    });
-    console.log("Afeter checkstat", !checkState);
+    updateValue("eqdetails", eqObject);
+    updateValue("Customer details", data);
   };
 
   const { boolvalue, setBoolvalue, userData, setUserData } =
@@ -154,7 +147,7 @@ Third Column: 23.6 */}
           justifyContent: "start",
           Width: "100%",
           minHeight: "100vh",
-          p: 2,
+
         }}
       >
         {/* Row1 */}
@@ -406,7 +399,7 @@ Third Column: 23.6 */}
               width: "23.6%",
             }}
           >
-            <InvoiceDetailsWindowUp/>
+            <InvoiceDetailsWindowUp />
           </Box>
         </Box>
 
@@ -416,7 +409,7 @@ Third Column: 23.6 */}
           sx={{
             display: "flex",
             width: "100%",
-            height: "42vh",
+            height: "34vh",
           }}
         >
           {/*Row3 Leftmost box */}

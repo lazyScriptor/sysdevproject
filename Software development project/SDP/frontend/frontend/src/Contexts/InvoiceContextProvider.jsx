@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import { InvoiceContext } from "./Contexts";
 
 export default function InvoiceContextProvider({ children }) {
-
-  
   const [fullDetailsEquipmentArray, setFullDetailsEquipmentArray] = useState(
     []
   ); //FULL DETAIL OBJECT.ARRAY OF OBJECTS
   const [checkState, setCheckState] = useState(false);
   const [eqObject, setEqObject] = useState([]);
   const [invoiceObject, setInvoiceObject] = useState({});
+  const [responseManageToogle, setResponseManageToogle] = useState(false);
   const clearObject = () => {
     setInvoiceObject({});
   };
@@ -18,23 +17,21 @@ export default function InvoiceContextProvider({ children }) {
     setInvoiceObject((preObject) => ({ ...preObject, [value]: newVaalue }));
   };
 
-  const updateEqObject = ( newValue) => {
+  const updateEqObject = (newValue) => {
     // setEqObject((prev) => [...prev, { newValue }]);in this way you can add array under the newValue KEY name
-    setEqObject((prev) => [...prev,newValue])
+    setEqObject((prev) => [...prev, newValue]);
   };
-
-
-
-
 
   useEffect(() => {
     console.log(eqObject);
-    console.log("effect",Array.isArray({ds:2}));
+    console.log("effect", Array.isArray({ ds: 2 }));
   }, [eqObject]); // Run this effect whenever eqObject changes
 
   return (
     <InvoiceContext.Provider
       value={{
+        responseManageToogle,
+        setResponseManageToogle,
         fullDetailsEquipmentArray,
         setFullDetailsEquipmentArray,
         checkState,

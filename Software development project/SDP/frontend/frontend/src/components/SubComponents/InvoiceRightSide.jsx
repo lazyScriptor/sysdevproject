@@ -11,7 +11,7 @@ import {
   IconButton,
 } from "@mui/material";
 import axios from "axios";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AlertComponentContext, InvoiceContext } from "../../Contexts/Contexts";
 import MousePopOver from "./AlertComponents/MousePopOver";
 import SearchIcon from "@mui/icons-material/Search";
@@ -40,6 +40,8 @@ function InvoiceRightSide() {
 
   const { snackHandleClickVariant } = useContext(AlertComponentContext);
   const {
+    responseManageToogle,
+    setResponseManageToogle,
     fullDetailsEquipmentArray,
     setFullDetailsEquipmentArray,
     checkState,
@@ -57,7 +59,7 @@ function InvoiceRightSide() {
   const [eq, setEq] = useState(""); //eq name
   const [eqQty, setEqQty] = useState(""); //eq auantity
   const [EqIdValue, setEqIdValue] = useState();
-  const [eqLocalObject,setEqLocalObject]=useState()//Locally retireve the equipment details and use to pass the object to the equipment object array
+  const [eqLocalObject, setEqLocalObject] = useState(); //Locally retireve the equipment details and use to pass the object to the equipment object array
   const [numChips, setNumChips] = useState(0); // Initial number of chips
   const [isQtyGreaterThanOne, setIsQtyEqualsOne] = useState(false);
   const [borrowedQty, setBorrowedQty] = useState();
@@ -134,21 +136,27 @@ function InvoiceRightSide() {
     eqObject.Qty = eqQty;
     updateEqObject(eqObject);
   };
-  
 
   const handleRemoveEquipment = (eqObject, EqIdValue) => {
-    for (let i = 0; i < eqObject.length; i++) {
-      if (eqObject[i].eq_id == EqIdValue) {
-        eqObject.splice([i], [1]);
-        console.log("inside the remove", eqObject);
+    setResponseManageToogle(!responseManageToogle)
+    let obj = eqObject;
+    for (let i = 0; i < obj.length; i++) {
+      if (obj[i].eq_id == EqIdValue) {
+        obj.splice([i], [1]);
+        console.log("inside the remove", obj);
       }
     }
+    console.log("outside the remove", obj);
+    setEqObject(obj);
     // const updatedEqObject = eqObject.filter((item) => item.id !== EqIdValue);
     // // Update the state with the filtered array
     // setEqObject(updatedEqObject);
     // // Also, update the invoice object if necessary
     // updateValue("eqArray", updatedEqObject);
   };
+  useEffect(() => {
+    console.log("changed", eqObject);
+  }, [eqObject]);
   return (
     <>
       <Paper
@@ -281,7 +289,9 @@ function InvoiceRightSide() {
               sx={{ display: "flex", justifyContent: "space-between", p: 3 }}
             >
               <Button
-                onClick={() => handleAddEquipment(EqIdValue, eqQty, eqLocalObject)}
+                onClick={() =>
+                  handleAddEquipment(EqIdValue, eqQty, eqLocalObject)
+                }
               >
                 Add
               </Button>

@@ -20,14 +20,11 @@ function IdCardStatus() {
 
   const handleIdAdd = () => {
     console.log("prev checkstate", checkState);
-    setCheckState((checkState) => {
-      // console.log(!checkState)
-      checkState = !checkState;
-      updateValue("idStatus", checkState);
-      return checkState;
-    });
-    console.log("Afeter checkstat", !checkState);
-
+    setCheckState((prevCheckState)=>{
+      const newCheckState=!prevCheckState
+      updateValue("iDstatus",newCheckState)
+      return newCheckState
+    })
     //handleAddEquipment description eka wagema methanath EquipmentObject kiyana context eke thyena object ekata
     //aluthin idData eka add wela,checkState eka change krna parak gane value eka change wela object ekata
     //append wenawa
