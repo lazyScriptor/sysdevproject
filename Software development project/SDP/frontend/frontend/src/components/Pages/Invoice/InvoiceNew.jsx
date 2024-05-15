@@ -35,7 +35,7 @@ export default function InvoiceNew() {
           <Item sx={{}}><InvoiceRightSide/></Item>
         </Grid>
         <Grid xs={6.5}>
-          <Item><InvoiceCustomerDetails/></Item>
+          <Item></Item>
         </Grid>
         <Grid xs={2.5}>
           <Item></Item>
@@ -48,7 +48,7 @@ export default function InvoiceNew() {
           <Item sx={{}}></Item>
         </Grid>
         <Grid xs={6.5}>
-          <Item><InvoiceCustomerDetails/></Item>
+          <Item></Item>
         </Grid>
         <Grid xs={2.5}>
           <Item></Item>

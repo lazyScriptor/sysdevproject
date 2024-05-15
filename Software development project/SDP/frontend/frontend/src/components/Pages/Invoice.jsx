@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../Stylings/rootstyles.css";
 import NewCustomerForm from "./NewCustomerForm.jsx";
-import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew.jsx";
 import {
   Box,
   Button,
@@ -12,8 +11,6 @@ import {
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faUpload } from "@fortawesome/free-solid-svg-icons";
-import Checkbox from "@mui/material/Checkbox";
-import CustomerTable from "../SubComponents/CustomerTable.jsx";
 import {
   AuthContext,
   InvoiceContext,
@@ -23,20 +20,23 @@ import OverlayDialogBox from "../SubComponents/OverlayDialogBox.jsx";
 import axios from "axios";
 import InvoiceRightSide from "../SubComponents/InvoiceRightSide.jsx";
 import InvoiceTable from "../SubComponents/InvoiceTable.jsx";
-import NavBarComponent from "./NavBarComponent.jsx";
-import InvoiceLeftSide from "../SubComponents/InvoiceLeftSide.jsx";
+import IdCardStatus from "./Invoice/IdCardStatus.jsx";
+import InvoiceDetailsWindowUp from "./Invoice/InvoiceDetailsWindowUp.jsx";
+import InvoiceDetailsWindowDown from "./Invoice/InvoiceDetailsWindowDown.jsx";
 
 function Invoice() {
   const {
-    equipmentObject,
-    setEquipmentObject,
+    fullDetailsEquipmentArray,
+    setFullDetailsEquipmentArray,
     checkState,
     setCheckState,
-    eqArray,
+    eqObject,
+    setEqObject,
     invoiceObject,
     setInvoiceObject,
     clearObject,
     updateValue,
+    updateEqObject,
   } = useContext(InvoiceContext);
   const { setIsAuthenticated } = useContext(AuthContext);
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -45,22 +45,13 @@ function Invoice() {
     new Date().toISOString().slice(0, 10)
   );
   const [invoiceIdSearch, setInvoiceIdSearch] = useState();
-
   useEffect(() => {
-    if (!localStorage.getItem("token")) {
-      navigate("/");
-      setIsAuthenticated(false);
-    }
-  }, []);
-
-  const [clearData, setClearData] = useState({
-    cus_fname: "",
-    cus_address1: "",
-    cus_address2: "",
-    nic: "",
-    cus_phone_number: "",
-    Cus: "",
-  });
+    // if (!localStorage.getItem("token")) {
+    //   navigate("/");
+    //   setIsAuthenticated(false);
+    // }
+    console.log(invoiceObject)
+  }, [invoiceObject]);
   const [data, setData] = useState({
     cus_fname: "",
     cus_address1: " ",
@@ -70,19 +61,22 @@ function Invoice() {
     cus_id: "",
   });
 
-  const handleProceedPayment = () => {
-    console.log(invoiceObject);
-    setEquipmentObject({
-      ...equipmentObject,
-      eq_id: eqArray,
-      cus_id: data.cus_id,
-    });
+  const [clearData, setClearData] = useState({
+    cus_fname: "",
+    cus_address1: "",
+    cus_address2: "",
+    nic: "",
+    cus_phone_number: "",
+    Cus: "",
+  });
 
-    console.log("prev checkstate", checkState);
+  const handleProceedPayment = () => {
     setCheckState((checkState) => {
       // console.log(!checkState)
       checkState = !checkState;
       updateValue("idStatus", checkState);
+      updateValue("eqdetails",eqObject);
+      updateValue("Customer details",data)
       return checkState;
     });
     console.log("Afeter checkstat", !checkState);
@@ -97,7 +91,6 @@ function Invoice() {
         .get(`http://localhost:8085/getCustomerbyPhoneNumber/${phoneNumber}`)
         .then((res) => {
           setData(res.data[0]);
-          updateValue("cusId", res.data[0].cus_id);
           // invoiceObject.c=3;
           // console.log(invoiceObject.eqArray)
           // console.log("This is the ",invoiceObject.cusId)
@@ -143,20 +136,10 @@ function Invoice() {
       console.log("handleSearch Createinvoice error", error);
     }
   };
-  const handleIdAdd = () => {
-    console.log("prev checkstate", checkState);
-    setCheckState((checkState) => {
-      // console.log(!checkState)
-      checkState = !checkState;
-      updateValue("idStatus", checkState);
-      return checkState;
-    });
-    console.log("Afeter checkstat", !checkState);
-  };
 
-  const handlecheck =(e)=>{
-    console.log("value ",e.target.value,checkState)
-  }
+  const handlecheck = (e) => {
+    console.log("value ", e.target.value, checkState);
+  };
   return (
     <>
       {/* First Column: 61.8
@@ -168,9 +151,10 @@ Third Column: 23.6 */}
           backgroundColor: "white",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "end",
+          justifyContent: "start",
           Width: "100%",
           minHeight: "100vh",
+          p: 2,
         }}
       >
         {/* Row1 */}
@@ -178,8 +162,7 @@ Third Column: 23.6 */}
           sx={{
             display: "flex",
             width: "100%",
-            minHeight: "10vh",
-            border: "solid 2px green",
+            minHeight: "8vh",
           }}
         >
           {/*Row1 Leftmost box */}
@@ -240,7 +223,7 @@ Third Column: 23.6 */}
           sx={{
             display: "flex",
             width: "100%",
-            minHeight: "60vh",
+            minHeight: "50vh",
           }}
         >
           {/*Row2 Leftmost box */}
@@ -248,6 +231,7 @@ Third Column: 23.6 */}
             sx={{
               display: "flex",
               flexDirection: "column",
+              gap: 3,
               width: "23.6%",
             }}
           >
@@ -268,6 +252,7 @@ Third Column: 23.6 */}
               elevation={3}
               sx={{
                 width: "95%",
+                height: "100%",
                 display: "flex",
                 justifyContent: "center",
                 p: 3,
@@ -380,7 +365,7 @@ Third Column: 23.6 */}
                     label={<FontAwesomeIcon icon={faUpload} />}
                     variant="outlined"
                   />
-                  <Checkbox
+                  {/* <Checkbox
                     // checked={checkState === "true"} // Convert the string value to a boolean
                     onChange={(e)=>handlecheck(e)}
 
@@ -388,7 +373,8 @@ Third Column: 23.6 */}
                   />
                   <FormLabel sx={{ pt: 2 }}>Physical</FormLabel>
                   <Checkbox />
-                  <FormLabel sx={{ pt: 2 }}>Digital</FormLabel>
+                  <FormLabel sx={{ pt: 2 }}>Digital</FormLabel> */}
+                  <IdCardStatus />
                 </Box>
                 <Box>
                   <TextField
@@ -420,7 +406,7 @@ Third Column: 23.6 */}
               width: "23.6%",
             }}
           >
-            <InvoiceRightSide />
+            <InvoiceDetailsWindowUp/>
           </Box>
         </Box>
 
@@ -430,7 +416,7 @@ Third Column: 23.6 */}
           sx={{
             display: "flex",
             width: "100%",
-            height: "30vh",
+            height: "42vh",
           }}
         >
           {/*Row3 Leftmost box */}
@@ -439,7 +425,7 @@ Third Column: 23.6 */}
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              width: "15%",
+              width: "23.6%",
             }}
           >
             Row 3 coloumn 1
@@ -450,7 +436,7 @@ Third Column: 23.6 */}
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              width: "60%",
+              width: "52.4%",
               p: 3,
             }}
           >
@@ -460,11 +446,14 @@ Third Column: 23.6 */}
           <Box
             sx={{
               display: "flex",
-              justifyContent: "center",
+              flexDirection: "column",
               alignItems: "center",
-              width: "25%",
+              justifyContent: "start",
+              width: "23.6%",
             }}
-          ></Box>
+          >
+            <InvoiceDetailsWindowDown />
+          </Box>
         </Box>
       </Box>
       <OverlayDialogBox>

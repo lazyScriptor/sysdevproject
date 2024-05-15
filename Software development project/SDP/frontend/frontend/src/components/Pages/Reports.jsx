@@ -12,11 +12,7 @@ function Reports() {
       setIsAuthenticated(false);
     }
   }, []);
-  return (
-    <>
-     <LoginFormMUI/>
-    </>
-  );
+  return <></>;
 }
 
 export default Reports;

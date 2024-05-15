@@ -61,6 +61,10 @@ function LoginFormMUI() {
 
   const handleLoadingButton = async (userName) => {
     setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    // clearTimeout();
     try {
       await axios
         .get(`http://localhost:8085/getUserRole/${userName}`)
@@ -72,7 +76,8 @@ function LoginFormMUI() {
       setIsLoading(false);
       console.log("handleSearch NIC error");
     }
-    setIsLoading(false);
+
+    
   };
 
   const handleSelectChange = (event) => {

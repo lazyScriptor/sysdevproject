@@ -1,34 +1,51 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InvoiceContext } from "./Contexts";
 
 export default function InvoiceContextProvider({ children }) {
-  const [equipmentObject, setEquipmentObject] = useState({});
-  const [checkState, setCheckState] = useState(false);
-  const [eqArray, setEqArray] = useState([]);
-  const [invoiceObject, setInvoiceObject] = useState({
 
-  });
+  
+  const [fullDetailsEquipmentArray, setFullDetailsEquipmentArray] = useState(
+    []
+  ); //FULL DETAIL OBJECT.ARRAY OF OBJECTS
+  const [checkState, setCheckState] = useState(false);
+  const [eqObject, setEqObject] = useState([]);
+  const [invoiceObject, setInvoiceObject] = useState({});
   const clearObject = () => {
     setInvoiceObject({});
   };
 
-  const updateValue = (value,newVaalue) => {
-    setInvoiceObject((preObject)=>({ ...preObject, [value]: newVaalue }));
+  const updateValue = (value, newVaalue) => {
+    setInvoiceObject((preObject) => ({ ...preObject, [value]: newVaalue }));
   };
+
+  const updateEqObject = ( newValue) => {
+    // setEqObject((prev) => [...prev, { newValue }]);in this way you can add array under the newValue KEY name
+    setEqObject((prev) => [...prev,newValue])
+  };
+
+
+
+
+
+  useEffect(() => {
+    console.log(eqObject);
+    console.log("effect",Array.isArray({ds:2}));
+  }, [eqObject]); // Run this effect whenever eqObject changes
 
   return (
     <InvoiceContext.Provider
       value={{
-        equipmentObject,
-        setEquipmentObject,
+        fullDetailsEquipmentArray,
+        setFullDetailsEquipmentArray,
         checkState,
         setCheckState,
-        eqArray,
-        setEqArray,
+        eqObject,
+        setEqObject,
         invoiceObject,
         setInvoiceObject,
         updateValue,
-        clearObject
+        updateEqObject,
+        clearObject,
       }}
     >
       {children}
