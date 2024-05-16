@@ -17,7 +17,6 @@ import { ThemeProvider, createTheme } from "@mui/material";
 import NewLogin from "./components/Pages/NewLogin.jsx";
 import Settings from "./components/Pages/Settings.jsx";
 import AuthContextProvider from "./Contexts/AuthContextProvider.jsx";
-import NavBarComponent from "./components/Pages/NavBarComponent.jsx";
 
 export const AppCustomContext = createContext();
 

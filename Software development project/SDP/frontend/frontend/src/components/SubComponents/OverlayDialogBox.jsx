@@ -13,12 +13,13 @@ export default function OverlayDialogBox({ children }) {
   const fullScreen = useMediaQuery(theme.breakpoints.down("xl"));
 
   const handleClose = () => {
-    setBoolvalue(!boolvalue);
+    setBoolvalue(false);
   };
 
   return (
     <>
       <Dialog
+      sx={{borderRadius:5}}
         maxWidth="xl"
         fullScreen={fullScreen}
         open={boolvalue}

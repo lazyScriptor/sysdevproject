@@ -12,13 +12,11 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { AlertComponentContext, InvoiceContext } from "../../Contexts/Contexts";
-import MousePopOver from "./AlertComponents/MousePopOver";
+import { AlertComponentContext, InvoiceContext } from "../../../Contexts/Contexts.jsx";
 import SearchIcon from "@mui/icons-material/Search";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import IdCardStatus from "../Pages/Invoice/IdCardStatus";
 
 function InvoiceRightSide() {
   const schema = yup.object().shape({
@@ -90,47 +88,6 @@ function InvoiceRightSide() {
       console.error("error occurred while searching by ID:", error);
     }
   };
-
-  // const handleAddEquipment = (EqIdValue, eqQty,eqArray) => {
-  //   //Makt the eq id integer .Default value is a string
-  //   let newValue = parseInt(EqIdValue);
-  //   //set equipment full details and eq quantity for invoice rightside auto fill paper
-  //   // setEqArray((prev)=>{
-  //   //   const updatedArray=[
-  //   //     ...prev,
-  //   //     {
-  //   //       array,
-  //   //       eqQty:eqQty
-  //   //     }
-  //   //   ];
-  //   //   console.log("new eq object",updatedArray)
-  //   //   return updatedArray;
-  //   // })
-  //   //create a new array and add each items (id and borrowed qty ) as a new value
-  //   // setEqArray((prev) => {
-  //   //   const updatedEqObject = [
-  //   //     ...prev,
-  //   //     {
-  //   //       borrowedQty:eqQ
-  //   //     }
-
-  //   //   ];
-  //   //   updateValue("eqArray", updatedEqObject);//Push values to the invoice object
-  //   //   console.log("This is the equipment objectttttt", updatedEqObject);
-  //   //   return updatedEqObject;
-  //   // });
-
-  //   // Create a new object with equipment details
-  //   const newEquipment = {
-  //     id: newValue,
-  //     borrowedQty: eqQty
-  //   };
-  //   // Update the eqArray with the new equipment object
-  //   setEqArray((prevEqArray) => [...prevEqArray, newEquipment]);
-
-  //   //incrementing the number of chips
-  //   // setNumChips((prevNumChips) => prevNumChips + 1);
-  // };
 
   const handleAddEquipment = (EqIdValue, eqQty, eqObject) => {
     eqObject.Qty = eqQty;
@@ -276,10 +233,10 @@ function InvoiceRightSide() {
                     fullWidth
                     disabled={isQtyGreaterThanOne}
                     id="standard-basic"
-                    // label="Enter quantity"
+                    label="Remaining stock shown here"
                     variant="outlined"
                     value={eqQty}
-                    onChange={(e) => setBorrowedQty(e.target.value)}
+                    onChange={(e) => setEqQty(e.target.value)}
                   />
                 </Box>
               </Box>

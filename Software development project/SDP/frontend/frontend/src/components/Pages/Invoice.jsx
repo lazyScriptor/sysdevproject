@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../Stylings/rootstyles.css";
 import NewCustomerForm from "./NewCustomerForm.jsx";
+
 import {
   Box,
   Button,
@@ -18,11 +19,12 @@ import {
 } from "../../Contexts/Contexts.jsx";
 import OverlayDialogBox from "../SubComponents/OverlayDialogBox.jsx";
 import axios from "axios";
-import InvoiceRightSide from "../SubComponents/InvoiceRightSide.jsx";
+import InvoiceRightSide from "./Invoice/InvoiceRightSide.jsx";
 import InvoiceTable from "../SubComponents/InvoiceTable.jsx";
 import IdCardStatus from "./Invoice/IdCardStatus.jsx";
 import InvoiceDetailsWindowUp from "./Invoice/InvoiceDetailsWindowUp.jsx";
 import InvoiceDetailsWindowDown from "./Invoice/InvoiceDetailsWindowDown.jsx";
+import Payments from "./Invoice/Payments.jsx";
 
 function Invoice() {
   const {
@@ -38,6 +40,7 @@ function Invoice() {
     updateValue,
     updateEqObject,
   } = useContext(InvoiceContext);
+
   const { setIsAuthenticated } = useContext(AuthContext);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [invoiceId, setInvoiceId] = useState("0000");
@@ -73,6 +76,7 @@ function Invoice() {
   const handleProceedPayment = () => {
     updateValue("eqdetails", eqObject);
     updateValue("Customer details", data);
+    setBoolvalue(true);
   };
 
   const { boolvalue, setBoolvalue, userData, setUserData } =
@@ -147,7 +151,6 @@ Third Column: 23.6 */}
           justifyContent: "start",
           Width: "100%",
           minHeight: "100vh",
-
         }}
       >
         {/* Row1 */}
@@ -433,6 +436,7 @@ Third Column: 23.6 */}
               p: 3,
             }}
           >
+      
             <InvoiceTable />
           </Box>
           {/*Row3 rightmost box */}
@@ -445,12 +449,13 @@ Third Column: 23.6 */}
               width: "23.6%",
             }}
           >
+           
             <InvoiceDetailsWindowDown />
           </Box>
         </Box>
       </Box>
       <OverlayDialogBox>
-        <NewCustomerForm />
+        <Payments />
       </OverlayDialogBox>
     </>
   );

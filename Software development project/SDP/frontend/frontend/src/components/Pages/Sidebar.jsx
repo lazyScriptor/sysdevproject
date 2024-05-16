@@ -24,7 +24,6 @@ import { useContext } from "react";
 import { AppCustomContext } from "../../App.jsx";
 import Button from "@mui/material/Button";
 import { Typography } from "@mui/material";
-import NavBarComponent from "./NavBarComponent.jsx";
 
 function Sidebar() {
   //context data
@@ -49,28 +48,6 @@ function Sidebar() {
       <Button sx={{position:"absolute",backgroundColor:""}} onClick={()=>setShow(!show)}>
           <WidgetsIcon fontSize="large" sx={{colorL:"red"}}/>
       </Button>
-      {/* <NavBarComponent show={show} setShow={setShow}/> */}
-      {/* <Button
-        onClick={handleShow}
-        className="open-button"
-        sx={{
-          position: "fixed",
-          top: "00px",
-          left: "0px",
-          height: "40px",
-          zIndex: 999,
-          borderRadius: "0px",
-          backgroundColor: (theme) => theme.palette.primary[50],
-          "&:hover": {
-            backgroundColor: (theme) => theme.palette.primary[200],
-          },
-        }}
-      >
-        <Typography sx={{ mr: 2, color: "#cecececd" }}>
-          Open the side bar
-        </Typography>
-        {/* <FontAwesomeIcon icon={faBars} size="xl" style={{ color: "#505050" }} /> */}
-      {/* </Button> */} 
       <Offcanvas
         name="Disable backdrop"
         scroll={true}

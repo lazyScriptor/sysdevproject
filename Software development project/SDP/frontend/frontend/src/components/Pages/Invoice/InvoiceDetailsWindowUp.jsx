@@ -28,7 +28,7 @@ function InvoiceDetailsWindowUp() {
   useEffect(() => {
     console.log("eqObject changed:", eqObject);
     setResponseManageToogle(!responseManageToogle)
-  }, [eqObject,responseManageToogle]);
+  }, [eqObject]);
 
   return (
     <>

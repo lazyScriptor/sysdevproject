@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew";
 import EquipmentTable from "../SubComponents/EquipmentTable";
-import NavBarComponent from "./NavBarComponent";
 
 function Equipment() {
   useEffect(() => {

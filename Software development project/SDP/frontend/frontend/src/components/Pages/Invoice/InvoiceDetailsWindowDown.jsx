@@ -1,8 +1,29 @@
 import { Box, Paper, Stack, Typography } from "@mui/material";
 import { Button } from "@mui/material";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { InvoiceContext } from "../../../Contexts/Contexts";
 
 function InvoiceDetailsWindowDown() {
+  const {
+    fullDetailsEquipmentArray,
+    setFullDetailsEquipmentArray,
+    checkState,
+    responseManageToogle,
+    setResponseManageToogle,
+    setCheckState,
+    eqObject,
+    setEqObject,
+    invoiceObject,
+    setInvoiceObject,
+    clearObject,
+    updateValue,
+    updateEqObject,
+  } = useContext(InvoiceContext);
+  const [paymentArray, setPaymentArray] = useState([]);
+
+  useEffect(() => {
+    setPaymentArray(invoiceObject.payments);
+  }, [invoiceObject,responseManageToogle]);
   return (
     <>
       <Paper
@@ -24,48 +45,49 @@ function InvoiceDetailsWindowDown() {
             <Typography variant='h6' sx={{textAlign:"end"}}>2000 LKR</Typography>
             <Typography variant='h7' sx={{textAlign:"end"}}></Typography>
         </Box> */}
-        <Box sx={{ height: "100%", width: "100%", display: "flex" ,flexDirection:"column"}}>
-
-        <Box sx={{display:"flex",width:"100%"}}>
-             <Box
-            sx={{
-              width: "30%",
-              display: "flex",
-              flexDirection: "column",
-              gap: 3,
-              height: "60%",
-            }}
-          >
-            <Typography variant="h6">Advance</Typography>
-            <Typography variant="h7">Payments</Typography>
-           </Box>
+        <Box
+          sx={{
+            height: "100%",
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box sx={{ display: "flex", width: "100%" }}>
+            <Box
+              sx={{
+                width: "30%",
+                display: "flex",
+                flexDirection: "column",
+                gap: 3,
+                height: "100%",
+              }}
+            >
+              <Typography variant="h6">Advance</Typography>
+              <Typography variant="h7">Payments</Typography>
+            </Box>
             <Box sx={{ flexGrow: 1, height: "50%" }} />
             <Box
-            sx={{
-              width: "30%",
-              display: "flex",
-              flexDirection: "column",
-              height: "50%",
-            }}
-          >
-            <Typography variant="h6" sx={{ textAlign: "end", mb: 3 }}>
-              2000 LKR
-            </Typography>
-            <Typography variant="h7" sx={{ textAlign: "end" }}>
-              x 1000 LKR
-            </Typography>
-            <Typography variant="h7" sx={{ textAlign: "end" }}>
-              x 200 LKR
-            </Typography>
-            <Typography variant="h7" sx={{ textAlign: "end" }}>
-              x 350 LKR
-            </Typography>
-            </Box>
-        </Box>
-            <Box sx={{height:"100%",width:"100%"}}>
-              
-            </Box>
+              sx={{
+                width: "30%",
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+              }}
+            >
+              <Typography variant="h6" sx={{ textAlign: "end", mb: 2.5 }}>
+                {invoiceObject.advance && invoiceObject.advance}
+                LKR
+              </Typography>
 
+              {paymentArray.map((item, index) => (
+                <Typography key={index} variant="h7" sx={{ textAlign: "end" }}>
+                  {item.payment} lkr
+                </Typography>
+              ))}
+            </Box>
+          </Box>
+          <Box sx={{ height: "100%", width: "100%" }}></Box>
         </Box>
       </Paper>
       <Button
