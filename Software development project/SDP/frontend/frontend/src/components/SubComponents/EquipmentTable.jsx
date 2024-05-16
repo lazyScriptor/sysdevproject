@@ -346,7 +346,7 @@ export default function EquipmentTable() {
                       {row.eq_name}
                     </TableCell>
                     <TableCell className="table-cell-data">
-                      {row.rental}
+                      {row.eq_rental}
                     </TableCell>
                     <TableCell className="table-cell-data">
                       {formatDate(row.date_of_purchase)}

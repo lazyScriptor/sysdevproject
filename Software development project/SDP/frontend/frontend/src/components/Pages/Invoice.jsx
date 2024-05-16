@@ -25,6 +25,7 @@ import IdCardStatus from "./Invoice/IdCardStatus.jsx";
 import InvoiceDetailsWindowUp from "./Invoice/InvoiceDetailsWindowUp.jsx";
 import InvoiceDetailsWindowDown from "./Invoice/InvoiceDetailsWindowDown.jsx";
 import Payments from "./Invoice/Payments.jsx";
+import Swala from "../MessageComponents/Swal.jsx";
 
 function Invoice() {
   const {
@@ -304,7 +305,7 @@ Third Column: 23.6 */}
                   <Button onClick={() => handleSearchPhoneNumber(phoneNumber)}>
                     <FontAwesomeIcon icon={faSearch} />
                   </Button>
-                  <Button
+                  {/* <Button
                     variant="outlined"
                     size="small"
                     onClick={() => {
@@ -314,7 +315,8 @@ Third Column: 23.6 */}
                     Advance
                     <br />
                     search
-                  </Button>
+                  </Button> */}
+                  <Swala icon="info" title="Redirect Alert" text="This operation may clear your invoice data" buttonContent="Advance Search" swalButtonContent="Go back"footer='<a href="customers">Redirect Anyway</a>'/>
 
                   <Button
                     onClick={() => {

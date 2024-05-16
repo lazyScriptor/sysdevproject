@@ -25,10 +25,12 @@ function InvoiceDetailsWindowUp() {
     updateValue,
   } = useContext(InvoiceContext);
 
+  const Total = localStorage.getItem("Total")
   useEffect(() => {
-    console.log("eqObject changed:", eqObject);
+    
     setResponseManageToogle(!responseManageToogle)
-  }, [eqObject]);
+  }, [eqObject])
+
 
   return (
     <>
@@ -44,6 +46,15 @@ function InvoiceDetailsWindowUp() {
           height:"100%"
         }}
       >
+        <Box sx={{position:"relative",height:"50px",top:"92%",m:2,display:"flex"}}>
+            <Typography variant="body">
+              Sub Total
+            </Typography>
+            <Box sx={{ flexGrow: 1 }} />
+            <Typography variant="body">
+             {Total} LKR
+            </Typography>
+        </Box>
         {eqObject.map((item, index) => (
           <Paper
             elevation={2}

@@ -27,7 +27,13 @@ function InvoiceRightSide() {
       .max(200, "The equipment ID must be at most 200")
       .required("Equipment ID is required"),
   });
-  
+  const schemaAdd = yup.object().shape({
+  eqQty: yup
+    .number()
+    .typeError("Equipment quantity must be a number")
+    .min(1, "The equipment quantity must be at least 1")
+    .required("Equipment quantity is required"),
+});
   const {
     register,
     handleSubmit,
@@ -62,12 +68,14 @@ function InvoiceRightSide() {
   const [EqIdValue, setEqIdValue] = useState();
   const [eqLocalObject, setEqLocalObject] = useState(); //Locally retireve the equipment details and use to pass the object to the equipment object array
   const [numChips, setNumChips] = useState(0); // Initial number of chips
-  const [isQtyGreaterThanOne, setIsQtyEqualsOne] = useState(false);
+  const [isQtyGreaterThanOne, setIsQtyEqualsOne] = useState(true);
   const [Total, setTotal] = useState(0);
-  const [eqRental,setEqRental]=useState()
+  const [eqRental,setEqRental]=useState();
+  const [addBtnToogle,setAddBtnToogle]=useState(false)
   
 
   const handleSearch = async (value) => {
+
     setEq("")
     setEqQty("")
     try {
@@ -88,7 +96,7 @@ function InvoiceRightSide() {
       setEqRental(parseFloat(res.data[0].eq_rental))
       console.log("This is rental",parseFloat(res.data[0].eq_rental))
       // setEquipmentObject(res.data[0]); //pass retrieved data directly to the CONTEXT object
-
+      setAddBtnToogle(false)
       snackHandleClickVariant(
         `Equipment found :${res.data[0].eq_name}`,
         "success"
@@ -107,6 +115,8 @@ function InvoiceRightSide() {
     })
     eqObject.Qty = eqQty;
     updateEqObject(eqObject);
+    setAddBtnToogle(true)
+    setIsQtyEqualsOne(true)
   };
   useEffect(()=>{
     console.log("Total is",Total)
@@ -156,13 +166,11 @@ function InvoiceRightSide() {
             </Typography>
             <hr />
             <Box
-              gap={2}
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 height: "60%",
                 width: "100%",
-                gap: 4,
               }}
             >
               <Box
@@ -176,21 +184,21 @@ function InvoiceRightSide() {
                   sx={{
                     display: "flex",
                     width: "40%",
-
-                    alignItems: "center",
+                    pt:2,
+                    alignItems: "start",
                   }}
                 >
                   <FormLabel htmlFor="my-input">Equipment Id</FormLabel>
                 </Box>
                 <Box
-                  sx={{ width: "60%", display: "flex", alignItems: "center" }}
+                  sx={{ width: "60%", display: "flex", alignItems: "start" }}
                 >
                   <TextField
                     onChange={(e) => {
                       const value = e.target.value;
                       setEqIdValue(value);
                     }}
-                    sx={{ width: "70%" }}
+                    sx={{ width: "1000%" ,height:'100px'}}
                     inputProps={{ ...register("eqid") }}
                     id="outlined-basic"
                     label="Search"
@@ -215,7 +223,8 @@ function InvoiceRightSide() {
                   sx={{
                     width: "40%",
                     display: "flex",
-                    alignItems: "center",
+                    pt:2,
+                    alignItems: "start",
                   }}
                 >
                   <FormLabel htmlFor="my-input">Equipment Name</FormLabel>
@@ -223,7 +232,7 @@ function InvoiceRightSide() {
                 <Box sx={{ width: "60%" }}>
                   <TextField
                     disabled
-                    sx={{ width: "100%" }}
+                    sx={{ width: "100%" ,height:"100px"}}
                     id="outlined-basic"
                     variant="outlined"
                     value={eq}
@@ -241,9 +250,10 @@ function InvoiceRightSide() {
                   sx={{
                     width: "40%",
                     display: "flex",
-                    alignItems: "center",
+                    pt:2,
+                    alignItems: "start",
                     height:"100px",
-                    border:"solid green 3px"
+                  
                   }}
                 >
                   <FormLabel htmlFor="my-input">Equipment Qty</FormLabel>
@@ -270,6 +280,7 @@ function InvoiceRightSide() {
               sx={{ display: "flex", justifyContent: "space-between", p: 3 }}
             >
               <Button
+              disabled={addBtnToogle}
                 onClick={() =>
                   handleAddEquipment(EqIdValue, eqQty, eqLocalObject,Total,eqRental)
                 }
