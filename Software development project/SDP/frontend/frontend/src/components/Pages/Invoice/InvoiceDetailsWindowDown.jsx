@@ -19,11 +19,11 @@ function InvoiceDetailsWindowDown() {
     updateValue,
     updateEqObject,
   } = useContext(InvoiceContext);
-  const [paymentArray, setPaymentArray] = useState([]);
+
 
   useEffect(() => {
-    setPaymentArray(invoiceObject.payments);
-  }, [invoiceObject,responseManageToogle]);
+    
+  }, [invoiceObject]);
   return (
     <>
       <Paper
@@ -32,7 +32,7 @@ function InvoiceDetailsWindowDown() {
           width: "100%",
           display: "flex",
           justifyContent: "start",
-          p: 1,
+          p: 3,
           borderRadius: "0px 0px 12px 12px",
           height: "100%",
         }}
@@ -80,9 +80,9 @@ function InvoiceDetailsWindowDown() {
                 LKR
               </Typography>
 
-              {paymentArray.map((item, index) => (
+              {invoiceObject.payments && invoiceObject.payments.map((item, index) => (
                 <Typography key={index} variant="h7" sx={{ textAlign: "end" }}>
-                  {item.payment} lkr
+                  {item && item} lkr
                 </Typography>
               ))}
             </Box>

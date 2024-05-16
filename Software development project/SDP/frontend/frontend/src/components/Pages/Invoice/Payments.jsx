@@ -52,6 +52,8 @@ function Payments() {
     checkState,
     responseManageToogle,
     setResponseManageToogle,
+    paymentArray, setPaymentArray,
+    paymentId,setPaymentId,
     setCheckState,
     eqObject,
     setEqObject,
@@ -64,33 +66,29 @@ function Payments() {
 
   const [advance, setAdvance] = useState();
   const [payment, setPayment] = useState("");
-  const [paymentArray, setPaymentArray] = useState([]);
   const [paymentToogle, setPaymentToogle] = useState(false);
 
   const onSubmitPayments = () => {};
 
   const onSubmit1 = (advance) => {
+    setPaymentToogle(false)
     updateValue("advance", advance);
   };
 
   const onSubmit2 = (payment) => {
-    setPaymentArray((prev) => {
-      // Generate a unique ID for the new payment object
-      const id = prev.length + 1;
-      // Create the new payment object with the ID
-      const newPayment = { id, payment };
-      // Spread the previous array and add the new payment object to it
-      const newArray = [...prev, newPayment];
-      updateValue("payments", newArray);
-      return newArray;
-    });
-    setResponseManageToogle(!responseManageToogle)
+    setPaymentArray((prev) => [
+      ...prev,
+      payment
+    ]);
+    updateValue("payments", [...paymentArray, payment]);
+    setResponseManageToogle(!responseManageToogle); // Toggles the responseManageToogle state
   };
+  
 
   return (
     <Box
       sx={{
-        width: "50vw",
+        width: "30vw",
         height: "60vh",
         display: "flex",
         justifyContent: "center",

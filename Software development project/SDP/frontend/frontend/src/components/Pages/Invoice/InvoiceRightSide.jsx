@@ -21,13 +21,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 function InvoiceRightSide() {
   const schema = yup.object().shape({
     eqid: yup
-      .number("Enter a number")
-      .positive("The equipment ID must be a positive number")
-      // .min(1, "The equipment ID must be at least 1")
+      .number()
+      .typeError("Equipment ID must be a number")
+      .min(1, "The equipment ID must be at least 1")
       .max(200, "The equipment ID must be at most 200")
-      .required("ffasd"),
-    // select: yup.required(),
+      .required("Equipment ID is required"),
   });
+  
   const {
     register,
     handleSubmit,
@@ -52,6 +52,9 @@ function InvoiceRightSide() {
     updateValue,
   } = useContext(InvoiceContext);
 
+  const fontColorStyle = {
+    color:"yellow"
+  }
   const [array, setArray] = useState([]);
   // const [eqObject, setEqObject] = useState([]); //local array of equipment
   const [eq, setEq] = useState(""); //eq name
@@ -60,9 +63,13 @@ function InvoiceRightSide() {
   const [eqLocalObject, setEqLocalObject] = useState(); //Locally retireve the equipment details and use to pass the object to the equipment object array
   const [numChips, setNumChips] = useState(0); // Initial number of chips
   const [isQtyGreaterThanOne, setIsQtyEqualsOne] = useState(false);
-  const [borrowedQty, setBorrowedQty] = useState();
+  const [Total, setTotal] = useState(0);
+  const [eqRental,setEqRental]=useState()
+  
 
   const handleSearch = async (value) => {
+    setEq("")
+    setEqQty("")
     try {
       const res = await axios.get(
         `http://localhost:8085/getEquipmentbyID/${value}`
@@ -78,6 +85,8 @@ function InvoiceRightSide() {
       setEqLocalObject(res.data[0]); //pass the current search full details about the equipment to the context "eqArray"
       setEq(res.data[0].eq_name); //just to display in the field
       setEqQty(res.data[0].eq_quantity);
+      setEqRental(parseFloat(res.data[0].eq_rental))
+      console.log("This is rental",parseFloat(res.data[0].eq_rental))
       // setEquipmentObject(res.data[0]); //pass retrieved data directly to the CONTEXT object
 
       snackHandleClickVariant(
@@ -89,10 +98,19 @@ function InvoiceRightSide() {
     }
   };
 
-  const handleAddEquipment = (EqIdValue, eqQty, eqObject) => {
+  const handleAddEquipment = (EqIdValue, eqQty, eqObject,Total,eqRental) => {
+    
+    setTotal((prev)=>{
+      const i = prev+eqRental*eqQty
+      localStorage.setItem("Total",i)
+      return i
+    })
     eqObject.Qty = eqQty;
     updateEqObject(eqObject);
   };
+  useEffect(()=>{
+    console.log("Total is",Total)
+  },[Total])
 
   const handleRemoveEquipment = (eqObject, EqIdValue) => {
     setResponseManageToogle(!responseManageToogle)
@@ -181,7 +199,7 @@ function InvoiceRightSide() {
                     error={!!errors.eqid}
                     helperText={errors.eqid?.message}
                   />
-                  <IconButton type="submit">
+                  <IconButton type="submit" onClick={()=>setEqQty("")}>
                     <SearchIcon />
                   </IconButton>
                 </Box>
@@ -224,12 +242,16 @@ function InvoiceRightSide() {
                     width: "40%",
                     display: "flex",
                     alignItems: "center",
+                    height:"100px",
+                    border:"solid green 3px"
                   }}
                 >
                   <FormLabel htmlFor="my-input">Equipment Qty</FormLabel>
                 </Box>
                 <Box sx={{ width: "60%" }}>
+                  
                   <TextField
+                    color={eqQty>1 ? "warning":"primary"}
                     fullWidth
                     disabled={isQtyGreaterThanOne}
                     id="standard-basic"
@@ -237,6 +259,8 @@ function InvoiceRightSide() {
                     variant="outlined"
                     value={eqQty}
                     onChange={(e) => setEqQty(e.target.value)}
+                    helperText={eqQty>1 && "Enter quantity"}
+                    sx={{mb:2}}
                   />
                 </Box>
               </Box>
@@ -247,7 +271,7 @@ function InvoiceRightSide() {
             >
               <Button
                 onClick={() =>
-                  handleAddEquipment(EqIdValue, eqQty, eqLocalObject)
+                  handleAddEquipment(EqIdValue, eqQty, eqLocalObject,Total,eqRental)
                 }
               >
                 Add

@@ -7,8 +7,10 @@ export default function InvoiceContextProvider({ children }) {
   ); //FULL DETAIL OBJECT.ARRAY OF OBJECTS
   const [checkState, setCheckState] = useState(false);
   const [eqObject, setEqObject] = useState([]);
-  const [invoiceObject, setInvoiceObject] = useState({payments:[]});
+  const [invoiceObject, setInvoiceObject] = useState({});
   const [responseManageToogle, setResponseManageToogle] = useState(false);
+  const [paymentArray, setPaymentArray] = useState([]);
+  const [paymentId,setPaymentId]=useState(0);
   const clearObject = () => {
     setInvoiceObject({});
   };
@@ -23,15 +25,16 @@ export default function InvoiceContextProvider({ children }) {
   };
 
   useEffect(() => {
-    console.log(eqObject);
-    console.log("effect", Array.isArray({ ds: 2 }));
-  }, [eqObject]); // Run this effect whenever eqObject changes
+    console.log(invoiceObject);
+  }, [invoiceObject]);
 
   return (
     <InvoiceContext.Provider
       value={{
         responseManageToogle,
         setResponseManageToogle,
+        paymentArray, setPaymentArray,
+        paymentId,setPaymentId,
         fullDetailsEquipmentArray,
         setFullDetailsEquipmentArray,
         checkState,

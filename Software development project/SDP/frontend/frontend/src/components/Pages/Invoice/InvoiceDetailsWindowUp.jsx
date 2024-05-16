@@ -41,8 +41,7 @@ function InvoiceDetailsWindowUp() {
           flexDirection: "column",
           p: 1,
           borderRadius: "12px 12px 0px 0px",
-          height: "53.6vh",
-          maxHeight:"53.6vh"
+          height:"100%"
         }}
       >
         {eqObject.map((item, index) => (
