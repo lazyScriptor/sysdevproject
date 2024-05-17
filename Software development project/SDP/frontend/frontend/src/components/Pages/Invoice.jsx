@@ -26,6 +26,7 @@ import InvoiceDetailsWindowUp from "./Invoice/InvoiceDetailsWindowUp.jsx";
 import InvoiceDetailsWindowDown from "./Invoice/InvoiceDetailsWindowDown.jsx";
 import Payments from "./Invoice/Payments.jsx";
 import Swala from "../MessageComponents/Swal.jsx";
+import { useNavigate } from "react-router-dom";
 
 function Invoice() {
   const {
@@ -42,6 +43,7 @@ function Invoice() {
     updateEqObject,
   } = useContext(InvoiceContext);
 
+  const navigate = useNavigate();
   const { setIsAuthenticated } = useContext(AuthContext);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [invoiceId, setInvoiceId] = useState("0000");
@@ -50,12 +52,23 @@ function Invoice() {
   );
   const [invoiceIdSearch, setInvoiceIdSearch] = useState();
   useEffect(() => {
-    // if (!localStorage.getItem("token")) {
-    //   navigate("/");
-    //   setIsAuthenticated(false);
-    // }
-    console.log(invoiceObject);
+      try{
+        axios
+         .get("http://localhost:8085/isUserAuth", {
+           headers: {
+             "x-access-token": localStorage.getItem("token"),
+           },
+         })
+         .then((response) => {
+           if(!response.data.auth)navigate('/');
+         });
+      }catch(error){
+        console.log("Error",error)
+      }
   }, [invoiceObject]);
+
+
+
   const [data, setData] = useState({
     cus_fname: "",
     cus_address1: " ",

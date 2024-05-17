@@ -18,7 +18,6 @@ const pool = mysql
 const port = process.env.PORT || 8085;
 
 export async function loginValidate(userObject) {
-  console.log(userObject.username);
   const [user] = await pool.query(
     "SELECT username, role, password ,user_id FROM users WHERE username = ? AND role = ? ",
     [userObject.username, userObject.role]

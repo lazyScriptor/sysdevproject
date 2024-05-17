@@ -67,21 +67,24 @@ function Payments() {
   const [advance, setAdvance] = useState();
   const [payment, setPayment] = useState("");
   const [paymentToogle, setPaymentToogle] = useState(false);
+  const [advanceToogle,setAdvanceToogle]=useState(false)
 
   const onSubmitPayments = () => {};
 
   const onSubmit1 = (advance) => {
-    setPaymentToogle(false)
+    setPaymentToogle(true)
     updateValue("advance", advance);
+    // setAdvanceToogle(true)
   };
 
-  const onSubmit2 = (payment) => {
-    setPaymentArray((prev) => [
-      ...prev,
-      payment
-    ]);
-    updateValue("payments", [...paymentArray, payment]);
-    setResponseManageToogle(!responseManageToogle); // Toggles the responseManageToogle state
+  const onSubmit2 = (data) => {
+    console.log(data)
+    // setPaymentArray((prev) => [
+    //   ...prev,
+    //   payment
+    // ]);
+    // updateValue("payments", [...paymentArray, payment]);
+    // setResponseManageToogle(!responseManageToogle); // Toggles the responseManageToogle state
   };
   
 
@@ -98,6 +101,7 @@ function Payments() {
     >
       <Box sx={{ display: "flex" }}>
         <Button
+        disabled={advanceToogle}
           sx={{
             height: "130px",
             width: "130px",
@@ -108,9 +112,10 @@ function Payments() {
           variant="outlined"
           onClick={() => {
             setPaymentToogle(false);
+            
           }}
         >
-          <Lottie options={{ animationData: Advance }} width={100} />
+          <Lottie options={{ animationData: Advance }} width={100} isClickToPauseDisabled={advanceToogle} />
           Advance
         </Button>
         <Button
@@ -126,7 +131,7 @@ function Payments() {
             setPaymentToogle(true);
           }}
         >
-          <Lottie options={{ animationData: Cash }} width={100} />
+          <Lottie options={{ animationData: Cash }} width={100} isPaused={paymentToogle}/>
           Payment
         </Button>
       </Box>
@@ -136,6 +141,7 @@ function Payments() {
           <form noValidate onSubmit={handleSubmit1(onSubmit1)}>
             <Stack spacing={4} width={300}>
               <TextField
+              disabled={advanceToogle}
                 label="Advance payment"
                 onChange={(e) => setAdvance(e.target.value)}
                 inputProps={{ ...register1("advance") }}
@@ -145,18 +151,21 @@ function Payments() {
               <Box>
                 <FormLabel>Advance paid </FormLabel>
                 <Switch
+                disabled={advanceToogle}
                   defaultChecked
                   onChange={(e) => console.log(e.target.checked)}
                 />
               </Box>
               <Button
+              disabled={advanceToogle}
                 variant="contained"
                 type="submit"
-                onClick={() => onSubmit1(advance)}
+                onClick={() => {onSubmit1(advance)
+                  
+                }}
               >
                 Pay
               </Button>
-              <Typography variant="h6">Amount : {advance}</Typography>
             </Stack>
           </form>
         </Box>
@@ -164,20 +173,20 @@ function Payments() {
 
       {paymentToogle && (
         <Box>
-          <form noValidate onSubmit={handleSubmit2(onSubmit2)}>
+          <form noValidate onSubmit={handleSubmit2(onSubmit2())}>
             <Stack spacing={4} width={300}>
               <TextField
                 label="Payment Amount"
                 inputProps={{ ...register2("payment") }}
                 error={!!errors2.payment}
                 helperText={errors2.payment?.message}
-                onChange={(e) => setPayment(e.target.value)}
+                // onChange={(e) => setPayment(e.target.value)}
               />
               <Box></Box>
               <Button
                 variant="contained"
                 type="submit"
-                onClick={() => onSubmit2(payment)}
+                
               >
                 Pay
               </Button>

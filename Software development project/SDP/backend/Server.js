@@ -52,13 +52,35 @@ const verifyJWT = (req, res, next) => {
       if (err) {
         res.json({ auth: false, message: "U failed to authencticate" });
       } else {
-        req.userId = decoded.id;
-        console.log("veriy jwt else part ", req.userId, token);
+        req.role = decoded.userRole;
+        console.log("veriy jwt else part ", req.role, token);
         next();
       }
     });
   }
 };
+
+const verifyAdmin = (req, res, next) => {
+  const token = req.headers["x-access-token"];
+  if (!token) {
+    console.log("object")
+    return res.status(403).json({ auth: false, message: "No token provided." });
+  }
+  jwt.verify(token, "jwtSecret", (err, decoded) => {
+    if (err) {
+      return res.status(500).json({ auth: false, message: "Failed to authenticate token." });
+    } else {
+      if (decoded.userRole === "admin") {
+        console.log("authenticated")
+        next();
+      } else {
+        return res.status(403).json({ auth: false, message: "You are not an admin." });
+      }
+    }
+  });
+};
+
+
 
 app.get("/isUserAuth", verifyJWT, (req, res) => {
   return res.json({ auth: true, message: "You have a valid token" });
@@ -69,17 +91,20 @@ app.get("/loginValidate", async (req, res) => {
     console.log("express app ", req.query.username);
 
     const response = await loginValidate(req.query);
-    console.log("This is the response ", response);
-
     const id = response[1][0].user_id;
-    const userRole = response[1][0].role
-    const userName = response[1][0].username
-    console.log("id is", id,"username is ",userRole);
-    const token = jwt.sign({ id }, "jwtSecret", {
+    const userRole = response[1][0].role;
+    const userName = response[1][0].username;
+    console.log("id is", id, "Role is ", userRole);
+    const token = jwt.sign({ userRole }, "jwtSecret", {
       expiresIn: 300,
     });
 
-    return res.json({ auth: true, token: token, result: userRole ,username:userName});
+    return res.json({
+      auth: true,
+      token: token,
+      result: userRole,
+      username: userName,
+    });
   } catch (error) {
     console.log("wrong", { auth: false, message: "express failed auth false" });
     return res.json({ auth: false, message: "express failed auth false" });
@@ -217,7 +242,9 @@ app.get("/getUserRole/:userName", async (req, res) => {
     const userRole = await getUserRole(req.params.userName);
     console.log("express ", userRole);
     return res.json(userRole);
-  } catch {}
+  } catch (error) {
+    console.log("Error occured in express", error);
+  }
 });
 
 app.delete("/deleteCustomers/:customerId", async (req, res) => {

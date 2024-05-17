@@ -25,6 +25,14 @@ function App() {
   const [rolee, setRolee] = useState("new role data");
 
   const theme = createTheme({
+    typography:{
+      fontFamily:[
+        '-apple-system-',
+        'BlinkMacSystemFont',
+        'Roboto',
+        'sans-serif',
+      ].join(','),
+    },
     // Define your theme here
     palette: {
       primary: {

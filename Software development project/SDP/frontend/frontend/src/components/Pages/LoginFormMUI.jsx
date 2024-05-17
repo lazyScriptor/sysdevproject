@@ -85,17 +85,7 @@ function LoginFormMUI() {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
-    await axios
-      .get("http://localhost:8085/isUserAuth", {
-        headers: {
-          "x-access-token": localStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        console.log("token details ", response);
-      });
-
+   
     try {
       await axios
         .get(`http://localhost:8085/loginValidate`, {
