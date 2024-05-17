@@ -206,6 +206,91 @@ export async function getInvoiceDetails(invoiceId) {
   );
 
   const customerDetails = getCustomerbyID(invoice[0].cusinv_cusid);
-  console.log("backend",customerDetails)
+  console.log("backend", customerDetails);
   return customerDetails;
+}
+
+export async function updateInvoiceDetails(InvoiceCompleteDetail) {
+
+  // Update invoice details
+  try {
+    await pool.query(
+      "UPDATE invoice SET inv_advance = ?, inv_special_message = ?, inv_idcardstatus = ? WHERE inv_id = ?",
+      [
+        InvoiceCompleteDetail.advance,
+        "", // Empty string for inv_special_message
+        InvoiceCompleteDetail.iDstatus && 1, // Assuming iDstatus is a boolean value
+        InvoiceCompleteDetail.InvoiceID,
+      ]
+    );
+  } catch (error) {
+    console.log("Error occurred in backend invoice details update", error);
+  }
+
+  // Update customer invoice details
+  try {
+    await pool.query(
+      "INSERT INTO customerInvoice (cusinv_cusid, cusinv_invid) VALUES (?, ?)",
+      [
+        InvoiceCompleteDetail.customerDetails.cus_id,
+        InvoiceCompleteDetail.InvoiceID,
+      ]
+    );
+  } catch (error) {
+    // Handle duplicate entry error
+    if (error.code === "ER_DUP_ENTRY") {
+      console.log(
+        "Duplicate entry detected. Attempting to update existing record..."
+      );
+      try {
+        await pool.query(
+          "UPDATE customerInvoice SET cusinv_cusid = ?, cusinv_invid = ? WHERE cusinv_cusid = ? AND cusinv_invid = ?",
+          [
+            InvoiceCompleteDetail.customerDetails.cus_id,
+            InvoiceCompleteDetail.InvoiceID,
+            InvoiceCompleteDetail.customerDetails.cus_id,
+            InvoiceCompleteDetail.InvoiceID,
+          ]
+        );
+      } catch (updateError) {
+        console.log("Error occurred in updating existing record:", updateError);
+      }
+    } else {
+      console.log("Error occurred in backend invoice details update:", error);
+    }
+  }
+
+  // Update invoice equipment details
+  try {
+    for (const equipment of InvoiceCompleteDetail.eqdetails) {
+      await pool.query(
+        "INSERT INTO invoiceEquipment (inveq_eqid, inveq_invid) VALUES (?, ?)",
+        [equipment.eq_id, InvoiceCompleteDetail.InvoiceID]
+      );
+    }
+  } catch (error) {
+    // Handle duplicate entry error
+    if (error.code === "ER_DUP_ENTRY") {
+      console.log(
+        "Duplicate entry detected. Attempting to update existing record..."
+      );
+      try {
+        for (const equipment of InvoiceCompleteDetail.eqdetails) {
+          await pool.query(
+            "UPDATE invoiceEquipment SET inveq_eqid = ?, inveq_invid = ? WHERE inveq_eqid = ? AND inveq_invid = ?",
+            [
+              equipment.eq_id,
+              InvoiceCompleteDetail.InvoiceID,
+              equipment.eq_id,
+              InvoiceCompleteDetail.InvoiceID,
+            ]
+          );
+        }
+      } catch (updateError) {
+        console.log("Error occurred in updating existing record:", updateError);
+      }
+    } else {
+      console.log("Error occurred in backend invoice details update:", error);
+    }
+  }
 }

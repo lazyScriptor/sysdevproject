@@ -2,6 +2,7 @@ import { Box, Paper, Stack, Typography } from "@mui/material";
 import { Button } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { InvoiceContext } from "../../../Contexts/Contexts";
+import axios from "axios";
 
 function InvoiceDetailsWindowDown() {
   const {
@@ -24,6 +25,33 @@ function InvoiceDetailsWindowDown() {
   useEffect(() => {
     
   }, [invoiceObject]);
+
+  const handleInvoiceSubmit = async() => {
+    localStorage.removeItem("CIObject");
+    localStorage.setItem("CIObject",JSON.stringify(invoiceObject))
+    const localInvoiceObject = localStorage.getItem("CIObject");
+    console.log("Local storage retrievel",localInvoiceObject)
+
+    if (localInvoiceObject) {
+      const localInvoiceObjectJSON = JSON.parse(localInvoiceObject);
+      console.log("Local storage retrieval", localInvoiceObjectJSON);
+      try {
+        // Send the object to the backend
+        await axios.post("http://localhost:8085/updateInvoiceDetails", localInvoiceObjectJSON);
+      } catch (error) {
+        console.error("Error occurred in front end AXIOS invoice pass", error);
+      }
+    } else {
+      console.log("No data found in local storage");
+    }
+
+
+
+
+
+
+
+  }
   return (
     <>
       <Paper
@@ -95,6 +123,7 @@ function InvoiceDetailsWindowDown() {
         color="success"
         variant="outlined"
         sx={{ mt: 2, borderRadius: 0, height: "60px" }}
+        onClick={handleInvoiceSubmit}
       >
         Create Invoice
       </Button>

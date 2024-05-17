@@ -23,6 +23,7 @@ import {
   loginValidate,
   getInvoiceId,
   getInvoiceDetails,
+  updateInvoiceDetails,
 } from "./database.js";
 
 const app = express();
@@ -53,7 +54,7 @@ const verifyJWT = (req, res, next) => {
         res.json({ auth: false, message: "U failed to authencticate" });
       } else {
         req.role = decoded.userRole;
-        console.log("veriy jwt else part ", req.role, token);
+        console.log("veriy jwt else part ", req.role);
         next();
       }
     });
@@ -96,7 +97,7 @@ app.get("/loginValidate", async (req, res) => {
     const userName = response[1][0].username;
     console.log("id is", id, "Role is ", userRole);
     const token = jwt.sign({ userRole }, "jwtSecret", {
-      expiresIn: 300,
+      expiresIn: 3600,
     });
 
     return res.json({
@@ -303,6 +304,36 @@ app.get("/invoiceDataRetrieve/:invoiceIdSearch", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+app.post("/updateInvoiceDetails", async (req, res) => {
+  try {
+    const customerDetails = await updateInvoiceDetails(req.body);
+    return res.json({
+      message: `Customer details updated for the customer with id : ${req.body.id}`,
+    });
+  } catch (error) {
+    console.error("Error in updateCustomerDetails:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 dotenv.config();
 const port = process.env.PORT;

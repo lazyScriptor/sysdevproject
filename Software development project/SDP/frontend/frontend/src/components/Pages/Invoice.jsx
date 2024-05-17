@@ -89,7 +89,7 @@ function Invoice() {
 
   const handleProceedPayment = () => {
     updateValue("eqdetails", eqObject);
-    updateValue("Customer details", data);
+    updateValue("customerDetails", data);
     setBoolvalue(true);
   };
 
@@ -121,7 +121,9 @@ function Invoice() {
     clearObject();
     try {
       await axios.get("http://localhost:8085/invoiceIdRetrieve").then((res) => {
-        setInvoiceId(res.data + 1);
+        console.log(res.data)
+        setInvoiceId(res.data );
+        updateValue("InvoiceID",res.data)
       });
     } catch (error) {
       console.log("handleSearch Createinvoice error", error);
