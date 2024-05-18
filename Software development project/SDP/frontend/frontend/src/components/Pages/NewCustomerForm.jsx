@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   FormControl,
   InputLabel,
@@ -10,37 +10,36 @@ import {
   Paper,
   Button,
   colors,
-} from "@mui/material";
-import "../Stylings/rootstyles.css";
-import { useEffect, useState, useContext } from "react";
-import { PopupContext } from "../../Contexts/Contexts";
+} from '@mui/material';
+import '../Stylings/rootstyles.css';
+import { useEffect, useState, useContext } from 'react';
+import { PopupContext } from '../../Contexts/Contexts';
 
-import "../Stylings/newCustomerForm.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
-import Snack from "./Snack";
+import '../Stylings/newCustomerForm.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+import Snack from './Snack';
 
-import { createContext } from "react";
-import { useSnackbar } from "notistack";
+import { createContext } from 'react';
+import { useSnackbar } from 'notistack';
 export const AppCustomeContext3 = createContext();
 
 function NewCustomerForm() {
-  const { boolvalue, setBoolvalue, userData, setUserData } =
-    useContext(PopupContext);
+  const { boolvalue, setBoolvalue, userData, setUserData } = useContext(PopupContext);
 
   const [data, setData] = useState([]);
-  const [newId, setNewId] = useState("");
-  const [newNic, setNewNic] = useState("");
-  const [newPno, setNewPno] = useState("");
+  const [newId, setNewId] = useState('');
+  const [newNic, setNewNic] = useState('');
+  const [newPno, setNewPno] = useState('');
 
-  const [id, setId] = useState("");
-  const [nic, setNic] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
+  const [id, setId] = useState('');
+  const [nic, setNic] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [fname, setFname] = useState('');
+  const [lname, setLname] = useState('');
+  const [address1, setAddress1] = useState('');
+  const [address2, setAddress2] = useState('');
 
   //variable to toogle inputs
   const [toogle, setToogle] = useState(false);
@@ -52,7 +51,7 @@ function NewCustomerForm() {
   const { enqueueSnackbar } = useSnackbar();
 
   const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
+    if (reason === 'clickaway') {
       return;
     }
 
@@ -117,37 +116,32 @@ function NewCustomerForm() {
   };
   const handleSaveDetails = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:8085/updateCustomerDetails",
-        {
-          id,
-          nic,
-          phoneNumber,
-          fname,
-          lname,
-          address1,
-          address2,
-        }
-      );
-      console.log("Details saved successfully:", response.data);
+      const response = await axios.post('http://localhost:8085/updateCustomerDetails', {
+        id,
+        nic,
+        phoneNumber,
+        fname,
+        lname,
+        address1,
+        address2,
+      });
+      console.log('Details saved successfully:', response.data);
 
       setToogle(true);
     } catch (error) {
-      console.error("Error saving details:", error);
+      console.error('Error saving details:', error);
     }
   };
   const handleDeleteCustomer = async (id, variant, fname) => {
     try {
-      await axios
-        .delete(`http://localhost:8085/deleteCustomers/${id}`)
-        .then(() => {
-          console.log("Frontend executed successfully");
-          enqueueSnackbar(`Customer : ${fname} deleted successfully`, {
-            variant,
-          });
+      await axios.delete(`http://localhost:8085/deleteCustomers/${id}`).then(() => {
+        console.log('Frontend executed successfully');
+        enqueueSnackbar(`Customer : ${fname} deleted successfully`, {
+          variant,
         });
+      });
     } catch (error) {
-      console.error("Frontend error occured", error);
+      console.error('Frontend error occured', error);
     }
   };
   const handleDataFill = (firstCustomer) => {
@@ -158,35 +152,33 @@ function NewCustomerForm() {
     setLname(firstCustomer.cus_lname);
     setAddress1(firstCustomer.cus_address1);
     setAddress2(firstCustomer.cus_address2);
-    console.log("Customer found");
-    setMessage("success");
-    SetMessageContent("Customer found");
+    console.log('Customer found');
+    setMessage('success');
+    SetMessageContent('Customer found');
     setOpen(true);
   };
   const handleSearchnic = async (nic) => {
     try {
-      await axios
-        .get(`http://localhost:8085/getCustomerbyNIC/${nic}`)
-        .then((res) => {
-          const customerData = res.data;
-          if (customerData && customerData.length > 0) {
-            const firstCustomer = customerData[0]; // Get the first customer from the array
-            handleDataFill(firstCustomer);
-            console.log(
-              "This is the first then",
-              firstCustomer,
-              "This is the length",
-              customerData.length
-            );
-          } else {
-            console.log("No customer data found");
-          }
-        });
+      await axios.get(`http://localhost:8085/getCustomerbyNIC/${nic}`).then((res) => {
+        const customerData = res.data;
+        if (customerData && customerData.length > 0) {
+          const firstCustomer = customerData[0]; // Get the first customer from the array
+          handleDataFill(firstCustomer);
+          console.log(
+            'This is the first then',
+            firstCustomer,
+            'This is the length',
+            customerData.length,
+          );
+        } else {
+          console.log('No customer data found');
+        }
+      });
       // .then(() => {
       //   console.log(`handle Search is working with --> ${data}`);
       // });
     } catch (error) {
-      console.log("handleSearch NIC error");
+      console.log('handleSearch NIC error');
     }
   };
 
@@ -200,20 +192,20 @@ function NewCustomerForm() {
             const firstCustomer = customerData[0]; // Get the first customer from the array
             handleDataFill(firstCustomer);
             console.log(
-              "This is the first then",
+              'This is the first then',
               firstCustomer,
-              "This is the length",
-              customerData.length
+              'This is the length',
+              customerData.length,
             );
           } else {
-            console.log("No customer data found");
+            console.log('No customer data found');
           }
         })
         .then(() => {
           console.log(`handle Search is working with --> ${customerData}`);
         });
     } catch (error) {
-      console.log("handleSearch Id error");
+      console.log('handleSearch Id error');
     }
   };
 
@@ -226,22 +218,22 @@ function NewCustomerForm() {
           if (customerData && customerData.length > 0) {
             const firstCustomer = customerData[0]; // Get the first customer from the array
             handleDataFill(firstCustomer);
-            console.log("This is the first then", firstCustomer);
+            console.log('This is the first then', firstCustomer);
           } else {
-            console.log("No customer data found");
+            console.log('No customer data found');
           }
         });
       // .then(() => {
       //   console.log(`handle Search is working with --> ${data}`);
       // });
     } catch (error) {
-      console.log("handleSearch Id error");
+      console.log('handleSearch Id error');
     }
   };
 
   const handleCreate = async () => {
     try {
-      await axios.post("http://localhost:8085/createCustomer", {
+      await axios.post('http://localhost:8085/createCustomer', {
         fname,
         lname,
         nic,
@@ -249,11 +241,11 @@ function NewCustomerForm() {
         address1,
         address2,
       });
-      console.log("Details created successfully:");
+      console.log('Details created successfully:');
 
       setToogle(true);
     } catch (error) {
-      console.error("Error creating details:", error);
+      console.error('Error creating details:', error);
     }
   };
 
@@ -261,35 +253,34 @@ function NewCustomerForm() {
     <>
       <Box
         sx={{
-          
-          display: "flex",
-          width: "100%",
-          height: "auto",
-          justifyContent: "center",
-          alignItems: "start",
+          display: 'flex',
+          width: '100%',
+          height: 'auto',
+          justifyContent: 'center',
+          alignItems: 'start',
         }}
       >
         <Paper
           elevation={4}
           sx={{
-            width: "100%",
-            p:2,
+            width: '100%',
+            p: 2,
             mt: 1,
             borderRadius: 3,
-            gap: "20px",
-            minWidth: "500px",
+            gap: '20px',
+            minWidth: '500px',
             backgroundColor: (theme) => theme.palette.primary,
           }}
         >
           <Box
             sx={{
-              height: "100px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "column",
+              height: '100px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
               backgroundColor: (theme) => theme.palette.primary[800],
-              color: "white",
+              color: 'white',
               borderRadius: 3,
               mb: 3,
             }}
@@ -299,22 +290,22 @@ function NewCustomerForm() {
           {/* Upper Search bar Start*/}
           <Box
             sx={{
-              height: "70px",
+              height: '70px',
               borderRadius: 3,
               backgroundColor: (theme) => theme.palette.primary[100],
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
             <Box
               sx={{
-                height: "50px",
-                width: "30%",
+                height: '50px',
+                width: '30%',
                 borderRadius: 3,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 pl: 2,
               }}
             >
@@ -330,8 +321,8 @@ function NewCustomerForm() {
                 onClick={() => handleSearchid(newId)}
                 sx={{
                   pt: 2,
-                  "&:hover": {
-                    color: "green",
+                  '&:hover': {
+                    color: 'green',
                   },
                 }}
               >
@@ -340,12 +331,12 @@ function NewCustomerForm() {
             </Box>
             <Box
               sx={{
-                height: "50px",
-                width: "30%",
+                height: '50px',
+                width: '30%',
                 borderRadius: 3,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 pl: 2,
               }}
             >
@@ -361,8 +352,8 @@ function NewCustomerForm() {
                 onClick={() => handleSearchnic(newNic)}
                 sx={{
                   pt: 2,
-                  "&:hover": {
-                    color: "green",
+                  '&:hover': {
+                    color: 'green',
                   },
                 }}
               >
@@ -371,12 +362,12 @@ function NewCustomerForm() {
             </Box>
             <Box
               sx={{
-                height: "50px",
-                width: "40%",
+                height: '50px',
+                width: '40%',
                 borderRadius: 3,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               <TextField
@@ -391,8 +382,8 @@ function NewCustomerForm() {
                 onClick={() => handleSearchPno(newPno)}
                 sx={{
                   pt: 2,
-                  "&:hover": {
-                    color: "green",
+                  '&:hover': {
+                    color: 'green',
                   },
                 }}
               >
@@ -401,25 +392,25 @@ function NewCustomerForm() {
             </Box>
           </Box>
           {/* Upper Search bar End */}
-          <Box sx={{ p: 2}}>
+          <Box sx={{ p: 2 }}>
             {/* Left side Box */}
             <Box
               sx={{
-                height: "auto",
-                width: "40%",
+                height: 'auto',
+                width: '40%',
                 borderRadius: 3,
-                display: "flex",
-                alignItems: "start",
-                float: "left",
+                display: 'flex',
+                alignItems: 'start',
+                float: 'left',
               }}
             >
               <FormControl
                 sx={{
-                  gap: "20px",
+                  gap: '20px',
 
-                  width: "100%",
+                  width: '100%',
 
-                  display: "flex",
+                  display: 'flex',
                 }}
               >
                 <Box className="dey">
@@ -435,38 +426,32 @@ function NewCustomerForm() {
                   <FormLabel htmlFor="my-input">Customer NIC</FormLabel>
                 </Box>
                 <Box className="dey">
-                  <FormLabel htmlFor="my-input">
-                    Customer Phone number
-                  </FormLabel>
+                  <FormLabel htmlFor="my-input">Customer Phone number</FormLabel>
                 </Box>
                 <Box className="dey">
-                  <FormLabel htmlFor="my-input">
-                    Customer Address line 1
-                  </FormLabel>
+                  <FormLabel htmlFor="my-input">Customer Address line 1</FormLabel>
                 </Box>
                 <Box className="dey">
-                  <FormLabel htmlFor="my-input">
-                    Customer Address line 2
-                  </FormLabel>
+                  <FormLabel htmlFor="my-input">Customer Address line 2</FormLabel>
                 </Box>
               </FormControl>
             </Box>
             {/* Right side Box */}
             <Box
               sx={{
-                width: "60%",
+                width: '60%',
 
                 borderRadius: 3,
-                display: "flex",
-                float: "right",
-                flexDirection: "column",
+                display: 'flex',
+                float: 'right',
+                flexDirection: 'column',
               }}
             >
               <FormControl
                 sx={{
                   pl: 10,
-                  gap: "20px",
-                  width: "100%",
+                  gap: '20px',
+                  width: '100%',
                 }}
               >
                 <Box className="dey">
@@ -475,7 +460,7 @@ function NewCustomerForm() {
                     id="standard-basic"
                     variant="outlined"
                     size="small"
-                    sx={{ width: "80px" }}
+                    sx={{ width: '80px' }}
                     value={id}
                   />
                 </Box>
@@ -486,7 +471,7 @@ function NewCustomerForm() {
                     id="standard-basic"
                     variant="outlined"
                     size="small"
-                    sx={{ color: "red" }}
+                    sx={{ color: 'red' }}
                     value={fname}
                     onChange={(e) => setFname(e.target.value)}
                   />
@@ -497,7 +482,7 @@ function NewCustomerForm() {
                     id="standard-basic"
                     variant="outlined"
                     size="small"
-                    sx={{ color: "red" }}
+                    sx={{ color: 'red' }}
                     value={lname}
                     onChange={(e) => setLname(e.target.value)}
                   />
@@ -508,7 +493,7 @@ function NewCustomerForm() {
                     id="standard-basic"
                     variant="outlined"
                     size="small"
-                    sx={{ color: "red" }}
+                    sx={{ color: 'red' }}
                     value={nic}
                     onChange={(e) => setNic(e.target.value)}
                   />
@@ -519,7 +504,7 @@ function NewCustomerForm() {
                     id="standard-basic"
                     variant="outlined"
                     size="small"
-                    sx={{ color: "red" }}
+                    sx={{ color: 'red' }}
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                   />
@@ -530,7 +515,7 @@ function NewCustomerForm() {
                     id="standard-basic"
                     variant="outlined"
                     size="small"
-                    sx={{ color: "red" }}
+                    sx={{ color: 'red' }}
                     value={address1}
                     onChange={(e) => setAddress1(e.target.value)}
                   />
@@ -541,7 +526,7 @@ function NewCustomerForm() {
                     id="standard-basic"
                     variant="outlined"
                     size="small"
-                    sx={{ color: "red" }}
+                    sx={{ color: 'red' }}
                     value={address2}
                     onChange={(e) => setAddress2(e.target.value)}
                   />
@@ -560,7 +545,7 @@ function NewCustomerForm() {
               <Button
                 color="error"
                 sx={{ mt: 2, ml: 2 }}
-                onClick={() => handleDeleteCustomer(id, "success", fname)}
+                onClick={() => handleDeleteCustomer(id, 'success', fname)}
               >
                 Delete
               </Button>
@@ -571,12 +556,7 @@ function NewCustomerForm() {
             </Button>
           </Box>
         </Paper>
-        <Snack
-          type={message}
-          message={messageContent}
-          open={open}
-          handleClose={handleClose}
-        />
+        <Snack type={message} message={messageContent} open={open} handleClose={handleClose} />
       </Box>
     </>
   );

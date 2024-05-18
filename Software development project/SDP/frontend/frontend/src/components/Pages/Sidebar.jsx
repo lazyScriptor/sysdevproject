@@ -3,7 +3,7 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import adminImage from "../../assets/profileImage.jpeg";
 import "../Stylings/sidebar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import WidgetsIcon from '@mui/icons-material/Widgets';
+import WidgetsIcon from "@mui/icons-material/Widgets";
 
 import {
   faTableCellsLarge,
@@ -39,21 +39,21 @@ function Sidebar() {
   );
 
   //context data over
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   return (
     <div>
-      <Button sx={{position:"absolute",backgroundColor:""}} onClick={()=>setShow(!show)}>
-          <WidgetsIcon fontSize="large" sx={{colorL:"red"}}/>
+      <Button
+        sx={{ position: "absolute", backgroundColor: "" }}
+        onClick={() => setShow(!show)}
+      >
+        <WidgetsIcon fontSize="large" sx={{ colorL: "red" }} />
       </Button>
       <Offcanvas
-        name="Disable backdrop"
         scroll={true}
         backdrop={false}
-        backdropClassName="backedrop"
-        bsPrefix="offcanvas"
         show={show}
         onHide={handleClose}
         placement="start"

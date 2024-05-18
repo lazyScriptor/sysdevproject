@@ -1,63 +1,57 @@
-import "bootstrap/dist/css/bootstrap.min.css";
-import Login from "./components/Pages/Login";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Customers from "./components/Pages/Customers.jsx";
-import Sidebar from "./components/Pages/Sidebar.jsx";
-import DashboardMain from "./components/Pages/DasboardMain.jsx";
-import Equipment from "./components/Pages/Equipment.jsx";
-import Inbox from "./components/Pages/Inbox.jsx";
-import Invoice from "./components/Pages/Invoice.jsx";
-import Reports from "./components/Pages/Reports.jsx";
-import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
-// import "./index.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Login from './components/Pages/Login';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Customers from './components/Pages/Customers.jsx';
+import Sidebar from './components/Pages/Sidebar.jsx';
+import DashboardMain from './components/Pages/DasboardMain.jsx';
+import Equipment from './components/Pages/Equipment.jsx';
+import Inbox from './components/Pages/Inbox.jsx';
+import Invoice from './components/Pages/Invoice.jsx';
+import Reports from './components/Pages/Reports.jsx';
+import Notfoundd from '../additionalcomponents/Notfoundd.jsx';
+// import './index.css';
 
-import { useState, createContext } from "react";
-
-import { ThemeProvider, createTheme } from "@mui/material";
-import NewLogin from "./components/Pages/NewLogin.jsx";
-import Settings from "./components/Pages/Settings.jsx";
-import AuthContextProvider from "./Contexts/AuthContextProvider.jsx";
+import { useState, createContext } from 'react';
+import { ThemeProvider, createTheme } from '@mui/material';
+import NewLogin from './components/Pages/NewLogin.jsx';
+import Settings from './components/Pages/Settings.jsx';
+import AuthContextProvider from './Contexts/AuthContextProvider.jsx';
 
 export const AppCustomContext = createContext();
 
 function App() {
-  const [usernamee, setUsernamee] = useState("new dummy data");
-  const [rolee, setRolee] = useState("new role data");
+  const [usernamee, setUsernamee] = useState('new dummy data');
+  const [rolee, setRolee] = useState('new role data');
 
   const theme = createTheme({
-    typography:{
-      fontFamily:[
-        '-apple-system-',
-        'BlinkMacSystemFont',
-        'Roboto',
-        'sans-serif',
-      ].join(','),
+    typography: {
+      fontFamily: ['-apple-system-', 'BlinkMacSystemFont', 'Roboto', 'sans-serif'].join(','),
     },
     // Define your theme here
     palette: {
       primary: {
-        50: "#e0f7fa",
-        100: "#b2ebf2",
-        200: "#80deea",
-        300: "#4dd0e1",
-        400: "#26c6da",
-        500: "#00bcd4",
-        600: "#00acc1",
-        700: "#0097a7",
-        800: "#00838f",
-        900: "#006064",
+        // 50: "#e0f7fa",
+        // 100: "#b2ebf2",
+        // 200: "#80deea",
+        // 300: "#4dd0e1",
+        // 400: "#26c6da",
+        // 500: "#00bcd4",
+        // 600: "#00acc1",
+        // 700: "#0097a7",
+        // 800: "#00838f",
+        // 900: "#006064",
 
         //Blue shades
-        // 50: "#e3f2fd",
-        // 100: "#bbdefb",
-        // 200: "#90caf9",
-        // 300: "#64b5f6",
-        // 400: "#42a5f5",
-        // 500: "#2196f3",
-        // 600: "#1e88e5",
-        // 700: "#1976d2",
-        // 800: "#1565c0",
-        // 900: "#0d47a1",
+        50: '#e3f2fd',
+        100: '#bbdefb',
+        200: '#90caf9',
+        300: '#64b5f6',
+        400: '#42a5f5',
+        500: '#2196f3',
+        600: '#1e88e5',
+        700: '#1976d2',
+        800: '#1565c0',
+        900: '#0d47a1',
 
         // purpleShades
 
@@ -85,34 +79,32 @@ function App() {
         // 900: "#E65100",
 
         error: {
-          10: "#ffe6e6",
-          50: "#FFCCCC",
-          100: "#FF9999",
-          200: "#FF6666",
-          300: "#FF3333",
-          400: "#FF0000",
-          500: "#CC0000",
-          600: "#990000",
-          700: "#660000",
+          10: '#ffe6e6',
+          50: '#FFCCCC',
+          100: '#FF9999',
+          200: '#FF6666',
+          300: '#FF3333',
+          400: '#FF0000',
+          500: '#CC0000',
+          600: '#990000',
+          700: '#660000',
         },
-        monochromic: "#00C9B6",
+        monochromic: '#00C9B6',
       },
       secondary: {
-        main: "#00ff00",
+        main: '#00ff00',
       },
-      ps: { main: "#00ff00" },
+      ps: { main: '#00ff00' },
       common: {
-        maincolour1: "red",
-        maincolour2: "green",
+        maincolour1: 'red',
+        maincolour2: 'green',
       },
     },
   });
 
   return (
     <ThemeProvider theme={theme}>
-      <AppCustomContext.Provider
-        value={{ usernamee, setUsernamee, rolee, setRolee, theme }}
-      >
+      <AppCustomContext.Provider value={{ usernamee, setUsernamee, rolee, setRolee, theme }}>
         <Router>
           <AuthContextProvider>
             <Routes>
@@ -124,7 +116,6 @@ function App() {
                 path="/customers"
                 element={
                   <>
-                  
                     <Sidebar />
                     <Customers />
                   </>
@@ -134,7 +125,6 @@ function App() {
                 path="/DashboardMain"
                 element={
                   <>
-               
                     <Sidebar />
                     <DashboardMain />
                   </>
@@ -144,7 +134,6 @@ function App() {
                 path="/Equipment"
                 element={
                   <>
-            
                     <Sidebar />
                     <Equipment />
                   </>
@@ -172,7 +161,6 @@ function App() {
                 path="/Reports"
                 element={
                   <>
-                 
                     <Sidebar />
                     <Reports />
                   </>
@@ -182,7 +170,6 @@ function App() {
                 path="/Settings"
                 element={
                   <>
-              
                     <Sidebar />
                     <Settings />
                   </>

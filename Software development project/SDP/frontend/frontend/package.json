@@ -37,6 +37,7 @@
     "react-virtuoso": "^4.7.10",
     "styled-components": "^6.1.9",
     "sweetalert2": "^11.11.0",
+    "uuid": "^9.0.1",
     "yup": "^1.4.0"
   },
   "devDependencies": {

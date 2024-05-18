@@ -1,22 +1,29 @@
-import { useEffect, useState } from "react";
-import { InvoiceContext } from "./Contexts";
+import { useEffect, useState } from 'react';
+import { InvoiceContext } from './Contexts';
 
 export default function InvoiceContextProvider({ children }) {
-  const [fullDetailsEquipmentArray, setFullDetailsEquipmentArray] = useState(
-    []
-  ); //FULL DETAIL OBJECT.ARRAY OF OBJECTS
+  const [fullDetailsEquipmentArray, setFullDetailsEquipmentArray] = useState([]); //FULL DETAIL OBJECT.ARRAY OF OBJECTS
   const [checkState, setCheckState] = useState(false);
   const [eqObject, setEqObject] = useState([]);
   const [invoiceObject, setInvoiceObject] = useState({});
   const [responseManageToogle, setResponseManageToogle] = useState(false);
   const [paymentArray, setPaymentArray] = useState([]);
-  const [paymentId,setPaymentId]=useState(0);
+  const [paymentId, setPaymentId] = useState(0);
   const clearObject = () => {
     setInvoiceObject({});
   };
 
   const updateValue = (value, newVaalue) => {
     setInvoiceObject((preObject) => ({ ...preObject, [value]: newVaalue }));
+  };
+  const clearValues = () => {
+    setInvoiceObject((prevObject) => {
+      const clearedObject = {};
+      Object.keys(prevObject).forEach((key) => {
+        clearedObject[key] = ''; // or null, or undefined
+      });
+      return clearedObject;
+    });
   };
 
   const updateEqObject = (newValue) => {
@@ -33,8 +40,11 @@ export default function InvoiceContextProvider({ children }) {
       value={{
         responseManageToogle,
         setResponseManageToogle,
-        paymentArray, setPaymentArray,
-        paymentId,setPaymentId,
+        paymentArray,
+        setPaymentArray,
+        clearValues,
+        paymentId,
+        setPaymentId,
         fullDetailsEquipmentArray,
         setFullDetailsEquipmentArray,
         checkState,

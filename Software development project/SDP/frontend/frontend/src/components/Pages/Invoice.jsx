@@ -40,6 +40,7 @@ function Invoice() {
     setInvoiceObject,
     clearObject,
     updateValue,
+    clearValues,
     updateEqObject,
   } = useContext(InvoiceContext);
 
@@ -119,6 +120,7 @@ function Invoice() {
   };
   const handleCreateNew = async () => {
     clearObject();
+    clearValues();
     try {
       await axios.get("http://localhost:8085/invoiceIdRetrieve").then((res) => {
         console.log(res.data)

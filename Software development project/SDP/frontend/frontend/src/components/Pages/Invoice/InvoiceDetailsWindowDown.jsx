@@ -110,7 +110,7 @@ function InvoiceDetailsWindowDown() {
 
               {invoiceObject.payments && invoiceObject.payments.map((item, index) => (
                 <Typography key={index} variant="h7" sx={{ textAlign: "end" }}>
-                  {item && item} lkr
+                  {item.payment && item.payment} lkr
                 </Typography>
               ))}
             </Box>

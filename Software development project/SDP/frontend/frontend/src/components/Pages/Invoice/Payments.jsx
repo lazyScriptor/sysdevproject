@@ -15,14 +15,81 @@ import { InvoiceContext } from "../../../Contexts/Contexts";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { v4 as uuidv4 } from "uuid";
 
-function Payments() {
+const Buttonstyles = {
+  display:"flex",
+  flexDirection:"column",
+  alignItems:"center",
+  width: "130px",
+  height: "110px",
+  color: "primary",
+  border: "solid 1px",
+  borderRadius: 4,
+  opacity: 0.8,
+  m:2
+};
+const ButtonstylesSubmit = {
+  display:"flex",
+  flexDirection:"column",
+  alignItems:"center",
+  width: "100px",
+  height: "80px",
+  color: "primary",
+  border: "solid 1px",
+  borderRadius: 4,
+  opacity: 0.8,
+  m:2
+};
+
+
+export default function Payments() {
+  const [payment, setPayment] = useState("");
+  const [buttonToogle, setButtonToogle] = useState(true);
+
+  return (
+    <Box
+      sx={{
+        width: "25vw",
+        height: "520px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+       pb:7,
+
+      }}
+    >
+      <Box sx={{ display: "flex" }}>
+        <ButtonSection
+          buttonToogle={buttonToogle}
+          setButtonToogle={setButtonToogle}
+        />
+      </Box>
+
+      <Box sx={{height:"273px",width:"300px"}}>{buttonToogle == true ? <AdvancePayment /> : <PaymentForm />}</Box>
+    </Box>
+  );
+}
+
+export function PaymentForm() {
+  const { setPaymentArray, updateValue, invoiceObject } =
+    useContext(InvoiceContext);
+
+  const generatePaymentId = (invoiceId, amount) => {
+    const date = new Date();
+    // const year = date.getFullYear().toString().slice(-2); // Last two digits of the year
+    const month = ("0" + (date.getMonth() + 1)).slice(-2); // Month (zero-padded)
+    const day = ("0" + date.getDate()).slice(-2); // Date (zero-padded)
+    const amountFormatted = amount.toFixed(2).replace(".", ""); // Amount formatted without decimal point
+
+    const uniqueComponent = uuidv4(); // Generate a UUID
+
+    return `${invoiceId}${month}${day}${amountFormatted}${uniqueComponent}`;
+  };
+
+
   const schema = yup.object().shape({
-    advance: yup
-      .number()
-      .typeError("Please enter a valid number")
-      .required("This field is required")
-      .min(0),
     payment: yup
       .number()
       .typeError("Please enter a valid number")
@@ -31,29 +98,56 @@ function Payments() {
   });
 
   const {
-    register: register1,
-    handleSubmit: handleSubmit1,
-    formState: { errors: errors1 },
+    register,
+    handleSubmit,
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const {
-    register: register2,
-    handleSubmit: handleSubmit2,
-    formState: { errors: errors2 },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
+  const onSubmit = (data) => {
+    console.log("Payment data:", data.payment);
+    setPaymentArray((prev) => {
+      const paymentId = generatePaymentId(invoiceObject.InvoiceID, data.payment);
+      console.log(paymentId); // Output: 12324051815075-uuid
+      const updatedArray = [...prev, {
+        payId:paymentId,
+        payment:data.payment
+      }];
+      updateValue("payments", updatedArray);
+      return updatedArray; // Return the updated array to update the state
+    });
+  };
+  return (
+    <>
+      <form style={{height:"60%",display:"flex",flexDirection:"column"}}noValidate onSubmit={handleSubmit(onSubmit)}>
+       
+          <TextField
+          fullWidth
+            label="Payment Amount"
+            {...register("payment")}
+            error={!!errors.payment}
+            helperText={errors.payment?.message}
+        />
+          <Box sx={{flexGrow:1}}/>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Button variant="contained" sx={ButtonstylesSubmit} type="submit" >
+              Pay
+            </Button>
+          </Box>
+         
+      </form>
+    </>
+  );
+}
 
+export function AdvancePayment() {
   const {
     fullDetailsEquipmentArray,
     setFullDetailsEquipmentArray,
     checkState,
     responseManageToogle,
     setResponseManageToogle,
-    paymentArray, setPaymentArray,
-    paymentId,setPaymentId,
     setCheckState,
     eqObject,
     setEqObject,
@@ -64,139 +158,75 @@ function Payments() {
     updateEqObject,
   } = useContext(InvoiceContext);
 
-  const [advance, setAdvance] = useState();
-  const [payment, setPayment] = useState("");
-  const [paymentToogle, setPaymentToogle] = useState(false);
-  const [advanceToogle,setAdvanceToogle]=useState(false)
+  const schema = yup.object().shape({
+    advance: yup
+      .number()
+      .typeError("Please enter a valid number")
+      .required("This field is required")
+      .min(0),
+  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-  const onSubmitPayments = () => {};
-
-  const onSubmit1 = (advance) => {
-    setPaymentToogle(true)
-    updateValue("advance", advance);
-    // setAdvanceToogle(true)
+  const onSubmit = (data) => {
+    updateValue("advance", data.advance);
   };
-
-  const onSubmit2 = (data) => {
-    console.log(data)
-    // setPaymentArray((prev) => [
-    //   ...prev,
-    //   payment
-    // ]);
-    // updateValue("payments", [...paymentArray, payment]);
-    // setResponseManageToogle(!responseManageToogle); // Toggles the responseManageToogle state
-  };
-  
 
   return (
-    <Box
-      sx={{
-        width: "30vw",
-        height: "60vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-      }}
-    >
-      <Box sx={{ display: "flex" }}>
-        <Button
-        disabled={advanceToogle}
-          sx={{
-            height: "130px",
-            width: "130px",
-            display: "flex",
-            flexDirection: "column",
-            m: 2,
-          }}
-          variant="outlined"
-          onClick={() => {
-            setPaymentToogle(false);
-            
-          }}
-        >
-          <Lottie options={{ animationData: Advance }} width={100} isClickToPauseDisabled={advanceToogle} />
-          Advance
-        </Button>
-        <Button
-          sx={{
-            height: "130px",
-            width: "130px",
-            display: "flex",
-            flexDirection: "column",
-            m: 2,
-          }}
-          variant="outlined"
-          onClick={() => {
-            setPaymentToogle(true);
-          }}
-        >
-          <Lottie options={{ animationData: Cash }} width={100} isPaused={paymentToogle}/>
-          Payment
-        </Button>
-      </Box>
-
-      {!paymentToogle && (
-        <Box>
-          <form noValidate onSubmit={handleSubmit1(onSubmit1)}>
-            <Stack spacing={4} width={300}>
-              <TextField
-              disabled={advanceToogle}
-                label="Advance payment"
-                onChange={(e) => setAdvance(e.target.value)}
-                inputProps={{ ...register1("advance") }}
-                error={!!errors1.advance}
-                helperText={errors1.advance?.message}
-              />
-              <Box>
-                <FormLabel>Advance paid </FormLabel>
-                <Switch
-                disabled={advanceToogle}
-                  defaultChecked
-                  onChange={(e) => console.log(e.target.checked)}
-                />
-              </Box>
-              <Button
-              disabled={advanceToogle}
-                variant="contained"
-                type="submit"
-                onClick={() => {onSubmit1(advance)
-                  
-                }}
-              >
-                Pay
-              </Button>
-            </Stack>
-          </form>
-        </Box>
-      )}
-
-      {paymentToogle && (
-        <Box>
-          <form noValidate onSubmit={handleSubmit2(onSubmit2())}>
-            <Stack spacing={4} width={300}>
-              <TextField
-                label="Payment Amount"
-                inputProps={{ ...register2("payment") }}
-                error={!!errors2.payment}
-                helperText={errors2.payment?.message}
-                // onChange={(e) => setPayment(e.target.value)}
-              />
-              <Box></Box>
-              <Button
-                variant="contained"
-                type="submit"
-                
-              >
-                Pay
-              </Button>
-              <Typography variant="h6">Amount : </Typography>
-            </Stack>
-          </form>
-        </Box>
-      )}
-    </Box>
+    <>
+      <form noValidate onSubmit={handleSubmit(onSubmit)}>
+        <Stack spacing={4} width="100%">
+          <TextField
+            label="Advance payment"
+            {...register("advance")}
+            error={!!errors.advance}
+            helperText={errors.advance?.message}
+          />
+          <Box>
+            <FormLabel>Advance paid </FormLabel>
+            <Switch defaultChecked />
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Button variant="contained" sx={ButtonstylesSubmit} type="submit" >
+              Pay
+            </Button>
+          </Box>
+        </Stack>
+      </form>
+    </>
   );
 }
 
-export default Payments;
+export function ButtonSection(props) {
+  const { buttonToogle, setButtonToogle } = props;
+
+  return (
+    <>
+      <Button
+        sx={Buttonstyles}
+        variant="outlined"
+        onClick={() => {
+          setButtonToogle(true);
+        }}
+      >
+        <Lottie options={{ animationData: Advance }} width={100} />
+        Advance
+      </Button>
+      <Button
+        sx={Buttonstyles}
+        variant="outlined"
+        onClick={() => {
+          setButtonToogle(false);
+        }}
+      >
+        <Lottie options={{ animationData: Cash }} width={100} />
+        Payment
+      </Button>
+    </>
+  );
+}
