@@ -119,8 +119,9 @@ function Invoice() {
     }
   };
   const handleCreateNew = async () => {
+    localStorage.removeItem("CIObject");
+    // setData(clearData)
     clearObject();
-    clearValues();
     try {
       await axios.get("http://localhost:8085/invoiceIdRetrieve").then((res) => {
         console.log(res.data)
@@ -403,9 +404,8 @@ Third Column: 23.6 */}
                   />
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <Button variant="contained" onClick={handleProceedPayment}>
-                    Proceed to <br />
-                    payment
+                  <Button customvariant="custom" variant="contained" onClick={handleProceedPayment}>
+                    Payments
                   </Button>
                 </Box>
               </Box>

@@ -5,11 +5,14 @@ export default function InvoiceContextProvider({ children }) {
   const [fullDetailsEquipmentArray, setFullDetailsEquipmentArray] = useState([]); //FULL DETAIL OBJECT.ARRAY OF OBJECTS
   const [checkState, setCheckState] = useState(false);
   const [eqObject, setEqObject] = useState([]);
-  const [invoiceObject, setInvoiceObject] = useState({});
+  const [invoiceObject, setInvoiceObject] = useState({
+    iDstatus:false
+  });
   const [responseManageToogle, setResponseManageToogle] = useState(false);
   const [paymentArray, setPaymentArray] = useState([]);
   const [paymentId, setPaymentId] = useState(0);
   const clearObject = () => {
+    setEqObject([])
     setInvoiceObject({});
   };
 

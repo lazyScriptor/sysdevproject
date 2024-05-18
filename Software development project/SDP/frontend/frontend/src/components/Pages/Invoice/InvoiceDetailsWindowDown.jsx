@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { InvoiceContext } from "../../../Contexts/Contexts";
 import axios from "axios";
+import Swala from "../../MessageComponents/Swal";
 
 function InvoiceDetailsWindowDown() {
   const {
@@ -10,6 +11,7 @@ function InvoiceDetailsWindowDown() {
     setFullDetailsEquipmentArray,
     checkState,
     responseManageToogle,
+    clearValues,
     setResponseManageToogle,
     setCheckState,
     eqObject,
@@ -21,37 +23,62 @@ function InvoiceDetailsWindowDown() {
     updateEqObject,
   } = useContext(InvoiceContext);
 
+  useEffect(() => {}, [invoiceObject]);
 
-  useEffect(() => {
-    
-  }, [invoiceObject]);
-
-  const handleInvoiceSubmit = async() => {
-    localStorage.removeItem("CIObject");
-    localStorage.setItem("CIObject",JSON.stringify(invoiceObject))
+  const handleInvoiceSubmit = async () => {
+    localStorage.setItem("CIObject", JSON.stringify(invoiceObject));
     const localInvoiceObject = localStorage.getItem("CIObject");
-    console.log("Local storage retrievel",localInvoiceObject)
+    console.log("Local storage retrieval", localInvoiceObject);
 
-    if (localInvoiceObject) {
-      const localInvoiceObjectJSON = JSON.parse(localInvoiceObject);
-      console.log("Local storage retrieval", localInvoiceObjectJSON);
-      try {
-        // Send the object to the backend
-        await axios.post("http://localhost:8085/updateInvoiceDetails", localInvoiceObjectJSON);
-      } catch (error) {
-        console.error("Error occurred in front end AXIOS invoice pass", error);
+    if (invoiceObject) {
+      if (invoiceObject.customerDetails.length > 0) {
+        if (invoiceObject.eqdetails.length > 0) {
+          if (invoiceObject.advance > 0) {
+            console.log("Local storage retrieval", invoiceObject);
+            try {
+              // Send the object to the backend
+              await axios.post(
+                "http://localhost:8085/updateInvoiceDetails",
+                invoiceObject
+              );
+              console.log("Invoice details updated successfully");
+            } catch (error) {
+              <Swala
+                icon="error"
+                title="Redirect Alert"
+                text="This operation may clear your invoice data"
+                buttonContent="Advance Search"
+                swalButtonContent="Go back"
+                footer='<a href="customers">Redirect Anyway</a>'
+              />;
+
+              console.error(
+                "Error occurred in front end AXIOS invoice pass",
+                error
+              );
+            }
+          } else {
+            <Swala
+            icon="error"
+            title="Redirect Alert"
+            text="This operation may clear your invoice data"
+            buttonContent="Advance Search"
+            swalButtonContent="Go back"
+            footer='<a href="customers">Redirect Anyway</a>'
+          />;
+            console.log("Advance payment is not greater than 0");
+          }
+        } else {
+          
+          console.log("No equipment details found");
+        }
+      } else {
+        console.log("Customer ID is not greater than 0");
       }
     } else {
-      console.log("No data found in local storage");
+      console.log("Invoice object is undefined");
     }
-
-
-
-
-
-
-
-  }
+  };
   return (
     <>
       <Paper
@@ -105,14 +132,21 @@ function InvoiceDetailsWindowDown() {
             >
               <Typography variant="h6" sx={{ textAlign: "end", mb: 2.5 }}>
                 {invoiceObject.advance && invoiceObject.advance}
-                LKR
+                {invoiceObject.advance && " LKR"}
               </Typography>
 
-              {invoiceObject.payments && invoiceObject.payments.map((item, index) => (
-                <Typography key={index} variant="h7" sx={{ textAlign: "end" }}>
-                  {item.payment && item.payment} lkr
-                </Typography>
-              ))}
+              {invoiceObject.payments &&
+                invoiceObject.payments.map((item, index) => (
+                  <Typography
+                    key={index}
+                    variant="h7"
+                    sx={{ textAlign: "end" }}
+                  >
+                    {`${index + 1}) `}
+                    {item.payment && item.payment}
+                    {item.payment && " LKR"}
+                  </Typography>
+                ))}
             </Box>
           </Box>
           <Box sx={{ height: "100%", width: "100%" }}></Box>

@@ -21,20 +21,24 @@ import SearchIcon from "@mui/icons-material/Search";
 const schema = yup.object().shape({
   eqid: yup
     .number()
-    .typeError("Equipment ID must be a number")
+    .typeError("Equipment ID required")
     .min(1, "The equipment ID must be at least 1")
     .max(200, "The equipment ID must be at most 200")
     .required("Equipment ID is required"),
 });
 
 export default function InvoiceRightSide() {
-  const validationSchema = yup.object().shape({
-    quantity: yup
-      .number()
-      .required("Quantity is required")
-      .min(0, "Quantity must be greater than or equal to 0")
-      .max(`Quantity cannot exceed `), // Dynamic validation
+  const [eqDetails, setEqDetails] = useState({});
+  const [eqName, setEqName] = useState();
+  const [eqQty, setEqQty] = useState();
+  const [total, setTotal] = useState();
+  const [addBtnDisabled, setAddBtnDisabled] = useState(false);
+  const [qtyBtnDisabled, setQtyBtnDisabled] = useState(true);
+
+  let validationSchema = yup.object().shape({
+    quantity: yup.number().typeError("Equipment ID must be a number").max(1000),
   });
+
   const {
     register,
     handleSubmit,
@@ -43,7 +47,6 @@ export default function InvoiceRightSide() {
     resolver: yupResolver(validationSchema),
   });
 
-  const onSubmit = () => {};
   const {
     responseManageToogle,
     setResponseManageToogle,
@@ -52,41 +55,25 @@ export default function InvoiceRightSide() {
     updateEqObject,
   } = useContext(InvoiceContext);
 
-  const [eqDetails, setEqDetails] = useState({});
-  const [eqQty, setEqQty] = useState(0);
-  const [total, setTotal] = useState(0);
-  const [addBtnDisabled, setAddBtnDisabled] = useState(false);
-
   const handleAddEquipment = () => {
     setTotal((prev) => prev + eqDetails.eq_rental * eqQty);
     updateEqObject({ ...eqDetails, Qty: eqQty });
     setAddBtnDisabled(true);
   };
 
-  const handleRemoveEquipment = () => {
-    setResponseManageToogle(!responseManageToogle);
-    const updatedEqObject = eqObject.filter(
-      (item) => item.eq_id !== eqDetails.eq_id
-    );
-    setEqObject(updatedEqObject);
+  const onSubmit = () => {
+    updateEqObject({ ...eqDetails, Qty: eqQty });
+    setAddBtnDisabled(true);
   };
-
-  useEffect(() => {
-    console.log("Total is", total);
-  }, [total]);
-
+  const handleReset = () => {
+    setEqName('')
+    setEqQty('')
+    setEqObject([]);
+  };
   useEffect(() => {
     console.log("Changed equipment object", eqObject);
   }, [eqObject]);
 
-  const Buttonstyles = {
-    width: "100px",
-    height: "80px",
-    color: "primary",
-    border: "solid 1px",
-    borderRadius: 4,
-    opacity: 0.8,
-  };
   return (
     <Paper
       elevation={3}
@@ -103,79 +90,115 @@ export default function InvoiceRightSide() {
         <Typography>Equipment Form</Typography>
         <hr />
         <Box display="flex" alignItems="start">
-          <FormLabel sx={{ width: "30%" }}>Equipment Name</FormLabel>
-          <TextField sx={{ flexGrow: 1, height: "100px" }} helperText="" />
-          <Button>
-            <SearchIcon />
-          </Button>
+          <EquipmentIdSearch
+            setQtyBtnDisabled={setQtyBtnDisabled}
+            eqDetails={eqDetails}
+            setEqDetails={setEqDetails}
+            setEqQty={setEqQty}
+            setAddBtnDisabled={setAddBtnDisabled}
+            setEqName={setEqName}
+          />
         </Box>
         <Box display="flex" alignItems="start">
-          <FormLabel sx={{ width: "30%" }}>Equipment Name</FormLabel>
-          <TextField sx={{ flexGrow: 1, height: "100px" }} helperText="" />
+          <FormLabel sx={{ width: "30%" }}>Name</FormLabel>
+          <TextField
+            disabled={true}
+            sx={{ flexGrow: 1, height: "100px" }}
+            value={eqName || ""}
+            helperText=""
+          />
         </Box>
-        <Box display="flex" alignItems="start">
-          <FormLabel sx={{ width: "30%" }}>Equipment Name</FormLabel>
-          <TextField sx={{ flexGrow: 1, height: "100px" }} helperText="" />
-        </Box>
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="space-around"
-          pt={3}
-        >
-          <Button variant="contained" sx={Buttonstyles}>
-            Add
-          </Button>
-          <Button variant="contained" color="warning" sx={Buttonstyles}>
-            Handover
-          </Button>
-          <Button variant="contained" color="error" sx={Buttonstyles}>
-            Remove
-          </Button>
-        </Box>
+        <form noValidate onSubmit={handleSubmit(onSubmit)}>
+          <Box display="flex" alignItems="start">
+            <FormLabel sx={{ width: "30%" }}>Qty</FormLabel>
+            <TextField
+              disabled={
+                eqDetails.eq_quantity == 1 || addBtnDisabled || qtyBtnDisabled
+              }
+              sx={{ flexGrow: 1, height: "100px" }}
+              type="number"
+              onChange={(e) => setEqQty(e.target.value)}
+              value={eqQty || 0}
+              inputProps={{ ...register("quantity") }}
+              error={!!errors.quantity}
+              helperText={errors.quantity?.message}
+            />
+          </Box>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-around"
+            pt={3}
+          >
+            <Button
+              disabled={addBtnDisabled}
+              variant="contained"
+              customvariant="custom"
+              type="submit"
+            >
+              Add
+            </Button>
+            <Button variant="contained" color="warning" customvariant="custom">
+              Handover
+            </Button>
+            <Button variant="contained" color="error" customvariant="custom" onClick={handleReset}>
+              Clear
+            </Button>
+          </Box>
+        </form>
       </Stack>
     </Paper>
   );
 }
 
-// function EquipmentIdSearch({ setEqDetails, setEqQty }) {
-//   const {
-//     register,
-//     handleSubmit,
-//     formState: { errors },
-//   } = useForm({
-//     resolver: yupResolver(schema),
-//   });
+export function EquipmentIdSearch(props) {
+  const { eqDetails, setEqDetails, setEqQty, setAddBtnDisabled, setEqName,setQtyBtnDisabled } =
+    props;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-//   const onSubmit = async (data) => {
-//     try {
-//       const res = await axios.get(
-//         `http://localhost:8085/getEquipmentbyID/${data.eqid}`
-//       );
-//       const equipment = res.data[0];
-//       setEqDetails(equipment);
-//       setEqQty(equipment.eq_quantity);
-//     } catch (error) {
-//       console.error("Error occurred while searching by ID:", error);
-//     }
-//   };
+  const onSubmit = async (data) => {
+    setQtyBtnDisabled(false)
+    setEqName("");
+    setEqQty("");
+    setAddBtnDisabled(false);
+    try {
+      const res = await axios.get(
+        `http://localhost:8085/getEquipmentbyID/${data.eqid}`
+      );
+      const equipment = res.data[0];
+      console.log(res.data[0]);
 
-//   return (
-//     <form noValidate onSubmit={handleSubmit(onSubmit)}>
-//       <TextField
-//         sx={{ width: "60%", height: "100px" }}
-//         inputProps={{ ...register("eqid") }}
-//         label="Search"
-//         type="number"
-//         variant="outlined"
-//         error={!!errors.eqid}
-//         helperText={errors.eqid?.message}
-//       />
-//       <Button sx={{ pt: 2 }} type="submit">
-//         <SearchIcon />
-//       </Button>
-//     </form>
-//   );
-// }
+      if (res.data.length > 0) {
+        setEqQty(equipment.eq_quantity);
+        setEqName(equipment.eq_name);
+        setEqDetails(equipment);
+      }
+    } catch (error) {
+      console.error("Error occurred while searching by ID:", error);
+    }
+  };
 
-// export default InvoiceRightSide;
+  return (
+    <form noValidate onSubmit={handleSubmit(onSubmit)}>
+      <FormLabel sx={{ width: "32.5%" }}>Equipment Id</FormLabel>
+      <TextField
+        sx={{ width: "40%", height: "100px" }}
+        inputProps={{ ...register("eqid") }}
+        label="Search"
+        type="number"
+        variant="outlined"
+        error={!!errors.eqid}
+        helperText={errors.eqid?.message}
+      />
+      <Button sx={{ pt: 2 }} type="submit">
+        <SearchIcon />
+      </Button>
+    </form>
+  );
+}

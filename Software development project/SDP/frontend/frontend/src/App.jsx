@@ -23,9 +23,22 @@ function App() {
   const [usernamee, setUsernamee] = useState('new dummy data');
   const [rolee, setRolee] = useState('new role data');
 
+  const Buttonstyles =(theme)=> ({
+    display:"flex",
+    flexDirection:"column",
+    alignItems:"center",
+    width: "100px",
+    height: "80px",
+    border: "solid 1px",
+    borderRadius: 15,
+    opacity: 0.8,
+    m:2
+  });
+
   const theme = createTheme({
     typography: {
       fontFamily: ['-apple-system-', 'BlinkMacSystemFont', 'Roboto', 'sans-serif'].join(','),
+      color:"red"
     },
     // Define your theme here
     palette: {
@@ -98,6 +111,16 @@ function App() {
       common: {
         maincolour1: 'red',
         maincolour2: 'green',
+      },
+    },
+    components: {
+      MuiButton: {
+        variants: [
+          {
+            props: { customvariant: 'custom' },
+            style: Buttonstyles,
+          },
+        ],
       },
     },
   });

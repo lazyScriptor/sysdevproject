@@ -17,13 +17,13 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { v4 as uuidv4 } from "uuid";
 
+
 const Buttonstyles = {
   display:"flex",
   flexDirection:"column",
   alignItems:"center",
   width: "130px",
   height: "110px",
-  color: "primary",
   border: "solid 1px",
   borderRadius: 4,
   opacity: 0.8,
