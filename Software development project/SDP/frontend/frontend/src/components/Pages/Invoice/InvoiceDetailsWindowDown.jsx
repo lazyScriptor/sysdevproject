@@ -3,7 +3,6 @@ import { Button } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { InvoiceContext } from "../../../Contexts/Contexts";
 import axios from "axios";
-import Swala from "../../MessageComponents/Swal";
 
 function InvoiceDetailsWindowDown() {
   const {
@@ -26,12 +25,12 @@ function InvoiceDetailsWindowDown() {
   useEffect(() => {}, [invoiceObject]);
 
   const handleInvoiceSubmit = async () => {
-    localStorage.setItem("CIObject", JSON.stringify(invoiceObject));
-    const localInvoiceObject = localStorage.getItem("CIObject");
-    console.log("Local storage retrieval", localInvoiceObject);
+    // localStorage.setItem("CIObject", JSON.stringify(invoiceObject));
+    // const localInvoiceObject = localStorage.getItem("CIObject");
+    console.log("Local storage retrieval", invoiceObject);
 
     if (invoiceObject) {
-      if (invoiceObject.customerDetails.length > 0) {
+      if (invoiceObject.customerDetails.cus_id > 0) {
         if (invoiceObject.eqdetails.length > 0) {
           if (invoiceObject.advance > 0) {
             console.log("Local storage retrieval", invoiceObject);
@@ -43,29 +42,14 @@ function InvoiceDetailsWindowDown() {
               );
               console.log("Invoice details updated successfully");
             } catch (error) {
-              <Swala
-                icon="error"
-                title="Redirect Alert"
-                text="This operation may clear your invoice data"
-                buttonContent="Advance Search"
-                swalButtonContent="Go back"
-                footer='<a href="customers">Redirect Anyway</a>'
-              />;
-
+              
               console.error(
                 "Error occurred in front end AXIOS invoice pass",
                 error
               );
             }
           } else {
-            <Swala
-            icon="error"
-            title="Redirect Alert"
-            text="This operation may clear your invoice data"
-            buttonContent="Advance Search"
-            swalButtonContent="Go back"
-            footer='<a href="customers">Redirect Anyway</a>'
-          />;
+           
             console.log("Advance payment is not greater than 0");
           }
         } else {

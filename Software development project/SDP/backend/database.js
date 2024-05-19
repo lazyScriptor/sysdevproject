@@ -176,7 +176,7 @@ export async function getInvoiceId() {
     );
 
     const [invoiceId] = await pool.query(
-      'SELECT MAX(inv_id) AS largest_invoice_number FROM invoice',
+      'SELECT Min(inv_id) AS largest_invoice_number FROM invoice WHERE inv_updatedstatus = 0',
     );
     console.log('back', invoiceId[0].largest_invoice_number);
     return invoiceId[0].largest_invoice_number;
@@ -198,11 +198,12 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
   // Update invoice details
   try {
     await pool.query(
-      'UPDATE invoice SET inv_advance = ?, inv_special_message = ?, inv_idcardstatus = ? WHERE inv_id = ?',
+      'UPDATE invoice SET inv_advance = ?, inv_special_message = ?, inv_idcardstatus = ?, inv_updatedstatus = ? WHERE inv_id = ?',
       [
         InvoiceCompleteDetail.advance,
         '', // Empty string for inv_special_message
         InvoiceCompleteDetail.iDstatus && 1, // Assuming iDstatus is a boolean value
+        1,
         InvoiceCompleteDetail.InvoiceID,
       ],
     );

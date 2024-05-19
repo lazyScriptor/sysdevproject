@@ -34,6 +34,7 @@ export default function InvoiceRightSide() {
   const [total, setTotal] = useState();
   const [addBtnDisabled, setAddBtnDisabled] = useState(false);
   const [qtyBtnDisabled, setQtyBtnDisabled] = useState(true);
+  const [eqBorrowQty, setEqBorrowQty] = useState();
 
   let validationSchema = yup.object().shape({
     quantity: yup.number().typeError("Equipment ID must be a number").max(1000),
@@ -62,12 +63,21 @@ export default function InvoiceRightSide() {
   };
 
   const onSubmit = () => {
-    updateEqObject({ ...eqDetails, Qty: eqQty });
+
+    try{
+      axios 
+      .get()
+    }catch{
+
+    }
+
+
+    updateEqObject({ ...eqDetails, Qty: eqBorrowQty });
     setAddBtnDisabled(true);
   };
   const handleReset = () => {
-    setEqName('')
-    setEqQty('')
+    setEqName("");
+    setEqQty("");
     setEqObject([]);
   };
   useEffect(() => {
@@ -97,6 +107,7 @@ export default function InvoiceRightSide() {
             setEqQty={setEqQty}
             setAddBtnDisabled={setAddBtnDisabled}
             setEqName={setEqName}
+            setEqBorrowQty={setEqBorrowQty}
           />
         </Box>
         <Box display="flex" alignItems="start">
@@ -113,17 +124,27 @@ export default function InvoiceRightSide() {
             <FormLabel sx={{ width: "30%" }}>Qty</FormLabel>
             <TextField
               disabled={
-                eqDetails.eq_quantity == 1 || addBtnDisabled || qtyBtnDisabled
+                eqQty == 1 || addBtnDisabled
               }
               sx={{ flexGrow: 1, height: "100px" }}
               type="number"
-              onChange={(e) => setEqQty(e.target.value)}
-              value={eqQty || 0}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                if (inputValue > eqQty) {
+                  console.log("{Please enter a lower value}");
+                  setAddBtnDisabled(true);
+                } else {
+                  setEqBorrowQty(e.target.value);
+                  setAddBtnDisabled(false);
+                }
+              }}
+              value={eqBorrowQty || ''}
               inputProps={{ ...register("quantity") }}
               error={!!errors.quantity}
-              helperText={errors.quantity?.message}
+              helperText={[ eqBorrowQty>eqQty?errors.quantity:  "Remaining stock :", " ", eqQty]}
             />
           </Box>
+
           <Box
             display="flex"
             alignItems="center"
@@ -141,7 +162,12 @@ export default function InvoiceRightSide() {
             <Button variant="contained" color="warning" customvariant="custom">
               Handover
             </Button>
-            <Button variant="contained" color="error" customvariant="custom" onClick={handleReset}>
+            <Button
+              variant="contained"
+              color="error"
+              customvariant="custom"
+              onClick={handleReset}
+            >
               Clear
             </Button>
           </Box>
@@ -152,8 +178,15 @@ export default function InvoiceRightSide() {
 }
 
 export function EquipmentIdSearch(props) {
-  const { eqDetails, setEqDetails, setEqQty, setAddBtnDisabled, setEqName,setQtyBtnDisabled } =
-    props;
+  const {
+    eqDetails,
+    setEqDetails,
+    setEqQty,
+    setAddBtnDisabled,
+    setEqName,
+    setQtyBtnDisabled,
+    setEqBorrowQty
+  } = props;
   const {
     register,
     handleSubmit,
@@ -163,7 +196,8 @@ export function EquipmentIdSearch(props) {
   });
 
   const onSubmit = async (data) => {
-    setQtyBtnDisabled(false)
+    setEqBorrowQty(1)
+    setQtyBtnDisabled(false);
     setEqName("");
     setEqQty("");
     setAddBtnDisabled(false);

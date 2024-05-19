@@ -16,6 +16,7 @@ import {
   AuthContext,
   InvoiceContext,
   PopupContext,
+  SwalContext,
 } from "../../Contexts/Contexts.jsx";
 import OverlayDialogBox from "../SubComponents/OverlayDialogBox.jsx";
 import axios from "axios";
@@ -25,8 +26,9 @@ import IdCardStatus from "./Invoice/IdCardStatus.jsx";
 import InvoiceDetailsWindowUp from "./Invoice/InvoiceDetailsWindowUp.jsx";
 import InvoiceDetailsWindowDown from "./Invoice/InvoiceDetailsWindowDown.jsx";
 import Payments from "./Invoice/Payments.jsx";
-import Swala from "../MessageComponents/Swal.jsx";
 import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2'
+
 
 function Invoice() {
   const {
@@ -43,6 +45,8 @@ function Invoice() {
     clearValues,
     updateEqObject,
   } = useContext(InvoiceContext);
+  const {showAlert}=useContext(SwalContext)
+
 
   const navigate = useNavigate();
   const { setIsAuthenticated } = useContext(AuthContext);
@@ -323,18 +327,20 @@ Third Column: 23.6 */}
                   <Button onClick={() => handleSearchPhoneNumber(phoneNumber)}>
                     <FontAwesomeIcon icon={faSearch} />
                   </Button>
-                  {/* <Button
+                  <Button
                     variant="outlined"
                     size="small"
                     onClick={() => {
-                      setBoolvalue(!boolvalue);
+                      showAlert();
                     }}
                   >
+                    <Typography variant="caption">
                     Advance
                     <br />
                     search
-                  </Button> */}
-                  <Swala icon="info" title="Redirect Alert" text="This operation may clear your invoice data" buttonContent="Advance Search" swalButtonContent="Go back"footer='<a href="customers">Redirect Anyway</a>'/>
+                    </Typography>
+                      
+                  </Button>
 
                   <Button
                     onClick={() => {
@@ -481,3 +487,7 @@ Third Column: 23.6 */}
 }
 
 export default Invoice;
+
+
+
+

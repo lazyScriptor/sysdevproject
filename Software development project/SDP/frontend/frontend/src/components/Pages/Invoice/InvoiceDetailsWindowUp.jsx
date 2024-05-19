@@ -65,10 +65,17 @@ function InvoiceDetailsWindowUp() {
           borderRadius: "12px 12px 0px 0px",
           height: "100%",
         }}
-      ><Box sx={{backgroundColor:(theme)=>theme.palette.primary[50],borderRadius:3,width:"140px"}}>
-        <Switch onChange={(e) => setToogle(e.target.checked)} />
-        <Typography variant="caption">Edit mode</Typography>
-      </Box>
+      >
+        <Box
+          sx={{
+            backgroundColor: (theme) => theme.palette.primary[50],
+            borderRadius: 3,
+            width: "140px",
+          }}
+        >
+          <Switch onChange={(e) => setToogle(e.target.checked)} />
+          <Typography variant="caption">Edit mode</Typography>
+        </Box>
         <Box
           sx={{
             position: "relative",
@@ -82,71 +89,72 @@ function InvoiceDetailsWindowUp() {
           <Box sx={{ flexGrow: 1 }} />
           <Typography variant="body">{Total} LKR</Typography>
         </Box>
-        {eqObject && eqObject.map((item, index) => (
-          <Paper
-            elevation={2}
-            key={index}
-            sx={{
-              display: "flex",
-              height: "70px",
-              p: 1,
-              m: 1,
-              borderRadius: 2,
-              border: "solid 1px rgb(222, 222, 222)",
-            }}
-          >
-            <Box
+        {eqObject &&
+          eqObject.map((item, index) => (
+            <Paper
+              elevation={2}
+              key={index}
               sx={{
-                width: "50%",
                 display: "flex",
-                flexDirection: "row",
-                justifyContent: "start",
-                alignItems: "start",
-                gap: 2,
-                ml: 2,
+                height: "70px",
+                p: 1,
+                m: 1,
+                borderRadius: 2,
+                border: "solid 1px rgb(222, 222, 222)",
               }}
             >
-              {/* <Typography variant="h6">Advance</Typography> */}
-              <Typography variant="caption">{item.eq_id}</Typography>
-              <Typography variant="body">{item.eq_name}</Typography>
-            </Box>
-            <Box sx={{ flexGrow: 1 }} />
-            <Box
-              sx={{
-                width: "50%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "start",
-                alignItems: "end",
-                pr: 2,
-              }}
-            >
-              {/* <Typography variant="h6" sx={{ textAlign: "end",mb:3 }}>
+              <Box
+                sx={{
+                  width: "50%",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "start",
+                  alignItems: "start",
+                  gap: 2,
+                  ml: 2,
+                }}
+              >
+                {/* <Typography variant="h6">Advance</Typography> */}
+                <Typography variant="caption">{item.eq_id}</Typography>
+                <Typography variant="body">{item.eq_name}</Typography>
+              </Box>
+              <Box sx={{ flexGrow: 1 }} />
+              <Box
+                sx={{
+                  width: "50%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "start",
+                  alignItems: "end",
+                  pr: 2,
+                }}
+              >
+                {/* <Typography variant="h6" sx={{ textAlign: "end",mb:3 }}>
           2000 LKR
         </Typography> */}
-        
-              <Typography variant="body" sx={{ textAlign: "end" }}>
-                Rentalx {item.eq_rental}
-              </Typography>
-              <Typography variant="caption" sx={{ textAlign: "end" }}>
-                Quantityx {item.Qty}
-              </Typography>
-            </Box>
-            {toogle && (
-              <>
-                {" "}
-                <Box sx={{ width: "40px" }}>
-                  <button
-                    style={deleteButtonStyles}
-                    onClick={() => handleDelete(item.eq_id)}
-                  >
-                    <DeleteTwoToneIcon sx={{ color: "white" }} />
-                  </button>
-                </Box>
-              </>
-            )}
-          </Paper>
-        ))}
+
+                <Typography variant="body" sx={{ textAlign: "end" }}>
+                  Rentalx {item.eq_rental}
+                </Typography>
+                <Typography variant="caption" sx={{ textAlign: "end" }}>
+                  Quantityx {item.Qty}
+                </Typography>
+              </Box>
+              {toogle && (
+                <>
+                  {" "}
+                  <Box sx={{ width: "40px" }}>
+                    <button
+                      style={deleteButtonStyles}
+                      onClick={() => handleDelete(item.eq_id)}
+                    >
+                      <DeleteTwoToneIcon sx={{ color: "white" }} />
+                    </button>
+                  </Box>
+                </>
+              )}
+            </Paper>
+          ))}
       </Paper>
     </>
   );
