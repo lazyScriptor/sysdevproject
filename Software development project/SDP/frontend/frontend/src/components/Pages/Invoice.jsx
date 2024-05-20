@@ -29,6 +29,7 @@ import Payments from "./Invoice/Payments.jsx";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
 import InvoicePaymentsTable from "./Invoice/InvoicePaymentsTable.jsx";
+import InvoiceRightSideNew from "./Invoice/InvoiceRightSideNew.jsx";
 
 
 function Invoice() {
@@ -37,6 +38,7 @@ function Invoice() {
     setFullDetailsEquipmentArray,
     checkState,
     setCheckState,
+    setPaymentArray,
     eqObject,
     setEqObject,
     invoiceObject,
@@ -129,6 +131,7 @@ function Invoice() {
     setData(clearData)
     setEqObject('')
     clearObject();
+    setPaymentArray([])
     try {
       await axios.get("http://localhost:8085/invoiceIdRetrieve").then((res) => {
         console.log(res.data)
@@ -251,7 +254,8 @@ Third Column: 23.6 */}
               width: "23.6%",
             }}
           >
-            <InvoiceRightSide />
+            {/* <InvoiceRightSide /> */}
+            <InvoiceRightSideNew/>
           </Box>
           {/*Row2 middle box */}
 

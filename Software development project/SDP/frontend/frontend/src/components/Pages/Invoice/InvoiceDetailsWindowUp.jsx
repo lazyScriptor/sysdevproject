@@ -137,7 +137,7 @@ function InvoiceDetailsWindowUp() {
                   Rentalx {item.eq_rental}
                 </Typography>
                 <Typography variant="caption" sx={{ textAlign: "end" }}>
-                  Quantityx {item.Qty}
+                  Quantityx {item.quantity}
                 </Typography>
               </Box>
               {toogle && (
