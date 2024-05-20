@@ -28,6 +28,7 @@ import InvoiceDetailsWindowDown from "./Invoice/InvoiceDetailsWindowDown.jsx";
 import Payments from "./Invoice/Payments.jsx";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
+import InvoicePaymentsTable from "./Invoice/InvoicePaymentsTable.jsx";
 
 
 function Invoice() {
@@ -125,6 +126,8 @@ function Invoice() {
   const handleCreateNew = async () => {
     localStorage.removeItem("CIObject");
     // setData(clearData)
+    setData(clearData)
+    setEqObject('')
     clearObject();
     try {
       await axios.get("http://localhost:8085/invoiceIdRetrieve").then((res) => {
@@ -442,11 +445,11 @@ Third Column: 23.6 */}
             sx={{
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
+              alignItems: "start",
               width: "23.6%",
             }}
           >
-            Row 3 coloumn 1
+            <InvoicePaymentsTable/>
           </Box>
           {/*Row3 middle box */}
           <Box

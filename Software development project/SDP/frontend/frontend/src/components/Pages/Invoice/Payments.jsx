@@ -85,7 +85,7 @@ export function PaymentForm() {
 
     const uniqueComponent = uuidv4(); // Generate a UUID
 
-    return `${invoiceId}${month}${day}${amountFormatted}${uniqueComponent}`;
+    return `${invoiceId}${month}${day}${amountFormatted}`;
   };
 
 

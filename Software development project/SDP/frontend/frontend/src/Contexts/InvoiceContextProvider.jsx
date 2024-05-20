@@ -1,26 +1,38 @@
-import { useEffect, useState } from 'react';
-import { InvoiceContext } from './Contexts';
+import { useEffect, useState } from "react";
+import { InvoiceContext } from "./Contexts";
 
 export default function InvoiceContextProvider({ children }) {
-  const [fullDetailsEquipmentArray, setFullDetailsEquipmentArray] = useState([]); //FULL DETAIL OBJECT.ARRAY OF OBJECTS
+  const [fullDetailsEquipmentArray, setFullDetailsEquipmentArray] = useState(
+    []
+  ); //FULL DETAIL OBJECT.ARRAY OF OBJECTS
   const [checkState, setCheckState] = useState(false);
   const [eqObject, setEqObject] = useState([]);
   const [invoiceObject, setInvoiceObject] = useState({
-    iDstatus:false,
-    payments:0,
-    eqdetails:[],
-    advance:0,
-    customerDetails:{},
-    payments:[],
-    InvoiceID:0
+    iDstatus: false,
+    eqdetails: [],
+    advance: 0,
+    customerDetails: {},
+    payments: [],
+    InvoiceID: 0,
   });
   const [responseManageToogle, setResponseManageToogle] = useState(false);
   const [paymentArray, setPaymentArray] = useState([]);
   const [paymentId, setPaymentId] = useState(0);
   const clearObject = () => {
-    setEqObject([])
-    setInvoiceObject({});
+    setEqObject([]);
+    setInvoiceObject({
+      iDstatus: false,
+      eqdetails: [],
+      advance: 0,
+      customerDetails: {},
+      payments: [],
+      InvoiceID: 0,
+    });
   };
+  const clearPaymentArray=()=>{
+    setPaymentArray([])
+  }
+
 
   const updateValue = (value, newVaalue) => {
     setInvoiceObject((preObject) => ({ ...preObject, [value]: newVaalue }));
@@ -29,7 +41,7 @@ export default function InvoiceContextProvider({ children }) {
     setInvoiceObject((prevObject) => {
       const clearedObject = {};
       Object.keys(prevObject).forEach((key) => {
-        clearedObject[key] = ''; // or null, or undefined
+        clearedObject[key] = ""; // or null, or undefined
       });
       return clearedObject;
     });
@@ -49,6 +61,7 @@ export default function InvoiceContextProvider({ children }) {
       value={{
         responseManageToogle,
         setResponseManageToogle,
+        clearPaymentArray,
         paymentArray,
         setPaymentArray,
         clearValues,
