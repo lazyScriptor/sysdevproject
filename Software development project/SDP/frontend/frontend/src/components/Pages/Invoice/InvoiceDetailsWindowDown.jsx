@@ -30,8 +30,8 @@ function InvoiceDetailsWindowDown() {
     console.log("Local storage retrieval", invoiceObject);
 
     if (invoiceObject) {
-      if (invoiceObject.customerDetails.cus_id > 0) {
-        if (invoiceObject.eqdetails.length > 0) {
+      if (invoiceObject.hasOwnProperty("customerDetails") && invoiceObject.customerDetails.cus_id>0) {
+        if (invoiceObject.eqdetails.length>0) {
           if (invoiceObject.advance > 0) {
             console.log("Local storage retrieval", invoiceObject);
             try {
@@ -57,7 +57,7 @@ function InvoiceDetailsWindowDown() {
           console.log("No equipment details found");
         }
       } else {
-        console.log("Customer ID is not greater than 0");
+        console.log("Customer ID is not greater than 0 MEANS Customer is not found");
       }
     } else {
       console.log("Invoice object is undefined");

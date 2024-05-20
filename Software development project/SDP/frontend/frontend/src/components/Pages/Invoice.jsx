@@ -94,7 +94,6 @@ function Invoice() {
 
   const handleProceedPayment = () => {
     updateValue("eqdetails", eqObject);
-    updateValue("customerDetails", data);
     setBoolvalue(true);
   };
 
@@ -107,6 +106,7 @@ function Invoice() {
         .get(`http://localhost:8085/getCustomerbyPhoneNumber/${phoneNumber}`)
         .then((res) => {
           setData(res.data[0]);
+          updateValue("customerDetails",res.data[0])
           // invoiceObject.c=3;
           // console.log(invoiceObject.eqArray)
           // console.log("This is the ",invoiceObject.cusId)
@@ -143,14 +143,8 @@ function Invoice() {
         .get(`http://localhost:8085/invoiceDataRetrieve/${invoiceIdSearch}`)
         .then((res) => {
           console.log(res.data);
-          setData({
-            cus_fname: res.data.cus_fname,
-            cus_address1: res.data.cus_address1,
-            cus_address2: res.data.cus_address2,
-            nic: res.data.nic,
-            cus_phone_number: res.data.cus_phone_number,
-            Cus: res.data.cus_id,
-          });
+          
+
         });
     } catch (error) {
       console.log("handleSearch Createinvoice error", error);
@@ -319,6 +313,7 @@ Third Column: 23.6 */}
 
                   <TextField
                     onChange={(e) => setPhoneNumber(e.target.value)}
+                    value={phoneNumber}
                     sx={{ width: "350px" }}
                     id="outlined-basic"
                     label="Search with phone number or NIC"
@@ -344,7 +339,9 @@ Third Column: 23.6 */}
 
                   <Button
                     onClick={() => {
-                      setData(clearData);
+                      setData(clearData)
+                      setPhoneNumber('')
+                      updateValue("customerDetails",clearData)
                     }}
                     sx={{
                       color: (theme) => theme.palette.primary.error[400],

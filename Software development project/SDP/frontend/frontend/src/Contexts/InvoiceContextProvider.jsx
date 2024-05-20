@@ -6,7 +6,13 @@ export default function InvoiceContextProvider({ children }) {
   const [checkState, setCheckState] = useState(false);
   const [eqObject, setEqObject] = useState([]);
   const [invoiceObject, setInvoiceObject] = useState({
-    iDstatus:false
+    iDstatus:false,
+    payments:0,
+    eqdetails:[],
+    advance:0,
+    customerDetails:{},
+    payments:[],
+    InvoiceID:0
   });
   const [responseManageToogle, setResponseManageToogle] = useState(false);
   const [paymentArray, setPaymentArray] = useState([]);

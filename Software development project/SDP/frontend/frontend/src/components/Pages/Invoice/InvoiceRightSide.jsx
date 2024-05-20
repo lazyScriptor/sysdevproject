@@ -8,7 +8,7 @@ import {
   Stack,
 } from "@mui/material";
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -17,6 +17,7 @@ import {
   InvoiceContext,
 } from "../../../Contexts/Contexts.jsx";
 import SearchIcon from "@mui/icons-material/Search";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const schema = yup.object().shape({
   eqid: yup
@@ -34,10 +35,17 @@ export default function InvoiceRightSide() {
   const [total, setTotal] = useState();
   const [addBtnDisabled, setAddBtnDisabled] = useState(false);
   const [qtyBtnDisabled, setQtyBtnDisabled] = useState(true);
-  const [eqBorrowQty, setEqBorrowQty] = useState();
+  const [eqBorrowQty, setEqBorrowQty] = useState(1);
+  const eqBorrowQuantity = useRef();
 
-  let validationSchema = yup.object().shape({
-    quantity: yup.number().typeError("Equipment ID must be a number").max(1000),
+  useEffect(() => {
+    console.log("eqQty", eqQty, "eqBorrow", eqBorrowQty);
+  }, [eqQty, eqBorrowQty]);
+  const validationSchema = yup.object().shape({
+    quantity: yup
+      .number()
+      .typeError("Equipment quantity must be a number")
+      .min(1),
   });
 
   const {
@@ -63,16 +71,7 @@ export default function InvoiceRightSide() {
   };
 
   const onSubmit = () => {
-
-    try{
-      axios 
-      .get()
-    }catch{
-
-    }
-
-
-    updateEqObject({ ...eqDetails, Qty: eqBorrowQty });
+    updateEqObject({ ...eqDetails, Qty: eqBorrowQuantity.current.value });
     setAddBtnDisabled(true);
   };
   const handleReset = () => {
@@ -108,10 +107,11 @@ export default function InvoiceRightSide() {
             setAddBtnDisabled={setAddBtnDisabled}
             setEqName={setEqName}
             setEqBorrowQty={setEqBorrowQty}
+            eqBorrowQuantity={eqBorrowQuantity}
           />
         </Box>
         <Box display="flex" alignItems="start">
-          <FormLabel sx={{ width: "30%" }}>Name</FormLabel>
+          <FormLabel sx={{ width: "30%", pt: 2 }}>Name</FormLabel>
           <TextField
             disabled={true}
             sx={{ flexGrow: 1, height: "100px" }}
@@ -120,28 +120,30 @@ export default function InvoiceRightSide() {
           />
         </Box>
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
+          <Box display={"flex"} justifyContent={"center"}>
+            <Typography variant="caption">
+              <InfoOutlinedIcon fontSize="2" sx={{ mr: 1 }} />
+              Stock remaining : {eqQty}
+            </Typography>
+          </Box>
           <Box display="flex" alignItems="start">
-            <FormLabel sx={{ width: "30%" }}>Qty</FormLabel>
+            <FormLabel sx={{ width: "30%", pt: 2 }}>Qty</FormLabel>
             <TextField
-              disabled={
-                eqQty == 1 || addBtnDisabled
-              }
+              disabled={eqQty === 0 || addBtnDisabled || eqQty === 1}
               sx={{ flexGrow: 1, height: "100px" }}
               type="number"
               onChange={(e) => {
-                const inputValue = e.target.value;
-                if (inputValue > eqQty) {
-                  console.log("{Please enter a lower value}");
-                  setAddBtnDisabled(true);
+                console.log("eqval",eqQty)
+                if (eqQty == 1) {
+                  eqBorrowQuantity.current = 1;
                 } else {
-                  setEqBorrowQty(e.target.value);
-                  setAddBtnDisabled(false);
+                  eqBorrowQuantity.current.value = e.target.value;
                 }
               }}
-              value={eqBorrowQty || ''}
+              inputRef={(eqBorrowQuantity)}
               inputProps={{ ...register("quantity") }}
               error={!!errors.quantity}
-              helperText={[ eqBorrowQty>eqQty?errors.quantity:  "Remaining stock :", " ", eqQty]}
+              helperText={errors.quantity?.message}
             />
           </Box>
 
@@ -159,6 +161,7 @@ export default function InvoiceRightSide() {
             >
               Add
             </Button>
+
             <Button variant="contained" color="warning" customvariant="custom">
               Handover
             </Button>
@@ -185,7 +188,8 @@ export function EquipmentIdSearch(props) {
     setAddBtnDisabled,
     setEqName,
     setQtyBtnDisabled,
-    setEqBorrowQty
+    setEqBorrowQty,
+    eqBorrowQuantity
   } = props;
   const {
     register,
@@ -196,27 +200,38 @@ export function EquipmentIdSearch(props) {
   });
 
   const onSubmit = async (data) => {
-    setEqBorrowQty(1)
+    // Resetting state variables
+    setEqBorrowQty(0);
     setQtyBtnDisabled(false);
     setEqName("");
     setEqQty("");
     setAddBtnDisabled(false);
+  
     try {
+      // Fetching equipment details by ID
       const res = await axios.get(
         `http://localhost:8085/getEquipmentbyID/${data.eqid}`
       );
+  
       const equipment = res.data[0];
       console.log(res.data[0]);
-
+  
       if (res.data.length > 0) {
-        setEqQty(equipment.eq_quantity);
+        // Setting state variables with fetched data
+        setEqQty(equipment.eq_available_quantity);
         setEqName(equipment.eq_name);
+        eqBorrowQuantity.current.value = equipment.eq_available_quantity; // Setting ref value
         setEqDetails(equipment);
+  
+        // Additional logic for quantity
+        if (equipment.eq_available_quantity == 1) setEqBorrowQty(1);
       }
     } catch (error) {
+      // Error handling
       console.error("Error occurred while searching by ID:", error);
     }
   };
+  
 
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>

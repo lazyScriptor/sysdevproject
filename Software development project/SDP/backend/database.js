@@ -46,10 +46,12 @@ export async function getCustomers() {
 
 export async function getEquipment() {
   const [equipment] = await pool.query('SELECT * FROM equipment');
+
+
   return equipment;
 }
 export async function getEquipmentbyID(id) {
-  const [equipment] = await pool.query('SELECT * FROM equipment WHERE eq_id =?', [id]);
+  const [equipment] = await pool.query('SELECT eq_id,eq_name,eq_rental,eq_description,eq_dofpurchase,eq_warranty_expire,eq_image,eq_cost,(eq_completestock - eq_defected_status) AS eq_available_quantity FROM equipment WHERE eq_id =?', [id]);
   console.log(equipment);
   return equipment;
 }
@@ -242,9 +244,11 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
   // Update invoice equipment details
   try {
     for (const equipment of InvoiceCompleteDetail.eqdetails) {
-      await pool.query('INSERT INTO invoiceEquipment (inveq_eqid, inveq_invid) VALUES (?, ?)', [
+      console.log("This is the equipment",equipment)
+      await pool.query('INSERT INTO invoiceEquipment (inveq_eqid, inveq_invid,inveq_borrowqty) VALUES (?, ?,?)', [
         equipment.eq_id,
         InvoiceCompleteDetail.InvoiceID,
+        equipment.Qty
       ]);
     }
   } catch (error) {
@@ -252,14 +256,17 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
     if (error.code === 'ER_DUP_ENTRY') {
       console.log('Duplicate entry detected. Attempting to update existing record...');
       try {
+        console.log(InvoiceCompleteDetail.eqdetails)
         for (const equipment of InvoiceCompleteDetail.eqdetails) {
           await pool.query(
-            'UPDATE invoiceEquipment SET inveq_eqid = ?, inveq_invid = ? WHERE inveq_eqid = ? AND inveq_invid = ?',
+            'UPDATE invoiceEquipment SET inveq_eqid = ?, inveq_invid = ? ,inveq_borrowqty = ? WHERE inveq_eqid = ? AND inveq_invid = ? AND inveq_borrowqty = ?',
             [
               equipment.eq_id,
               InvoiceCompleteDetail.InvoiceID,
+              equipment.Qty,
               equipment.eq_id,
               InvoiceCompleteDetail.InvoiceID,
+              equipment.Qty
             ],
           );
         }
