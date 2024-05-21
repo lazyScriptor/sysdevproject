@@ -75,20 +75,20 @@ export function PaymentForm() {
   const { setPaymentArray, updateValue, invoiceObject } =
     useContext(InvoiceContext);
 
-  const [paymentCounter, setPaymentCounter] = useState(0);
-  const generatePaymentId = (invoiceId, amount) => {
-    const date = new Date();
-    const month = ("0" + (date.getMonth() + 1)).slice(-2); // Month (zero-padded)
-    const day = ("0" + date.getDate()).slice(-2); // Date (zero-padded)
-    const amountFormatted = amount.toFixed(2).replace(".", ""); // Amount formatted without decimal point
 
-    setPaymentCounter((prevCounter) => prevCounter + 1); // Increment the counter
 
-    const sequentialNumber = paymentCounter.toString().padStart(1, "0"); // Sequential number (zero-padded)
+    const generatePaymentId = (invoiceId, amount) => {
+      const date = new Date();
+      const month = ("0" + (date.getMonth() + 1)).slice(-2); // Month (zero-padded)
+      const day = ("0" + date.getDate()).slice(-2); // Date (zero-padded)
+      const milliseconds = ("00" + date.getMilliseconds()).slice(-3); // Milliseconds (zero-padded)
+      const amountFormatted = amount.toFixed(2).replace(".", "").padStart(5, "0"); // Amount formatted as 5-digit number
 
-    return `${invoiceId}${month}${day}${amountFormatted}${sequentialNumber}`;
-  };
-
+      const uniquePart = uuidv4().slice(0, 3); // Using part of a UUID for additional uniqueness
+    
+      return `${invoiceId}${month}${day}${milliseconds}${amountFormatted}${uniquePart}`;
+    };
+    
   const schema = yup.object().shape({
     payment: yup
       .number()

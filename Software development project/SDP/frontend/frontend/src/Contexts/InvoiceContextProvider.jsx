@@ -29,10 +29,9 @@ export default function InvoiceContextProvider({ children }) {
       InvoiceID: 0,
     });
   };
-  const clearPaymentArray=()=>{
-    setPaymentArray([])
-  }
-
+  const clearPaymentArray = () => {
+    setPaymentArray([]);
+  };
 
   const updateValue = (value, newVaalue) => {
     setInvoiceObject((preObject) => ({ ...preObject, [value]: newVaalue }));
@@ -52,9 +51,38 @@ export default function InvoiceContextProvider({ children }) {
     setEqObject((prev) => [...prev, newValue]);
   };
 
+  const [updateFlag, setUpdateFlag] = useState(false);
+
   useEffect(() => {
-    console.log(invoiceObject);
+    if (updateFlag) {
+      console.log(invoiceObject);
+      const removeDuplicated = () => {
+        const uniqueObjects = eqObject.reduce((acc, current) => {
+          if (!acc[current.eq_id]) {
+            acc[current.eq_id] = current;
+          }
+          return acc;
+        }, {});
+        // Convert uniqueObjects back to an array of values
+        return Object.values(uniqueObjects);
+      };
+    
+      // Get the unique array
+      const uniqueArray = removeDuplicated();
+    
+      // Update eqObject state with the unique array
+      setEqObject(uniqueArray);
+    
+      // Log the unique array
+      console.log("uniq", uniqueArray);
+    }
   }, [invoiceObject]);
+  
+  // Set updateFlag to true after the component mounts to allow the initial update
+  useEffect(() => {
+    setUpdateFlag(true);
+  }, []);
+
 
   return (
     <InvoiceContext.Provider

@@ -4,6 +4,8 @@ import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew";
 import CustomerTable from "../SubComponents/CustomerTable";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Contexts/Contexts";
+import { Box } from "@mui/material";
+import CollapsibleTable from "../SubComponents/CustomerTableNew";
 
 function Customers() {
   const { setIsAuthenticated } = useContext(AuthContext);
@@ -16,13 +18,14 @@ function Customers() {
   }, []);
   return (
     <>
+      <Box id="main-body">
+        <Box id="body">
+          <BackgroundStyleNew>
+          <CollapsibleTable/>
 
-      <BackgroundStyleNew
-        title={"Customer Details"}
-        subTitle={"This is the customer page"}
-      >
-        <CustomerTable />
-      </BackgroundStyleNew>
+          </BackgroundStyleNew>
+        </Box>
+      </Box>
     </>
   );
 }

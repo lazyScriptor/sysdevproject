@@ -1,5 +1,16 @@
 .body {
-  background-color: #e6e6e5;
+  background-color: #e6701c;
   min-height: 100%;
   height: max-content;
+}
+
+#main-body{
+  width: 100vw;
+  height: 100%;
+  background-color: rgb(255, 255, 255);
+}
+#body{
+  width: 83vw;
+  margin-left: 15vw;
+  height: 100%;
 }

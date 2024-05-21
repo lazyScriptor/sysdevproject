@@ -25,7 +25,8 @@ import { createContext } from 'react';
 import { useSnackbar } from 'notistack';
 export const AppCustomeContext3 = createContext();
 
-function NewCustomerForm() {
+function NewCustomerForm(props) {
+  const {cus_id}=props;
   const { boolvalue, setBoolvalue, userData, setUserData } = useContext(PopupContext);
 
   const [data, setData] = useState([]);
@@ -49,6 +50,10 @@ function NewCustomerForm() {
   const [message, setMessage] = useState();
   const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(()=>{
+    handleSearchid(cus_id)
+  },[cus_id])
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -108,7 +113,7 @@ function NewCustomerForm() {
     const enteredText = e.target.value;
     setNewPno(enteredText);
   };
-  2;
+  
   //Searchbar functions over
 
   const handleToogleStatus = () => {
@@ -272,21 +277,6 @@ function NewCustomerForm() {
             backgroundColor: (theme) => theme.palette.primary,
           }}
         >
-          <Box
-            sx={{
-              height: '100px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'column',
-              backgroundColor: (theme) => theme.palette.primary[800],
-              color: 'white',
-              borderRadius: 3,
-              mb: 3,
-            }}
-          >
-            <h1>Add/Edit Customers</h1>
-          </Box>
           {/* Upper Search bar Start*/}
           <Box
             sx={{

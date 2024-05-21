@@ -52,7 +52,7 @@ export default function InvoicePaymentsTable() {
 
   return (
     <TableContainer component={Paper} sx={{ mt: 2,borderRadius:4 }}elevation={4}>
-      <Table sx={{ minWidth: 10 }} aria-label="simple table">
+      <Table stickyHeader sx={{ minWidth: 10 }} aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell align="center">Payment Id</TableCell>
