@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew";
 import EquipmentTable from "../SubComponents/EquipmentTable";
+import { Box } from "@mui/material";
+import EquipmentPageContentNew from "../SubComponents/EquipmentPageContentNew";
 
 function Equipment() {
   useEffect(() => {
@@ -11,7 +13,7 @@ function Equipment() {
   }, []);
   return (
     <>
-
+      {/*   
       <BackgroundStyleNew
         title={"Equipment"}
         subTitle={"This is the equipment page"}
@@ -19,7 +21,13 @@ function Equipment() {
         <>
           <EquipmentTable />
         </>
-      </BackgroundStyleNew>
+      </BackgroundStyleNew> */}
+
+      <Box id="main-body">
+        <Box id="body">
+          <EquipmentPageContentNew/>
+        </Box>
+      </Box>
     </>
   );
 }

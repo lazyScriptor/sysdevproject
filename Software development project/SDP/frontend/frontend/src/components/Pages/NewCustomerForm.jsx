@@ -166,7 +166,7 @@ function NewCustomerForm(props) {
       address2: firstCustomer.cus_address2,
     });
     console.log("Customer found");
-    enqueueSnackbar("Customer found", { variant: "success" });
+    // enqueueSnackbar("Customer found", { variant: "success" });
   };
 
   const handleSearchnic = async (nic) => {
@@ -251,16 +251,16 @@ function NewCustomerForm(props) {
           }}
         >
           <form noValidate onSubmit={handleSubmit(onSubmit)}>
-            <TextField
+            {/* <TextField
               disabled={true}
               id="customer-id"
               name="id"
-              label="customer id"
+              label=""
               variant="outlined"
               size="small"
               sx={{ width: "10%", mb: 2, ml: 2 }}
               value={customer.id}
-            />
+            /> */}
             <Grid container spacing={2}>
               {/* Left side Box */}
               <Grid item xs={6}>

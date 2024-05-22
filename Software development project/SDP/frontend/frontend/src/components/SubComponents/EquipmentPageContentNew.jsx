@@ -98,7 +98,7 @@ function Row(props) {
   );
 }
 
-export default function CustomerTableNew() {
+export default function EquipmentTableNew() {
   const [data, setData] = useState([]);
   const [searchValue, setSearchValue] = useState("");
 

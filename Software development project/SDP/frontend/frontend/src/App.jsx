@@ -22,6 +22,8 @@ export const AppCustomContext = createContext();
 function App() {
   const [usernamee, setUsernamee] = useState('new dummy data');
   const [rolee, setRolee] = useState('new role data');
+  const [show, setShow] = useState(false);
+
 
   const Buttonstyles =(theme)=> ({
     display:"flex",
@@ -142,7 +144,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <AppCustomContext.Provider value={{ usernamee, setUsernamee, rolee, setRolee, theme }}>
+      <AppCustomContext.Provider value={{ usernamee, setUsernamee, rolee, setRolee, theme,show, setShow }}>
         <Router>
           <AuthContextProvider>
             <Routes>

@@ -1,7 +1,5 @@
 import React, { useContext, useEffect } from "react";
 import "../Stylings/rootstyles.css";
-import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew";
-import CustomerTable from "../SubComponents/CustomerTable";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Contexts/Contexts";
 import { Box } from "@mui/material";

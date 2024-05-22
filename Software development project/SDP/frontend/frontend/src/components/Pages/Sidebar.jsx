@@ -23,23 +23,16 @@ import DashboardCategoryBtn from "../Buttons/DashboardButtons.jsx";
 import { useContext } from "react";
 import { AppCustomContext } from "../../App.jsx";
 import Button from "@mui/material/Button";
-import { Typography } from "@mui/material";
 
 function Sidebar() {
   //context data
-  const { usernamee, rolee } = useContext(AppCustomContext);
+  const { usernamee, rolee,show, setShow  } = useContext(AppCustomContext);
   const [contextUserName, setContextUserName] = useState();
   const [contextRole, setContextRole] = useState();
 
-  console.log(
-    "This is fresh passed username",
-    usernamee,
-    "This is fresh passed role",
-    rolee
-  );
+  
 
   //context data over
-  const [show, setShow] = useState(true);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -52,8 +45,8 @@ function Sidebar() {
         <WidgetsIcon fontSize="large" sx={{ colorL: "red" }} />
       </Button>
       <Offcanvas
-        scroll={true}
         backdrop={false}
+        scroll={true}
         show={show}
         onHide={handleClose}
         placement="start"

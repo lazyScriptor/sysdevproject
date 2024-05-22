@@ -48,21 +48,22 @@ export async function getCustomerBySearchingManyFields(value) {
     if (value < 1000) {
       const [customer] = await pool.query(
         `SELECT * FROM customer WHERE cus_id LIKE ? AND cus_delete_status = 0`,
-        `%${value}%`
+        [`%${value}%`]
       );
       return customer;
     } else {
       const query = `
-      SELECT * 
-      FROM customer 
-      WHERE nic LIKE ? 
-        OR cus_phone_number LIKE ? 
-        OR cus_fname LIKE ? 
-        OR cus_lname LIKE ? 
-        OR cus_address1 LIKE ? 
-        OR cus_address2 LIKE ?
-        AND cus_delete_status = 0
-    `;
+        SELECT * 
+        FROM customer 
+        WHERE cus_delete_status = 0 AND (
+          nic LIKE ? 
+          OR cus_phone_number LIKE ? 
+          OR cus_fname LIKE ? 
+          OR cus_lname LIKE ? 
+          OR cus_address1 LIKE ? 
+          OR cus_address2 LIKE ?
+        )
+      `;
 
       // Add wildcard characters around the value
       const formattedValue = `%${value}%`;
