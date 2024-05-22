@@ -22,13 +22,28 @@ import {
   faInfo,
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
-import { Button, FormControl, Grid, Stack, TextField } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+} from "@mui/material";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Checkbox from "@mui/material/Checkbox";
 import Swal from "sweetalert2";
+
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
 function Row(props) {
   const { row, searchValue } = props;
@@ -37,6 +52,8 @@ function Row(props) {
   const cellStyles = {
     padding: "6px 8px",
     height: "30px",
+    width: "auto",
+    textAlign: "center", // Ensure text alignment is centered
   };
 
   const highlightText = (text, highlight) => {
@@ -54,42 +71,60 @@ function Row(props) {
     );
   };
 
+  const dateFormat = (value) => {
+    return dayjs(value).format("YYYY-MM-DD");
+  };
   return (
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell sx={cellStyles}>
           <IconButton
             aria-label="expand row"
-            size="small"
+            size=" "
             onClick={() => setOpen(!open)}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
-          {highlightText(row.cus_id, searchValue)}
+        <TableCell sx={cellStyles} component="th" scope="row">
+          {highlightText(row.eq_id, searchValue)}
         </TableCell>
-        <TableCell align="center">
-          {highlightText(`${row.cus_fname} ${row.cus_lname}`, searchValue)}
+        <TableCell sx={cellStyles}>
+          {highlightText(`${row.eq_name}`, searchValue)}
         </TableCell>
-        <TableCell align="right">
-          {highlightText(row.cus_phone_number, searchValue)}
+        <TableCell sx={cellStyles}>
+          {highlightText(`${row.eqcat_name}`, searchValue)}
         </TableCell>
-        <TableCell align="right">
-          {highlightText(row.nic, searchValue)}
+        <TableCell sx={cellStyles}>
+          {highlightText(`${row.eq_rental}`, searchValue)}
         </TableCell>
-        <TableCell align="right">
-          {highlightText(row.cus_address1, searchValue)}
+        <TableCell sx={cellStyles}>
+          {highlightText(dateFormat(row.eq_dofpurchase), searchValue)}
         </TableCell>
-        <TableCell align="right">
-          {highlightText(row.cus_address2, searchValue)}
+        <TableCell sx={cellStyles}>
+          {highlightText(dateFormat(row.eq_warranty_expire), searchValue)}
+        </TableCell>
+        <TableCell sx={cellStyles}>
+          {highlightText(row.eq_cost, searchValue)}
+        </TableCell>
+        <TableCell sx={cellStyles}>
+          <Button>upload</Button>
+        </TableCell>
+        <TableCell sx={cellStyles}>
+          {highlightText(row.eq_description, searchValue)}
+        </TableCell>
+        <TableCell sx={cellStyles}>
+          {highlightText(row.eq_defected_status, searchValue)}
+        </TableCell>
+        <TableCell sx={cellStyles}>
+          {highlightText(row.eq_completestock, searchValue)}
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={10}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <NewCustomerForm cus_id={row.cus_id} />
+              {/* <NewCustomerForm cus_id={row.cus_id} /> */}
             </Box>
           </Collapse>
         </TableCell>
@@ -101,15 +136,19 @@ function Row(props) {
 export default function EquipmentTableNew() {
   const [data, setData] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+  const [dop, setDop] = useState();
+  const [warrantyDate, setWarrantyDate] = useState();
 
   useEffect(() => {
-    try {
-      axios.get("http://localhost:8085/customers").then((res) => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get("http://localhost:8085/equipment");
         setData(res.data);
-      });
-    } catch (error) {
-      console.error("error occurred in the try catch block", error);
-    }
+      } catch (error) {
+        console.error("error occurred while fetching data:", error);
+      }
+    };
+    fetchData();
   }, []);
 
   return (
@@ -119,18 +158,23 @@ export default function EquipmentTableNew() {
         <Table aria-label="collapsible table">
           <TableHead>
             <TableRow>
-              <TableCell />
-              <TableCell>Customer Id</TableCell>
-              <TableCell align="center">Customer Name</TableCell>
-              <TableCell align="right">Customer Phone number</TableCell>
-              <TableCell align="right">Customer NIC</TableCell>
-              <TableCell align="right">Customer Address line 1</TableCell>
-              <TableCell align="right">Customer Address line 2</TableCell>
+              <TableCell align="center" />
+              <TableCell align="center">Id</TableCell>
+              <TableCell align="center">Machine Name</TableCell>
+              <TableCell align="center">Category Name</TableCell>
+              <TableCell align="center">Rental</TableCell>
+              <TableCell align="center">DOP</TableCell>
+              <TableCell align="center">Warranty Due</TableCell>
+              <TableCell align="center">Machine Cost</TableCell>
+              <TableCell align="center">Machine image</TableCell>
+              <TableCell align="center">Description</TableCell>
+              <TableCell align="center">Defective status</TableCell>
+              <TableCell align="center">Stock remaining</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {data.map((row) => (
-              <Row key={row.cus_id} row={row} searchValue={searchValue} />
+              <Row key={row.eq_id} row={row} searchValue={searchValue} />
             ))}
           </TableBody>
         </Table>
@@ -141,6 +185,7 @@ export default function EquipmentTableNew() {
 
 export function CustomerPageUpper(props) {
   const { setData, setSearchValue } = props;
+
   const trimvariablesForAdvanceSearch = (variable) => {
     const cleanedVariable = variable.replace(/[\s-+]/g, ""); // Replace all whitespace characters, hyphens, and plus signs with an empty string
     const trimmedvariable = cleanedVariable.trim();
@@ -194,6 +239,8 @@ export function CustomerPageUpper(props) {
 export function CustomerPageMiddle() {
   const [toogle, setToogle] = useState(false);
   const [dbCustomerFound, setDbCustomerFound] = useState("");
+  const [selectValue, setSelectValue] = useState();
+  const [open, setOpen] = React.useState(false);
 
   const [customer, setCustomer] = useState({
     fname: "",
@@ -203,38 +250,37 @@ export function CustomerPageMiddle() {
     address1: "",
     address2: "",
   });
+  const [equipment, setEquipment] = useState({
+    eqid: "",
+    eqName: "",
+    eqRental: "",
+    eqDescription: "",
+    eqDop: "",
+    eqWarrantyExp: "",
+    eqCost: "",
+    eqDefStatus: "",
+    eqStock: "",
+  });
 
   const schema = yup.object().shape({
-    fname: yup.string().required().min(3).max(15),
-    lname: yup.string().min(3).max(25),
-    nic: yup
-      .string()
-      .required()
-      .transform((value) => value.trim())
-      .test("is-valid-nic", "Please enter a valid NIC number", (value) => {
-        if (!value) return false;
-        const nineDigitsAndV = /^[0-9]{9}v$/i;
-        const twelveDigits = /^[0-9]{12}$/;
-        return nineDigitsAndV.test(value) || twelveDigits.test(value);
-      }),
-    phoneNumber: yup
-      .string()
-      .required()
-      .transform((value) => value.replace(/[-\s]/g, "").trim())
-      .test(
-        "is-valid-phonenumber",
-        "Please enter a valid phone number",
-        (value) => {
-          if (!value) return false;
-          const validFormatCheck1 = /^[1-9]\d{8}$/; // 10 digits only
-          const validFormatCheck2 = /^[0]\d{9}$/; // 10 digits only
-
-          return validFormatCheck1.test(value) || validFormatCheck2.test(value);
-        }
-      ),
-    address1: yup.string().required().min(5).max(15),
-    address2: yup.string().min(3),
+    eqName: yup.string().required().min(3).max(15),
+    eqRental: yup.string().required().min(3).max(15),
+    eqDescription: yup.string().required(),
+    eqDop: yup.date(),
+    eqWarrantyExp: yup.date().when("eqDop", (eqDop, schema) => {
+      return (
+        eqDop &&
+        schema.min(
+          eqDop,
+          "Warranty expiration date must be after the date of purchase"
+        )
+      );
+    }),
+    eqCost: yup.string().min(3).max(25),
+    eqDefStatus: yup.string().required(),
+    eqStock: yup.string().required(),
   });
+
   const {
     register,
     handleSubmit,
@@ -244,6 +290,13 @@ export function CustomerPageMiddle() {
   } = useForm({
     resolver: yupResolver(schema),
   });
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
 
   const phonNumberDatabaseCheck = async (phonenumber) => {
     const cleanedPhoneNumber = phonenumber.replace(/\D/g, "");
@@ -325,7 +378,7 @@ export function CustomerPageMiddle() {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setCustomer((prevState) => ({
+    setEquipment((prevState) => ({
       ...prevState,
       [name]: name === "phoneNumber" ? formatPhoneNumber(value) : value,
     }));
@@ -344,8 +397,8 @@ export function CustomerPageMiddle() {
               id="customer-id"
               name="id"
               label="customer id"
-              variant="outlined"
-              size="small"
+              variant="standard"
+              size=" "
               sx={{ width: "10%", mb: 2, ml: 2 }}
               value={customer.id}
             /> */}
@@ -359,23 +412,30 @@ export function CustomerPageMiddle() {
           borderRadius={2}
         >
           {/* Left side Box names,mic,pno*/}
-          <Grid item xs={4}>
-            <FormControl sx={{ gap: "20px", width: "100%" }}>
-              <Grid container spacing={2}>
+          <FormControl
+            sx={{
+              gap: "20px",
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+            }}
+          >
+            <Grid item xs={4}>
+              <Grid container spacing={6}>
                 <Grid item xs={6}>
                   <Box className="dey">
                     <TextField
                       disabled={toogle}
-                      id="customer-fname"
-                      name="fname"
-                      variant="outlined"
-                      inputProps={{ ...register("fname") }}
-                      error={!!errors.fname}
-                      helperText={errors.fname?.message}
-                      size="small"
-                      label="first name"
+                      id="machine-fname"
+                      name="machine name"
+                      variant="standard"
+                      inputProps={{ ...register("eqName") }}
+                      error={!!errors.eqName}
+                      helperText={errors.eqName?.message}
+                      size=" "
+                      label="machine name"
                       sx={{ width: "100%" }}
-                      value={customer.fname}
+                      value={equipment.eqName}
                       onChange={handleInputChange}
                     />
                   </Box>
@@ -385,79 +445,146 @@ export function CustomerPageMiddle() {
                     <TextField
                       disabled={toogle}
                       id="customer-lname"
-                      name="lname"
-                      label="last name"
-                      inputProps={{ ...register("lname") }}
-                      error={!!errors.lname}
-                      helperText={errors.lname?.message}
-                      variant="outlined"
-                      size="small"
+                      name="eqRental"
+                      type="number"
+                      label="Rental"
+                      inputProps={{ ...register("eqRental") }}
+                      error={!!errors.eqRental}
+                      helperText={errors.eqRental?.message}
+                      variant="standard"
+                      size=" "
                       sx={{ width: "100%" }}
-                      value={customer.lname}
+                      value={equipment.eqRental}
                       onChange={handleInputChange}
                     />
                   </Box>
                 </Grid>
                 <Grid item xs={6}>
                   <Box className="dey">
-                    <TextField
+                    {/* <TextField
                       disabled={toogle}
                       id="customer-nic"
-                      name="nic"
-                      label="national ID card number"
-                      inputProps={{ ...register("nic") }}
-                      error={!!errors.nic}
-                      helperText={errors.nic?.message}
-                      variant="outlined"
-                      size="small"
+                      name="DOP"
+                      type="date"
+                      inputProps={{ ...register("eqDop") }}
+                      error={!!errors.eqDop}
+                      helperText={errors.eqDop?.message}
+                      variant="standard"
+                      size=" "
                       sx={{ width: "100%" }}
-                      value={customer.nic}
+                      value={equipment.eqDop}
                       onChange={handleInputChange}
-                    />
+                    /> */}
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        disabled={toogle}
+                        label="Date of Purchase"
+                        inputProps={{ ...register("eqDop") }}
+                        error={!!errors.eqDop}
+                        helperText={errors.eqDop?.message}
+                        defaultValue={dayjs("2022-04-17")}
+                        format="LL"
+                        onChange={(date) =>
+                          console.log(date.format("YYYY-MM-DD"))
+                        }
+                      />
+                    </LocalizationProvider>
                   </Box>
                 </Grid>
                 <Grid item xs={6}>
                   <Box className="dey">
-                    <TextField
-                      disabled={toogle}
-                      id="customer-phoneNumber"
-                      label="phone number"
-                      name="phoneNumber"
-                      inputProps={{ ...register("phoneNumber") }}
-                      error={!!errors.phoneNumber}
-                      helperText={errors.phoneNumber?.message}
-                      variant="outlined"
-                      size="small"
-                      sx={{ width: "100%" }}
-                      value={customer.phoneNumber}
-                      onChange={handleInputChange}
-                    />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        disabled={toogle}
+                        label="Warranty end"
+                        inputProps={{ ...register("eqWarrantyExp") }}
+                        error={!!errors.eqWarrantyExp}
+                        helperText={errors.eqWarrantyExp?.message}
+                        defaultValue={dayjs("2022-04-17")}
+                        format="LL"
+                        onChange={(date) =>
+                          console.log(date.format("YYYY-MM-DD"))
+                        }
+                      />
+                    </LocalizationProvider>
                   </Box>
                 </Grid>
               </Grid>
-            </FormControl>
-          </Grid>
+            </Grid>
 
-          {/* address column */}
-          <Grid item xs={3}>
-            <FormControl sx={{ gap: "20px", width: "100%", pr: 1 }}>
-              <Grid container spacing={2}>
+            {/* address column */}
+            <Grid item xs={2}>
+              <Grid container spacing={6}>
                 <Grid item xs={12}>
                   <Box className="dey">
                     <TextField
                       disabled={toogle}
                       id="customer-address1"
-                      name="address1"
-                      inputProps={{ ...register("address1") }}
-                      error={!!errors.address1}
-                      helperText={errors.address1?.message}
-                      label="address line1"
-                      variant="outlined"
-                      size="small"
+                      name="eqCost"
+                      type="number"
+                      inputProps={{ ...register("eqCost") }}
+                      error={!!errors.eqCost}
+                      helperText={errors.eqCost?.message}
+                      label="Machine cost"
+                      variant="standard"
+                      size=" "
                       sx={{ width: "100%" }}
-                      value={customer.address1}
+                      value={equipment.eqCost}
                       onChange={handleInputChange}
                     />
+                  </Box>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Box className="dey">
+                    <TextField
+                      disabled={toogle}
+                      id="customer-address2"
+                      name="address2"
+                      inputProps={{ ...register("eqStock") }}
+                      error={!!errors.eqStock}
+                      helperText={errors.eqStock?.message}
+                      label="Stock"
+                      variant="standard"
+                      size=" "
+                      sx={{ width: "100%" }}
+                      value={equipment.eqStock}
+                      onChange={handleInputChange}
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+            </Grid>
+            {/* last olumn */}
+            <Grid item xs={2}>
+              <Grid container spacing={6}>
+                <Grid item xs={12}>
+                  <Box className="dey">
+                    <FormControl>
+                      <InputLabel id="demo-controlled-open-select-label">
+                        Age
+                      </InputLabel>
+                      <Select
+                      sx={{width:"200px",p:0}}
+                        labelId="demo-controlled-open-select-label"
+                        size="small"
+                        id="demo-controlled-open-select"
+                        open={open}
+                        variant="standard"
+                        onClose={handleClose}
+                        onOpen={handleOpen}
+                        value={selectValue}
+                        label="Age"
+                        onChange={(e) => setSelectValue(e.target.value)}
+                      >
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
+                        <MenuItem value={10}>Power Tool</MenuItem>
+                        <MenuItem value={20}>Construction Item</MenuItem>
+                        <MenuItem value={30}>Thirty</MenuItem>
+                      </Select>
+                    </FormControl>
                   </Box>
                 </Grid>
 
@@ -471,8 +598,8 @@ export function CustomerPageMiddle() {
                       error={!!errors.address2}
                       helperText={errors.address2?.message}
                       label="address line2"
-                      variant="outlined"
-                      size="small"
+                      variant="standard"
+                      size=" "
                       sx={{ width: "100%" }}
                       value={customer.address2}
                       onChange={handleInputChange}
@@ -480,92 +607,94 @@ export function CustomerPageMiddle() {
                   </Box>
                 </Grid>
               </Grid>
-            </FormControl>
-          </Grid>
-          {/* validation part column */}
-          <Grid item xs={4}>
-            <Stack component={Paper} elevation={1} sx={{ p: 1 }}>
-              <Box display={"flex"} alignItems={"center"}>
-                <Checkbox
-                  checked={!!errors.fname?.message}
-                  icon={<FontAwesomeIcon icon={faCheckDouble} />}
-                  checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
-                />
-                <Typography>First Name</Typography>
-              </Box>
-              <Box display={"flex"} alignItems={"center"}>
-                <Checkbox
-                  checked={!!errors.nic?.message}
-                  icon={<FontAwesomeIcon icon={faCheckDouble} />}
-                  checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
-                />
-                <Typography>National ID card</Typography>
-              </Box>
-              <Box display={"flex"} alignItems={"center"}>
-                <Checkbox
-                  checked={!!errors.phoneNumber?.message}
-                  icon={<FontAwesomeIcon icon={faCheckDouble} />}
-                  checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
-                />
-                <Typography>Phone number</Typography>
-              </Box>
-              <Box display={"flex"} alignItems={"center"}>
-                <Checkbox
-                  checked={!!errors.address1?.message}
-                  icon={<FontAwesomeIcon icon={faCheckDouble} />}
-                  checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
-                />
-                <Typography>Address Line 1</Typography>
-              </Box>
-              <Box display={"flex"} alignItems={"center"}>
-                <Typography color={"error"}>
-                  {dbCustomerFound && (
-                    <FontAwesomeIcon icon={faTriangleExclamation} />
-                  )}
-                  {dbCustomerFound}
-                </Typography>
-              </Box>
-            </Stack>
+              
+            </Grid>
+            {/* validation part column */}
+            <Grid item xs={3}>
+              <Stack component={Paper} elevation={1} sx={{ p: 1 }}>
+                <Box display={"flex"} alignItems={"center"}>
+                  <Checkbox
+                    checked={!!errors.fname?.message}
+                    icon={<FontAwesomeIcon icon={faCheckDouble} />}
+                    checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
+                  />
+                  <Typography>First Name</Typography>
+                </Box>
+                <Box display={"flex"} alignItems={"center"}>
+                  <Checkbox
+                    checked={!!errors.nic?.message}
+                    icon={<FontAwesomeIcon icon={faCheckDouble} />}
+                    checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
+                  />
+                  <Typography>National ID card</Typography>
+                </Box>
+                <Box display={"flex"} alignItems={"center"}>
+                  <Checkbox
+                    checked={!!errors.phoneNumber?.message}
+                    icon={<FontAwesomeIcon icon={faCheckDouble} />}
+                    checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
+                  />
+                  <Typography>Phone number</Typography>
+                </Box>
+                <Box display={"flex"} alignItems={"center"}>
+                  <Checkbox
+                    checked={!!errors.address1?.message}
+                    icon={<FontAwesomeIcon icon={faCheckDouble} />}
+                    checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
+                  />
+                  <Typography>Address Line 1</Typography>
+                </Box>
+                <Box display={"flex"} alignItems={"center"}>
+                  <Typography color={"error"}>
+                    {dbCustomerFound && (
+                      <FontAwesomeIcon icon={faTriangleExclamation} />
+                    )}
+                    {dbCustomerFound}
+                  </Typography>
+                </Box>
+              </Stack>
 
-            {/* button column */}
-          </Grid>
-          <Grid item xs={1}>
-            <Box
-              sx={{
-                gap: 3,
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                marginTop: "20px",
-              }}
-            >
-              <Button
-                // onClick={handleSaveDetails}
-                variant="contained"
-                type="submit"
-              >
-                Save
-              </Button>
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => {
-                  setCustomer({
-                    fname: "",
-                    lname: "",
-                    nic: "",
-                    phoneNumber: "",
-                    address1: "",
-                    address2: "",
-                  });
+              {/* button column */}
+            </Grid>
+
+            {/* Buttons */}
+            <Grid item xs={1}>
+              <Box
+                sx={{
+                  gap: 3,
+                  display: "flex",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  marginTop: "20px",
                 }}
               >
-                Clear
-              </Button>
-            </Box>
-          </Grid>
+                <Button
+                  // onClick={handleSaveDetails}
+                  variant="contained"
+                  type="submit"
+                >
+                  Save
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => {
+                    setCustomer({
+                      fname: "",
+                      lname: "",
+                      nic: "",
+                      phoneNumber: "",
+                      address1: "",
+                      address2: "",
+                    });
+                  }}
+                >
+                  Clear
+                </Button>
+              </Box>
+            </Grid>
+          </FormControl>
         </Grid>
-        {/* Buttons */}
       </form>
     </>
   );

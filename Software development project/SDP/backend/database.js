@@ -86,7 +86,7 @@ export async function getCustomerBySearchingManyFields(value) {
 }
 
 export async function getEquipment() {
-  const [equipment] = await pool.query("SELECT * FROM equipment WHERE eq_delete_status = 0");
+  const [equipment] = await pool.query("SELECT equipment.*, equipmentCategory.eqcat_name FROM equipment JOIN equipmentCategory ON equipment.eq_catid = equipmentCategory.eqcat_id WHERE equipment.eq_delete_status=0");
 
   return equipment;
 }
