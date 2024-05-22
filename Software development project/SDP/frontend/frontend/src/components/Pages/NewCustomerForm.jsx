@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext, createContext } from "react";
 import {
   FormControl,
-  FormLabel,
   TextField,
   Box,
   Button,
@@ -10,18 +9,15 @@ import {
 import { PopupContext } from "../../Contexts/Contexts";
 import axios from "axios";
 import { useSnackbar } from "notistack";
-import Snack from "./Snack";
-
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import Snack from "./Snack";
 
 import "../Stylings/rootstyles.css";
 import "../Stylings/newCustomerForm.css";
 
 export const AppCustomeContext3 = createContext();
-
-
 
 const schema = yup.object().shape({
   fname: yup.string().required().min(3).max(15),
@@ -36,6 +32,7 @@ const schema = yup.object().shape({
       (value) => {
         if (!value) return false;
         const nineDigitsAndV = /^[0-9]{9}v$/i;
+        const validFormatCheck = /^[1-9]\d{8,10}$/;
         const twelveDigits = /^[0-9]{12}$/;
         return nineDigitsAndV.test(value) || twelveDigits.test(value);
       }
@@ -48,17 +45,17 @@ const schema = yup.object().shape({
       'is-valid-phonenumber',
       "Please enter a valid phone number",
       (value) => {
+        console.log(value)
         if (!value) return false;
-        const tendigitcheck = /^[0-9]{9,}$/;
-        const validFormatCheck = /^(\d{3})?(\d{3})(\d{3,4})$/;
-        return tendigitcheck.test(value) && validFormatCheck.test(value);
+        const validFormatCheck1 = /^[1-9]\d{8}$/; // 10 digits only
+        const validFormatCheck2 = /^[0]\d{9}$/; // 10 digits only
+
+        return validFormatCheck1.test(value) || validFormatCheck2.test(value);
       }
     ),
   address1: yup.string().required().min(5),
   address2: yup.string().min(3),
 });
-
-
 
 function NewCustomerForm(props) {
   const { cus_id } = props;
@@ -66,20 +63,6 @@ function NewCustomerForm(props) {
   const [newId, setNewId] = useState("");
   const [newNic, setNewNic] = useState("");
   const [newPno, setNewPno] = useState("");
-
- 
-
-  const formatPhoneNumber = (value) => {
-    // Remove all non-digit characters
-    const cleaned = value.replace(/\D/g, "");
-
-    // Format the phone number
-    const match = cleaned.match(/(\d{1,3})(\d{1,4})?(\d{1,4})?/);
-    if (match) {
-      return [match[1], match[2], match[3]].filter(Boolean).join("-");
-    }
-    return value;
-  };
 
   const { register, handleSubmit, formState: { errors }, setValue, trigger } = useForm({
     resolver: yupResolver(schema)
@@ -92,13 +75,22 @@ function NewCustomerForm(props) {
     address1: '123 Main St',
     address2: 'Apt 4'
   });
+
   useEffect(() => {
-    // Set initial values and trigger validation
     for (const field in customer) {
       setValue(field, customer[field]);
     }
     trigger();
   }, [customer, setValue, trigger]);
+
+  const formatPhoneNumber = (value) => {
+    const cleaned = value.replace(/\D/g, ""); // Remove all non-digit characters
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+      return `${match[1]}-${match[2]}-${match[3]}`;
+    }
+    return value;
+  };
 
   const onSubmit = async(data) => {
     console.log("This is data", data);
@@ -116,8 +108,6 @@ function NewCustomerForm(props) {
 
   const [toogle, setToogle] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-
-  //check this use effect weather essential or not
 
   useEffect(() => {
     if (userData) {
@@ -227,28 +217,18 @@ function NewCustomerForm(props) {
     }
   };
 
-  // const handleCreate = async () => {
-  //   try {
-  //     await axios.post('http://localhost:8085/createCustomer', customer);
-  //     console.log('Details created successfully:');
-  //     setToogle(true);
-  //   } catch (error) {
-  //     console.error('Error creating details:', error);
-  //   }
-  // };
-
-    const handleInputChange = (event) => {
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
     setCustomer((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: name === 'phoneNumber' ? formatPhoneNumber(value) : value,
     }));
   };
 
   useEffect(() => {
     handleSearchid(cus_id);
-
   }, [cus_id]);
+
   return (
     <>
       <Box
@@ -446,3 +426,6 @@ function NewCustomerForm(props) {
 }
 
 export default NewCustomerForm;
+
+
+
