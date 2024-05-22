@@ -24,6 +24,7 @@ import {
   getInvoiceId,
   getInvoiceDetails,
   updateInvoiceDetails,
+  getCustomerBySearchingManyFields,
 } from "./database.js";
 
 const app = express();
@@ -116,6 +117,15 @@ app.get("/customers", async (req, res) => {
   try {
     console.log(req);
     const customers = await getCustomers();
+    return res.json(customers);
+  } catch (error) {
+    console.error("Error in fetching customers:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+app.get("/searchCustomerByValue/:value", async (req, res) => {
+  try {
+    const customers = await getCustomerBySearchingManyFields(req.params.value);
     return res.json(customers);
   } catch (error) {
     console.error("Error in fetching customers:", error);

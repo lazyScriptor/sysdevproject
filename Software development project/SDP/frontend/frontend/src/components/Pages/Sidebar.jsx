@@ -39,7 +39,7 @@ function Sidebar() {
   );
 
   //context data over
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -95,42 +95,50 @@ function Sidebar() {
           <hr />
           <div className="offcanvas-body">
             <DashboardCategoryBtn
+              handlefunction={handleShow}
               name="Dashboard"
               icon={faTableCellsLarge}
               destination="/DashboardMain"
             />
             <DashboardCategoryBtn
+              handlefunction={handleShow}
               name="Inbox"
               icon={faInbox}
               destination="/Inbox"
             />
             <DashboardCategoryBtn
+              handlefunction={handleClose}
               name="Invoices"
               icon={faLayerGroup}
               destination="/Invoice"
             />
             <DashboardCategoryBtn
+              handlefunction={handleShow}
               name="Customers"
               icon={faUser}
               destination="/Customers"
             />
             <DashboardCategoryBtn
+              handlefunction={handleShow}
               name="Equipment"
               icon={faToolbox}
               destination="/Equipment"
             />
             <DashboardCategoryBtn
+              handlefunction={handleShow}
               name="Reports"
               icon={faNewspaper}
               destination="/Reports"
             />
             <hr />
             <DashboardCategoryBtn
+              handlefunction={handleShow}
               name="Settings"
               icon={faHouse}
               destination="/Settings"
             />
             <DashboardCategoryBtn
+              handlefunction={handleShow}
               name="Logout"
               icon={faRightFromBracket}
               destination="/"

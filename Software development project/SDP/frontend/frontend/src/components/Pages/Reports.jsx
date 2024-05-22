@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { AuthContext } from "../../Contexts/Contexts.jsx";
+import CustomerForm from "../SubComponents/CustomerForm.jsx";
 
 function Reports() {
   const { setIsAuthenticated } = useContext(AuthContext);
@@ -9,7 +10,11 @@ function Reports() {
       setIsAuthenticated(false);
     }
   }, []);
-  return <></>;
+  return (
+    <>
+      <CustomerForm />
+    </>
+  );
 }
 
 export default Reports;

@@ -13,42 +13,41 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import NewCustomerForm from "../Pages/NewCustomerForm";
-
-// function createData(name, calories, fat, carbs, protein, price) {
-//   return {
-//     name,
-//     calories,
-//     fat,
-//     carbs,
-//     protein,
-//     price,
-//     history: [
-//       {
-//         date: '2020-01-05',
-//         customerId: '11091700',
-//         amount: 3,
-//       },
-//       {
-//         date: '2020-01-02',
-//         customerId: 'Anonymous',
-//         amount: 1,
-//       },
-//     ],
-//   };
-// }
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { Button, Stack, TextField } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
 function Row(props) {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
+  const { row, searchValue } = props;
+  const [open, setOpen] = useState(false);
+
+  const cellStyles = {
+    padding: "6px 8px",
+    height: "30px",
+  };
+
+  const highlightText = (text, highlight) => {
+    if (typeof text !== 'string') return text; // Ensure text is a string
+    if (!highlight) return text;
+    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+    return parts.map((part, index) =>
+      part.toLowerCase() === highlight.toLowerCase() ? (
+        <span key={index} style={{ backgroundColor: 'yellow' }}>{part}</span>
+      ) : (
+        part
+      )
+    );
+  };
 
   return (
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
+        <TableCell sx={cellStyles}>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -58,59 +57,32 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.cus_id}
+          {highlightText(row.cus_id, searchValue)}
         </TableCell>
-        <TableCell align="right">{row.cus_fname}</TableCell>
-        <TableCell align="right">{row.cus_phone_number}</TableCell>
-        <TableCell align="right">{row.nic}</TableCell>
-        <TableCell align="right">{row.cus_address1}</TableCell>
-        <TableCell align="right">{row.cus_address2}</TableCell>
+        <TableCell align="center">
+          {highlightText(`${row.cus_fname} ${row.cus_lname}`, searchValue)}
+        </TableCell>
+        <TableCell align="right">{highlightText(row.cus_phone_number, searchValue)}</TableCell>
+        <TableCell align="right">{highlightText(row.nic, searchValue)}</TableCell>
+        <TableCell align="right">{highlightText(row.cus_address1, searchValue)}</TableCell>
+        <TableCell align="right">{highlightText(row.cus_address2, searchValue)}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
-
-
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <NewCustomerForm cus_id={row.cus_id}/>
+              <NewCustomerForm cus_id={row.cus_id} />
             </Box>
           </Collapse>
-
-
         </TableCell>
       </TableRow>
     </React.Fragment>
   );
 }
 
-// Row.propTypes = {
-//   row: PropTypes.shape({
-//     calories: PropTypes.number.isRequired,
-//     carbs: PropTypes.number.isRequired,
-//     fat: PropTypes.number.isRequired,
-//     history: PropTypes.arrayOf(
-//       PropTypes.shape({
-//         amount: PropTypes.number.isRequired,
-//         customerId: PropTypes.string.isRequired,
-//         date: PropTypes.string.isRequired,
-//       }),
-//     ).isRequired,
-//     name: PropTypes.string.isRequired,
-//     price: PropTypes.number.isRequired,
-//     protein: PropTypes.number.isRequired,
-//   }).isRequired,
-// };
-
-// const rows = [
-//   createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
-//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
-//   createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
-//   createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
-//   createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
-// ];
-
-export default function CollapsibleTable() {
+export default function CustomerTableNew() {
   const [data, setData] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
     try {
@@ -122,26 +94,77 @@ export default function CollapsibleTable() {
       console.error("error occurred in the try catch block", error);
     }
   }, []);
+
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Customer Id</TableCell>
-            <TableCell align="right">Customer Name</TableCell>
-            <TableCell align="right">Customer NIC</TableCell>
-            <TableCell align="right">Customer Phone number</TableCell>
-            <TableCell align="right">Customer Address line 1</TableCell>
-            <TableCell align="right">Customer Address line 2</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map((row) => (
-            <Row key={row.name} row={row} />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <>
+      <CustomerPageUpper setData={setData} setSearchValue={setSearchValue} />
+      <TableContainer component={Paper}>
+        <Table aria-label="collapsible table">
+          <TableHead>
+            <TableRow>
+              <TableCell />
+              <TableCell>Customer Id</TableCell>
+              <TableCell align="center">Customer Name</TableCell>
+              <TableCell align="right">Customer Phone number</TableCell>
+              <TableCell align="right">Customer NIC</TableCell>
+              <TableCell align="right">Customer Address line 1</TableCell>
+              <TableCell align="right">Customer Address line 2</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((row) => (
+              <Row key={row.cus_id} row={row} searchValue={searchValue} />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
+  );
+}
+
+export function CustomerPageUpper(props) {
+  const { setData, setSearchValue } = props;
+
+  const searchByVariable = (variable) => {
+    try {
+      axios
+        .get(`http://localhost:8085/searchCustomerByValue/${variable}`)
+        .then((res) => {
+          setData(res.data);
+          console.log(res.data);
+        });
+      setSearchValue(variable);
+    } catch (error) {
+      console.error("error occurred in the try catch block", error);
+    }
+  };
+
+  return (
+    <>
+      <Box sx={{ height: "250px", width: "100%" }}>
+        <Stack
+          direction="column"
+          justifyContent="space-between"
+          alignItems="stretch"
+          spacing={2}
+        >
+          <Box></Box>
+          <Box display="flex" justifyContent="center">
+            <TextField
+              label={[<ManageSearchIcon/>," Search by everything"]}
+              onChange={(e) => {
+                searchByVariable(e.target.value);
+              }}
+              sx={{ width: "420px" }}
+            />
+          </Box>
+          <Box display="flex" justifyContent="flex-start" sx={{}}>
+           <Box>
+              
+           </Box>
+          </Box>
+        </Stack>
+      </Box>
+    </>
   );
 }

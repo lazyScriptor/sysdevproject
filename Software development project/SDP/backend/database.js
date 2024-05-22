@@ -40,18 +40,58 @@ export async function getUsers() {
 }
 
 export async function getCustomers() {
-  const [customers] = await pool.query("SELECT * FROM customer");
+  const [customers] = await pool.query("SELECT * FROM customer WHERE cus_delete_status = 0");
   return customers;
+}
+export async function getCustomerBySearchingManyFields(value) {
+  try {
+    if (value < 1000) {
+      const [customer] = await pool.query(
+        `SELECT * FROM customer WHERE cus_id LIKE ? AND cus_delete_status = 0`,
+        `%${value}%`
+      );
+      return customer;
+    } else {
+      const query = `
+      SELECT * 
+      FROM customer 
+      WHERE nic LIKE ? 
+        OR cus_phone_number LIKE ? 
+        OR cus_fname LIKE ? 
+        OR cus_lname LIKE ? 
+        OR cus_address1 LIKE ? 
+        OR cus_address2 LIKE ?
+        AND cus_delete_status = 0
+    `;
+
+      // Add wildcard characters around the value
+      const formattedValue = `%${value}%`;
+
+      // Execute the query with the formatted value for each field
+      const [customer] = await pool.query(query, [
+        formattedValue,
+        formattedValue,
+        formattedValue,
+        formattedValue,
+        formattedValue,
+        formattedValue,
+      ]);
+
+      return customer;
+    }
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function getEquipment() {
-  const [equipment] = await pool.query("SELECT * FROM equipment");
+  const [equipment] = await pool.query("SELECT * FROM equipment WHERE eq_delete_status = 0");
 
   return equipment;
 }
 export async function getEquipmentbyID(id) {
   const [equipment] = await pool.query(
-    "SELECT eq_id,eq_name,eq_rental,eq_description,eq_dofpurchase,eq_warranty_expire,eq_image,eq_cost,(eq_completestock - eq_defected_status) AS eq_available_quantity FROM equipment WHERE eq_id =?",
+    "SELECT eq_id,eq_name,eq_rental,eq_description,eq_dofpurchase,eq_warranty_expire,eq_image,eq_cost,(eq_completestock - eq_defected_status) AS eq_available_quantity FROM equipment WHERE eq_id =? AND eq_delete_status = 0",
     [id]
   );
   console.log(equipment);
@@ -59,7 +99,7 @@ export async function getEquipmentbyID(id) {
 }
 export async function getEquipmentbyName(name) {
   const [equipment] = await pool.query(
-    "SELECT * FROM equipment WHERE eq_name LIKE ?",
+    "SELECT * FROM equipment WHERE eq_name LIKE ? AND eq_delete_status = 0",
     [`%${name}%`]
   );
   console.log(equipment);
@@ -67,7 +107,7 @@ export async function getEquipmentbyName(name) {
 }
 
 export async function getCustomerbyNIC(nic) {
-  const [customers] = await pool.query("SELECT * FROM customer WHERE nic =?", [
+  const [customers] = await pool.query("SELECT * FROM customer WHERE nic =? AND cus_delete_status = 0", [
     nic,
   ]);
   console.log(customers);
@@ -75,7 +115,7 @@ export async function getCustomerbyNIC(nic) {
 }
 export async function getCustomerbyID(id) {
   const [customers] = await pool.query(
-    "SELECT * FROM customer WHERE cus_id =?",
+    "SELECT * FROM customer WHERE cus_id =? AND cus_delete_status = 0",
     [id]
   );
   console.log(customers);
@@ -84,7 +124,7 @@ export async function getCustomerbyID(id) {
 export async function getCustomerbyFirstName(FirstName) {
   console.log("Backend first name ", FirstName);
   const [customers] = await pool.query(
-    "SELECT * FROM customer WHERE cus_fname LIKE ?",
+    "SELECT * FROM customer WHERE cus_fname LIKE ? AND cus_delete_status = 0",
     [`%${FirstName}%`]
   );
   console.log("backend", customers);
@@ -92,7 +132,7 @@ export async function getCustomerbyFirstName(FirstName) {
 }
 export async function getCustomerbyLastName(LastName) {
   const [customers] = await pool.query(
-    "SELECT * FROM customer WHERE cus_lname LIKE ?",
+    "SELECT * FROM customer WHERE cus_lname LIKE ? AND cus_delete_status = 0",
     [`%${LastName}%`]
   );
   console.log(customers);
@@ -101,7 +141,7 @@ export async function getCustomerbyLastName(LastName) {
 
 export async function getCustomerbyPhoneNumber(phoneNumber) {
   const [customers] = await pool.query(
-    "SELECT * FROM customer WHERE cus_phone_number =? OR nic=?",
+    "SELECT * FROM customer WHERE cus_phone_number =? OR nic=? AND cus_delete_status = 0",
     [phoneNumber, phoneNumber]
   );
   console.log(customers);
@@ -109,7 +149,7 @@ export async function getCustomerbyPhoneNumber(phoneNumber) {
 }
 export async function getCustomerbyAddress1(SAddress1) {
   const [customers] = await pool.query(
-    "SELECT * FROM customer WHERE cus_address1 LIKE ?",
+    "SELECT * FROM customer WHERE cus_address1 LIKE ? AND cus_delete_status = 0",
     [`%${SAddress1}%`]
   );
   console.log(customers);
@@ -117,7 +157,7 @@ export async function getCustomerbyAddress1(SAddress1) {
 }
 export async function getCustomerbyAddress2(SAddress2) {
   const [customers] = await pool.query(
-    "SELECT * FROM customer WHERE cus_address2 LIKE ?",
+    "SELECT * FROM customer WHERE cus_address2 LIKE ? AND cus_delete_status = 0",
     [`%${SAddress2}%`]
   );
   console.log(customers);
@@ -134,7 +174,8 @@ export async function getUserRole(userName) {
 
 export async function deleteCustomer(id) {
   try {
-    await pool.query("DELETE FROM customer WHERE cus_id = ?", [id]);
+    // await pool.query("DELETE FROM customer WHERE cus_id = ?", [id]);
+    await pool.query(`UPDATE customer SET cus_delete_status = 1 WHERE cus_id = ?`,[id])
     console.log(`Deleted customer with ID ${id}`);
     return { message: `Deleted customer with ID ${id}` };
   } catch (error) {
@@ -158,7 +199,9 @@ export async function setCustomer(bodydata) {
 }
 export async function deleteEquipment(id) {
   try {
-    await pool.query("DELETE FROM equipment WHERE eq_id = ?", [id]);
+    // await pool.query("DELETE FROM equipment WHERE eq_id = ?", [id]);
+    await pool.query(`UPDATE equipment SET eq_delete_status = 1 WHERE eq_id = ?`,[id])
+
     console.log(`Deleted equipment with ID ${id}`);
     return { message: `Deleted equipment with ID ${id}` };
   } catch (error) {
@@ -265,7 +308,7 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
 
   try {
     for (const payment of InvoiceCompleteDetail.payments) {
-      console.log("This is the payID",payment.payId)
+      console.log("This is the payID", payment.payId);
       await pool.query(
         "INSERT INTO invoicePayments (invpay_payment_id, invpay_inv_id ,	invpay_amount) VALUES (?, ?, ?)",
         [payment.payId, InvoiceCompleteDetail.InvoiceID, payment.payment]

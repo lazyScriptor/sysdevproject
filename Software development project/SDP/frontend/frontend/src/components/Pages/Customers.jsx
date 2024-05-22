@@ -5,7 +5,7 @@ import CustomerTable from "../SubComponents/CustomerTable";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Contexts/Contexts";
 import { Box } from "@mui/material";
-import CollapsibleTable from "../SubComponents/CustomerTableNew";
+import CustomerTableNew from "../SubComponents/CustomerTableNew";
 
 function Customers() {
   const { setIsAuthenticated } = useContext(AuthContext);
@@ -20,10 +20,10 @@ function Customers() {
     <>
       <Box id="main-body">
         <Box id="body">
-          <BackgroundStyleNew>
-          <CollapsibleTable/>
+          
+          <CustomerTableNew/>
 
-          </BackgroundStyleNew>
+         
         </Box>
       </Box>
     </>

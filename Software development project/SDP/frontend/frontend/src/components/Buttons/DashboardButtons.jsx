@@ -6,12 +6,18 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { Button, Typography } from "@mui/material";
 import { AuthContext } from "../../Contexts/Contexts";
 
-function DashboardCategoryBtn({ name, icon, destination }) {
+function DashboardCategoryBtn(props) {
+  const { name, icon, destination ,handlefunction} = props
   const navigate = useNavigate();
   const { setIsAuthenticated } = useContext(AuthContext);
 
   const handleClick = () => {
-    console.log(`${name} clicked`);
+    // Only some button components provided this function
+    // thats why we have to check the existence of the
+    // function then trigger
+    if (handlefunction) {
+      handlefunction(); 
+    }
     if (destination == "/") {
       localStorage.removeItem("token");
       navigate('/')
