@@ -78,7 +78,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <InvoiceContextProvider>
             <SnackbarProvider maxSnack={3}>
               {/* <RouterProvider router={router} /> */}
-              <App />
+              <App classNam />
             </SnackbarProvider>
           </InvoiceContextProvider>
         </AlertComponentsContextProvider>

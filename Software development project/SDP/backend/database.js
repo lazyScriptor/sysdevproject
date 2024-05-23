@@ -1,6 +1,6 @@
 import mysql from "mysql2";
 import dotenv from "dotenv";
-
+import dayjs from "dayjs";
 dotenv.config();
 
 // insted of createconnection, Overall, using createPool simplifies connection
@@ -40,7 +40,9 @@ export async function getUsers() {
 }
 
 export async function getCustomers() {
-  const [customers] = await pool.query("SELECT * FROM customer WHERE cus_delete_status = 0");
+  const [customers] = await pool.query(
+    "SELECT * FROM customer WHERE cus_delete_status = 0"
+  );
   return customers;
 }
 export async function getCustomerBySearchingManyFields(value) {
@@ -86,7 +88,9 @@ export async function getCustomerBySearchingManyFields(value) {
 }
 
 export async function getEquipment() {
-  const [equipment] = await pool.query("SELECT equipment.*, equipmentCategory.eqcat_name FROM equipment JOIN equipmentCategory ON equipment.eq_catid = equipmentCategory.eqcat_id WHERE equipment.eq_delete_status=0");
+  const [equipment] = await pool.query(
+    "SELECT equipment.*, equipmentCategory.eqcat_name FROM equipment JOIN equipmentCategory ON equipment.eq_catid = equipmentCategory.eqcat_id WHERE equipment.eq_delete_status=0"
+  );
 
   return equipment;
 }
@@ -106,11 +110,55 @@ export async function getEquipmentbyName(name) {
   console.log(equipment);
   return equipment;
 }
+export async function setEquipment(bodydata) {
+  const {
+    eq_name,
+    eq_rental,
+    eq_completestock,
+    eq_cost,
+    eq_defected_status,
+    eq_description,
+    eq_dofpurchase,
+    eq_warranty_expire,
+    eq_catid,
+  } = bodydata;
+
+  const dateFormat = (value) => {
+    const dateOnly = value.substring(0, 10);
+    return dateOnly;
+  };
+  const neweq_dofpurchase = dateFormat(eq_dofpurchase);
+  const neweq_warranty_expire = dateFormat(eq_warranty_expire);
+
+  console.log("Formated string", eq_dofpurchase);
+  try {
+    await pool.query(
+      "INSERT INTO equipment (eq_name, eq_rental, eq_description, eq_dofpurchase, eq_warranty_expire, eq_cost, eq_defected_status, eq_completestock, eq_catid) VALUES (?,?,?,?,?,?,?,?,?)",
+      [
+        eq_name,
+        eq_rental,
+        eq_description,
+        neweq_dofpurchase,
+        neweq_warranty_expire,
+        eq_cost,
+        eq_defected_status,
+        eq_completestock,
+        eq_catid,
+      ]
+    );
+    console.log(`Created equipment `);
+    return { message: `Created equipment` };
+  } catch (error) {
+    console.error("Error creating customer db connection:", error);
+    throw error;
+  }
+}
 
 export async function getCustomerbyNIC(nic) {
-  const [customers] = await pool.query("SELECT * FROM customer WHERE nic =? AND cus_delete_status = 0", [
-    nic,
-  ]);
+  const [customers] = await pool.query(
+    "SELECT * FROM customer WHERE nic =? AND cus_delete_status = 0",
+    [nic]
+  );
   console.log(customers);
   return customers;
 }
@@ -176,7 +224,10 @@ export async function getUserRole(userName) {
 export async function deleteCustomer(id) {
   try {
     // await pool.query("DELETE FROM customer WHERE cus_id = ?", [id]);
-    await pool.query(`UPDATE customer SET cus_delete_status = 1 WHERE cus_id = ?`,[id])
+    await pool.query(
+      `UPDATE customer SET cus_delete_status = 1 WHERE cus_id = ?`,
+      [id]
+    );
     console.log(`Deleted customer with ID ${id}`);
     return { message: `Deleted customer with ID ${id}` };
   } catch (error) {
@@ -201,7 +252,10 @@ export async function setCustomer(bodydata) {
 export async function deleteEquipment(id) {
   try {
     // await pool.query("DELETE FROM equipment WHERE eq_id = ?", [id]);
-    await pool.query(`UPDATE equipment SET eq_delete_status = 1 WHERE eq_id = ?`,[id])
+    await pool.query(
+      `UPDATE equipment SET eq_delete_status = 1 WHERE eq_id = ?`,
+      [id]
+    );
 
     console.log(`Deleted equipment with ID ${id}`);
     return { message: `Deleted equipment with ID ${id}` };

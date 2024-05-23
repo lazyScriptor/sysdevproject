@@ -25,6 +25,7 @@ import {
   getInvoiceDetails,
   updateInvoiceDetails,
   getCustomerBySearchingManyFields,
+  setEquipment,
 } from "./database.js";
 
 const app = express();
@@ -173,6 +174,19 @@ app.get("/getCustomerbyNIC/:nic", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+app.post("/addEquipment", async (req, res) => {
+  try {
+    const customerDetails = await setEquipment(req.body);
+    console.log("created equipment details:", req.body);
+    return res.json({
+      message: `equipment details updated for the equipment with id : ${req.body.id}`,
+    });
+  } catch (error) {
+    console.error("Error in updateEquipmentDetails:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 app.post("/createCustomer", async (req, res) => {
   try {
     const customerDetails = await setCustomer(req.body);

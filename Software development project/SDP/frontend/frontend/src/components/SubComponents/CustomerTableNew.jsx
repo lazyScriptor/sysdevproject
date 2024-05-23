@@ -29,6 +29,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Checkbox from "@mui/material/Checkbox";
 import Swal from "sweetalert2";
+import Lottie from "react-lottie";
+import CustomerPage from '../../assets/CustomerPage.json'
 
 function Row(props) {
   const { row, searchValue } = props;
@@ -361,7 +363,7 @@ export function CustomerPageMiddle() {
           {/* Left side Box names,mic,pno*/}
           <Grid item xs={4}>
             <FormControl sx={{ gap: "20px", width: "100%" }}>
-              <Grid container spacing={2}>
+              <Grid container spacing={2} >
                 <Grid item xs={6}>
                   <Box className="dey">
                     <TextField
@@ -483,7 +485,7 @@ export function CustomerPageMiddle() {
             </FormControl>
           </Grid>
           {/* validation part column */}
-          <Grid item xs={4}>
+          <Grid item xs={2}>
             <Stack component={Paper} elevation={1} sx={{ p: 1 }}>
               <Box display={"flex"} alignItems={"center"}>
                 <Checkbox
@@ -526,6 +528,12 @@ export function CustomerPageMiddle() {
                 </Typography>
               </Box>
             </Stack>
+
+            {/* button column */}
+          </Grid>
+          <Grid item xs={2}>
+          <Lottie options={{ animationData: CustomerPage }} width={200} />
+
 
             {/* button column */}
           </Grid>
