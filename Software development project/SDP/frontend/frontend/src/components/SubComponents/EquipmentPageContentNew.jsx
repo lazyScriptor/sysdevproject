@@ -36,14 +36,15 @@ import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { NewEquipmentForm } from "./NewEquipmentForm";
 import Checkbox from "@mui/material/Checkbox";
 import Swal from "sweetalert2";
-
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+
 
 function Row(props) {
   const { row, searchValue } = props;
@@ -124,7 +125,7 @@ function Row(props) {
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={10}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              {/* <NewCustomerForm cus_id={row.cus_id} /> */}
+              <NewEquipmentForm/>
             </Box>
           </Collapse>
         </TableCell>
