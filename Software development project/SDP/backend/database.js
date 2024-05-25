@@ -86,7 +86,6 @@ export async function getCustomerBySearchingManyFields(value) {
     throw error;
   }
 }
-
 export async function getEquipment() {
   const [equipment] = await pool.query(
     "SELECT equipment.*, equipmentCategory.eqcat_name FROM equipment JOIN equipmentCategory ON equipment.eq_catid = equipmentCategory.eqcat_id WHERE equipment.eq_delete_status=0"
@@ -96,7 +95,7 @@ export async function getEquipment() {
 }
 export async function getEquipmentbyID(id) {
   const [equipment] = await pool.query(
-    "SELECT eq_id,eq_name,eq_rental,eq_description,eq_dofpurchase,eq_warranty_expire,eq_image,eq_cost,(eq_completestock - eq_defected_status) AS eq_available_quantity FROM equipment WHERE eq_id =? AND eq_delete_status = 0",
+    "SELECT * FROM equipment WHERE eq_id =? AND eq_delete_status = 0",
     [id]
   );
   console.log(equipment);
@@ -110,7 +109,7 @@ export async function getEquipmentbyName(name) {
   console.log(equipment);
   return equipment;
 }
-export async function setEquipment(bodydata) {
+export async function addEquipment(bodydata) {
   const {
     eq_name,
     eq_rental,
@@ -150,6 +149,52 @@ export async function setEquipment(bodydata) {
     return { message: `Created equipment` };
   } catch (error) {
     console.error("Error creating customer db connection:", error);
+    throw error;
+  }
+}
+export async function setEquipment(bodydata) {
+  console.log("This is the body data ", bodydata);
+  const {
+    eq_name,
+    eq_rental,
+    eq_completestock,
+    eq_cost,
+    eq_defected_status,
+    eq_description,
+    eq_dofpurchase,
+    eq_warranty_expire,
+    eq_catid,
+    eq_id,
+  } = bodydata;
+
+  const dateFormat = (value) => {
+    const dateOnly = value.substring(0, 10);
+    return dateOnly;
+  };
+  const neweq_dofpurchase = dateFormat(eq_dofpurchase);
+  const neweq_warranty_expire = dateFormat(eq_warranty_expire);
+
+  console.log("Formatted string", eq_dofpurchase);
+  try {
+    await pool.query(
+      "UPDATE equipment SET eq_name = ?, eq_rental = ?, eq_description = ?, eq_dofpurchase = ?, eq_warranty_expire = ?, eq_cost = ?, eq_defected_status = ?, eq_completestock = ?, eq_catid = ? WHERE eq_id = ?",
+      [
+        eq_name,
+        eq_rental,
+        eq_description,
+        neweq_dofpurchase,
+        neweq_warranty_expire,
+        eq_cost,
+        eq_defected_status,
+        eq_completestock,
+        eq_catid,
+        eq_id,
+      ]
+    );
+    console.log(`Updated equipment with ID ${eq_id}`);
+    return { message: `Updated equipment with ID ${eq_id}` };
+  } catch (error) {
+    console.error("Error updating equipment:", error);
     throw error;
   }
 }

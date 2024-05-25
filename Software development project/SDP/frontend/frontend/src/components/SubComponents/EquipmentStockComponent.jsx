@@ -23,9 +23,9 @@ export default function EquipmentStockComponent(props) {
     setDefectedStock,
   } = props;
   useEffect(() => {
-    setworkingStock(stockValue);
-    setDefectedStock(0);
-  }, [stockValue]);
+    // setworkingStock(stockValue);
+    // setDefectedStock(0);
+  }, [stockValue,workingStock,defectedStock]);
 
   const handleStock = () => {};
   return (
@@ -123,7 +123,8 @@ export default function EquipmentStockComponent(props) {
       <Collapse in={stockValue ==1} timeout="auto">
         <FormControl fullWidth>
           <InputLabel>Defective Status</InputLabel>
-          <Select onChange={(e) => setDefectedStock(e.target.value)}>
+                
+          <Select value={defectedStock} onChange={(e) => setDefectedStock(e.target.value)}>
             <MenuItem value={0}>Not Defective</MenuItem>
             <MenuItem value={1}>Defective</MenuItem>
           </Select>

@@ -57,7 +57,6 @@ export function NewEquipmentForm(props) {
       .typeError("Complete stock must be a number")
       .required("Complete stock is required")
       .positive("Complete stock must be positive"),
-    eqcat_name: yup.string().required("Category is required"),
     eq_catid: yup.number().required("Category is required"),
   });
 
@@ -82,8 +81,9 @@ export function NewEquipmentForm(props) {
         const res = await axios.get(
           `http://localhost:8085/getEquipmentbyID/${id}`
         );
-        const equipmentData = res.data;
+        const equipmentData = res.data[0];
         setEquipment(equipmentData);
+        console.log(res.data);
 
         setValue(
           "eq_dofpurchase",
@@ -97,6 +97,7 @@ export function NewEquipmentForm(props) {
             ? dayjs(equipmentData.eq_warranty_expire)
             : null
         );
+        setValue("eq_id", equipmentData.eq_id);
         setValue("eq_name", equipmentData.eq_name);
         setValue("eq_cost", equipmentData.eq_cost);
         setValue("eq_rental", equipmentData.eq_rental);
@@ -105,6 +106,12 @@ export function NewEquipmentForm(props) {
         setValue("eq_completestock", equipmentData.eq_completestock);
         setValue("eqcat_name", equipmentData.eqcat_name);
         setValue("eq_catid", equipmentData.eq_catid); // Ensure correct value set
+
+        const calcWorkingStock =
+          equipmentData.eq_completestock - equipmentData.eq_defected_status;
+
+        setDefectedStock(equipmentData.eq_defected_status);
+        setworkingStock(calcWorkingStock);
       } catch (error) {
         console.error("Error fetching equipment by ID", error);
       }
@@ -116,16 +123,18 @@ export function NewEquipmentForm(props) {
   }, [eq_id, setValue]);
 
   const handleClear = () => {
-    // reset(); // Reset form fields
-    // setEquipment({}); // Clear the equipment state
-    // setToggle(false); // Reset toggle state
+    reset(); // Reset form fields
+    setEquipment({}); // Clear the equipment state
+    setToggle(false); // Reset toggle state
     console.log(equipment.eq_catid);
   };
 
   const onSubmit = async (data) => {
+    data.eq_defected_status=defectedStock
     try {
+      console.log("tr");
       const response = await axios.post(
-        "http://localhost:8085/addEquipment",
+        "http://localhost:8085/setEquipment",
         data
       );
       Swal.fire("Success", "Machine added successfully", "success");
@@ -151,8 +160,8 @@ export function NewEquipmentForm(props) {
         </Grid>
       </Box>
 
-      <Box sx={{ mt: 2 ,mb:10}}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+      <Box sx={{ mt: 2, mb: 10 }}>
+        <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2} sx={{ m: 0.5, width: "95%" }}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -240,13 +249,13 @@ export function NewEquipmentForm(props) {
               <FormControl fullWidth>
                 <InputLabel>Category</InputLabel>
                 <Select
-                  {...register("eq_catid")}
-                  value={getValues("eq_catid") ?? ""}
                   onChange={(e) => {
                     setValue("eq_catid", e.target.value, {
                       shouldValidate: true,
                     });
                   }}
+                  {...register("eq_catid")}
+                  value={getValues("eq_catid") ?? ""}
                 >
                   <MenuItem value={1}>Power tools</MenuItem>
                   <MenuItem value={2}>Construction tools</MenuItem>
@@ -259,7 +268,28 @@ export function NewEquipmentForm(props) {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
+              <TextField
+                label="Complete Stock"
+                fullWidth
+                {...register("eq_completestock")}
+                error={!!errors.eq_completestock}
+                helperText={errors.eq_completestock?.message}
+                onChange={(e) => {
+                  setStockValue(e.target.value);
+                  setworkingStock(e.target.value-defectedStock);
+                }}
+              />
+              <EquipmentStockComponent
+                stockValue={stockValue}
+                workingStock={workingStock}
+                setworkingStock={setworkingStock}
+                defectedStock={defectedStock}
+                setDefectedStock={setDefectedStock}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              {/* <FormControl fullWidth>
                 <InputLabel>Defective Status</InputLabel>
                 <Select
                   {...register("eq_defected_status")}
@@ -277,23 +307,7 @@ export function NewEquipmentForm(props) {
                 <Typography variant="body2" color="error">
                   {errors.eq_defected_status?.message}
                 </Typography>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Complete Stock"
-                fullWidth
-                onChange={(e) => setStockValue(e.target.value)}
-                
-              />
-              <EquipmentStockComponent
-                stockValue={stockValue}
-                workingStock={workingStock}
-                setworkingStock={setworkingStock}
-                defectedStock={defectedStock}
-                setDefectedStock={setDefectedStock}
-              />
+              </FormControl> */}
             </Grid>
             <Grid item xs={12} sm={6}>
               <Button type="submit" variant="contained">
