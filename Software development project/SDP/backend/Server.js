@@ -9,7 +9,6 @@ import {
   getEquipmentbyName,
   getCustomerbyID,
   getCustomerbyNIC,
-  getCustomerbyPhoneNumber,
   getCustomers,
   getEquipment,
   getUsers,
@@ -27,6 +26,7 @@ import {
   getCustomerBySearchingManyFields,
   setEquipment,
   addEquipment,
+  getCustomerbyPhoneNumberOrNic,
 } from "./database.js";
 
 const app = express();
@@ -244,10 +244,10 @@ app.get("/getCustomerbyLastName/:SLastName", async (req, res) => {
   }
 });
 
-app.get("/getCustomerbyPhoneNumber/:phoneNumber", async (req, res) => {
+app.get("/getCustomerbyPhoneNumberOrNic/:phoneNumber", async (req, res) => {
   try {
     console.log("Server side getCustomerbyphoneNumber", req.params.phoneNumber);
-    const customers = await getCustomerbyPhoneNumber(req.params.phoneNumber);
+    const customers = await getCustomerbyPhoneNumberOrNic(req.params.phoneNumber);
     return res.json(customers);
   } catch (error) {
     console.error("Error in getCustomerbyPhoneNumber:", error);

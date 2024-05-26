@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../Stylings/rootstyles.css";
 import NewCustomerForm from "./NewCustomerForm.jsx";
-
 import {
   Box,
   Button,
@@ -27,10 +26,9 @@ import InvoiceDetailsWindowUp from "./Invoice/InvoiceDetailsWindowUp.jsx";
 import InvoiceDetailsWindowDown from "./Invoice/InvoiceDetailsWindowDown.jsx";
 import Payments from "./Invoice/Payments.jsx";
 import { useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import InvoicePaymentsTable from "./Invoice/InvoicePaymentsTable.jsx";
 import InvoiceRightSideNew from "./Invoice/InvoiceRightSideNew.jsx";
-
 
 function Invoice() {
   const {
@@ -48,34 +46,33 @@ function Invoice() {
     clearValues,
     updateEqObject,
   } = useContext(InvoiceContext);
-  const {showAlert}=useContext(SwalContext)
-
+  const { showAlert } = useContext(SwalContext);
 
   const navigate = useNavigate();
   const { setIsAuthenticated } = useContext(AuthContext);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumberorNic, setPhoneNumberorNic] = useState("");
   const [invoiceId, setInvoiceId] = useState("0000");
   const [currentDate, setCurrentDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
-  const [invoiceIdSearch, setInvoiceIdSearch] = useState();
+  const [invoiceIdSearch, setInvoiceIdSearch] = useState("");
+  const [validationMessage, setValidationMessage] = useState("");
+
   useEffect(() => {
-      try{
-        axios
-         .get("http://localhost:8085/isUserAuth", {
-           headers: {
-             "x-access-token": localStorage.getItem("token"),
-           },
-         })
-         .then((response) => {
-           if(!response.data.auth)navigate('/');
-         });
-      }catch(error){
-        console.log("Error",error)
-      }
+    try {
+      axios
+        .get("http://localhost:8085/isUserAuth", {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          if (!response.data.auth) navigate("/");
+        });
+    } catch (error) {
+      console.log("Error", error);
+    }
   }, [invoiceObject]);
-
-
 
   const [data, setData] = useState({
     cus_fname: "",
@@ -103,45 +100,94 @@ function Invoice() {
   const { boolvalue, setBoolvalue, userData, setUserData } =
     useContext(PopupContext);
 
-  const handleSearchPhoneNumber = async (phoneNumber) => {
-    try {
-      await axios
-        .get(`http://localhost:8085/getCustomerbyPhoneNumber/${phoneNumber}`)
-        .then((res) => {
-          setData(res.data[0]);
-          updateValue("customerDetails",res.data[0])
-          // invoiceObject.c=3;
-          // console.log(invoiceObject.eqArray)
-          // console.log("This is the ",invoiceObject.cusId)
-        });
+  const isValidNIC = (nic) => {
+    const nineDigitsAndV = /^[0-9]{9}v$/i;
+    const twelveDigits = /^[0-9]{12}$/;
+    return nineDigitsAndV.test(nic) || twelveDigits.test(nic);
+  };
 
-      console.log(invoiceObject);
+  const isValidPhoneNumber = (phoneNumber) => {
+    phoneNumber = phoneNumber.replace(/[-\s]/g, '').trim();
+    const validFormatCheck1 = /^[1-9]\d{8}$/;
+    const validFormatCheck2 = /^[0]\d{9}$/;
+    return validFormatCheck1.test(phoneNumber) || validFormatCheck2.test(phoneNumber);
+  };
+
+  const handleSearchPhoneNumberorNic = async () => {
+    if (!phoneNumberorNic) {
+      setValidationMessage("Phone number or NIC is required");
+      return;
+    }
+
+    const trimmedValue = phoneNumberorNic.trim();
+    if (!isValidNIC(trimmedValue) && !isValidPhoneNumber(trimmedValue)) {
+      setValidationMessage("Invalid phone number or NIC format");
+      return;
+    }
+
+    setValidationMessage("");
+
+    try {
+      const res = await axios.get(`http://localhost:8085/getCustomerbyPhoneNumberOrNic/${phoneNumberorNic}`);
+      const data = res.data;
+
+      if (Array.isArray(data) && data.length > 0) {
+        setData(data[0]);
+        updateValue("customerDetails", data[0]);
+      } else if (data.message) {
+        setData({
+          cus_fname: "",
+          cus_address1: "",
+          cus_address2: "",
+          nic: "",
+          cus_phone_number: "",
+          cus_id: "",
+        });
+        updateValue("customerDetails", null);
+        console.log(data.message);
+      } else {
+        console.error("Unexpected response format:", data);
+        setData({
+          cus_fname: "",
+          cus_address1: "",
+          cus_address2: "",
+          nic: "",
+          cus_phone_number: "",
+          cus_id: "",
+        });
+        updateValue("customerDetails", null);
+      }
     } catch (error) {
-      //When error occured in the above phase,despite of that ,text field is retrieving retrieveddata objects cus_fname,
-      //when there is a error in retriving that data,it passes that cus_fname as anobject and text field can't retireve the value
-      //which will leads to an application error.So when an error occured ,in the catch block im set that data object
-      //with the previous null data
-      setData(clearData);
-      console.error("handle Search Phone number block", error);
+      setData({
+        cus_fname: "",
+        cus_address1: "",
+        cus_address2: "",
+        nic: "",
+        cus_phone_number: "",
+        cus_id: "",
+      });
+      updateValue("customerDetails", null);
+      console.error("Error in handleSearchPhoneNumberorNic:", error);
     }
   };
+
   const handleCreateNew = async () => {
     localStorage.removeItem("CIObject");
-    // setData(clearData)
-    setData(clearData)
-    setEqObject('')
+    setData(clearData);
+    setEqObject("");
     clearObject();
-    setPaymentArray([])
+    setPaymentArray([]);
     try {
       await axios.get("http://localhost:8085/invoiceIdRetrieve").then((res) => {
-        console.log(res.data)
-        setInvoiceId(res.data );
-        updateValue("InvoiceID",res.data)
+        console.log(res.data);
+        setInvoiceId(res.data);
+        updateValue("InvoiceID", res.data);
       });
     } catch (error) {
       console.log("handleSearch Createinvoice error", error);
     }
   };
+
   const handleInvoiceSearch = async (invoiceIdSearch) => {
     try {
       console.log(invoiceIdSearch);
@@ -149,23 +195,14 @@ function Invoice() {
         .get(`http://localhost:8085/invoiceDataRetrieve/${invoiceIdSearch}`)
         .then((res) => {
           console.log(res.data);
-          
-
         });
     } catch (error) {
       console.log("handleSearch Createinvoice error", error);
     }
   };
 
-  const handlecheck = (e) => {
-    console.log("value ", e.target.value, checkState);
-  };
   return (
     <>
-      {/* First Column: 61.8
-Second Column: 38.2
-Third Column: 23.6 */}
-
       <Box
         sx={{
           backgroundColor: "white",
@@ -176,7 +213,6 @@ Third Column: 23.6 */}
           minHeight: "100vh",
         }}
       >
-        {/* Row1 */}
         <Box
           sx={{
             display: "flex",
@@ -184,7 +220,6 @@ Third Column: 23.6 */}
             minHeight: "8vh",
           }}
         >
-          {/*Row1 Leftmost box */}
           <Box
             sx={{
               display: "flex",
@@ -193,7 +228,6 @@ Third Column: 23.6 */}
               width: "23.6%",
             }}
           ></Box>
-          {/*Row1 middle box */}
           <Box
             sx={{
               display: "flex",
@@ -216,7 +250,6 @@ Third Column: 23.6 */}
               Search
             </Button>
           </Box>
-          {/*Row1 rightmost box */}
           <Box
             sx={{
               display: "flex",
@@ -229,7 +262,6 @@ Third Column: 23.6 */}
             <Button onClick={handleCreateNew} variant="contained">
               Create new
             </Button>
-            {/* Invoice text box */}
             <Box>
               <h5>Invoice ID: {invoiceId}</h5>
               <h6>{currentDate}</h6>
@@ -237,7 +269,6 @@ Third Column: 23.6 */}
           </Box>
         </Box>
 
-        {/* Row2 */}
         <Box
           sx={{
             display: "flex",
@@ -245,7 +276,6 @@ Third Column: 23.6 */}
             minHeight: "50vh",
           }}
         >
-          {/*Row2 Leftmost box */}
           <Box
             sx={{
               display: "flex",
@@ -254,11 +284,8 @@ Third Column: 23.6 */}
               width: "23.6%",
             }}
           >
-            {/* <InvoiceRightSide /> */}
-            <InvoiceRightSideNew/>
+            <InvoiceRightSideNew />
           </Box>
-          {/*Row2 middle box */}
-
           <Box
             sx={{
               display: "flex",
@@ -279,54 +306,54 @@ Third Column: 23.6 */}
                 borderRadius: 3,
               }}
             >
-              {/* 2nd row middle box left */}
               <Box
                 sx={{
                   display: "flex",
                   width: "35%",
+                  flexDirection:"column",
                   justifyContent: "start",
-                  flexDirection: "column",
-                  gap: 7.4,
-                  pt: 12.8,
+                  alignItems: "end",
+                  mr:2,
+                  pt:5,
+                  gap:7.2
                 }}
               >
-                <FormLabel>Customer Name</FormLabel>
-                <FormLabel>Customer Address</FormLabel>
-                <FormLabel>Upload NIC</FormLabel>
-                <FormLabel>Customer Phone number</FormLabel>
+                
+                <FormLabel sx={{ fontSize: "12px" }}> </FormLabel>
+                <FormLabel sx={{ fontSize: "15px" }}>Customer Name</FormLabel>
+                <FormLabel sx={{ fontSize: "15px" }}>Customer Address</FormLabel>
+                <FormLabel sx={{ fontSize: "15px" }}>Customer NIC </FormLabel>
+                <FormLabel sx={{ fontSize: "15px" }}>Customer Phone number</FormLabel>
               </Box>
-              {/* 2nd row middle box right */}
-
               <Box
-                //  2nd row middle box right-(Searchid,search box) AND (clear button)
                 sx={{
                   display: "flex",
-                  width: "65%",
-                  justifyContent: "start",
                   flexDirection: "column",
-                  gap: 3,
+                  justifyContent: "space-between",
+                  gap: 2,
+                  width: "70%",
                 }}
               >
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: "row",
+                    justifyContent: "space-between",
                     alignItems: "center",
                     width: "100%",
                     gap: 2,
                   }}
                 >
-                  {/* 2nd row middle box right - searchbar and search button only */}
-
                   <TextField
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumberorNic(e.target.value)}
+                    value={phoneNumberorNic}
                     sx={{ width: "350px" }}
                     id="outlined-basic"
                     label="Search with phone number or NIC"
                     variant="outlined"
+                    error={!!validationMessage}
+                    helperText={validationMessage}
                   />
-                  <Button onClick={() => handleSearchPhoneNumber(phoneNumber)}>
+                  <Button onClick={handleSearchPhoneNumberorNic}>
                     <FontAwesomeIcon icon={faSearch} />
                   </Button>
                   <Button
@@ -337,18 +364,18 @@ Third Column: 23.6 */}
                     }}
                   >
                     <Typography variant="caption">
-                    Advance
-                    <br />
-                    search
+                      Advance
+                      <br />
+                      search
                     </Typography>
-                      
                   </Button>
 
                   <Button
                     onClick={() => {
-                      setData(clearData)
-                      setPhoneNumber('')
-                      updateValue("customerDetails",clearData)
+                      setData(clearData);
+                      setPhoneNumberorNic("");
+                      setValidationMessage("");
+                      updateValue("customerDetails", clearData);
                     }}
                     sx={{
                       color: (theme) => theme.palette.primary.error[400],
@@ -364,9 +391,7 @@ Third Column: 23.6 */}
                   <TextField
                     fullWidth
                     disabled
-                    sx={{}}
                     value={data.cus_fname}
-                    id="outlined-basic"
                     label=""
                     variant="outlined"
                   />
@@ -375,31 +400,16 @@ Third Column: 23.6 */}
                   <TextField
                     fullWidth
                     disabled
-                    sx={{}}
                     value={`${data.cus_address1}  ${data.cus_address2}`}
-                    id="outlined-basic"
-                    label=""
                     variant="outlined"
                   />
                 </Box>
                 <Box sx={{ display: "flex", gap: 4 }}>
                   <TextField
-                    sx={{}}
                     disabled
-                    id="outlined-basic"
                     value={data.nic}
-                    label={<FontAwesomeIcon icon={faUpload} />}
                     variant="outlined"
                   />
-                  {/* <Checkbox
-                    // checked={checkState === "true"} // Convert the string value to a boolean
-                    onChange={(e)=>handlecheck(e)}
-
-                    // sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
-                  />
-                  <FormLabel sx={{ pt: 2 }}>Physical</FormLabel>
-                  <Checkbox />
-                  <FormLabel sx={{ pt: 2 }}>Digital</FormLabel> */}
                   <IdCardStatus />
                 </Box>
                 <Box>
@@ -414,7 +424,11 @@ Third Column: 23.6 */}
                   />
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <Button customvariant="custom" variant="contained" onClick={handleProceedPayment}>
+                  <Button
+                    customvariant="custom"
+                    variant="contained"
+                    onClick={handleProceedPayment
+                    }>
                     Payments
                   </Button>
                 </Box>
@@ -422,7 +436,6 @@ Third Column: 23.6 */}
             </Paper>
           </Box>
 
-          {/*Row2 rightmost box */}
           <Box
             sx={{
               display: "flex",
@@ -435,7 +448,6 @@ Third Column: 23.6 */}
           </Box>
         </Box>
 
-        {/* Row3 */}
         <Box
           minHeight={300}
           sx={{
@@ -444,7 +456,6 @@ Third Column: 23.6 */}
             height: "34vh",
           }}
         >
-          {/*Row3 Leftmost box */}
           <Box
             sx={{
               display: "flex",
@@ -453,9 +464,8 @@ Third Column: 23.6 */}
               width: "23.6%",
             }}
           >
-            <InvoicePaymentsTable/>
+            <InvoicePaymentsTable />
           </Box>
-          {/*Row3 middle box */}
           <Box
             sx={{
               display: "flex",
@@ -465,10 +475,8 @@ Third Column: 23.6 */}
               p: 3,
             }}
           >
-      
             <InvoiceTable />
           </Box>
-          {/*Row3 rightmost box */}
           <Box
             sx={{
               display: "flex",
@@ -478,7 +486,6 @@ Third Column: 23.6 */}
               width: "23.6%",
             }}
           >
-           
             <InvoiceDetailsWindowDown />
           </Box>
         </Box>
@@ -491,7 +498,3 @@ Third Column: 23.6 */}
 }
 
 export default Invoice;
-
-
-
-

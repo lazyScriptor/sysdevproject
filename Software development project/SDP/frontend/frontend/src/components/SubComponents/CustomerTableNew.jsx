@@ -30,7 +30,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Checkbox from "@mui/material/Checkbox";
 import Swal from "sweetalert2";
 import Lottie from "react-lottie";
-import CustomerPage from '../../assets/CustomerPage.json'
+import CustomerPage from "../../assets/CustomerPage.json";
 
 function Row(props) {
   const { row, searchValue } = props;
@@ -151,13 +151,19 @@ export function CustomerPageUpper(props) {
 
   const searchByVariable = (variable) => {
     try {
-      axios
-        .get(`http://localhost:8085/searchCustomerByValue/${variable}`)
-        .then((res) => {
+      if (variable) {
+        axios
+          .get(`http://localhost:8085/searchCustomerByValue/${variable}`)
+          .then((res) => {
+            setData(res.data);
+            console.log(res.data);
+          });
+        setSearchValue(variable);
+      } else {
+        axios.get("http://localhost:8085/customers").then((res) => {
           setData(res.data);
-          console.log(res.data);
         });
-      setSearchValue(variable);
+      }
     } catch (error) {
       console.error("error occurred in the try catch block", error);
     }
@@ -363,7 +369,7 @@ export function CustomerPageMiddle() {
           {/* Left side Box names,mic,pno*/}
           <Grid item xs={4}>
             <FormControl sx={{ gap: "20px", width: "100%" }}>
-              <Grid container spacing={2} >
+              <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <Box className="dey">
                     <TextField
@@ -532,8 +538,7 @@ export function CustomerPageMiddle() {
             {/* button column */}
           </Grid>
           <Grid item xs={2}>
-          <Lottie options={{ animationData: CustomerPage }} width={200} />
-
+            <Lottie options={{ animationData: CustomerPage }} width={200} />
 
             {/* button column */}
           </Grid>

@@ -132,7 +132,7 @@ export async function addEquipment(bodydata) {
   console.log("Formated string", eq_dofpurchase);
   try {
     await pool.query(
-      "INSERT INTO equipment (eq_name, eq_rental, eq_description, eq_dofpurchase, eq_warranty_expire, eq_cost, eq_defected_status, eq_completestock, eq_catid) VALUES (?,?,?,?,?,?,?,?,?)",
+      "INSERT INTO equipment (eq_name, eq_rental, eq_description, eq_dofpurchase, eq_warranty_expire, eq_cost, eq_completestock, eq_catid) VALUES (?,?,?,?,?,?,?,?)",
       [
         eq_name,
         eq_rental,
@@ -140,7 +140,6 @@ export async function addEquipment(bodydata) {
         neweq_dofpurchase,
         neweq_warranty_expire,
         eq_cost,
-        eq_defected_status,
         eq_completestock,
         eq_catid,
       ]
@@ -233,14 +232,19 @@ export async function getCustomerbyLastName(LastName) {
   return customers;
 }
 
-export async function getCustomerbyPhoneNumber(phoneNumber) {
+export async function getCustomerbyPhoneNumberOrNic(phoneNumber) {
   const [customers] = await pool.query(
-    "SELECT * FROM customer WHERE cus_phone_number =? OR nic=? AND cus_delete_status = 0",
-    [phoneNumber, phoneNumber]
+    "SELECT * FROM customer WHERE (cus_phone_number LIKE ? OR nic LIKE ?) AND cus_delete_status = 0",
+    [`%${phoneNumber}%`, `%${phoneNumber}%`]
   );
-  console.log(customers);
-  return customers;
+  if (customers.length > 0) {
+    console.log(customers);
+    return customers;
+  } else {
+    return { message: `No customer found with ${phoneNumber}` };
+  }
 }
+
 export async function getCustomerbyAddress1(SAddress1) {
   const [customers] = await pool.query(
     "SELECT * FROM customer WHERE cus_address1 LIKE ? AND cus_delete_status = 0",

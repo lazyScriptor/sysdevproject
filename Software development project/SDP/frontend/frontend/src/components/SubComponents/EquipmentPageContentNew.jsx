@@ -45,7 +45,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 
-
 function Row(props) {
   const { row, searchValue } = props;
   const [open, setOpen] = useState(false);
@@ -75,13 +74,14 @@ function Row(props) {
   const dateFormat = (value) => {
     return dayjs(value).format("YYYY-MM-DD");
   };
+
   return (
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell sx={cellStyles}>
           <IconButton
             aria-label="expand row"
-            size=" "
+            size="small"
             onClick={() => setOpen(!open)}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
@@ -122,10 +122,10 @@ function Row(props) {
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={10}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <NewEquipmentForm eq_id={row.eq_id}/>
+              <NewEquipmentForm eq_id={row.eq_id} />
             </Box>
           </Collapse>
         </TableCell>
@@ -137,6 +137,8 @@ function Row(props) {
 export default function EquipmentTableNew() {
   const [data, setData] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -150,6 +152,30 @@ export default function EquipmentTableNew() {
     fetchData();
   }, []);
 
+  const handleSort = (column) => {
+    const isAsc = orderBy === column && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(column);
+
+    const sortedData = [...data].sort((a, b) => {
+      if (isAsc) {
+        return a[column] < b[column] ? -1 : 1;
+      } else {
+        return a[column] > b[column] ? -1 : 1;
+      }
+    });
+
+    setData(sortedData);
+  };
+
+  const headerStyles = {
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "#f1f1f1",
+    },
+    transition: "background-color 0.3s ease",
+  };
+
   return (
     <>
       <CustomerPageUpper setData={setData} setSearchValue={setSearchValue} />
@@ -158,16 +184,59 @@ export default function EquipmentTableNew() {
           <TableHead>
             <TableRow>
               <TableCell align="center" />
-              <TableCell align="center">Id</TableCell>
+              <TableCell
+                align="center"
+                onClick={() => handleSort("eq_id")}
+                sx={headerStyles}
+              >
+                Id {orderBy === "eq_id" && (order === "asc" ? "↑" : "↓")}
+              </TableCell>
               <TableCell align="center">Machine Name</TableCell>
               <TableCell align="center">Category Name</TableCell>
-              <TableCell align="center">Rental</TableCell>
-              <TableCell align="center">DOP</TableCell>
-              <TableCell align="center">Warranty Due</TableCell>
-              <TableCell align="center">Machine Cost</TableCell>
+              <TableCell
+                align="center"
+                onClick={() => handleSort("eq_rental")}
+                sx={headerStyles}
+              >
+                Rental{" "}
+                {orderBy === "eq_rental" && (order === "asc" ? "↑" : "↓")}
+              </TableCell>
+              <TableCell
+                align="center"
+                onClick={() => handleSort("eq_dofpurchase")}
+                sx={headerStyles}
+              >
+                DOP{" "}
+                {orderBy === "eq_dofpurchase" && (order === "asc" ? "↑" : "↓")}
+              </TableCell>
+              <TableCell
+                align="center"
+                onClick={() => handleSort("eq_warranty_expire")}
+                sx={headerStyles}
+              >
+                Warranty Due{" "}
+                {orderBy === "eq_warranty_expire" &&
+                  (order === "asc" ? "↑" : "↓")}
+              </TableCell>
+              <TableCell
+                align="center"
+                onClick={() => handleSort("eq_cost")}
+                sx={headerStyles}
+              >
+                Machine Cost{" "}
+                {orderBy === "eq_cost" && (order === "asc" ? "↑" : "↓")}
+              </TableCell>
               <TableCell align="center">Machine image</TableCell>
               <TableCell align="center">Description</TableCell>
-              <TableCell align="center">Defective status</TableCell>
+              <TableCell
+                align="center"
+                onClick={() => handleSort("eq_defected_status")}
+                sx={headerStyles}
+              >
+                Defective status{" "}
+                {orderBy === "eq_defected_status" &&
+                  (order === "asc" ? "↑" : "↓")}
+              </TableCell>
               <TableCell align="center">Stock remaining</TableCell>
             </TableRow>
           </TableHead>
@@ -255,6 +324,7 @@ export function CustomerPageMiddle() {
 
   const validationSchema = yup.object().shape({
     eq_name: yup.string().required("Machine Name is required"),
+    eq_catid: yup.number().required("Category is required"),
     eq_dofpurchase: yup
       .date()
       .required("Date of purchase is required")
@@ -274,9 +344,6 @@ export function CustomerPageMiddle() {
       .required("Rental is required")
       .positive("Rental must be positive"),
     eq_description: yup.string().required("Description is required"),
-    eq_defected_status: yup
-      .boolean()
-      .required("Defective status is required"),
     eq_completestock: yup
       .number()
       .typeError("Complete stock must be a number")
@@ -304,12 +371,12 @@ export function CustomerPageMiddle() {
   };
 
   const onSubmit = async (data) => {
-
     try {
       const response = await axios.post(
         "http://localhost:8085/addEquipment",
         data
       );
+      window.location.reload();
       Swal.fire("Success", "Machine added successfully", "success");
     } catch (error) {
       Swal.fire("Error", "Failed to add machine", "error");
@@ -346,10 +413,16 @@ export function CustomerPageMiddle() {
         </Grid>
       </Box>
 
-      <Collapse in={true} timeout="auto" unmountOnExit component={Box} sx={{height:"500px",display:"flex",alignItems:"center"}}>
+      <Collapse
+        in={true}
+        timeout="auto"
+        unmountOnExit
+        component={Box}
+        sx={{ height: "500px", display: "flex", alignItems: "center" }}
+      >
         <Box sx={{ mt: 2 }}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Grid container spacing={2} sx={{m:.5,width:"95%"}}>
+            <Grid container spacing={2} sx={{ m: 0.5, width: "95%" }}>
               <Grid item xs={12} sm={6}>
                 <TextField
                   label="Machine Name"
@@ -360,7 +433,7 @@ export function CustomerPageMiddle() {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6} sx={{display:"flex"}}>
+              <Grid item xs={12} sm={6} sx={{ display: "flex" }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     label="Date of Purchase"
@@ -379,7 +452,7 @@ export function CustomerPageMiddle() {
                     )}
                   />
                 </LocalizationProvider>
-                <Box sx={{flexGrow:1}}/>
+                <Box sx={{ flexGrow: 1 }} />
                 <Button variant="contained">Upload an image</Button>
               </Grid>
 
@@ -441,36 +514,15 @@ export function CustomerPageMiddle() {
                   <InputLabel>Category</InputLabel>
                   <Select
                     {...register("eq_catid")}
+                    error={!!errors.eq_catid}
+                    helperText={errors.eq_catid?.message}
                     value={selectValue}
                     onChange={(e) => setSelectValue(e.target.value)}
                   >
-                    <MenuItem value={1}>Category 1</MenuItem>
-                    <MenuItem value={2}>Category 2</MenuItem>
+                    <MenuItem value={1}>Power tools</MenuItem>
+                    <MenuItem value={2}>Construction equipment</MenuItem>
                     <MenuItem value={3}>Category 3</MenuItem>
                   </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel>Defective Status</InputLabel>
-                  <Select
-                    {...register("eq_defected_status")}
-                    defaultValue=""
-                    value={getValues("eq_defected_status") || ""}
-                    onChange={(e) =>
-                      setValue("eq_defected_status", e.target.value, {
-                        shouldValidate: true,
-                      })
-                    }
-                    error={!!errors.eq_defected_status}
-                  >
-                    <MenuItem value={true}>Defective</MenuItem>
-                    <MenuItem value={false}>Not Defective</MenuItem>
-                  </Select>
-                  <Typography variant="body2" color="error">
-                    {errors.eq_defected_status?.message}
-                  </Typography>
                 </FormControl>
               </Grid>
 
@@ -484,12 +536,14 @@ export function CustomerPageMiddle() {
                 />
               </Grid>
 
+              <Grid item xs={12} sm={6}></Grid>
+
               <Grid item xs={12} sm={6}>
                 <Button type="submit" variant="contained">
                   Submit
                 </Button>
                 <Button
-                  type="button"
+                  type="reset"
                   onClick={handleClear}
                   variant="contained"
                   sx={{ ml: 2 }}
@@ -500,7 +554,7 @@ export function CustomerPageMiddle() {
             </Grid>
           </form>
         </Box>
-        <hr/>
+        <hr />
       </Collapse>
     </>
   );

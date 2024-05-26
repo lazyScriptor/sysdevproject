@@ -132,13 +132,11 @@ export function NewEquipmentForm(props) {
   const onSubmit = async (data) => {
     data.eq_defected_status=defectedStock
     try {
-      console.log("tr");
       const response = await axios.post(
         "http://localhost:8085/setEquipment",
         data
       );
       Swal.fire("Success", "Machine added successfully", "success");
-      handleClear();
     } catch (error) {
       Swal.fire("Error", "Failed to add machine", "error");
     }

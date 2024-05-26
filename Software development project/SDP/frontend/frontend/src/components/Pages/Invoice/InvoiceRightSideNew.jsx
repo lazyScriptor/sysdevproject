@@ -10,7 +10,7 @@ import {
 import { Box, Stack } from "@mui/system";
 import axios from "axios";
 import { InvoiceContext } from "../../../Contexts/Contexts";
-import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
+import YoutubeSearchedForIcon from "@mui/icons-material/YoutubeSearchedFor";
 
 function InvoiceRightSideNew() {
   const [idFormData, setIdFormData] = useState({
@@ -81,7 +81,9 @@ function InvoiceRightSideNew() {
 
         if (res.data.length > 0) {
           // Setting state variables with fetched data
-          setEqQuantity(equipment.eq_available_quantity);
+          setEqQuantity(
+            equipment.eq_completestock - equipment.eq_defected_status
+          );
           setEqName(equipment.eq_name);
           setEqFullDetail(equipment);
           setAddButtonDisable(false);
@@ -134,16 +136,17 @@ function InvoiceRightSideNew() {
           <FormLabel
             sx={{
               pt: 2,
-
+              pr:2,
               width: "30%",
               display: "flex",
+              justifyContent: "end",
             }}
             htmlFor="id"
           >
             ID
           </FormLabel>
           <TextField
-            sx={{ }}
+            sx={{}}
             id="id"
             label="ID"
             name="id"
@@ -152,14 +155,14 @@ function InvoiceRightSideNew() {
             helperText={idErrors.id && idErrors.id}
           />
           <Button
-          sx={{width:"20px",height:"57px"}}
+            sx={{ width: "20px", height: "57px" }}
             type="submit"
             onClick={() => {
               setEqName("");
               setEqQuantity("");
             }}
           >
-            <YoutubeSearchedForIcon/>
+            <YoutubeSearchedForIcon />
           </Button>
         </Box>
       </form>
@@ -170,9 +173,10 @@ function InvoiceRightSideNew() {
             <FormLabel
               sx={{
                 pt: 2,
-
+                pr:2,
                 width: "40%",
                 display: "flex",
+                justifyContent: "end",
               }}
               htmlFor="name"
             >
@@ -193,9 +197,10 @@ function InvoiceRightSideNew() {
             <FormLabel
               sx={{
                 pt: 2,
-
+                pr:2,
                 width: "40%",
                 display: "flex",
+                justifyContent: "end",
               }}
               htmlFor="quantity"
             >
