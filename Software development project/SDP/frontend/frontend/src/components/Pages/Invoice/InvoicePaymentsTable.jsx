@@ -74,7 +74,7 @@ export default function InvoicePaymentsTable() {
         <TableBody>
           <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
             <TableCell align="center">Advance payment</TableCell>
-            <TableCell align="center">{invoiceObject.advance}</TableCell>
+            <TableCell align="center">{!!invoiceObject.advance&&invoiceObject.advance}</TableCell>
             <TableCell align="center">
               {editToggle && (
                 <button

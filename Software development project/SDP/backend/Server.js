@@ -27,6 +27,7 @@ import {
   setEquipment,
   addEquipment,
   getCustomerbyPhoneNumberOrNic,
+  getCustomerbyPhoneNumber,
 } from "./database.js";
 
 const app = express();
@@ -240,6 +241,16 @@ app.get("/getCustomerbyLastName/:SLastName", async (req, res) => {
     return res.json(customers);
   } catch (error) {
     console.error("Error in getCustomerbyLastName:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+app.get("/getCustomerbyPhoneNumber/:trimmedPhoneNumber", async (req, res) => {
+  try {
+    console.log("Server side getCustomerbyPhoneNumber", req.params.trimmedPhoneNumber);
+    const customer = await getCustomerbyPhoneNumber(req.params.trimmedPhoneNumber);
+    return res.json(customer);
+  } catch (error) {
+    console.error("Error in getCustomerbyPhoneNumber:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });

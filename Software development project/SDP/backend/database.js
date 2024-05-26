@@ -214,6 +214,14 @@ export async function getCustomerbyID(id) {
   console.log(customers);
   return customers;
 }
+export async function getCustomerbyPhoneNumber(trimmedPhoneNumber) {
+  const [customers] = await pool.query(
+    "SELECT * FROM customer WHERE cus_phone_number =? AND cus_delete_status = 0",
+    [trimmedPhoneNumber]
+  );
+  console.log(customers);
+  return customers;
+}
 export async function getCustomerbyFirstName(FirstName) {
   console.log("Backend first name ", FirstName);
   const [customers] = await pool.query(

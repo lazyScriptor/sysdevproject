@@ -73,6 +73,9 @@ function Invoice() {
       console.log("Error", error);
     }
   }, [invoiceObject]);
+  useEffect(()=>{
+    handleCreateNew();
+  },[])
 
   const [data, setData] = useState({
     cus_fname: "",
@@ -315,7 +318,7 @@ function Invoice() {
                   alignItems: "end",
                   mr:2,
                   pt:5,
-                  gap:7.2
+                  gap:8
                 }}
               >
                 

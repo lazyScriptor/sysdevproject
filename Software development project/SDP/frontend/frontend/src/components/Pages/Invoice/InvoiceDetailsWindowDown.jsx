@@ -52,17 +52,17 @@ function InvoiceDetailsWindowDown() {
                   showConfirmButton: false,
                   timer: 1500,
                 });
-                
+
                 console.log("Invoice details updated successfully");
               } catch (error) {
                 Swal.fire({
                   icon: "error",
                   title: "Oops...",
                   text: "Try again!",
-                  footer: '<span style={{color:"red}}>Error occurred in front end AXIOS invoice pass?</span>'
+                  footer:
+                    '<span style={{color:"red}}>Error occurred in front end AXIOS invoice pass?</span>',
                 });
                 console.error(
-                  
                   "Error occurred in front end AXIOS invoice pass",
                   error
                 );
@@ -72,7 +72,7 @@ function InvoiceDetailsWindowDown() {
                 icon: "error",
                 title: "Oops...",
                 text: "Didn't he pay you!",
-                footer: '<a href="#">Why do I have this issue?</a>'
+                footer: '<a href="#">Why do I have this issue?</a>',
               });
               console.log("Advance payment is not greater than 0");
             }
@@ -81,7 +81,7 @@ function InvoiceDetailsWindowDown() {
               icon: "error",
               title: "Oops...",
               text: "Enter machine details!",
-              footer: '<a href="#">Why do I have this issue?</a>'
+              footer: '<a href="#">Why do I have this issue?</a>',
             });
             console.log("No equipment details found");
           }
@@ -90,7 +90,7 @@ function InvoiceDetailsWindowDown() {
             icon: "error",
             title: "Oops...",
             text: "Enter Customer Details!",
-            footer: '<a href="#">Why do I have this issue?</a>'
+            footer: '<a href="#">Why do I have this issue?</a>',
           });
           console.log(
             "Customer ID is not greater than 0 MEANS Customer is not found"
@@ -101,11 +101,9 @@ function InvoiceDetailsWindowDown() {
           icon: "error",
           title: "Oops...",
           text: "Create a New Invoice!",
-          footer: '<a href="#">Why do I have this issue?</a>'
+          footer: '<a href="#">Why do I have this issue?</a>',
         });
-        console.log(
-          "Invoice Id should be present"
-        );
+        console.log("Invoice Id should be present");
       }
     } else {
       console.log("Invoice object is undefined");
@@ -163,8 +161,8 @@ function InvoiceDetailsWindowDown() {
               }}
             >
               <Typography variant="h6" sx={{ textAlign: "end", mb: 2.5 }}>
-                {invoiceObject.advance && invoiceObject.advance}
-                {invoiceObject.advance && " LKR"}
+                {!!invoiceObject.advance ? invoiceObject.advance : ""}
+                {!!invoiceObject.advance ? " LKR" : ""}
               </Typography>
 
               {invoiceObject.payments &&
