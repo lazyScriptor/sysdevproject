@@ -355,16 +355,6 @@ export async function getInvoiceId() {
     console.error("Error in the updateCustomerDetails db connection", error);
   }
 }
-export async function getInvoiceDetails(invoiceId) {
-  const [invoice] = await pool.query(
-    `SELECT * FROM customerInvoice WHERE cusinv_invid=?`,
-    [invoiceId]
-  );
-
-  const customerDetails = getCustomerbyID(invoice[0].cusinv_cusid);
-  console.log("backend", customerDetails);
-  return customerDetails;
-}
 
 export async function updateInvoiceDetails(InvoiceCompleteDetail) {
   // Update invoice details
@@ -374,7 +364,7 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
       [
         InvoiceCompleteDetail.advance,
         "", // Empty string for inv_special_message
-        InvoiceCompleteDetail.iDstatus && 1, // Assuming iDstatus is a boolean value
+        InvoiceCompleteDetail.idStatus && 1, // Assuming idStatus is a boolean value
         1,
         InvoiceCompleteDetail.InvoiceID,
       ]
@@ -487,5 +477,96 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
     } else {
       console.log("Error occurred in backend invoice details update:", error);
     }
+  }
+}
+
+export async function getInvoiceDetails(invoiceIdSearch) {
+  try {
+    // Fetch customer, invoice, equipment, and additional invoice details
+    const [invoiceCustomerDetails] = await pool.query(
+      `SELECT customer.*, customerInvoice.*, invoiceEquipment.*, equipment.*, invoice.inv_advance, invoice.inv_special_message, invoice.inv_idcardstatus 
+       FROM customerInvoice 
+       LEFT JOIN customer ON customer.cus_id = customerInvoice.cusinv_cusid 
+       LEFT JOIN invoiceEquipment ON customerInvoice.cusinv_invid = invoiceEquipment.inveq_invid 
+       LEFT JOIN equipment ON invoiceEquipment.inveq_eqid = equipment.eq_id
+       LEFT JOIN invoice ON customerInvoice.cusinv_invid = invoice.inv_id
+       WHERE customerInvoice.cusinv_invid = ?`,
+      [invoiceIdSearch]
+    );
+
+    if (invoiceCustomerDetails.length > 0) {
+      const invoiceObject = {
+        customerDetails: {},
+        createdDate: null,
+        eqdetails: [],
+        payments: [],
+        advance: null,
+        invoiceSpecialmessage: null,
+        idStatus: null,
+      };
+
+      const customerDetails = Object.keys(invoiceCustomerDetails[0])
+        .filter((key) => key.startsWith("cus_") || key === "nic")
+        .reduce((obj, key) => {
+          obj[key] = invoiceCustomerDetails[0][key];
+          return obj;
+        }, {});
+
+      invoiceObject.customerDetails = customerDetails;
+      invoiceObject.createdDate = invoiceCustomerDetails[0].cusinv_createddate;
+
+      // Extracting equipment details
+      const equipmentDetails = invoiceCustomerDetails.map((record) => ({
+        eq_id: record.eq_id,
+        eq_name: record.eq_name,
+        eq_rental: record.eq_rental,
+        eq_description: record.eq_description,
+        eq_dofpurchase: record.eq_dofpurchase,
+        eq_warranty_expire: record.eq_warranty_expire,
+        eq_image: record.eq_image,
+        eq_cost: record.eq_cost,
+        eq_defected_status: record.eq_defected_status,
+        eq_completestock: record.eq_completestock,
+        eq_delete_status: record.eq_delete_status,
+        eq_catid: record.eq_catid,
+        inveq_borrow_date: record.inveq_borrow_date,
+        inveq_return_date: record.inveq_return_date,
+        duration_in_days: record.duration_in_days,
+        inveq_borrowqty: record.inveq_borrowqty,
+      }));
+
+      invoiceObject.eqdetails = equipmentDetails;
+
+      // Fetch payment details
+      const [invoicePayments] = await pool.query(
+        `SELECT invpay_payment_id, invpay_payment_date, invpay_amount 
+         FROM invoicePayments 
+         WHERE invpay_inv_id = ?`,
+        [invoiceIdSearch]
+      );
+
+      // Extracting payment details
+      const paymentDetails = invoicePayments.map((payment) => ({
+        invpay_payment_id: payment.invpay_payment_id,
+        invpay_payment_date: payment.invpay_payment_date,
+        invpay_amount: payment.invpay_amount,
+      }));
+
+      invoiceObject.payments = paymentDetails;
+
+      // Adding additional invoice details
+      invoiceObject.advance = invoiceCustomerDetails[0].inv_advance;
+      invoiceObject.invoiceSpecialmessage =
+        invoiceCustomerDetails[0].inv_special_message;
+      invoiceObject.idStatus = !!invoiceCustomerDetails[0].inv_idcardstatus; // converting to boolean
+
+      return invoiceObject;
+    } else {
+      console.error("No invoice details found");
+      return false;
+    }
+  } catch (error) {
+    console.error("Error fetching invoice details:", error);
+    return false;
   }
 }

@@ -36,7 +36,7 @@ function InvoiceDetailsWindowUp() {
 
   const Total = localStorage.getItem("Total");
   useEffect(() => {
-    setResponseManageToogle(!responseManageToogle);
+    // setResponseManageToogle(!responseManageToogle);
   }, [eqObject]);
 
   const deleteButtonStyles = {
@@ -48,10 +48,16 @@ function InvoiceDetailsWindowUp() {
   };
   const handleDelete = (id) => {
     // Filter out the item with the corresponding eq_id
-    const updatedEqObject = eqObject.filter((item) => item.eq_id !== id);
-    // Update the eqObject state with the filtered array
-    setEqObject(updatedEqObject);
+    const updatedEqObject = invoiceObject.eqdetails.filter((item) => item.eq_id !== id);
+    
+    // Update the invoiceObject with the filtered eqdetails array
+    setInvoiceObject((prevInvoiceObject) => ({
+      ...prevInvoiceObject,
+      eqdetails: updatedEqObject,
+    }));
   };
+  
+  
   return (
     <>
       <Paper
@@ -89,8 +95,8 @@ function InvoiceDetailsWindowUp() {
           <Box sx={{ flexGrow: 1 }} />
           <Typography variant="body">{Total} LKR</Typography>
         </Box>
-        {eqObject &&
-          eqObject.map((item, index) => (
+        {invoiceObject.eqdetails &&
+          invoiceObject.eqdetails.map((item, index) => (
             <Paper
               elevation={2}
               key={index}
@@ -137,7 +143,7 @@ function InvoiceDetailsWindowUp() {
                   Rentalx {item.eq_rental}
                 </Typography>
                 <Typography variant="caption" sx={{ textAlign: "end" }}>
-                  Quantityx {item.quantity}
+                  Quantityx {item.inveq_borrowqty}
                 </Typography>
               </Box>
               {toogle && (

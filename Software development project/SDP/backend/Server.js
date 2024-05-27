@@ -68,24 +68,26 @@ const verifyJWT = (req, res, next) => {
 const verifyAdmin = (req, res, next) => {
   const token = req.headers["x-access-token"];
   if (!token) {
-    console.log("object")
+    console.log("object");
     return res.status(403).json({ auth: false, message: "No token provided." });
   }
   jwt.verify(token, "jwtSecret", (err, decoded) => {
     if (err) {
-      return res.status(500).json({ auth: false, message: "Failed to authenticate token." });
+      return res
+        .status(500)
+        .json({ auth: false, message: "Failed to authenticate token." });
     } else {
       if (decoded.userRole === "admin") {
-        console.log("authenticated")
+        console.log("authenticated");
         next();
       } else {
-        return res.status(403).json({ auth: false, message: "You are not an admin." });
+        return res
+          .status(403)
+          .json({ auth: false, message: "You are not an admin." });
       }
     }
   });
 };
-
-
 
 app.get("/isUserAuth", verifyJWT, (req, res) => {
   return res.json({ auth: true, message: "You have a valid token" });
@@ -246,8 +248,13 @@ app.get("/getCustomerbyLastName/:SLastName", async (req, res) => {
 });
 app.get("/getCustomerbyPhoneNumber/:trimmedPhoneNumber", async (req, res) => {
   try {
-    console.log("Server side getCustomerbyPhoneNumber", req.params.trimmedPhoneNumber);
-    const customer = await getCustomerbyPhoneNumber(req.params.trimmedPhoneNumber);
+    console.log(
+      "Server side getCustomerbyPhoneNumber",
+      req.params.trimmedPhoneNumber
+    );
+    const customer = await getCustomerbyPhoneNumber(
+      req.params.trimmedPhoneNumber
+    );
     return res.json(customer);
   } catch (error) {
     console.error("Error in getCustomerbyPhoneNumber:", error);
@@ -258,7 +265,9 @@ app.get("/getCustomerbyPhoneNumber/:trimmedPhoneNumber", async (req, res) => {
 app.get("/getCustomerbyPhoneNumberOrNic/:phoneNumber", async (req, res) => {
   try {
     console.log("Server side getCustomerbyphoneNumber", req.params.phoneNumber);
-    const customers = await getCustomerbyPhoneNumberOrNic(req.params.phoneNumber);
+    const customers = await getCustomerbyPhoneNumberOrNic(
+      req.params.phoneNumber
+    );
     return res.json(customers);
   } catch (error) {
     console.error("Error in getCustomerbyPhoneNumber:", error);
@@ -342,16 +351,22 @@ app.get("/invoiceIdRetrieve", async (req, res) => {
 });
 app.get("/invoiceDataRetrieve/:invoiceIdSearch", async (req, res) => {
   try {
-    console.log("reqaaa");
-    const [customerDetails] = await getInvoiceDetails(
+    const completeInvoiceDetails = await getInvoiceDetails(
       req.params.invoiceIdSearch
     );
-    console.log("Expressaaaa", customerDetails);
-    return res.json(customerDetails);
+    if (completeInvoiceDetails) {
+      console.log("Express complete invoice object", completeInvoiceDetails);
+      return res.json(completeInvoiceDetails);
+    } else {
+      console.error("No invoice details found");
+      return res.status(404).json({ error: "Invoice not found" });
+    }
   } catch (error) {
+    console.error("Error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 app.post("/updateInvoiceDetails", async (req, res) => {
   try {
     const customerDetails = await updateInvoiceDetails(req.body);
@@ -363,25 +378,6 @@ app.post("/updateInvoiceDetails", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 dotenv.config();
 const port = process.env.PORT;

@@ -1,27 +1,27 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { InvoiceContext } from "./Contexts";
 
 export default function InvoiceContextProvider({ children }) {
-  const [fullDetailsEquipmentArray, setFullDetailsEquipmentArray] = useState(
-    []
-  ); //FULL DETAIL OBJECT.ARRAY OF OBJECTS
+  const [fullDetailsEquipmentArray, setFullDetailsEquipmentArray] = useState([]);
   const [checkState, setCheckState] = useState(false);
   const [eqObject, setEqObject] = useState([]);
   const [invoiceObject, setInvoiceObject] = useState({
-    iDstatus: false,
+    idStatus: false,
     eqdetails: [],
     advance: 0,
     customerDetails: {},
     payments: [],
     InvoiceID: 0,
   });
-  const [responseManageToogle, setResponseManageToogle] = useState(false);
+  const [responseManageToggle, setResponseManageToggle] = useState(false);
   const [paymentArray, setPaymentArray] = useState([]);
   const [paymentId, setPaymentId] = useState(0);
+  const [updateFlag, setUpdateFlag] = useState(false);
+
   const clearObject = () => {
     setEqObject([]);
     setInvoiceObject({
-      iDstatus: false,
+      idStatus: false,
       eqdetails: [],
       advance: 0,
       customerDetails: {},
@@ -29,13 +29,30 @@ export default function InvoiceContextProvider({ children }) {
       InvoiceID: 0,
     });
   };
+
   const clearPaymentArray = () => {
     setPaymentArray([]);
   };
 
-  const updateValue = (value, newVaalue) => {
-    setInvoiceObject((preObject) => ({ ...preObject, [value]: newVaalue }));
+  const updateValue = (key, newValue) => {
+    setInvoiceObject((prevObject) => {
+      if (key === "eqdetails") {
+        const updatedEqDetails = prevObject.eqdetails.filter(
+          (item) => item.eq_id !== newValue.eq_id
+        );
+        return { ...prevObject, eqdetails: [...updatedEqDetails, newValue] };
+      } else if (key === "payments") {
+        const updatedPayments = prevObject.payments.filter(
+          (item) => item.invpay_payment_id !== newValue.invpay_payment_id
+        );
+        return { ...prevObject, payments: [...updatedPayments, newValue] };
+      } else {
+        return { ...prevObject, [key]: newValue };
+      }
+    });
   };
+  
+
   const clearValues = () => {
     setInvoiceObject((prevObject) => {
       const clearedObject = {};
@@ -47,48 +64,39 @@ export default function InvoiceContextProvider({ children }) {
   };
 
   const updateEqObject = (newValue) => {
-    // setEqObject((prev) => [...prev, { newValue }]);in this way you can add array under the newValue KEY name
     setEqObject((prev) => [...prev, newValue]);
   };
+useEffect(()=>{
+  console.log("context useEffect invoice objetct",invoiceObject)
+},[invoiceObject])
+  // useEffect(() => {
+  //   if (updateFlag) {
+  //     console.log(invoiceObject);
+  //     const removeDuplicated = () => {
+  //       const uniqueObjects = eqObject.reduce((acc, current) => {
+  //         if (!acc[current.eq_id]) {
+  //           acc[current.eq_id] = current;
+  //         }
+  //         return acc;
+  //       }, {});
+  //       return Object.values(uniqueObjects);
+  //     };
 
-  const [updateFlag, setUpdateFlag] = useState(false);
+  //     const uniqueArray = removeDuplicated();
+  //     setEqObject(uniqueArray);
+  //     console.log("unique", uniqueArray);
+  //   }
+  // }, [invoiceObject, eqObject, updateFlag]);
 
-  useEffect(() => {
-    if (updateFlag) {
-      console.log(invoiceObject);
-      const removeDuplicated = () => {
-        const uniqueObjects = eqObject.reduce((acc, current) => {
-          if (!acc[current.eq_id]) {
-            acc[current.eq_id] = current;
-          }
-          return acc;
-        }, {});
-        // Convert uniqueObjects back to an array of values
-        return Object.values(uniqueObjects);
-      };
-    
-      // Get the unique array
-      const uniqueArray = removeDuplicated();
-    
-      // Update eqObject state with the unique array
-      setEqObject(uniqueArray);
-    
-      // Log the unique array
-      console.log("uniq", uniqueArray);
-    }
-  }, [invoiceObject]);
-  
-  // Set updateFlag to true after the component mounts to allow the initial update
-  useEffect(() => {
-    setUpdateFlag(true);
-  }, []);
-
+  // useEffect(() => {
+  //   setUpdateFlag(true);
+  // }, []);
 
   return (
     <InvoiceContext.Provider
       value={{
-        responseManageToogle,
-        setResponseManageToogle,
+        responseManageToggle,
+        setResponseManageToggle,
         clearPaymentArray,
         paymentArray,
         setPaymentArray,

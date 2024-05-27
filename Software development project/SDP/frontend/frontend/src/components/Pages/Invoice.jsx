@@ -73,9 +73,10 @@ function Invoice() {
       console.log("Error", error);
     }
   }, [invoiceObject]);
-  useEffect(()=>{
+  useEffect(() => {
     handleCreateNew();
-  },[])
+
+  }, []);
 
   const [data, setData] = useState({
     cus_fname: "",
@@ -110,10 +111,12 @@ function Invoice() {
   };
 
   const isValidPhoneNumber = (phoneNumber) => {
-    phoneNumber = phoneNumber.replace(/[-\s]/g, '').trim();
+    phoneNumber = phoneNumber.replace(/[-\s]/g, "").trim();
     const validFormatCheck1 = /^[1-9]\d{8}$/;
     const validFormatCheck2 = /^[0]\d{9}$/;
-    return validFormatCheck1.test(phoneNumber) || validFormatCheck2.test(phoneNumber);
+    return (
+      validFormatCheck1.test(phoneNumber) || validFormatCheck2.test(phoneNumber)
+    );
   };
 
   const handleSearchPhoneNumberorNic = async () => {
@@ -131,7 +134,9 @@ function Invoice() {
     setValidationMessage("");
 
     try {
-      const res = await axios.get(`http://localhost:8085/getCustomerbyPhoneNumberOrNic/${phoneNumberorNic}`);
+      const res = await axios.get(
+        `http://localhost:8085/getCustomerbyPhoneNumberOrNic/${phoneNumberorNic}`
+      );
       const data = res.data;
 
       if (Array.isArray(data) && data.length > 0) {
@@ -192,15 +197,31 @@ function Invoice() {
   };
 
   const handleInvoiceSearch = async (invoiceIdSearch) => {
+    clearObject();
     try {
       console.log(invoiceIdSearch);
-      await axios
-        .get(`http://localhost:8085/invoiceDataRetrieve/${invoiceIdSearch}`)
-        .then((res) => {
-          console.log(res.data);
-        });
+      const response = await axios.get(
+        `http://localhost:8085/invoiceDataRetrieve/${invoiceIdSearch}`
+      );
+
+      updateValue("advance",response.data.advance)
+      response.data.payments.forEach((payment) => {
+        // Pass each payment object to the updateValue function
+        updateValue("payments", payment);
+      });
+      // updateValue("payments",response.data.payments)
+      updateValue("customerDetails",response.data.customerDetails)
+      updateValue("eqdetails",response.data.eqdetails[0])
+      console.log("object",response.data.eqdetails)
+      if (response.status === 200) {
+        console.log("Invoice details:", response.data);
+      } else if (response.status == 404) {
+        console.log("Invoice not found");
+      } else {
+        console.log("Unexpected response status:", response.status);
+      }
     } catch (error) {
-      console.log("handleSearch Createinvoice error", error);
+      console.log("Error:", error);
     }
   };
 
@@ -313,20 +334,23 @@ function Invoice() {
                 sx={{
                   display: "flex",
                   width: "35%",
-                  flexDirection:"column",
+                  flexDirection: "column",
                   justifyContent: "start",
                   alignItems: "end",
-                  mr:2,
-                  pt:5,
-                  gap:8
+                  mr: 2,
+                  pt: 5,
+                  gap: 8,
                 }}
               >
-                
                 <FormLabel sx={{ fontSize: "12px" }}> </FormLabel>
                 <FormLabel sx={{ fontSize: "15px" }}>Customer Name</FormLabel>
-                <FormLabel sx={{ fontSize: "15px" }}>Customer Address</FormLabel>
+                <FormLabel sx={{ fontSize: "15px" }}>
+                  Customer Address
+                </FormLabel>
                 <FormLabel sx={{ fontSize: "15px" }}>Customer NIC </FormLabel>
-                <FormLabel sx={{ fontSize: "15px" }}>Customer Phone number</FormLabel>
+                <FormLabel sx={{ fontSize: "15px" }}>
+                  Customer Phone number
+                </FormLabel>
               </Box>
               <Box
                 sx={{
@@ -394,7 +418,7 @@ function Invoice() {
                   <TextField
                     fullWidth
                     disabled
-                    value={data.cus_fname}
+                    value={invoiceObject.customerDetails.cus_fname}
                     label=""
                     variant="outlined"
                   />
@@ -403,16 +427,12 @@ function Invoice() {
                   <TextField
                     fullWidth
                     disabled
-                    value={`${data.cus_address1}  ${data.cus_address2}`}
+                    value={`${invoiceObject.customerDetails.cus_address1}  ${invoiceObject.customerDetails.cus_address2}`}
                     variant="outlined"
                   />
                 </Box>
                 <Box sx={{ display: "flex", gap: 4 }}>
-                  <TextField
-                    disabled
-                    value={data.nic}
-                    variant="outlined"
-                  />
+                  <TextField disabled value={invoiceObject.customerDetails.nic} variant="outlined" />
                   <IdCardStatus />
                 </Box>
                 <Box>
@@ -420,7 +440,7 @@ function Invoice() {
                     fullWidth
                     disabled
                     sx={{}}
-                    value={data.cus_phone_number}
+                    value={invoiceObject.customerDetails.cus_phone_number}
                     id="outlined-basic"
                     label=""
                     variant="outlined"
@@ -430,8 +450,8 @@ function Invoice() {
                   <Button
                     customvariant="custom"
                     variant="contained"
-                    onClick={handleProceedPayment
-                    }>
+                    onClick={handleProceedPayment}
+                  >
                     Payments
                   </Button>
                 </Box>

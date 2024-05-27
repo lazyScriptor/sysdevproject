@@ -35,12 +35,14 @@ export default function InvoicePaymentsTable() {
   const handleDelete = (payId) => {
     // Filter out the payment with the corresponding payId
     const updatedPayments = invoiceObject.payments.filter(
-      (payment) => payment.payId !== payId
+      (payment) => payment.invpay_payment_id !== payId
     );
-
+    setInvoiceObject((prevInvoiceObject) => ({
+      ...prevInvoiceObject,
+      payments: updatedPayments,
+    }));
     // Update the invoiceObject state with the filtered array
-    setPaymentArray(updatedPayments);
-    updateValue("payments", updatedPayments);
+
   };
 
   const handleDeleteAdvance = () => {
@@ -51,7 +53,11 @@ export default function InvoicePaymentsTable() {
   const emptyRows = 5 - paymentArray.length;
 
   return (
-    <TableContainer component={Paper} sx={{ mt: 2,borderRadius:4 }}elevation={4}>
+    <TableContainer
+      component={Paper}
+      sx={{ mt: 2, borderRadius: 4 }}
+      elevation={4}
+    >
       <Table stickyHeader sx={{ minWidth: 10 }} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -74,7 +80,9 @@ export default function InvoicePaymentsTable() {
         <TableBody>
           <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
             <TableCell align="center">Advance payment</TableCell>
-            <TableCell align="center">{!!invoiceObject.advance&&invoiceObject.advance}</TableCell>
+            <TableCell align="center">
+              {!!invoiceObject.advance && invoiceObject.advance}
+            </TableCell>
             <TableCell align="center">
               {editToggle && (
                 <button
@@ -87,18 +95,18 @@ export default function InvoicePaymentsTable() {
             </TableCell>
           </TableRow>
 
-          {paymentArray.map((payment, index) => (
+          {invoiceObject.payments.map((payment, index) => (
             <TableRow
               key={index}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
-              <TableCell align="center">{payment.payId}</TableCell>
-              <TableCell align="center">{payment.payment}</TableCell>
+              <TableCell align="center">{payment.invpay_payment_id}</TableCell>
+              <TableCell align="center">{payment.invpay_amount}</TableCell>
               <TableCell align="center">
                 {editToggle && (
                   <button
                     style={deleteButtonStyles}
-                    onClick={() => handleDelete(payment.payId)}
+                    onClick={() => handleDelete(payment.invpay_payment_id)}
                   >
                     <DeleteTwoToneIcon sx={{ color: "white" }} />
                   </button>
@@ -109,8 +117,13 @@ export default function InvoicePaymentsTable() {
 
           {/* Add empty rows if paymentArray has less than 4 items */}
           {Array.from({ length: emptyRows }).map((_, index) => (
-            <TableRow key={`empty-${index}`} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-              <TableCell align="center" colSpan={3}>&nbsp;</TableCell>
+            <TableRow
+              key={`empty-${index}`}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              <TableCell align="center" colSpan={3}>
+                &nbsp;
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

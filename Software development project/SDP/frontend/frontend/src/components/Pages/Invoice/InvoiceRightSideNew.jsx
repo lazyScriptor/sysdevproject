@@ -99,6 +99,8 @@ function InvoiceRightSideNew() {
     console.log("Eqobj", eqObject);
   }, [eqObject]);
 
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const validationErrors = {};
@@ -116,13 +118,17 @@ function InvoiceRightSideNew() {
       setIdErrors(validationErrors);
     }
     if (Object.keys(validationErrors).length === 0) {
-      updateEqObject({ ...eqFullDetail, quantity: formData.quantity });
-      eqFullDetail.quantity = parseInt(formData.quantity);
+      updateEqObject({ ...eqFullDetail, inveq_borrowqty: formData.quantity });
+      eqFullDetail.inveq_borrowqty = parseInt(formData.quantity);
       setAddButtonDisable(true);
       updateValue("eqdetails", eqFullDetail);
     }
   };
 
+
+
+
+  
   return (
     <Paper
       sx={{ height: "542px", width: "100%", p: 4, borderRadius: 4 }}

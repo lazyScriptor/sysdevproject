@@ -173,8 +173,8 @@ function InvoiceDetailsWindowDown() {
                     sx={{ textAlign: "end" }}
                   >
                     {`${index + 1}) `}
-                    {item.payment && item.payment}
-                    {item.payment && " LKR"}
+                    {item.invpay_amount && item.invpay_amount}
+                    {item.invpay_amount && " LKR"}
                   </Typography>
                 ))}
             </Box>

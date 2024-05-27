@@ -75,20 +75,18 @@ export function PaymentForm() {
   const { setPaymentArray, updateValue, invoiceObject } =
     useContext(InvoiceContext);
 
+  const generatePaymentId = (invoiceId, amount) => {
+    const date = new Date();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2); // Month (zero-padded)
+    const day = ("0" + date.getDate()).slice(-2); // Date (zero-padded)
+    const milliseconds = ("00" + date.getMilliseconds()).slice(-3); // Milliseconds (zero-padded)
+    const amountFormatted = amount.toFixed(2).replace(".", "").padStart(5, "0"); // Amount formatted as 5-digit number
 
+    const uniquePart = uuidv4().slice(0, 3); // Using part of a UUID for additional uniqueness
 
-    const generatePaymentId = (invoiceId, amount) => {
-      const date = new Date();
-      const month = ("0" + (date.getMonth() + 1)).slice(-2); // Month (zero-padded)
-      const day = ("0" + date.getDate()).slice(-2); // Date (zero-padded)
-      const milliseconds = ("00" + date.getMilliseconds()).slice(-3); // Milliseconds (zero-padded)
-      const amountFormatted = amount.toFixed(2).replace(".", "").padStart(5, "0"); // Amount formatted as 5-digit number
+    return `${invoiceId}${month}${day}${milliseconds}${amountFormatted}${uniquePart}`;
+  };
 
-      const uniquePart = uuidv4().slice(0, 3); // Using part of a UUID for additional uniqueness
-    
-      return `${invoiceId}${month}${day}${milliseconds}${amountFormatted}${uniquePart}`;
-    };
-    
   const schema = yup.object().shape({
     payment: yup
       .number()
@@ -106,24 +104,26 @@ export function PaymentForm() {
   });
 
   const onSubmit = (data) => {
-    console.log("Payment data:", data.payment);
-    setPaymentArray((prev) => {
-      const paymentId = generatePaymentId(
-        invoiceObject.InvoiceID,
-        data.payment
-      );
-      console.log(paymentId); // Output: 12324051815075-uuid
-      const updatedArray = [
-        ...prev,
-        {
-          payId: paymentId,
-          payment: data.payment,
-        },
-      ];
-      updateValue("payments", updatedArray);
-      return updatedArray; // Return the updated array to update the state
-    });
+    // Generate the payment ID based on the InvoiceID and payment data
+    const paymentId = generatePaymentId(invoiceObject.InvoiceID, data.payment);
+  
+    // Create the new payment object
+    const newPayment = {
+      invpay_payment_id: paymentId,
+      invpay_payment_date: new Date(), // Current date and time
+      invpay_amount: data.payment,
+    };
+  
+    // Update the payments array in the invoiceObject context
+    updateValue("payments", newPayment);
+  
+    // // Update the local payment array state
+    // setPaymentArray((prev) => {
+    //   const updatedArray = [...prev, newPayment];
+    //   return updatedArray;
+    // });
   };
+  
   return (
     <>
       <form
