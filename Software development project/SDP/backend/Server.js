@@ -48,22 +48,6 @@ app.get("/users", async (req, res) => {
   }
 });
 
-const verifyJWT = (req, res, next) => {
-  const token = req.headers["x-access-token"];
-  if (!token) {
-    res.json({ auth: false, message: "failed" });
-  } else {
-    jwt.verify(token, "jwtSecret", (err, decoded) => {
-      if (err) {
-        res.json({ auth: false, message: "U failed to authencticate" });
-      } else {
-        req.role = decoded.userRole;
-        console.log("veriy jwt else part ", req.role);
-        next();
-      }
-    });
-  }
-};
 
 const verifyAdmin = (req, res, next) => {
   const token = req.headers["x-access-token"];
@@ -87,6 +71,22 @@ const verifyAdmin = (req, res, next) => {
       }
     }
   });
+};
+const verifyJWT = (req, res, next) => {
+  const token = req.headers["x-access-token"];
+  if (!token) {
+    res.json({ auth: false, message: "failed" });
+  } else {
+    jwt.verify(token, "jwtSecret", (err, decoded) => {
+      if (err) {
+        res.json({ auth: false, message: "U failed to authencticate" });
+      } else {
+        req.role = decoded.userRole;
+        console.log("veriy jwt else part ", req.role);
+        next();
+      }
+    });
+  }
 };
 
 app.get("/isUserAuth", verifyJWT, (req, res) => {
@@ -117,6 +117,7 @@ app.get("/loginValidate", async (req, res) => {
     return res.json({ auth: false, message: "express failed auth false" });
   }
 });
+
 
 app.get("/customers", async (req, res) => {
   try {

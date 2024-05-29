@@ -35,19 +35,10 @@ function DasboardMain() {
 
   return (
     <>
-
       <BackgroundStyleNew
         title={"Dashboard"}
         subTitle={"This is the dashboard page"}
-      >
-        {userRole === "admin" ? (
-          <>
-            <h1>yeeess: {userRole}</h1>
-          </>
-        ) : (
-          "noo"
-        )}
-      </BackgroundStyleNew>
+      ></BackgroundStyleNew>
     </>
   );
 }

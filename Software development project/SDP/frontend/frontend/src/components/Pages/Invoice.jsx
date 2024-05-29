@@ -75,7 +75,6 @@ function Invoice() {
   }, [invoiceObject]);
   useEffect(() => {
     handleCreateNew();
-
   }, []);
 
   const [data, setData] = useState({
@@ -97,7 +96,6 @@ function Invoice() {
   });
 
   const handleProceedPayment = () => {
-    updateValue("eqdetails", eqObject);
     setBoolvalue(true);
   };
 
@@ -204,15 +202,17 @@ function Invoice() {
         `http://localhost:8085/invoiceDataRetrieve/${invoiceIdSearch}`
       );
 
-      updateValue("advance",response.data.advance)
+      updateValue("advance", response.data.advance);
       response.data.payments.forEach((payment) => {
         // Pass each payment object to the updateValue function
         updateValue("payments", payment);
       });
-      // updateValue("payments",response.data.payments)
-      updateValue("customerDetails",response.data.customerDetails)
-      updateValue("eqdetails",response.data.eqdetails[0])
-      console.log("object",response.data.eqdetails)
+      updateValue("customerDetails", response.data.customerDetails);
+      response.data.eqdetails.forEach((eqdetail) => {
+        // Pass each payment object to the updateValue function
+        updateValue("eqdetails", eqdetail);
+      });
+      console.log("object", response.data.eqdetails);
       if (response.status === 200) {
         console.log("Invoice details:", response.data);
       } else if (response.status == 404) {
@@ -235,6 +235,7 @@ function Invoice() {
           justifyContent: "start",
           Width: "100%",
           minHeight: "100vh",
+          ml: 1,
         }}
       >
         <Box
@@ -427,12 +428,20 @@ function Invoice() {
                   <TextField
                     fullWidth
                     disabled
-                    value={`${invoiceObject.customerDetails.cus_address1}  ${invoiceObject.customerDetails.cus_address2}`}
+                    value={
+                      invoiceObject.customerDetails.cus_address1 == undefined || invoiceObject.customerDetails.cus_address2 == undefined
+                        ? ""
+                        : `${invoiceObject.customerDetails.cus_address1}  ${invoiceObject.customerDetails.cus_address2}`
+                    }
                     variant="outlined"
                   />
                 </Box>
                 <Box sx={{ display: "flex", gap: 4 }}>
-                  <TextField disabled value={invoiceObject.customerDetails.nic} variant="outlined" />
+                  <TextField
+                    disabled
+                    value={invoiceObject.customerDetails.nic}
+                    variant="outlined"
+                  />
                   <IdCardStatus />
                 </Box>
                 <Box>

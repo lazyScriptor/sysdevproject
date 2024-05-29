@@ -24,7 +24,9 @@ export default function InvoiceContextProvider({ children }) {
       idStatus: false,
       eqdetails: [],
       advance: 0,
-      customerDetails: {},
+      customerDetails: {
+        
+      },
       payments: [],
       InvoiceID: 0,
     });

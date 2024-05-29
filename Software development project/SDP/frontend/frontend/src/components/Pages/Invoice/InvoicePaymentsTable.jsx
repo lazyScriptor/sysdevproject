@@ -55,7 +55,7 @@ export default function InvoicePaymentsTable() {
   return (
     <TableContainer
       component={Paper}
-      sx={{ mt: 2, borderRadius: 4 }}
+      sx={{ mt: 3.2, borderRadius: 4 ,height:"430px"}}
       elevation={4}
     >
       <Table stickyHeader sx={{ minWidth: 10 }} aria-label="simple table">
@@ -79,12 +79,12 @@ export default function InvoicePaymentsTable() {
         </TableHead>
         <TableBody>
           <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-            <TableCell align="center">Advance payment</TableCell>
+            <TableCell align="center">{!!invoiceObject.advance && 'Advance payment'}</TableCell>
             <TableCell align="center">
               {!!invoiceObject.advance && invoiceObject.advance}
             </TableCell>
             <TableCell align="center">
-              {editToggle && (
+              {editToggle && !!invoiceObject.advance  && (
                 <button
                   style={deleteButtonStyles}
                   onClick={handleDeleteAdvance}

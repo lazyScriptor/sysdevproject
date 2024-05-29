@@ -119,7 +119,7 @@ function InvoiceDetailsWindowDown() {
           justifyContent: "start",
           p: 3,
           borderRadius: "0px 0px 12px 12px",
-          height: "100%",
+          height: "390px",
         }}
       >
         {/* <Box width="60%" sx={{display:"flex",flexDirection:"column",gap:3}}>
@@ -185,7 +185,7 @@ function InvoiceDetailsWindowDown() {
       <Button
         fullWidth
         color="success"
-        variant="outlined"
+        variant="contained"
         sx={{ mt: 2, borderRadius: 0, height: "60px" }}
         onClick={handleInvoiceSubmit}
       >

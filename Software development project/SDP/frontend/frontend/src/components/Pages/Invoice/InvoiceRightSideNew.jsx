@@ -11,6 +11,8 @@ import { Box, Stack } from "@mui/system";
 import axios from "axios";
 import { InvoiceContext } from "../../../Contexts/Contexts";
 import YoutubeSearchedForIcon from "@mui/icons-material/YoutubeSearchedFor";
+import MousePopOver from "../../SubComponents/AlertComponents/MousePopOver";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 function InvoiceRightSideNew() {
   const [idFormData, setIdFormData] = useState({
@@ -21,10 +23,12 @@ function InvoiceRightSideNew() {
     quantity: "",
   });
   const [idErrors, setIdErrors] = useState({});
+  const [eqErrors, setEqErrors] = useState({});
   const [eqQuantity, setEqQuantity] = useState(0);
   const [eqName, setEqName] = useState("");
   const [eqFullDetail, setEqFullDetail] = useState("");
   const [addButtonDisable, setAddButtonDisable] = useState(false);
+  const [stockTextColor, setStockTextColor] = useState("black");
 
   const {
     responseManageToogle,
@@ -52,12 +56,17 @@ function InvoiceRightSideNew() {
   };
 
   const handleReset = () => {
+    setIdErrors({});
+    setEqErrors({});
+    setStockTextColor("black");
     setEqName("");
     setEqQuantity("");
     setEqObject([]);
+    setFormData({ name: "", quantity: "" });
   };
 
   const handleSubmitId = async (e) => {
+    setEqErrors({});
     e.preventDefault();
     const validationErrors = {};
 
@@ -69,7 +78,6 @@ function InvoiceRightSideNew() {
     setIdErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log(idFormData);
       try {
         // Fetching equipment details by ID
         const res = await axios.get(
@@ -77,8 +85,6 @@ function InvoiceRightSideNew() {
         );
 
         const equipment = res.data[0];
-        console.log(res.data[0]);
-
         if (res.data.length > 0) {
           // Setting state variables with fetched data
           setEqQuantity(
@@ -87,6 +93,9 @@ function InvoiceRightSideNew() {
           setEqName(equipment.eq_name);
           setEqFullDetail(equipment);
           setAddButtonDisable(false);
+        } else {
+          setEqName("");
+          setEqQuantity(0);
         }
       } catch (error) {
         // Error handling
@@ -96,18 +105,22 @@ function InvoiceRightSideNew() {
   };
 
   useEffect(() => {
-    console.log("Eqobj", eqObject);
-  }, [eqObject]);
-
-
+    if (formData.quantity > eqQuantity) {
+      setStockTextColor("red");
+    } else {
+      setStockTextColor("black");
+    }
+  }, [formData.quantity, eqQuantity]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const validationErrors = {};
     if (!idFormData.id.trim()) {
-      validationErrors.id = "Id is required";
+      validationErrors.id = "ID is required";
     }
-    if (!formData.quantity.trim()) {
+    if (!eqName.trim()) {
+      validationErrors.quantity = "Please search an equipment";
+    } else if (!formData.quantity.trim()) {
       validationErrors.quantity = "Quantity is required";
     } else if (!/^\d+$/.test(formData.quantity.trim())) {
       validationErrors.quantity = "Quantity should be a number";
@@ -115,8 +128,9 @@ function InvoiceRightSideNew() {
       validationErrors.quantity = "Quantity should not exceed the stock limit";
     } else if (formData.quantity <= 0) {
       validationErrors.quantity = "Quantity should be greater than zero";
-      setIdErrors(validationErrors);
     }
+    setEqErrors(validationErrors);
+
     if (Object.keys(validationErrors).length === 0) {
       updateEqObject({ ...eqFullDetail, inveq_borrowqty: formData.quantity });
       eqFullDetail.inveq_borrowqty = parseInt(formData.quantity);
@@ -125,13 +139,9 @@ function InvoiceRightSideNew() {
     }
   };
 
-
-
-
-  
   return (
     <Paper
-      sx={{ height: "542px", width: "100%", p: 4, borderRadius: 4 }}
+      sx={{ height: "581px", width: "100%", p: 4, borderRadius: 4 }}
       elevation={3}
     >
       <form noValidate onSubmit={handleSubmitId}>
@@ -142,7 +152,7 @@ function InvoiceRightSideNew() {
           <FormLabel
             sx={{
               pt: 2,
-              pr:2,
+              pr: 2,
               width: "30%",
               display: "flex",
               justifyContent: "end",
@@ -152,12 +162,12 @@ function InvoiceRightSideNew() {
             ID
           </FormLabel>
           <TextField
-            sx={{}}
             id="id"
             label="ID"
             name="id"
             type="text"
             onChange={handleIdChange}
+            error={!!idErrors.id}
             helperText={idErrors.id && idErrors.id}
           />
           <Button
@@ -179,7 +189,7 @@ function InvoiceRightSideNew() {
             <FormLabel
               sx={{
                 pt: 2,
-                pr:2,
+                pr: 2,
                 width: "40%",
                 display: "flex",
                 justifyContent: "end",
@@ -192,18 +202,18 @@ function InvoiceRightSideNew() {
               disabled={true}
               fullWidth
               id="name"
-              label={eqName}
+              label={eqName || "Name"}
               name="name"
               type="text"
+              value={eqName}
               onChange={handleChange}
             />
-            {!idErrors.id && <span>{idErrors.name}</span>}
           </Box>
           <Box sx={{ display: "flex", height: "80px" }}>
             <FormLabel
               sx={{
                 pt: 2,
-                pr:2,
+                pr: 2,
                 width: "40%",
                 display: "flex",
                 justifyContent: "end",
@@ -219,24 +229,36 @@ function InvoiceRightSideNew() {
               name="quantity"
               type="number"
               onChange={handleChange}
-              helperText={idErrors.quantity && idErrors.quantity}
+              error={!!eqErrors.quantity}
+              helperText={eqErrors.quantity && eqErrors.quantity}
             />
           </Box>
-          <Typography textAlign={"left"}>
+          <Typography sx={{backgroundColor:(theme)=>theme.palette.primary[50],p:1,borderRadius:3}} variant="body2" color={stockTextColor} textAlign={"left"}>
             Remaining Stock: {eqQuantity}
           </Typography>
           <Box
             sx={{ display: "flex", justifyContent: "space-evenly", pt: 2.5 }}
           >
-            <Button
-              disabled={addButtonDisable}
-              variant="contained"
-              customvariant="custom"
-              type="submit"
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              alignItems={"center"}
             >
-              Add
-            </Button>
-
+              <Button
+                disabled={addButtonDisable}
+                variant="contained"
+                customvariant="custom"
+                type="submit"
+                >
+                Add
+              </Button>
+                {addButtonDisable && (
+                  <MousePopOver 
+                    message={<InfoOutlinedIcon fontSize="2" sx={{ mr: 1 }} />}
+                    popOverContent={`Search and equipment first`}
+                  />
+                )}
+            </Box>
             <Button variant="contained" color="warning" customvariant="custom">
               Handover
             </Button>

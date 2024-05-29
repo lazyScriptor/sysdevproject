@@ -18,10 +18,7 @@ function Customers() {
     <>
       <Box id="main-body">
         <Box id="body">
-          
           <CustomerTableNew/>
-
-         
         </Box>
       </Box>
     </>

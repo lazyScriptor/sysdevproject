@@ -42,9 +42,21 @@ function Row(props) {
   };
 
   const highlightText = (text, highlight) => {
-    if (typeof text !== "string") return text; // Ensure text is a string
-    if (!highlight) return text;
+    console.log("Text:", text);
+    console.log("Highlight:", highlight);
+    
+    if (!highlight || highlight.trim() === "") {
+      console.log("No highlight or empty, returning original text");
+      return text; // Return original text if no highlight value or if highlight is empty
+    }
+    if (typeof text !== "string") {
+      console.log("Text is not a string, returning original text");
+      return text; // Ensure text is a string
+    }
+  
     const parts = text.split(new RegExp(`(${highlight})`, "gi"));
+    console.log("Parts:", parts);
+    
     return parts.map((part, index) =>
       part.toLowerCase() === highlight.toLowerCase() ? (
         <span key={index} style={{ backgroundColor: "yellow" }}>
@@ -55,6 +67,8 @@ function Row(props) {
       )
     );
   };
+  
+  
 
   return (
     <React.Fragment>

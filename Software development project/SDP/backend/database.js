@@ -413,9 +413,10 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
       console.log("This is the payID", payment.payId);
       await pool.query(
         "INSERT INTO invoicePayments (invpay_payment_id, invpay_inv_id ,	invpay_amount) VALUES (?, ?, ?)",
-        [payment.payId, InvoiceCompleteDetail.InvoiceID, payment.payment]
+        [payment.invpay_payment_id, InvoiceCompleteDetail.InvoiceID, payment.invpay_amount]
       );
     }
+    
   } catch (error) {
     // Handle duplicate entry error
     if (error.code === "ER_DUP_ENTRY") {
@@ -427,10 +428,10 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
           await pool.query(
             "UPDATE invoicePayments SET invpay_payment_id = ?, invpay_inv_id = ? ,invpay_amount = ? WHERE cusinv_cusid = ? AND invpay_payment_id = ?",
             [
-              payment.payId,
+              payment.invpay_payment_id,
               InvoiceCompleteDetail.InvoiceID,
-              payment.payment,
-              payment.payId,
+              payment.invpay_amount,
+              payment.invpay_payment_id,
             ]
           );
         }
@@ -447,7 +448,7 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
     for (const equipment of InvoiceCompleteDetail.eqdetails) {
       await pool.query(
         "INSERT INTO invoiceEquipment (inveq_eqid, inveq_invid,inveq_borrowqty) VALUES (?, ?,?)",
-        [equipment.eq_id, InvoiceCompleteDetail.InvoiceID, equipment.quantity]
+        [equipment.eq_id, InvoiceCompleteDetail.InvoiceID, equipment.inveq_borrowqty]
       );
     }
   } catch (error) {
