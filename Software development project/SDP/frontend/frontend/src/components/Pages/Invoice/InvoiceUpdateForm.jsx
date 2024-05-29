@@ -1,9 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
-import "../Stylings/rootstyles.css";
-import NewCustomerForm from "./NewCustomerForm.jsx";
+import "../../Stylings/rootstyles.css";
 import {
   Box,
   Button,
+  Dialog,
   FormLabel,
   Paper,
   TextField,
@@ -16,22 +16,53 @@ import {
   InvoiceContext,
   PopupContext,
   SwalContext,
-} from "../../Contexts/Contexts.jsx";
-import OverlayDialogBox from "../SubComponents/OverlayDialogBox.jsx";
+} from "../../../Contexts/Contexts.jsx";
+import OverlayDialogBox from "../../SubComponents/OverlayDialogBox.jsx";
 import axios from "axios";
-import InvoiceRightSide from "./Invoice/InvoiceRightSide.jsx";
-import InvoiceTable from "../SubComponents/InvoiceTable.jsx";
-import IdCardStatus from "./Invoice/IdCardStatus.jsx";
-import InvoiceDetailsWindowUp from "./Invoice/InvoiceDetailsWindowUp.jsx";
-import InvoiceDetailsWindowDown from "./Invoice/InvoiceDetailsWindowDown.jsx";
-import Payments from "./Invoice/Payments.jsx";
+import InvoiceRightSide from "./../Invoice/InvoiceRightSide.jsx";
+import InvoiceTable from "../../SubComponents/InvoiceTable.jsx";
+import IdCardStatus from "./../Invoice/IdCardStatus.jsx";
+import InvoiceDetailsWindowUp from "./../Invoice/InvoiceDetailsWindowUp.jsx";
+import InvoiceDetailsWindowDown from "./../Invoice/InvoiceDetailsWindowDown.jsx";
+import Payments from "./../Invoice/Payments.jsx";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import InvoicePaymentsTable from "./Invoice/InvoicePaymentsTable.jsx";
-import InvoiceRightSideNew from "./Invoice/InvoiceRightSideNew.jsx";
-import InvoiceUpdateForm from "./Invoice/InvoiceUpdateForm.jsx";
+import InvoicePaymentsTable from "./../Invoice/InvoicePaymentsTable.jsx";
+import InvoiceRightSideNew from "./../Invoice/InvoiceRightSideNew.jsx";
+import Slide from "@mui/material/Slide";
 
-function Invoice() {
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export default function InvoiceUpdateForm({
+  setIsInvoiceUpdateFormShow,
+  isInvoiceUpdateFormShow,
+}) {
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setIsInvoiceUpdateFormShow(false);
+  };
+  return (
+    <Dialog
+      sx={{ "& .MuiDialog-paper": { width: "95%", maxWidth: "none" ,borderRadius:5} }} // Set your desired width here
+      open={isInvoiceUpdateFormShow}
+      TransitionComponent={Transition}
+      onClose={handleClose}
+    >
+      <Box>
+        <FormComponents />
+      </Box>
+    </Dialog>
+  );
+}
+function FormComponents() {
   const {
     fullDetailsEquipmentArray,
     setFullDetailsEquipmentArray,
@@ -58,7 +89,7 @@ function Invoice() {
   );
   const [invoiceIdSearch, setInvoiceIdSearch] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
-  const [updateBtnStatus, setUpdateBtnStatus] = useState(false);
+  const [invoiceSearchBtnStatus, setInvoiceSearchBtnStatus] = useState(false);
 
   useEffect(() => {}, [invoiceObject]);
   useEffect(() => {
@@ -84,6 +115,7 @@ function Invoice() {
   });
 
   const handleProceedPayment = () => {
+    setInvoiceSearchBtnStatus(false);
     setBoolvalue(true);
   };
 
@@ -176,7 +208,6 @@ function Invoice() {
         console.log(res.data);
         setInvoiceId(res.data);
         updateValue("InvoiceID", res.data);
-        updateValue("createdDate",currentDate)
       });
     } catch (error) {
       console.log("handleSearch Createinvoice error", error);
@@ -184,30 +215,28 @@ function Invoice() {
   };
 
   const handleInvoiceSearch = async (invoiceIdSearch) => {
+    setBoolvalue(true);
+    setInvoiceSearchBtnStatus(true);
     clearObject();
-
     try {
       console.log(invoiceIdSearch);
       const response = await axios.get(
         `http://localhost:8085/invoiceDataRetrieve/${invoiceIdSearch}`
       );
 
+      updateValue("advance", response.data.advance);
+      response.data.payments.forEach((payment) => {
+        // Pass each payment object to the updateValue function
+        updateValue("payments", payment);
+      });
+      updateValue("customerDetails", response.data.customerDetails);
+      response.data.eqdetails.forEach((eqdetail) => {
+        // Pass each payment object to the updateValue function
+        updateValue("eqdetails", eqdetail);
+      });
+      console.log("object", response.data.eqdetails);
       if (response.status === 200) {
         console.log("Invoice details:", response.data);
-        updateValue("advance", response.data.advance);
-        updateValue("createdDate",response.data.createdDate)
-        response.data.payments.forEach((payment) => {
-          // Pass each payment object to the updateValue function
-          updateValue("payments", payment);
-        });
-        updateValue("customerDetails", response.data.customerDetails);
-        response.data.eqdetails.forEach((eqdetail) => {
-          // Pass each payment object to the updateValue function
-          updateValue("eqdetails", eqdetail);
-        });
-        updateValue("InvoiceID",response.data.InvoiceID)
-        console.log("object", response.data.eqdetails);
-        setUpdateBtnStatus(true);
       } else if (response.status == 404) {
         console.log("Invoice not found");
       } else {
@@ -281,8 +310,8 @@ function Invoice() {
               Create new
             </Button>
             <Box>
-              <h5>Invoice ID: {invoiceObject.InvoiceID}</h5>
-              <h6>{invoiceObject.createdDate}</h6>
+              <h5>Invoice ID: {invoiceId}</h5>
+              <h6>{currentDate}</h6>
             </Box>
           </Box>
         </Box>
@@ -526,23 +555,13 @@ function Invoice() {
               width: "23.6%",
             }}
           >
-            <InvoiceDetailsWindowDown
-              updateBtnStatus={updateBtnStatus}
-              setUpdateBtnStatus={setUpdateBtnStatus}
-            />
+            <InvoiceDetailsWindowDown />
           </Box>
         </Box>
       </Box>
       <OverlayDialogBox>
-        <Payments />
+        {invoiceSearchBtnStatus == true ? <InvoiceUpdateForm /> : <Payments />}
       </OverlayDialogBox>
-      {/* {isInvoiceUpdateFormShow && (
-        <InvoiceUpdateForm
-          setIsInvoiceUpdateFormShow={setIsInvoiceUpdateFormShow} isInvoiceUpdateFormShow={isInvoiceUpdateFormShow}
-        />
-      )} */}
     </>
   );
 }
-
-export default Invoice;

@@ -334,37 +334,41 @@ export async function updateCustomerDetails(bodydata) {
 }
 export async function getInvoiceId() {
   try {
-    await pool.query(
-      "INSERT INTO invoice (inv_advance,inv_special_message,inv_idcardstatus) VALUES (?,?,?)",
-      [0, "", 0],
-      (error, results, fields) => {
-        if (error) {
-          console.error("Error creating new statement:", error);
-          return;
-        }
-        console.log("New statement created successfully!");
-      }
-    );
-
     const [invoiceId] = await pool.query(
       "SELECT Min(inv_id) AS largest_invoice_number FROM invoice WHERE inv_updatedstatus = 0"
     );
-    console.log("back", invoiceId[0].largest_invoice_number);
-    return invoiceId[0].largest_invoice_number;
+    if (invoiceId[0].largest_invoice_number == null) {
+      await pool.query(
+        "INSERT INTO invoice (inv_advance,inv_special_message,inv_idcardstatus) VALUES (?,?,?)",
+        [0, "", 0],
+        (error, results, fields) => {
+          if (error) {
+            console.error("Error creating new statement:", error);
+            return;
+          }
+          console.log("New statement created successfully!");
+        }
+      );
+    }
+    const [newInvoiceId] = await pool.query(
+      "SELECT Min(inv_id) AS largest_invoice_number FROM invoice WHERE inv_updatedstatus = 0"
+    );
+    return newInvoiceId[0].largest_invoice_number;
   } catch (error) {
     console.error("Error in the updateCustomerDetails db connection", error);
   }
 }
 
-export async function updateInvoiceDetails(InvoiceCompleteDetail) {
+export async function createInvoiceDetails(InvoiceCompleteDetail) {
   // Update invoice details
   try {
     await pool.query(
-      "UPDATE invoice SET inv_advance = ?, inv_special_message = ?, inv_idcardstatus = ?, inv_updatedstatus = ? WHERE inv_id = ?",
+      "UPDATE invoice SET inv_advance = ?, inv_special_message = ?, inv_idcardstatus = ?,inv_cusid=?, inv_updatedstatus = ? WHERE inv_id = ?",
       [
         InvoiceCompleteDetail.advance,
         "", // Empty string for inv_special_message
-        InvoiceCompleteDetail.idStatus && 1, // Assuming idStatus is a boolean value
+        InvoiceCompleteDetail.iDstatus,
+        InvoiceCompleteDetail.customerDetails.cus_id, // Assuming idStatus is a boolean value
         1,
         InvoiceCompleteDetail.InvoiceID,
       ]
@@ -374,37 +378,37 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
   }
 
   // Update customer invoice details
-  try {
-    await pool.query(
-      "INSERT INTO customerInvoice (cusinv_cusid, cusinv_invid) VALUES (?, ?)",
-      [
-        InvoiceCompleteDetail.customerDetails.cus_id,
-        InvoiceCompleteDetail.InvoiceID,
-      ]
-    );
-  } catch (error) {
-    // Handle duplicate entry error
-    if (error.code === "ER_DUP_ENTRY") {
-      console.log(
-        "Duplicate entry detected. Attempting to update existing record..."
-      );
-      try {
-        await pool.query(
-          "UPDATE customerInvoice SET cusinv_cusid = ?, cusinv_invid = ? WHERE cusinv_cusid = ? AND cusinv_invid = ?",
-          [
-            InvoiceCompleteDetail.customerDetails.cus_id,
-            InvoiceCompleteDetail.InvoiceID,
-            InvoiceCompleteDetail.customerDetails.cus_id,
-            InvoiceCompleteDetail.InvoiceID,
-          ]
-        );
-      } catch (updateError) {
-        console.log("Error occurred in updating existing record:", updateError);
-      }
-    } else {
-      console.log("Error occurred in backend invoice details update:", error);
-    }
-  }
+  // try {
+  //   await pool.query(
+  //     "INSERT INTO customerInvoice (cusinv_cusid, cusinv_invid) VALUES (?, ?)",
+  //     [
+  //       InvoiceCompleteDetail.customerDetails.cus_id,
+  //       InvoiceCompleteDetail.InvoiceID,
+  //     ]
+  //   );
+  // } catch (error) {
+  //   // Handle duplicate entry error
+  //   if (error.code === "ER_DUP_ENTRY") {
+  //     console.log(
+  //       "Duplicate entry detected. Attempting to update existing record..."
+  //     );
+  //     try {
+  //       await pool.query(
+  //         "UPDATE customerInvoice SET cusinv_cusid = ?, cusinv_invid = ? WHERE cusinv_cusid = ? AND cusinv_invid = ?",
+  //         [
+  //           InvoiceCompleteDetail.customerDetails.cus_id,
+  //           InvoiceCompleteDetail.InvoiceID,
+  //           InvoiceCompleteDetail.customerDetails.cus_id,
+  //           InvoiceCompleteDetail.InvoiceID,
+  //         ]
+  //       );
+  //     } catch (updateError) {
+  //       console.log("Error occurred in updating existing record:", updateError);
+  //     }
+  //   } else {
+  //     console.log("Error occurred in backend invoice details update:", error);
+  //   }
+  // }
 
   //Update invoice payment table
 
@@ -413,10 +417,13 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
       console.log("This is the payID", payment.payId);
       await pool.query(
         "INSERT INTO invoicePayments (invpay_payment_id, invpay_inv_id ,	invpay_amount) VALUES (?, ?, ?)",
-        [payment.invpay_payment_id, InvoiceCompleteDetail.InvoiceID, payment.invpay_amount]
+        [
+          payment.invpay_payment_id,
+          InvoiceCompleteDetail.InvoiceID,
+          payment.invpay_amount,
+        ]
       );
     }
-    
   } catch (error) {
     // Handle duplicate entry error
     if (error.code === "ER_DUP_ENTRY") {
@@ -448,7 +455,11 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
     for (const equipment of InvoiceCompleteDetail.eqdetails) {
       await pool.query(
         "INSERT INTO invoiceEquipment (inveq_eqid, inveq_invid,inveq_borrowqty) VALUES (?, ?,?)",
-        [equipment.eq_id, InvoiceCompleteDetail.InvoiceID, equipment.inveq_borrowqty]
+        [
+          equipment.eq_id,
+          InvoiceCompleteDetail.InvoiceID,
+          equipment.inveq_borrowqty,
+        ]
       );
     }
   } catch (error) {
@@ -484,18 +495,18 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
 export async function getInvoiceDetails(invoiceIdSearch) {
   try {
     // Fetch customer, invoice, equipment, and additional invoice details
-    const [invoiceCustomerDetails] = await pool.query(
-      `SELECT customer.*, customerInvoice.*, invoiceEquipment.*, equipment.*, invoice.inv_advance, invoice.inv_special_message, invoice.inv_idcardstatus 
-       FROM customerInvoice 
-       LEFT JOIN customer ON customer.cus_id = customerInvoice.cusinv_cusid 
-       LEFT JOIN invoiceEquipment ON customerInvoice.cusinv_invid = invoiceEquipment.inveq_invid 
-       LEFT JOIN equipment ON invoiceEquipment.inveq_eqid = equipment.eq_id
-       LEFT JOIN invoice ON customerInvoice.cusinv_invid = invoice.inv_id
-       WHERE customerInvoice.cusinv_invid = ?`,
+    // Fetch customer, invoice, equipment, and additional invoice details
+    const [invoiceDetails] = await pool.query(
+      `SELECT customer.*, invoice.*, invoiceEquipment.*, equipment.*, invoice.inv_advance, invoice.inv_special_message, invoice.inv_idcardstatus 
+   FROM invoice
+   LEFT JOIN customer ON customer.cus_id = invoice.inv_cusid
+   LEFT JOIN invoiceEquipment ON invoice.inv_id = invoiceEquipment.inveq_invid
+   LEFT JOIN equipment ON invoiceEquipment.inveq_eqid = equipment.eq_id
+   WHERE invoice.inv_id = ?`,
       [invoiceIdSearch]
     );
 
-    if (invoiceCustomerDetails.length > 0) {
+    if (invoiceDetails.length > 0) {
       const invoiceObject = {
         customerDetails: {},
         createdDate: null,
@@ -506,18 +517,32 @@ export async function getInvoiceDetails(invoiceIdSearch) {
         idStatus: null,
       };
 
-      const customerDetails = Object.keys(invoiceCustomerDetails[0])
+      const customerDetails = Object.keys(invoiceDetails[0])
         .filter((key) => key.startsWith("cus_") || key === "nic")
         .reduce((obj, key) => {
-          obj[key] = invoiceCustomerDetails[0][key];
+          obj[key] = invoiceDetails[0][key];
           return obj;
         }, {});
 
       invoiceObject.customerDetails = customerDetails;
-      invoiceObject.createdDate = invoiceCustomerDetails[0].cusinv_createddate;
+
+      function dateformatter(date) {
+        const createdDate = new Date(date);
+        const datePart = createdDate.toLocaleDateString("en-GB");
+        const timePart = createdDate.toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+        return `${datePart} ${timePart}`;
+      }
+
+      invoiceObject.createdDate = dateformatter(invoiceDetails[0].inv_createddate)
+
+      invoiceObject.InvoiceID = invoiceIdSearch;
 
       // Extracting equipment details
-      const equipmentDetails = invoiceCustomerDetails.map((record) => ({
+      const equipmentDetails = invoiceDetails.map((record) => ({
         eq_id: record.eq_id,
         eq_name: record.eq_name,
         eq_rental: record.eq_rental,
@@ -541,8 +566,8 @@ export async function getInvoiceDetails(invoiceIdSearch) {
       // Fetch payment details
       const [invoicePayments] = await pool.query(
         `SELECT invpay_payment_id, invpay_payment_date, invpay_amount 
-         FROM invoicePayments 
-         WHERE invpay_inv_id = ?`,
+     FROM invoicePayments 
+     WHERE invpay_inv_id = ?`,
         [invoiceIdSearch]
       );
 
@@ -556,10 +581,10 @@ export async function getInvoiceDetails(invoiceIdSearch) {
       invoiceObject.payments = paymentDetails;
 
       // Adding additional invoice details
-      invoiceObject.advance = invoiceCustomerDetails[0].inv_advance;
+      invoiceObject.advance = invoiceDetails[0].inv_advance;
       invoiceObject.invoiceSpecialmessage =
-        invoiceCustomerDetails[0].inv_special_message;
-      invoiceObject.idStatus = !!invoiceCustomerDetails[0].inv_idcardstatus; // converting to boolean
+        invoiceDetails[0].inv_special_message;
+      invoiceObject.idStatus = !!invoiceDetails[0].inv_idcardstatus; // converting to boolean
 
       return invoiceObject;
     } else {

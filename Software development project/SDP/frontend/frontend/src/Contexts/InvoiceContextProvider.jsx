@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { InvoiceContext } from "./Contexts";
 
 export default function InvoiceContextProvider({ children }) {
-  const [fullDetailsEquipmentArray, setFullDetailsEquipmentArray] = useState([]);
+  const [fullDetailsEquipmentArray, setFullDetailsEquipmentArray] = useState(
+    []
+  );
   const [checkState, setCheckState] = useState(false);
   const [eqObject, setEqObject] = useState([]);
+  const [invoiceSearchBtnStatus, setInvoiceSearchBtnStatus] = useState(false);
   const [invoiceObject, setInvoiceObject] = useState({
     idStatus: false,
     eqdetails: [],
@@ -24,9 +27,7 @@ export default function InvoiceContextProvider({ children }) {
       idStatus: false,
       eqdetails: [],
       advance: 0,
-      customerDetails: {
-        
-      },
+      customerDetails: {},
       payments: [],
       InvoiceID: 0,
     });
@@ -53,7 +54,6 @@ export default function InvoiceContextProvider({ children }) {
       }
     });
   };
-  
 
   const clearValues = () => {
     setInvoiceObject((prevObject) => {
@@ -68,9 +68,9 @@ export default function InvoiceContextProvider({ children }) {
   const updateEqObject = (newValue) => {
     setEqObject((prev) => [...prev, newValue]);
   };
-useEffect(()=>{
-  console.log("context useEffect invoice objetct",invoiceObject)
-},[invoiceObject])
+  useEffect(() => {
+    console.log("context useEffect invoice objetct", invoiceObject);
+  }, [invoiceObject]);
   // useEffect(() => {
   //   if (updateFlag) {
   //     console.log(invoiceObject);
@@ -102,6 +102,8 @@ useEffect(()=>{
         clearPaymentArray,
         paymentArray,
         setPaymentArray,
+        invoiceSearchBtnStatus,
+        setInvoiceSearchBtnStatus,
         clearValues,
         paymentId,
         setPaymentId,

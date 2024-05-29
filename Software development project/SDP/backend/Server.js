@@ -22,12 +22,12 @@ import {
   loginValidate,
   getInvoiceId,
   getInvoiceDetails,
-  updateInvoiceDetails,
   getCustomerBySearchingManyFields,
   setEquipment,
   addEquipment,
   getCustomerbyPhoneNumberOrNic,
   getCustomerbyPhoneNumber,
+  createInvoiceDetails,
 } from "./database.js";
 
 const app = express();
@@ -47,7 +47,6 @@ app.get("/users", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 const verifyAdmin = (req, res, next) => {
   const token = req.headers["x-access-token"];
@@ -117,7 +116,6 @@ app.get("/loginValidate", async (req, res) => {
     return res.json({ auth: false, message: "express failed auth false" });
   }
 });
-
 
 app.get("/customers", async (req, res) => {
   try {
@@ -370,7 +368,7 @@ app.get("/invoiceDataRetrieve/:invoiceIdSearch", async (req, res) => {
 
 app.post("/updateInvoiceDetails", async (req, res) => {
   try {
-    const customerDetails = await updateInvoiceDetails(req.body);
+    const customerDetails = await createInvoiceDetails(req.body);
     return res.json({
       message: `Customer details updated for the customer with id : ${req.body.id}`,
     });

@@ -153,7 +153,7 @@ function InvoiceRightSideNew() {
             sx={{
               pt: 2,
               pr: 2,
-              width: "30%",
+              width: "15%",
               display: "flex",
               justifyContent: "end",
             }}
@@ -190,7 +190,7 @@ function InvoiceRightSideNew() {
               sx={{
                 pt: 2,
                 pr: 2,
-                width: "40%",
+                width: "17%",
                 display: "flex",
                 justifyContent: "end",
               }}
@@ -214,7 +214,7 @@ function InvoiceRightSideNew() {
               sx={{
                 pt: 2,
                 pr: 2,
-                width: "40%",
+                width: "15%",
                 display: "flex",
                 justifyContent: "end",
               }}
@@ -224,8 +224,9 @@ function InvoiceRightSideNew() {
             </FormLabel>
             <TextField
               fullWidth
+              disabled={addButtonDisable}
               id="quantity"
-              label="Enter quantity"
+              label={["remaining : ", eqQuantity || "No equipment found"]}
               name="quantity"
               type="number"
               onChange={handleChange}
@@ -233,7 +234,17 @@ function InvoiceRightSideNew() {
               helperText={eqErrors.quantity && eqErrors.quantity}
             />
           </Box>
-          <Typography sx={{backgroundColor:(theme)=>theme.palette.primary[50],p:1,borderRadius:3}} variant="body2" color={stockTextColor} textAlign={"left"}>
+          <Typography
+            sx={{
+              backgroundColor: (theme) => theme.palette.primary[50],
+              p: 1.3,
+              width: "180px",
+              borderRadius: 3,
+            }}
+            variant="body2"
+            color={stockTextColor}
+            textAlign={"left"}
+          >
             Remaining Stock: {eqQuantity}
           </Typography>
           <Box
@@ -249,15 +260,15 @@ function InvoiceRightSideNew() {
                 variant="contained"
                 customvariant="custom"
                 type="submit"
-                >
+              >
                 Add
               </Button>
-                {addButtonDisable && (
-                  <MousePopOver 
-                    message={<InfoOutlinedIcon fontSize="2" sx={{ mr: 1 }} />}
-                    popOverContent={`Search and equipment first`}
-                  />
-                )}
+              {addButtonDisable && (
+                <MousePopOver
+                  message={<InfoOutlinedIcon fontSize="2" sx={{borderRadius:2,border:"solid 1px" ,color:(theme)=>theme.palette.primary[200],transition:"1900 ease-in-out"}}/>}
+                  popOverContent={`Search an equipment first`}
+                />
+              )}
             </Box>
             <Button variant="contained" color="warning" customvariant="custom">
               Handover

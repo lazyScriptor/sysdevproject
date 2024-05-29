@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { AuthContext } from "./Contexts";
 import { Navigate, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function AuthContextProvider({ children }) {
   const [name, setName] = useState("def");
@@ -9,19 +10,21 @@ function AuthContextProvider({ children }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(
-      "authenticated status ",
-      isAuthenticated,
-      "token status ",
-      !!localStorage.getItem("token")
-    );
-    // // Check if token exists when component mounts
-
-    if (!localStorage.getItem("token")) {
-      setIsAuthenticated(false)
-      navigate("/");
+    try {
+      console.log("object")
+      axios
+        .get("http://localhost:8085/isUserAuth", {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          if (!response.data.auth) navigate("/");
+        });
+    } catch (error) {
+      console.log("Error", error);
     }
-  }, [isAuthenticated]);
+  });
 
   // if (isAuthenticated==false || !localStorage.getItem("token")) {
   //   navigate("/");

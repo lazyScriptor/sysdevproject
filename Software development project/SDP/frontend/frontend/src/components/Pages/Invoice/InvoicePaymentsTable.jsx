@@ -7,7 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useContext } from "react";
-import { Box, Button, Switch, Typography } from "@mui/material";
+import { Box, Switch, Typography } from "@mui/material";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import { InvoiceContext } from "../../../Contexts/Contexts";
 import { useState } from "react";
@@ -16,9 +16,6 @@ export default function InvoicePaymentsTable() {
   const {
     invoiceObject,
     setInvoiceObject,
-    clearPaymentArray,
-    setPaymentArray,
-    paymentArray,
     updateValue,
   } = useContext(InvoiceContext);
 
@@ -42,7 +39,6 @@ export default function InvoicePaymentsTable() {
       payments: updatedPayments,
     }));
     // Update the invoiceObject state with the filtered array
-
   };
 
   const handleDeleteAdvance = () => {
@@ -50,12 +46,14 @@ export default function InvoicePaymentsTable() {
   };
 
   // Ensure there are always at least 4 rows
-  const emptyRows = 5 - paymentArray.length;
+  const minRows = 4;
+  const dataRows = invoiceObject.payments.length + (invoiceObject.advance ? 1 : 0);
+  const emptyRows = Math.max(minRows - dataRows, 0);
 
   return (
     <TableContainer
       component={Paper}
-      sx={{ mt: 3.2, borderRadius: 4 ,height:"430px"}}
+      sx={{ mt: 3.2, borderRadius: 4, height: "330px" }}
       elevation={4}
     >
       <Table stickyHeader sx={{ minWidth: 10 }} aria-label="simple table">
@@ -68,37 +66,37 @@ export default function InvoicePaymentsTable() {
                 sx={{
                   backgroundColor: (theme) => theme.palette.primary[50],
                   borderRadius: 3,
-                  width: "140px",
+                  width: "100px",
                 }}
               >
                 <Switch onChange={(e) => setEditToggle(e.target.checked)} />
-                <Typography variant="caption">Edit mode</Typography>
+                <Typography variant="caption">Edit</Typography>
               </Box>
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-            <TableCell align="center">{!!invoiceObject.advance && 'Advance payment'}</TableCell>
-            <TableCell align="center">
-              {!!invoiceObject.advance && invoiceObject.advance}
-            </TableCell>
-            <TableCell align="center">
-              {editToggle && !!invoiceObject.advance  && (
-                <button
-                  style={deleteButtonStyles}
-                  onClick={handleDeleteAdvance}
-                >
-                  <DeleteTwoToneIcon sx={{ color: "white" }} />
-                </button>
-              )}
-            </TableCell>
-          </TableRow>
+          {invoiceObject.advance ? (
+            <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, backgroundColor: (theme) => theme.palette.primary[50] }}>
+              <TableCell align="center">Advance payment</TableCell>
+              <TableCell align="center">{invoiceObject.advance}</TableCell>
+              <TableCell align="center">
+                {editToggle && (
+                  <button
+                    style={deleteButtonStyles}
+                    onClick={handleDeleteAdvance}
+                  >
+                    <DeleteTwoToneIcon sx={{ color: "white" }} />
+                  </button>
+                )}
+              </TableCell>
+            </TableRow>
+          ) : null}
 
           {invoiceObject.payments.map((payment, index) => (
             <TableRow
               key={index}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 }, height: "40px" , backgroundColor: (theme) => theme.palette.primary[25] }}
             >
               <TableCell align="center">{payment.invpay_payment_id}</TableCell>
               <TableCell align="center">{payment.invpay_amount}</TableCell>
@@ -115,11 +113,11 @@ export default function InvoicePaymentsTable() {
             </TableRow>
           ))}
 
-          {/* Add empty rows if paymentArray has less than 4 items */}
+          {/* Add empty rows if needed */}
           {Array.from({ length: emptyRows }).map((_, index) => (
             <TableRow
               key={`empty-${index}`}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 }, height: "40px" }}
             >
               <TableCell align="center" colSpan={3}>
                 &nbsp;

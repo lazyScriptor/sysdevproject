@@ -5,7 +5,8 @@ import { InvoiceContext } from "../../../Contexts/Contexts";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-function InvoiceDetailsWindowDown() {
+function InvoiceDetailsWindowDown(props) {
+  const { updateBtnStatus, setUpdateBtnStatus } = props;
   const {
     fullDetailsEquipmentArray,
     setFullDetailsEquipmentArray,
@@ -41,10 +42,17 @@ function InvoiceDetailsWindowDown() {
               console.log("Local storage retrieval", invoiceObject);
               try {
                 // Send the object to the backend
-                await axios.post(
-                  "http://localhost:8085/updateInvoiceDetails",
-                  invoiceObject
-                );
+                if (updateBtnStatus == true) {
+                  await axios.post(
+                    "http://localhost:8085/updateInvoiceDetails",
+                    invoiceObject
+                  );
+                } else {
+                  await axios.post(
+                    "http://localhost:8085/updateInvoiceDetails",
+                    invoiceObject
+                  );
+                }
                 Swal.fire({
                   position: "top-end",
                   icon: "success",
@@ -109,6 +117,7 @@ function InvoiceDetailsWindowDown() {
       console.log("Invoice object is undefined");
     }
   };
+  const handleInvoiceUpdate = async () => {};
   return (
     <>
       <Paper
@@ -182,15 +191,26 @@ function InvoiceDetailsWindowDown() {
           <Box sx={{ height: "100%", width: "100%" }}></Box>
         </Box>
       </Paper>
-      <Button
-        fullWidth
-        color="success"
-        variant="contained"
-        sx={{ mt: 2, borderRadius: 0, height: "60px" }}
-        onClick={handleInvoiceSubmit}
-      >
-        Create Invoice
-      </Button>
+      {updateBtnStatus == true ? (
+        <Button
+          fullWidth
+          variant="contained"
+          sx={{ mt: 2, borderRadius: 0, height: "60px" }}
+          onClick={handleInvoiceSubmit}
+        >
+          Update Invoice
+        </Button>
+      ) : (
+        <Button
+          fullWidth
+          color="success"
+          variant="contained"
+          sx={{ mt: 2, borderRadius: 0, height: "60px" }}
+          onClick={handleInvoiceUpdate}
+        >
+          Create Invoice
+        </Button>
+      )}
     </>
   );
 }

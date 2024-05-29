@@ -80,7 +80,7 @@ function App() {
         // 900: '#0d47a1',
 
         // purpleShades
-
+        25: "#faf0fa",
         50: "#f3e5f5",
         100: "#e1bee7",
         200: "#ce93d8",
