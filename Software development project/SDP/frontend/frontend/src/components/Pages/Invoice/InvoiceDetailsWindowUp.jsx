@@ -14,6 +14,7 @@ import React, {
 } from "react";
 import { InvoiceContext } from "../../../Contexts/Contexts";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
+import AppRegistrationTwoToneIcon from "@mui/icons-material/AppRegistrationTwoTone";
 
 function InvoiceDetailsWindowUp() {
   const {
@@ -25,6 +26,8 @@ function InvoiceDetailsWindowUp() {
     setCheckState,
     eqObject,
     setEqObject,
+    invoiceSearchBtnStatus,
+    setInvoiceSearchBtnStatus,
     invoiceObject,
     setInvoiceObject,
     clearObject,
@@ -48,16 +51,17 @@ function InvoiceDetailsWindowUp() {
   };
   const handleDelete = (id) => {
     // Filter out the item with the corresponding eq_id
-    const updatedEqObject = invoiceObject.eqdetails.filter((item) => item.eq_id !== id);
-    
+    const updatedEqObject = invoiceObject.eqdetails.filter(
+      (item) => item.eq_id !== id
+    );
+
     // Update the invoiceObject with the filtered eqdetails array
     setInvoiceObject((prevInvoiceObject) => ({
       ...prevInvoiceObject,
       eqdetails: updatedEqObject,
     }));
   };
-  
-  
+
   return (
     <>
       <Paper
@@ -74,13 +78,24 @@ function InvoiceDetailsWindowUp() {
       >
         <Box
           sx={{
-            backgroundColor: (theme) => theme.palette.primary[50],
+            backgroundColor: toogle
+              ? (theme) => theme.palette.primary[100]
+              : (theme) => theme.palette.primary[50],
             borderRadius: 3,
-            width: "140px",
+            width: "90px",
           }}
         >
-          <Switch onChange={(e) => setToogle(e.target.checked)} />
-          <Typography variant="caption">Edit mode</Typography>
+          <Switch disabled={invoiceSearchBtnStatus} onChange={(e) => setToogle(e.target.checked)} />
+          <Typography
+            variant="caption"
+            color={
+              toogle
+                ? (theme) => theme.palette.primary[25]
+                : (theme) => theme.palette.primary[400]
+            }
+          >
+            <AppRegistrationTwoToneIcon />
+          </Typography>
         </Box>
         <Box
           sx={{
@@ -101,7 +116,9 @@ function InvoiceDetailsWindowUp() {
               elevation={2}
               key={index}
               sx={{
-                backgroundColor: item.inveq_return_date ? 'lightgreen' : 'white',
+                backgroundColor: item.inveq_return_date
+                  ? "lightgreen"
+                  : "white",
                 display: "flex",
                 height: "70px",
                 p: 1,
@@ -157,7 +174,6 @@ function InvoiceDetailsWindowUp() {
                     >
                       <DeleteTwoToneIcon sx={{ color: "white" }} />
                     </button>
-                    
                   </Box>
                 </>
               )}

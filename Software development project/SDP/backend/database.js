@@ -18,15 +18,14 @@ const pool = mysql
 const port = process.env.PORT || 8085;
 
 export async function loginValidate(userObject) {
-  const [user] = await pool.query(
-    "SELECT username, role, password ,user_id FROM users WHERE username = ? AND role = ? ",
+  const [user] =await pool.query(
+    `SELECT users.* ,userRole.ur_role,userRoleMap.urm_password FROM users JOIN userRoleMap ON users.user_id=userRoleMap.urm_userid JOIN userRole ON userRoleMap.urm_roleid=userRole.ur_roleid WHERE username=? AND ur_role= ?`,
     [userObject.username, userObject.role]
   );
   console.log("this is the selected user :", user);
 
   const id = user[0].user_id;
-
-  if (userObject.password === user[0].password) {
+  if (userObject.password === user[0].urm_password) {
     console.log("Successful", user);
     return ["/DashboardMain", user];
   } else {
@@ -271,9 +270,10 @@ export async function getCustomerbyAddress2(SAddress2) {
 }
 
 export async function getUserRole(userName) {
-  const [user] = await pool.query(`SELECT role FROM users WHERE username=?`, [
-    userName,
-  ]);
+  const [user] = await pool.query(
+    `SELECT userRole.ur_role FROM users JOIN userRoleMap ON users.user_id=userRoleMap.urm_userid JOIN userRole ON userRoleMap.urm_roleid=userRole.ur_roleid WHERE username=?`,
+    [userName]
+  );
   console.log(user);
   return user;
 }
@@ -565,7 +565,7 @@ export async function getInvoiceDetails(invoiceIdSearch) {
         duration_in_days: record.duration_in_days,
         inveq_borrowqty: record.inveq_borrowqty,
         inveq_return_quantity: record.inveq_returned_quantity,
-        inveq_updated_status: record.inveq_updated_status
+        inveq_updated_status: record.inveq_updated_status,
       }));
 
       invoiceObject.eqdetails = equipmentDetails;
@@ -660,7 +660,10 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
     }
 
     for (const equipment of InvoiceCompleteDetail.eqdetails) {
-      if (equipment.inveq_return_quantity < equipment.inveq_borrowqty && equipment.inveq_return_quantity!=0) {
+      if (
+        equipment.inveq_return_quantity < equipment.inveq_borrowqty &&
+        equipment.inveq_return_quantity != 0
+      ) {
         // If returned quantity is less than borrowed quantity
         console.log("object");
         // Variables for updated quantities and dates
@@ -696,7 +699,7 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
             formattedBorrowDate, // Updated borrow date
             formattedReturnDate,
             returnedQuantity,
-            1
+            1,
           ]
         );
 
@@ -720,8 +723,10 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
         );
 
         // Insert a new row with the remaining borrowed quantity
-      } 
-      else if ((equipment.inveq_return_quantity == equipment.inveq_borrowqty)&&equipment.inveq_updated_status==0) {
+      } else if (
+        equipment.inveq_return_quantity == equipment.inveq_borrowqty &&
+        equipment.inveq_updated_status == 0
+      ) {
         console.log("it equals");
         // If returned quantity is equal to borrowed quantity
 
@@ -756,4 +761,10 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
   } catch (error) {
     console.log("Error occurred in backend invoice details update:", error);
   }
+}
+export async function getUserDetails() {
+  const [userDetails] = await pool.query(
+    `SELECT users.* ,userRole.ur_role FROM users JOIN userRoleMap ON users.user_id=userRoleMap.urm_userid JOIN userRole ON userRoleMap.urm_roleid=userRole.ur_roleid`
+  );
+  return userDetails;
 }

@@ -14,6 +14,8 @@ function InvoiceDetailsWindowDown(props) {
     responseManageToogle,
     clearValues,
     setResponseManageToogle,
+    invoiceSearchBtnStatus,
+    setInvoiceSearchBtnStatus,
     setCheckState,
     eqObject,
     setEqObject,
@@ -264,7 +266,7 @@ function InvoiceDetailsWindowDown(props) {
           <Box sx={{ height: "100%", width: "100%" }}></Box>
         </Box>
       </Paper>
-      {updateBtnStatus == true ? (
+      {invoiceSearchBtnStatus == true ? (
         <Button
           fullWidth
           variant="contained"

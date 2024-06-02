@@ -80,7 +80,7 @@ function IdCardStatus() {
           </Box>
           <Button onClick={handleIdAdd}>Add</Button>
           <Checkbox
-            checked={checkState}
+            checked={invoiceObject.iDstatus}
             sx={{ "& .MuiSvgIcon-root": { fontSize: 25 } }}
           />
         </Box>

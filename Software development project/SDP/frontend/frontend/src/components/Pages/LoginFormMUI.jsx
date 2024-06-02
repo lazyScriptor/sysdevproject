@@ -70,6 +70,7 @@ function LoginFormMUI() {
         .get(`http://localhost:8085/getUserRole/${userName}`)
         .then((res) => {
           console.log("This is the response ", res.data);
+          
           setUsernameArray(res.data);
         });
     } catch (error) {
@@ -158,8 +159,8 @@ function LoginFormMUI() {
               onChange={(event) => handleSelectChange(event)}
             >
               {usernameArray.map((users, index) => (
-                <MenuItem value={users.role} key={index}>
-                  {users.role}
+                <MenuItem value={users.ur_role} key={index}>
+                  {users.ur_role}
                 </MenuItem>
               ))}
             </Select>

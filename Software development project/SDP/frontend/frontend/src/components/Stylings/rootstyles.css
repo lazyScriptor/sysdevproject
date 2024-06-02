@@ -2,6 +2,7 @@
   background-color: #e6701c;
   min-height: 100%;
   height: max-content;
+  display: flex;
 }
 
 #main-body{

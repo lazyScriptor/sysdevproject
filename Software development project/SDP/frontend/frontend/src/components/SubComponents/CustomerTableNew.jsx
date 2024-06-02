@@ -44,7 +44,7 @@ function Row(props) {
   const highlightText = (text, highlight) => {
     console.log("Text:", text);
     console.log("Highlight:", highlight);
-    
+
     if (!highlight || highlight.trim() === "") {
       console.log("No highlight or empty, returning original text");
       return text; // Return original text if no highlight value or if highlight is empty
@@ -53,10 +53,10 @@ function Row(props) {
       console.log("Text is not a string, returning original text");
       return text; // Ensure text is a string
     }
-  
+
     const parts = text.split(new RegExp(`(${highlight})`, "gi"));
     console.log("Parts:", parts);
-    
+
     return parts.map((part, index) =>
       part.toLowerCase() === highlight.toLowerCase() ? (
         <span key={index} style={{ backgroundColor: "yellow" }}>
@@ -67,8 +67,6 @@ function Row(props) {
       )
     );
   };
-  
-  
 
   return (
     <React.Fragment>
@@ -217,6 +215,12 @@ export function CustomerPageMiddle() {
   const [toogle, setToogle] = useState(false);
   const [dbCustomerFound, setDbCustomerFound] = useState("");
 
+  const textFieldStyle = {
+    width: "100%",
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "12px", // Increase the border radius
+    },
+  };
   const [customer, setCustomer] = useState({
     fname: "",
     lname: "",
@@ -396,7 +400,7 @@ export function CustomerPageMiddle() {
                       helperText={errors.fname?.message}
                       size="small"
                       label="first name"
-                      sx={{ width: "100%" }}
+                      sx={textFieldStyle}
                       value={customer.fname}
                       onChange={handleInputChange}
                     />
@@ -414,7 +418,7 @@ export function CustomerPageMiddle() {
                       helperText={errors.lname?.message}
                       variant="outlined"
                       size="small"
-                      sx={{ width: "100%" }}
+                      sx={textFieldStyle}
                       value={customer.lname}
                       onChange={handleInputChange}
                     />
@@ -432,7 +436,7 @@ export function CustomerPageMiddle() {
                       helperText={errors.nic?.message}
                       variant="outlined"
                       size="small"
-                      sx={{ width: "100%" }}
+                      sx={textFieldStyle}
                       value={customer.nic}
                       onChange={handleInputChange}
                     />
@@ -450,7 +454,7 @@ export function CustomerPageMiddle() {
                       helperText={errors.phoneNumber?.message}
                       variant="outlined"
                       size="small"
-                      sx={{ width: "100%" }}
+                      sx={textFieldStyle}
                       value={customer.phoneNumber}
                       onChange={handleInputChange}
                     />
@@ -476,7 +480,7 @@ export function CustomerPageMiddle() {
                       label="address line1"
                       variant="outlined"
                       size="small"
-                      sx={{ width: "100%" }}
+                      sx={textFieldStyle}
                       value={customer.address1}
                       onChange={handleInputChange}
                     />
@@ -495,7 +499,7 @@ export function CustomerPageMiddle() {
                       label="address line2"
                       variant="outlined"
                       size="small"
-                      sx={{ width: "100%" }}
+                      sx={textFieldStyle}
                       value={customer.address2}
                       onChange={handleInputChange}
                     />

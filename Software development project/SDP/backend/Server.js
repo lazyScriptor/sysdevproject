@@ -29,6 +29,7 @@ import {
   getCustomerbyPhoneNumber,
   createInvoiceDetails,
   updateInvoiceDetails,
+  getUserDetails,
 } from "./database.js";
 
 const app = express();
@@ -95,11 +96,9 @@ app.get("/isUserAuth", verifyJWT, (req, res) => {
 
 app.get("/loginValidate", async (req, res) => {
   try {
-    console.log("express app ", req.query.username);
-
     const response = await loginValidate(req.query);
     const id = response[1][0].user_id;
-    const userRole = response[1][0].role;
+    const userRole = response[1][0].ur_role;
     const userName = response[1][0].username;
     console.log("id is", id, "Role is ", userRole);
     const token = jwt.sign({ userRole }, "jwtSecret", {
@@ -379,9 +378,6 @@ app.post("/createInvoiceDetails", async (req, res) => {
   }
 });
 
-
-
-
 app.post("/updateInvoiceDetails", async (req, res) => {
   try {
     const customerDetails = await updateInvoiceDetails(req.body);
@@ -394,11 +390,14 @@ app.post("/updateInvoiceDetails", async (req, res) => {
   }
 });
 
-
-
-
-
-
+app.get("/fetchUserDetails", async (req, res) => {
+  try {
+    const userDetails = await getUserDetails();
+    return res.json(userDetails);
+  } catch (error) {
+    console.log("Error occured in express fetchUser details");
+  }
+});
 dotenv.config();
 const port = process.env.PORT;
 app.listen(port, () => {

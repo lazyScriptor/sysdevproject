@@ -11,13 +11,11 @@ import { Box, Switch, Typography } from "@mui/material";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import { InvoiceContext } from "../../../Contexts/Contexts";
 import { useState } from "react";
+import AppRegistrationTwoToneIcon from "@mui/icons-material/AppRegistrationTwoTone";
 
 export default function InvoicePaymentsTable() {
-  const {
-    invoiceObject,
-    setInvoiceObject,
-    updateValue,
-  } = useContext(InvoiceContext);
+  const { invoiceObject, setInvoiceObject, updateValue } =
+    useContext(InvoiceContext);
 
   const deleteButtonStyles = {
     width: "auto",
@@ -47,7 +45,8 @@ export default function InvoicePaymentsTable() {
 
   // Ensure there are always at least 4 rows
   const minRows = 4;
-  const dataRows = invoiceObject.payments.length + (invoiceObject.advance ? 1 : 0);
+  const dataRows =
+    invoiceObject.payments.length + (invoiceObject.advance ? 1 : 0);
   const emptyRows = Math.max(minRows - dataRows, 0);
 
   return (
@@ -64,20 +63,36 @@ export default function InvoicePaymentsTable() {
             <TableCell align="center">
               <Box
                 sx={{
-                  backgroundColor: (theme) => theme.palette.primary[50],
+                  backgroundColor: editToggle
+                    ? (theme) => theme.palette.primary[100]
+                    : (theme) => theme.palette.primary[50],
                   borderRadius: 3,
                   width: "100px",
                 }}
               >
                 <Switch onChange={(e) => setEditToggle(e.target.checked)} />
-                <Typography variant="caption">Edit</Typography>
+                <Typography
+                  color={
+                    editToggle
+                      ? (theme) => theme.palette.primary[25]
+                      : (theme) => theme.palette.primary[400]
+                  }
+                  variant="caption"
+                >
+                  <AppRegistrationTwoToneIcon />
+                </Typography>
               </Box>
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {invoiceObject.advance ? (
-            <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, backgroundColor: (theme) => theme.palette.primary[50] }}>
+            <TableRow
+              sx={{
+                "&:last-child td, &:last-child th": { border: 0 },
+                backgroundColor: (theme) => theme.palette.primary[50],
+              }}
+            >
               <TableCell align="center">Advance payment</TableCell>
               <TableCell align="center">{invoiceObject.advance}</TableCell>
               <TableCell align="center">
@@ -96,9 +111,15 @@ export default function InvoicePaymentsTable() {
           {invoiceObject.payments.map((payment, index) => (
             <TableRow
               key={index}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 }, height: "40px" , backgroundColor: (theme) => theme.palette.primary[25] }}
+              sx={{
+                "&:last-child td, &:last-child th": { border: 0 },
+                height: "40px",
+                backgroundColor: (theme) => theme.palette.primary[25],
+              }}
             >
-              <TableCell align="center">{payment.invpay_payment_date}</TableCell>
+              <TableCell align="center">
+                {payment.invpay_payment_date}
+              </TableCell>
               <TableCell align="center">{payment.invpay_amount}</TableCell>
               <TableCell align="center">
                 {editToggle && (
@@ -117,7 +138,10 @@ export default function InvoicePaymentsTable() {
           {Array.from({ length: emptyRows }).map((_, index) => (
             <TableRow
               key={`empty-${index}`}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 }, height: "40px" }}
+              sx={{
+                "&:last-child td, &:last-child th": { border: 0 },
+                height: "40px",
+              }}
             >
               <TableCell align="center" colSpan={3}>
                 &nbsp;

@@ -41,6 +41,8 @@ function Invoice() {
     setPaymentArray,
     eqObject,
     setEqObject,
+    invoiceSearchBtnStatus,
+    setInvoiceSearchBtnStatus,
     invoiceObject,
     setInvoiceObject,
     clearObject,
@@ -168,6 +170,7 @@ function Invoice() {
 
   const handleCreateNew = async () => {
     localStorage.removeItem("CIObject");
+    setInvoiceSearchBtnStatus(false)
     setData(clearData);
     setEqObject("");
     clearObject();
@@ -186,6 +189,7 @@ function Invoice() {
   };
 
   const handleInvoiceSearch = async (invoiceIdSearch) => {
+    setInvoiceSearchBtnStatus(true)
     clearObject();
 
     try {
@@ -208,6 +212,7 @@ function Invoice() {
           updateValue("eqdetails", eqdetail);
         });
         updateValue("InvoiceID", response.data.InvoiceID);
+        updateValue("iDstatus", response.data.idStatus);
         console.log("object", response.data.eqdetails);
         setUpdateBtnStatus(true);
       } else if (response.status == 404) {
@@ -520,8 +525,7 @@ function Invoice() {
               width: "52.4%",
               p: 3,
             }}
-          >
-          </Box>
+          ></Box>
           <Box
             sx={{
               display: "flex",

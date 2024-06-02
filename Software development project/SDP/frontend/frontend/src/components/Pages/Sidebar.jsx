@@ -16,6 +16,7 @@ import {
   faXmark,
   faRightFromBracket,
   faNewspaper,
+  faUserAstronaut,
 } from "@fortawesome/free-solid-svg-icons";
 import DashboardCategoryBtn from "../Buttons/DashboardButtons.jsx";
 
@@ -122,6 +123,12 @@ function Sidebar() {
               name="Reports"
               icon={faNewspaper}
               destination="/Reports"
+            />
+             <DashboardCategoryBtn
+              handlefunction={handleShow}
+              name="User"
+              icon={faUserAstronaut}
+              destination="/userManagement"
             />
             <hr />
             <DashboardCategoryBtn

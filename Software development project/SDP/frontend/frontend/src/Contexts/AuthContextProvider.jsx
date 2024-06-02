@@ -24,7 +24,7 @@ function AuthContextProvider({ children }) {
     } catch (error) {
       console.log("Error", error);
     }
-  });
+  },[]);
 
   // if (isAuthenticated==false || !localStorage.getItem("token")) {
   //   navigate("/");
