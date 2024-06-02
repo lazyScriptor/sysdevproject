@@ -101,6 +101,7 @@ function InvoiceDetailsWindowUp() {
               elevation={2}
               key={index}
               sx={{
+                backgroundColor: item.inveq_return_date ? 'lightgreen' : 'white',
                 display: "flex",
                 height: "70px",
                 p: 1,
@@ -156,6 +157,7 @@ function InvoiceDetailsWindowUp() {
                     >
                       <DeleteTwoToneIcon sx={{ color: "white" }} />
                     </button>
+                    
                   </Box>
                 </>
               )}

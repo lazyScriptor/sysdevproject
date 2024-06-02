@@ -6,6 +6,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import InvoiceCustomerDetails from "./InvoiceCustomerDetails";
 import InvoiceRightSide from "./InvoiceRightSide";
 import InvoiceRightSideNew from "./InvoiceRightSideNew";
+import InvoiceHandOverForm from "./InvoiceHandOverForm";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -33,7 +34,7 @@ export default function InvoiceNew() {
 
       <Grid container spacing={1} columns={{ xs: 4, sm: 4, md: 12 }} sx={{height:"57vh"}}>
         <Grid xs={3.0} sx={{}}>
-          <Item sx={{}}><InvoiceRightSideNew/></Item>
+          <Item sx={{}}><InvoiceHandOverForm/></Item>
         </Grid>
         <Grid xs={6.5}>
           <Item></Item>

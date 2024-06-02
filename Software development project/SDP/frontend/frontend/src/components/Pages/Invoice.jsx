@@ -30,6 +30,7 @@ import Swal from "sweetalert2";
 import InvoicePaymentsTable from "./Invoice/InvoicePaymentsTable.jsx";
 import InvoiceRightSideNew from "./Invoice/InvoiceRightSideNew.jsx";
 import InvoiceUpdateForm from "./Invoice/InvoiceUpdateForm.jsx";
+import InvoiceHandOverForm from "./Invoice/InvoiceHandOverForm.jsx";
 
 function Invoice() {
   const {
@@ -171,12 +172,13 @@ function Invoice() {
     setEqObject("");
     clearObject();
     setPaymentArray([]);
+    setUpdateBtnStatus(false);
     try {
       await axios.get("http://localhost:8085/invoiceIdRetrieve").then((res) => {
         console.log(res.data);
         setInvoiceId(res.data);
         updateValue("InvoiceID", res.data);
-        updateValue("createdDate",currentDate)
+        updateValue("createdDate", currentDate);
       });
     } catch (error) {
       console.log("handleSearch Createinvoice error", error);
@@ -195,7 +197,7 @@ function Invoice() {
       if (response.status === 200) {
         console.log("Invoice details:", response.data);
         updateValue("advance", response.data.advance);
-        updateValue("createdDate",response.data.createdDate)
+        updateValue("createdDate", response.data.createdDate);
         response.data.payments.forEach((payment) => {
           // Pass each payment object to the updateValue function
           updateValue("payments", payment);
@@ -205,7 +207,7 @@ function Invoice() {
           // Pass each payment object to the updateValue function
           updateValue("eqdetails", eqdetail);
         });
-        updateValue("InvoiceID",response.data.InvoiceID)
+        updateValue("InvoiceID", response.data.InvoiceID);
         console.log("object", response.data.eqdetails);
         setUpdateBtnStatus(true);
       } else if (response.status == 404) {
@@ -302,7 +304,11 @@ function Invoice() {
               width: "23.6%",
             }}
           >
-            <InvoiceRightSideNew />
+            {updateBtnStatus == true ? (
+              <InvoiceHandOverForm />
+            ) : (
+              <InvoiceRightSideNew />
+            )}
           </Box>
           <Box
             sx={{
@@ -515,7 +521,6 @@ function Invoice() {
               p: 3,
             }}
           >
-            <InvoiceTable />
           </Box>
           <Box
             sx={{
@@ -527,6 +532,7 @@ function Invoice() {
             }}
           >
             <InvoiceDetailsWindowDown
+              handleCreateNew={handleCreateNew}
               updateBtnStatus={updateBtnStatus}
               setUpdateBtnStatus={setUpdateBtnStatus}
             />

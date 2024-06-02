@@ -416,11 +416,12 @@ export async function createInvoiceDetails(InvoiceCompleteDetail) {
     for (const payment of InvoiceCompleteDetail.payments) {
       console.log("This is the payID", payment.payId);
       await pool.query(
-        "INSERT INTO invoicePayments (invpay_payment_id, invpay_inv_id ,	invpay_amount) VALUES (?, ?, ?)",
+        "INSERT INTO invoicePayments (invpay_payment_id, invpay_inv_id ,	invpay_amount, invpay_payment_date) VALUES (?, ?,?, ?)",
         [
           payment.invpay_payment_id,
           InvoiceCompleteDetail.InvoiceID,
           payment.invpay_amount,
+          payment.invpay_payment_date,
         ]
       );
     }
@@ -432,13 +433,14 @@ export async function createInvoiceDetails(InvoiceCompleteDetail) {
       );
       try {
         for (const payment of InvoiceCompleteDetail.payments) {
+          console.log("This is the payID", payment.payId);
           await pool.query(
-            "UPDATE invoicePayments SET invpay_payment_id = ?, invpay_inv_id = ? ,invpay_amount = ? WHERE cusinv_cusid = ? AND invpay_payment_id = ?",
+            "INSERT INTO invoicePayments (invpay_payment_id, invpay_inv_id, invpay_amount, invpay_payment_date) VALUES (?, ?, ?, ?)",
             [
               payment.invpay_payment_id,
               InvoiceCompleteDetail.InvoiceID,
               payment.invpay_amount,
-              payment.invpay_payment_id,
+              payment.invpay_payment_date,
             ]
           );
         }
@@ -454,11 +456,12 @@ export async function createInvoiceDetails(InvoiceCompleteDetail) {
   try {
     for (const equipment of InvoiceCompleteDetail.eqdetails) {
       await pool.query(
-        "INSERT INTO invoiceEquipment (inveq_eqid, inveq_invid,inveq_borrowqty) VALUES (?, ?,?)",
+        "INSERT INTO invoiceEquipment (inveq_eqid, inveq_invid,inveq_borrowqty,inveq_borrow_date) VALUES (?, ?,?,?)",
         [
           equipment.eq_id,
           InvoiceCompleteDetail.InvoiceID,
           equipment.inveq_borrowqty,
+          equipment.inveq_borrow_date,
         ]
       );
     }
@@ -472,7 +475,7 @@ export async function createInvoiceDetails(InvoiceCompleteDetail) {
         console.log(InvoiceCompleteDetail.eqdetails);
         for (const equipment of InvoiceCompleteDetail.eqdetails) {
           await pool.query(
-            "UPDATE invoiceEquipment SET inveq_eqid = ?, inveq_invid = ? ,inveq_borrowqty = ? WHERE inveq_eqid = ? AND inveq_invid = ? AND inveq_borrowqty = ?",
+            `UPDATE invoiceEquipment SET inveq_eqid = 24, inveq_invid = 4, inveq_borrowqty = NULL, inveq_borrow_date = 24 WHERE inveq_eqid = 4 AND inveq_invid = NULL AND inveq_borrowqty = ?`,
             [
               equipment.eq_id,
               InvoiceCompleteDetail.InvoiceID,
@@ -537,7 +540,9 @@ export async function getInvoiceDetails(invoiceIdSearch) {
         return `${datePart} ${timePart}`;
       }
 
-      invoiceObject.createdDate = dateformatter(invoiceDetails[0].inv_createddate)
+      invoiceObject.createdDate = dateformatter(
+        invoiceDetails[0].inv_createddate
+      );
 
       invoiceObject.InvoiceID = invoiceIdSearch;
 
@@ -559,6 +564,8 @@ export async function getInvoiceDetails(invoiceIdSearch) {
         inveq_return_date: record.inveq_return_date,
         duration_in_days: record.duration_in_days,
         inveq_borrowqty: record.inveq_borrowqty,
+        inveq_return_quantity: record.inveq_returned_quantity,
+        inveq_updated_status: record.inveq_updated_status
       }));
 
       invoiceObject.eqdetails = equipmentDetails;
@@ -594,5 +601,159 @@ export async function getInvoiceDetails(invoiceIdSearch) {
   } catch (error) {
     console.error("Error fetching invoice details:", error);
     return false;
+  }
+}
+
+export async function updateInvoiceDetails(InvoiceCompleteDetail) {
+  // Update invoice details
+  // try {
+  //   await pool.query(
+  //     "UPDATE invoice SET inv_advance = ?, inv_special_message = ?, inv_idcardstatus = ?, inv_cusid = ?, inv_updatedstatus = ? WHERE inv_id = ?",
+  //     [
+  //       InvoiceCompleteDetail.advance,
+  //       "", // Empty string for inv_special_message
+  //       InvoiceCompleteDetail.idStatus,
+  //       InvoiceCompleteDetail.customerDetails.cus_id,
+  //       1,
+  //       InvoiceCompleteDetail.InvoiceID,
+  //     ]
+  //   );
+  // } catch (error) {
+  //   console.log("Error occurred in backend invoice details update", error);
+  // }
+
+  // Update invoice payment table
+  try {
+    for (const payment of InvoiceCompleteDetail.payments) {
+      // Convert payment date to SQL format
+      const formattedDate = new Date(payment.invpay_payment_date)
+        .toISOString()
+        .slice(0, 10);
+
+      console.log("This is the payID", formattedDate);
+
+      await pool.query(
+        `INSERT INTO invoicePayments (invpay_payment_id, invpay_inv_id, invpay_amount, invpay_payment_date)
+           VALUES (?, ?, ?, ?)
+           ON DUPLICATE KEY UPDATE
+           invpay_inv_id = VALUES(invpay_inv_id), invpay_amount = VALUES(invpay_amount), invpay_payment_date = VALUES(invpay_payment_date)`,
+        [
+          payment.invpay_payment_id,
+          InvoiceCompleteDetail.InvoiceID,
+          payment.invpay_amount,
+          formattedDate, // Use the formatted date here
+        ]
+      );
+    }
+  } catch (error) {
+    console.log("Error occurred in backend invoice details update:", error);
+  }
+
+  // Update invoice equipment details
+
+  try {
+    console.log("complete retrieved object", InvoiceCompleteDetail);
+    // Function to format the date for SQL
+    function formatDateForSQL(date) {
+      if (!date) return null;
+      return new Date(date).toISOString().slice(0, 19).replace("T", " ");
+    }
+
+    for (const equipment of InvoiceCompleteDetail.eqdetails) {
+      if (equipment.inveq_return_quantity < equipment.inveq_borrowqty && equipment.inveq_return_quantity!=0) {
+        // If returned quantity is less than borrowed quantity
+        console.log("object");
+        // Variables for updated quantities and dates
+        const returnedQuantity = equipment.inveq_return_quantity;
+        const previousBorrowQuantity = equipment.inveq_borrowqty;
+        const newBorrowQuantity = previousBorrowQuantity - returnedQuantity;
+
+        console.log(
+          "return qty",
+          returnedQuantity,
+          "newborrowed",
+          returnedQuantity,
+          "prevborrowqty",
+          previousBorrowQuantity,
+          "newborrowqty",
+          newBorrowQuantity
+        );
+
+        const formattedReturnDate = formatDateForSQL(
+          equipment.inveq_return_date
+        );
+        const formattedBorrowDate = formatDateForSQL(
+          equipment.inveq_borrow_date
+        );
+
+        await pool.query(
+          `INSERT INTO invoiceEquipment (inveq_eqid, inveq_invid, inveq_borrowqty, inveq_borrow_date,inveq_return_date,inveq_returned_quantity,inveq_updated_status)
+             VALUES (?, ?, ?, ?,?,?,?)`,
+          [
+            equipment.eq_id,
+            InvoiceCompleteDetail.InvoiceID,
+            returnedQuantity,
+            formattedBorrowDate, // Updated borrow date
+            formattedReturnDate,
+            returnedQuantity,
+            1
+          ]
+        );
+
+        // Update the existing row
+        await pool.query(
+          `UPDATE invoiceEquipment
+             SET
+               inveq_returned_quantity = ?,
+               inveq_borrowqty = ?
+             WHERE
+               inveq_invid = ?
+               AND inveq_eqid = ?
+               AND inveq_returned_quantity = 0`,
+          [
+            0, // Update returned quantity
+            newBorrowQuantity, // Update borrowed quantity to the returned quantity
+            // formattedReturnDate, // Update return date
+            InvoiceCompleteDetail.InvoiceID,
+            equipment.eq_id,
+          ]
+        );
+
+        // Insert a new row with the remaining borrowed quantity
+      } 
+      else if ((equipment.inveq_return_quantity == equipment.inveq_borrowqty)&&equipment.inveq_updated_status==0) {
+        console.log("it equals");
+        // If returned quantity is equal to borrowed quantity
+
+        const formattedReturnDate = formatDateForSQL(
+          equipment.inveq_return_date
+        );
+
+        // Update the existing row
+        await pool.query(
+          `UPDATE invoiceEquipment 
+            SET 
+              inveq_returned_quantity = ?, 
+              inveq_borrowqty = ?, 
+              inveq_return_date = ? ,
+              inveq_updated_status = ?
+            WHERE 
+              inveq_invid = ? 
+              AND inveq_eqid = ?
+              AND inveq_returned_quantity = 0
+              AND inveq_updated_status=0`,
+          [
+            equipment.inveq_return_quantity,
+            equipment.inveq_borrowqty,
+            formattedReturnDate,
+            1,
+            InvoiceCompleteDetail.InvoiceID,
+            equipment.eq_id,
+          ]
+        );
+      }
+    }
+  } catch (error) {
+    console.log("Error occurred in backend invoice details update:", error);
   }
 }

@@ -9,7 +9,7 @@ export default function InvoiceContextProvider({ children }) {
   const [eqObject, setEqObject] = useState([]);
   const [invoiceSearchBtnStatus, setInvoiceSearchBtnStatus] = useState(false);
   const [invoiceObject, setInvoiceObject] = useState({
-    idStatus: false,
+    iDstatus: false,
     eqdetails: [],
     advance: 0,
     customerDetails: {},
@@ -24,7 +24,7 @@ export default function InvoiceContextProvider({ children }) {
   const clearObject = () => {
     setEqObject([]);
     setInvoiceObject({
-      idStatus: false,
+      iDstatus: false,
       eqdetails: [],
       advance: 0,
       customerDetails: {},
@@ -40,10 +40,10 @@ export default function InvoiceContextProvider({ children }) {
   const updateValue = (key, newValue) => {
     setInvoiceObject((prevObject) => {
       if (key === "eqdetails") {
-        const updatedEqDetails = prevObject.eqdetails.filter(
-          (item) => item.eq_id !== newValue.eq_id
-        );
-        return { ...prevObject, eqdetails: [...updatedEqDetails, newValue] };
+        // const updatedEqDetails = prevObject.eqdetails.filter(
+        //   (item) => item.eq_id !== newValue.eq_id
+        // );
+        return { ...prevObject, eqdetails: [...prevObject.eqdetails, newValue] };
       } else if (key === "payments") {
         const updatedPayments = prevObject.payments.filter(
           (item) => item.invpay_payment_id !== newValue.invpay_payment_id

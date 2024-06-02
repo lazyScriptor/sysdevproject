@@ -6,7 +6,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 function InvoiceDetailsWindowDown(props) {
-  const { updateBtnStatus, setUpdateBtnStatus } = props;
+  const { updateBtnStatus, setUpdateBtnStatus,handleCreateNew } = props;
   const {
     fullDetailsEquipmentArray,
     setFullDetailsEquipmentArray,
@@ -42,17 +42,10 @@ function InvoiceDetailsWindowDown(props) {
               console.log("Local storage retrieval", invoiceObject);
               try {
                 // Send the object to the backend
-                if (updateBtnStatus == true) {
-                  await axios.post(
-                    "http://localhost:8085/updateInvoiceDetails",
-                    invoiceObject
-                  );
-                } else {
-                  await axios.post(
-                    "http://localhost:8085/updateInvoiceDetails",
-                    invoiceObject
-                  );
-                }
+                await axios.post(
+                  "http://localhost:8085/createInvoiceDetails",
+                  invoiceObject
+                );
                 Swal.fire({
                   position: "top-end",
                   icon: "success",
@@ -117,7 +110,87 @@ function InvoiceDetailsWindowDown(props) {
       console.log("Invoice object is undefined");
     }
   };
-  const handleInvoiceUpdate = async () => {};
+  const handleInvoiceUpdate = async () => {
+    if (invoiceObject) {
+      if (invoiceObject.InvoiceID > 0) {
+        if (
+          invoiceObject.hasOwnProperty("customerDetails") &&
+          invoiceObject.customerDetails.cus_id > 0
+        ) {
+          if (invoiceObject.eqdetails.length > 0) {
+            if (invoiceObject.advance > 0) {
+              console.log("Local storage retrieval", invoiceObject);
+              try {
+                // Send the object to the backend
+                await axios.post(
+                  "http://localhost:8085/updateInvoiceDetails",
+                  invoiceObject
+                );
+                Swal.fire({
+                  position: "top-end",
+                  icon: "success",
+                  title: "Your work has been saved",
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+                handleCreateNew();
+                setUpdateBtnStatus(false)
+                console.log("Invoice details updated successfully");
+              } catch (error) {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Try again!",
+                  footer:
+                    '<span style={{color:"red}}>Error occurred in front end AXIOS invoice pass?</span>',
+                });
+                console.error(
+                  "Error occurred in front end AXIOS invoice pass",
+                  error
+                );
+              }
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Didn't he pay you!",
+                footer: '<a href="#">Why do I have this issue?</a>',
+              });
+              console.log("Advance payment is not greater than 0");
+            }
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Enter machine details!",
+              footer: '<a href="#">Why do I have this issue?</a>',
+            });
+            console.log("No equipment details found");
+          }
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Enter Customer Details!",
+            footer: '<a href="#">Why do I have this issue?</a>',
+          });
+          console.log(
+            "Customer ID is not greater than 0 MEANS Customer is not found"
+          );
+        }
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Create a New Invoice!",
+          footer: '<a href="#">Why do I have this issue?</a>',
+        });
+        console.log("Invoice Id should be present");
+      }
+    } else {
+      console.log("Invoice object is undefined");
+    }
+  };
   return (
     <>
       <Paper
@@ -196,7 +269,7 @@ function InvoiceDetailsWindowDown(props) {
           fullWidth
           variant="contained"
           sx={{ mt: 2, borderRadius: 0, height: "60px" }}
-          onClick={handleInvoiceSubmit}
+          onClick={handleInvoiceUpdate}
         >
           Update Invoice
         </Button>
@@ -206,7 +279,7 @@ function InvoiceDetailsWindowDown(props) {
           color="success"
           variant="contained"
           sx={{ mt: 2, borderRadius: 0, height: "60px" }}
-          onClick={handleInvoiceUpdate}
+          onClick={handleInvoiceSubmit}
         >
           Create Invoice
         </Button>

@@ -14,7 +14,7 @@ import YoutubeSearchedForIcon from "@mui/icons-material/YoutubeSearchedFor";
 import MousePopOver from "../../SubComponents/AlertComponents/MousePopOver";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
-function InvoiceRightSideNew() {
+function InvoiceHandOverForm() {
   const [idFormData, setIdFormData] = useState({
     id: "",
   });
@@ -49,8 +49,12 @@ function InvoiceRightSideNew() {
     setResponseManageToogle,
     eqObject,
     setEqObject,
+    iDstatus,
+    invoiceObject,
+    setInvoiceObject,
     updateValue,
     updateEqObject,
+    clearObject,
   } = useContext(InvoiceContext);
 
   const handleIdChange = (e) => {
@@ -79,9 +83,9 @@ function InvoiceRightSideNew() {
     setFormData({ name: "", quantity: "" });
   };
 
-  const handleSubmitId = async (e) => {
-    setEqErrors({});
+  const handleSubmitId = (e) => {
     e.preventDefault();
+    setEqErrors({});
     const validationErrors = {};
 
     if (!idFormData.id.trim()) {
@@ -92,25 +96,19 @@ function InvoiceRightSideNew() {
     setIdErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      try {
-        const res = await axios.get(
-          `http://localhost:8085/getEquipmentbyID/${idFormData.id}`
-        );
-
-        const equipment = res.data[0];
-        if (res.data.length > 0) {
-          setEqQuantity(
-            equipment.eq_completestock - equipment.eq_defected_status
-          );
-          setEqName(equipment.eq_name);
-          setEqFullDetail(equipment);
-          setAddButtonDisable(false);
-        } else {
-          setEqName("");
-          setEqQuantity(0);
-        }
-      } catch (error) {
-        console.error("Error occurred while searching by ID:", error);
+      // Search for the equipment details in invoiceObject
+      const equipment = invoiceObject.eqdetails.find(
+        (item) => item.eq_id == parseInt(idFormData.id.trim()) && item.inveq_return_date ==null
+      );
+      if (equipment) {
+        // Set equipment details to state
+        setEqName(equipment.eq_name);
+        setEqQuantity(equipment.inveq_borrowqty); // Assuming quantity is available in the equipment object
+        setAddButtonDisable(false);
+      } else {
+        setEqName("");
+        setEqQuantity(0);
+        // Handle case when equipment is not found
       }
     }
   };
@@ -146,29 +144,53 @@ function InvoiceRightSideNew() {
     e.preventDefault();
     const validationErrors = validateForm();
     setEqErrors(validationErrors);
-
+  
     if (Object.keys(validationErrors).length === 0) {
-      updateEqObject({ ...eqFullDetail, inveq_borrowqty: formData.quantity });
-      eqFullDetail.inveq_borrowqty = parseInt(formData.quantity);
-      eqFullDetail.inveq_borrow_date = dateformatter();
-      setAddButtonDisable(true);
-      updateValue("eqdetails", eqFullDetail);
+      const currentDate = dateformatter();
+  
+      // Find the equipment in the invoiceObject where inveq_return_quantity is 0
+      const index = invoiceObject.eqdetails.findIndex(
+        (item) => item.eq_id == parseInt(idFormData.id.trim()) && item.inveq_return_quantity == 0
+      );
+  
+      if (index !== -1) {
+        // Clone the equipment object to avoid mutating the original state directly
+        const updatedEquipment = { ...invoiceObject.eqdetails[index] };
+  
+        // Add additional key-value pairs
+        updatedEquipment.inveq_return_quantity = parseInt(formData.quantity);
+        updatedEquipment.inveq_return_date = currentDate;
+  
+        // Update the equipment in the invoiceObject
+        const updatedInvoiceObject = { ...invoiceObject };
+        updatedInvoiceObject.eqdetails[index] = updatedEquipment;
+  
+        // Set the updated invoiceObject state
+        setInvoiceObject(updatedInvoiceObject);
+  
+        // Reset form data
+        setFormData({ name: "", quantity: "" });
+  
+      } else {
+        // Handle case when equipment is not found
+        console.error("Equipment not found in invoiceObject or already returned");
+      }
     }
   };
+  
+//   const handleHandover = () => {
+//     const validationErrors = validateForm();
+//     setEqErrors(validationErrors);
 
-  const handleHandover = () => {
-    const validationErrors = validateForm();
-    setEqErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length === 0) {
-      console.log("This is the data", dateformatter());
-      // Add your handover logic here, similar to handleSubmit
-    }
-  };
+//     if (Object.keys(validationErrors).length === 0) {
+//       console.log("This is the data", dateformatter());
+//       // Add your handover logic here, similar to handleSubmit
+//     }
+//   };
 
   return (
     <Paper
-      sx={{ height: "581px", width: "100%", p: 4, borderRadius: 4 }}
+      sx={{ height: "581px", width: "100%",p:2, borderRadius: 4 }}
       elevation={3}
     >
       <form noValidate onSubmit={handleSubmitId}>
@@ -272,46 +294,24 @@ function InvoiceRightSideNew() {
             color={stockTextColor}
             textAlign={"left"}
           >
-            Remaining Stock: {eqQuantity}
+            Rem Borrowed Stock: {eqQuantity}
           </Typography>
           <Box
-            sx={{ display: "flex", justifyContent: "space-evenly", pt: 2.5 }}
+            sx={{ display: "flex", justifyContent: "space-evenly" }}
           >
             <Box
               display={"flex"}
               flexDirection={"column"}
               alignItems={"center"}
             >
-              <Button
-                disabled={addButtonDisable}
-                variant="contained"
-                customvariant="custom"
-                type="submit"
-              >
-                Add
-              </Button>
-              {addButtonDisable && (
-                <MousePopOver
-                  message={
-                    <InfoOutlinedIcon
-                      fontSize="2"
-                      sx={{
-                        borderRadius: 2,
-                        border: "solid 1px",
-                        color: (theme) => theme.palette.primary[200],
-                        transition: "1900 ease-in-out",
-                      }}
-                    />
-                  }
-                  popOverContent={`Search an equipment first`}
-                />
-              )}
+              
             </Box>
             <Button
               variant="contained"
               color="warning"
               customvariant="custom"
-              onClick={handleHandover}
+            //   onClick={handleHandover}
+              type="submit"
             >
               Handover
             </Button>
@@ -330,4 +330,4 @@ function InvoiceRightSideNew() {
   );
 }
 
-export default InvoiceRightSideNew;
+export default InvoiceHandOverForm;

@@ -86,7 +86,20 @@ export function PaymentForm() {
 
     return `${invoiceId}${month}${day}${milliseconds}${amountFormatted}${uniquePart}`;
   };
-
+  function dateformatter() {
+    const createdDate = new Date();
+    
+    const year = createdDate.getFullYear();
+    const month = String(createdDate.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so add 1
+    const day = String(createdDate.getDate()).padStart(2, '0');
+  
+    const hours = String(createdDate.getHours()).padStart(2, '0');
+    const minutes = String(createdDate.getMinutes()).padStart(2, '0');
+    const seconds = String(createdDate.getSeconds()).padStart(2, '0');
+  
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+  
   const schema = yup.object().shape({
     payment: yup
       .number()
@@ -110,7 +123,7 @@ export function PaymentForm() {
     // Create the new payment object
     const newPayment = {
       invpay_payment_id: paymentId,
-      invpay_payment_date: new Date(), // Current date and time
+      invpay_payment_date: dateformatter(), // Current date and time
       invpay_amount: data.payment,
     };
   

@@ -98,7 +98,7 @@ export default function InvoicePaymentsTable() {
               key={index}
               sx={{ "&:last-child td, &:last-child th": { border: 0 }, height: "40px" , backgroundColor: (theme) => theme.palette.primary[25] }}
             >
-              <TableCell align="center">{payment.invpay_payment_id}</TableCell>
+              <TableCell align="center">{payment.invpay_payment_date}</TableCell>
               <TableCell align="center">{payment.invpay_amount}</TableCell>
               <TableCell align="center">
                 {editToggle && (

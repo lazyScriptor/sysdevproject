@@ -28,6 +28,7 @@ import {
   getCustomerbyPhoneNumberOrNic,
   getCustomerbyPhoneNumber,
   createInvoiceDetails,
+  updateInvoiceDetails,
 } from "./database.js";
 
 const app = express();
@@ -366,7 +367,7 @@ app.get("/invoiceDataRetrieve/:invoiceIdSearch", async (req, res) => {
   }
 });
 
-app.post("/updateInvoiceDetails", async (req, res) => {
+app.post("/createInvoiceDetails", async (req, res) => {
   try {
     const customerDetails = await createInvoiceDetails(req.body);
     return res.json({
@@ -377,6 +378,26 @@ app.post("/updateInvoiceDetails", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+
+
+app.post("/updateInvoiceDetails", async (req, res) => {
+  try {
+    const customerDetails = await updateInvoiceDetails(req.body);
+    return res.json({
+      message: `Customer details updated for the customer with id : ${req.body.id}`,
+    });
+  } catch (error) {
+    console.error("Error in updateCustomerDetails:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+
+
+
 
 dotenv.config();
 const port = process.env.PORT;
