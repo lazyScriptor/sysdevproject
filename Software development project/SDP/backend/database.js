@@ -18,12 +18,10 @@ const pool = mysql
 const port = process.env.PORT || 8085;
 
 export async function loginValidate(userObject) {
-  const [user] =await pool.query(
+  const [user] = await pool.query(
     `SELECT users.* ,userRole.ur_role,userRoleMap.urm_password FROM users JOIN userRoleMap ON users.user_id=userRoleMap.urm_userid JOIN userRole ON userRoleMap.urm_roleid=userRole.ur_roleid WHERE username=? AND ur_role= ?`,
     [userObject.username, userObject.role]
   );
-  console.log("this is the selected user :", user);
-
   const id = user[0].user_id;
   if (userObject.password === user[0].urm_password) {
     console.log("Successful", user);
@@ -763,8 +761,85 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
   }
 }
 export async function getUserDetails() {
-  const [userDetails] = await pool.query(
-    `SELECT users.* ,userRole.ur_role FROM users JOIN userRoleMap ON users.user_id=userRoleMap.urm_userid JOIN userRole ON userRoleMap.urm_roleid=userRole.ur_roleid`
-  );
-  return userDetails;
+  try {
+    const [userDetails] = await pool.query(`SELECT users.* FROM users`);
+
+    for (const user of userDetails) {
+      const [addRoleDetails] = await pool.query(
+        `SELECT urm_roleid FROM userRoleMap WHERE urm_userid = ?`,
+        [user.user_id]
+      );
+
+      // Add roles to the user object
+      user.user_roles = addRoleDetails.map((role) => role.urm_roleid);
+    }
+    console.log(userDetails, "object");
+    return userDetails;
+  } catch (error) {
+    console.error("Error in getUserDetails:", error);
+    throw error;
+  }
+}
+
+export async function setUserDetails(object) {
+  const {
+    firstname,
+    lastname,
+    username,
+    password,
+    nic,
+    phonenumber,
+    address1,
+    address2,
+    userRole,
+  } = object;
+
+  console.log("backend object", object);
+  try {
+    const [response] = await pool.query(
+      `
+  INSERT INTO users (user_first_name,user_last_name,username,nic,user_phone_number,user_address1,user_address2)
+  VALUES(?,?,?,?,?,?,?)
+  `,
+      [firstname, lastname, username, nic, phonenumber, address1, address2]
+    );
+
+    const userid = response.insertId;
+
+    for (const role of object.userRole) {
+      const [roleMapresponse] = await pool.query(
+        `
+      INSERT INTO userRoleMap (urm_userid,urm_roleid,urm_password) VALUES (?,?,?)`,
+        [userid, role, password]
+      );
+    }
+  } catch (error) {
+    console.log("Error occured in backend setUserDetails", error);
+  }
+}
+export async function deleteUserRole(userId,role) {
+  console.log("object,",role,userId)
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "DELETE FROM userRoleMap WHERE urm_roleid = ? AND urm_userid = ?",
+      [role, userId],
+      (error, results) => {
+        if (error) {
+          console.error("Error deleting user role:", error);
+          reject("Server error");
+        } else if (results.affectedRows === 0) {
+          reject("Role or user not found");
+        } else {
+          resolve(`Role ${role} for user ${userId} deleted successfully`);
+        }
+      }
+    );
+  });
+}
+export async function updateUserRole({userId,role}){
+  try{  
+    pool.query(`SELECT urm_password FROM userRoleMap WHERE urm_userid = ? AND`)
+  }catch(error){
+    console.log("Error occured in the backend",error)
+  }
 }

@@ -30,6 +30,8 @@ import {
   createInvoiceDetails,
   updateInvoiceDetails,
   getUserDetails,
+  setUserDetails,
+  deleteUserRole,
 } from "./database.js";
 
 const app = express();
@@ -396,6 +398,33 @@ app.get("/fetchUserDetails", async (req, res) => {
     return res.json(userDetails);
   } catch (error) {
     console.log("Error occured in express fetchUser details");
+  }
+});
+
+app.post("/createUser", async (req, res) => {
+  try {
+    const response = await setUserDetails(req.body);
+    return res.json(response);
+  } catch (error) {}
+});
+
+app.delete("/deleteUserRole/:userId/:role", async (req, res) => {
+  const { userId, role } = req.params;
+  try {
+    const result = await deleteUserRole(role, userId);
+    res.send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(error === "Role or user not found" ? 404 : 500).send(error);
+  }
+});
+app.put("/updateUserRole/:userId/:role", async (req, res) => {
+  try {
+    const {userId,role}=req.params;
+    console.log("Express app paramter", userId,role);
+    const result = await updateUserRole(userId,role);
+  } catch (error) {
+    console.log("Error occured in the express app", error);
   }
 });
 dotenv.config();

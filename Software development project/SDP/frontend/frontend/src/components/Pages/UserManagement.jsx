@@ -9,10 +9,16 @@ import {
   FormControl,
   InputLabel,
   Input,
+  Chip,
   FormHelperText,
   FormLabel,
   Checkbox,
 } from "@mui/material";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import { useTheme } from "@mui/material/styles";
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../Stylings/rootstyles.css";
@@ -25,11 +31,18 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import RoleSelect from "../SubComponents/RoleSelect";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import DoneIcon from "@mui/icons-material/Done";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function UserManagement({ username }) {
   const [users, setUsers] = useState([]);
   const [imageMap, setImageMap] = useState({}); // State to store image URLs mapped by username
   const imageListRef = ref(storage, "UserImages/");
+  const [existingUsernames, setExistingUsernames] = useState([]);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -59,7 +72,8 @@ export default function UserManagement({ username }) {
         const response = await axios.get(
           "http://localhost:8085/fetchUserDetails"
         );
-        console.log("This is the response", response.data);
+        const usernames = response.data.map((user) => user.username);
+        setExistingUsernames(usernames);
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -101,8 +115,8 @@ export default function UserManagement({ username }) {
             p: 4,
           }}
         >
-          <UserForm />
-          <Box component={Paper} sx={{ width: "75%", borderRadius: 4 }}>
+          <UserForm existingUsernames={existingUsernames} />{" "}
+          <Box component={Paper} sx={{ width: "60%", borderRadius: 4 }}>
             <UserTable />
           </Box>
         </Box>
@@ -180,41 +194,166 @@ function UserPaper({ user, imageUrl }) {
     </Paper>
   );
 }
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+function UserForm({ existingUsernames }) {
+  const [roles, setRoles] = useState([]);
 
-function UserForm() {
+  const schema = yup.object().shape({
+    firstname: yup.string().required("First name is required"),
+    userRole: yup.array().min(1, "At least one role must be selected"),
+    lastname: yup.string().required("Last name is required"),
+    nic: yup
+      .string()
+      .required()
+      .transform((value) => value.trim())
+      .test("is-valid-nic", "Please enter a valid NIC number", (value) => {
+        if (!value) return false;
+        const nineDigitsAndV = /^[0-9]{9}v$/i;
+        const validFormatCheck = /^[1-9]\d{8,10}$/;
+        const twelveDigits = /^[0-9]{12}$/;
+        return nineDigitsAndV.test(value) || twelveDigits.test(value);
+      }),
+    username: yup
+      .string()
+      .required("Username is required")
+      .min(3, "Username must be at least 3 characters")
+      .notOneOf(existingUsernames, "Username already exists"),
+    password: yup
+      .string()
+      .min(3, "Password must be at least 3 characters")
+      .max(10, "Password cannot exceed 10 characters")
+      .required("Password is required"),
+    confirmpassword: yup
+      .string()
+      .oneOf([yup.ref("password"), null], "Passwords must match"),
+    phonenumber: yup.string().required("Phone number is required"),
+    address1: yup.string().required("Address line 1 is required"),
+    address2: yup.string().required("Address line 2 is required"),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+    setValue,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  useEffect(() => {
+    setValue("userRole", roles);
+  }, [roles, setValue]);
+
+  const onSubmit = async (data) => {
+    try {
+      axios.post("http://localhost:8085/createUser", data);
+      reset();
+    } catch (error) {
+      console.log("Error occured in front end createUser", error);
+    }
+  };
+
   const textFieldStyle = {
     "& .MuiOutlinedInput-root": {
-      borderRadius: "12px", // Increase the border radius
+      borderRadius: "12px",
     },
   };
+
   return (
-    <>
-      <Box
-        sx={{
-          m: 2,
-          width: "auto",
-          height: "auto",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <Box sx={{ height: "200px" }}></Box>
+    <Box
+      sx={{
+        m: 2,
+        width: "700px",
+        height: "810px",
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <form noValidate onSubmit={handleSubmit(onSubmit)}>
         <Stack gap={3}>
           <Box>
             <FormLabel sx={{ m: 1, width: "150px" }}>First name</FormLabel>
-            <TextField label="First name" size="small" sx={textFieldStyle} />
+            <TextField
+              label="First name"
+              size="small"
+              sx={textFieldStyle}
+              inputProps={{ ...register("firstname") }}
+              error={!!errors.firstname}
+              helperText={errors.firstname?.message}
+            />
           </Box>
           <Box>
             <FormLabel sx={{ m: 1, width: "150px" }}>Last name</FormLabel>
-            <TextField label="Last name" size="small" sx={textFieldStyle} />
+            <TextField
+              label="Last name"
+              size="small"
+              sx={textFieldStyle}
+              inputProps={{ ...register("lastname") }}
+              error={!!errors.lastname}
+              helperText={errors.lastname?.message}
+            />
           </Box>
           <Box>
             <FormLabel sx={{ m: 1, width: "150px" }}>User name</FormLabel>
-            <TextField label="User name" size="small" sx={textFieldStyle} />
+            <TextField
+              label="User name"
+              size="small"
+              sx={textFieldStyle}
+              inputProps={{ ...register("username") }}
+              error={!!errors.username}
+              helperText={errors.username?.message}
+            />
+          </Box>
+          <Box sx={{ display: "flex" }}>
+            <FormLabel sx={{ m: 1, width: "150px" }}>Password</FormLabel>
+            <TextField
+              label="Password"
+              type="password"
+              size="small"
+              sx={textFieldStyle}
+              inputProps={{ ...register("password") }}
+              error={!!errors.password}
+              helperText={errors.password?.message}
+            />
+            <TextField
+              label="Confirm password"
+              size="small"
+              type="password"
+              sx={[textFieldStyle, { ml: 2 }]}
+              inputProps={{ ...register("confirmpassword") }}
+              error={!!errors.confirmpassword}
+              helperText={errors.confirmpassword?.message}
+            />
           </Box>
           <Box>
             <FormLabel sx={{ m: 1, width: "150px" }}>User role</FormLabel>
-            <TextField label="User role" size="small" sx={textFieldStyle} />
+            <RoleSelect roles={roles} setRoles={setRoles} register={register} />
+            {errors.userRole && (
+              <Typography variant="caption" color={"error"}>
+                {errors.userRole.message}
+              </Typography>
+            )}
+          </Box>
+          <Box>
+            <FormLabel sx={{ m: 1, width: "150px" }}>User NIC number</FormLabel>
+            <TextField
+              label="nic"
+              size="small"
+              sx={textFieldStyle}
+              inputProps={{ ...register("nic") }}
+              error={!!errors.nic}
+              helperText={errors.nic?.message}
+            />
           </Box>
           <Box>
             <FormLabel sx={{ m: 1, width: "150px" }}>
@@ -224,27 +363,90 @@ function UserForm() {
               label="User phone number"
               size="small"
               sx={textFieldStyle}
+              inputProps={{ ...register("phonenumber") }}
+              error={!!errors.phonenumber}
+              helperText={errors.phonenumber?.message}
             />
           </Box>
           <Box>
             <FormLabel sx={{ m: 1, width: "150px" }}>
               User address Line 1
             </FormLabel>
-            <TextField label="User address" size="small" sx={textFieldStyle} />
+            <TextField
+              label="User address"
+              size="small"
+              sx={textFieldStyle}
+              inputProps={{ ...register("address1") }}
+              error={!!errors.address1}
+              helperText={errors.address1?.message}
+            />
           </Box>
           <Box>
             <FormLabel sx={{ m: 1, width: "150px" }}>
               User address Line 2
             </FormLabel>
-            <TextField label="User address" size="small" sx={textFieldStyle} />
+            <TextField
+              label="User address"
+              size="small"
+              sx={textFieldStyle}
+              inputProps={{ ...register("address2") }}
+              error={!!errors.address2}
+              helperText={errors.address2?.message}
+            />
           </Box>
+          <Button type="submit">Submit</Button>
+          <Button type="reset">Clear</Button>
         </Stack>
-      </Box>
-    </>
+      </form>
+    </Box>
   );
 }
+
 function UserTable() {
   const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [availableRoles, setAvailableRoles] = useState([]);
+
+  const handleClick = () => {
+    console.info("You clicked the Chip.");
+  };
+
+  const handleDelete = async (userId, role) => {
+    try {
+      console.info("You clicked the delete icon.", role, userId);
+      const response = await axios.delete(
+        `http://localhost:8085/deleteUserRole/${userId}/${role}`
+      );
+      console.log("Delete response:", response.data);
+
+      // Update the local state to reflect the deletion
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.user_id === userId
+            ? { ...user, user_roles: user.user_roles.filter((r) => r !== role) }
+            : user
+        )
+      );
+    } catch (error) {
+      console.error("Error deleting user role:", error);
+    }
+  };
+
+
+  const handleAddRoles = (user) => {
+    setSelectedUser(user);
+    setAvailableRoles(["Admin", "Cashier", "Warehouse Handler"]); // Assuming these are the available roles
+  };
+
+  const handleRoleSelection = async (role) => {
+    try {
+      console.log(`Assigning role ${role} to user ${selectedUser.user_id}`);
+      // Simulated API call to assign role to user
+    } catch (error) {
+      console.error("Error assigning user role:", error);
+    }
+  };
+
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -261,18 +463,23 @@ function UserTable() {
     fetchUsers();
   }, []);
 
+  const roleLabels = {
+    1: "Admin",
+    2: "Cashier",
+    3: "Warehouse Handler",
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell>Full name</TableCell>
-            <TableCell align="right">Username</TableCell>
-            <TableCell align="right">Phone number</TableCell>
-            <TableCell align="center">Admin</TableCell>
-            <TableCell align="center">Cashier</TableCell>
-            <TableCell align="center">Warehouse Handler</TableCell>
-            <TableCell align="right">Address</TableCell>
+            <TableCell align="center">Username</TableCell>
+            <TableCell align="center">Phone number</TableCell>
+            <TableCell align="center">Address</TableCell>
+            <TableCell align="center">Roles</TableCell>
+            <TableCell align="center">Access permissions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -284,21 +491,38 @@ function UserTable() {
               <TableCell component="th" scope="row">
                 {user.user_first_name} {user.user_last_name}
               </TableCell>
-              <TableCell align="right">{user.username}</TableCell>
-              <TableCell align="right">{user.user_phone_number}</TableCell>
+              <TableCell align="center">{user.username}</TableCell>
+              <TableCell align="center">{user.user_phone_number}</TableCell>
               <TableCell align="center">
-                <Checkbox checked={user.ur_role.includes("admin")} />
-              </TableCell>
-              <TableCell align="center">
-                <Checkbox checked={user.ur_role.includes("cashier")} />
-              </TableCell>
-              <TableCell align="center">
-                <Checkbox
-                  checked={user.ur_role.includes("warehouse handler")}
-                />
-              </TableCell>
-              <TableCell align="right">
                 {user.user_address1} {user.user_address2}
+              </TableCell>
+              <TableCell align="center">
+                {user.user_roles &&
+                  user.user_roles.map((role) => (
+                    <Chip
+                      key={role}
+                      label={roleLabels[role]}
+                      onClick={handleClick}
+                      onDelete={() => handleDelete(role, user.user_id)}
+                      deleteIcon={<DeleteIcon />}
+                      sx={{ margin: "4px" }}
+                    />
+                  ))}
+              </TableCell>
+              <TableCell align="center">
+                <button onClick={() => handleAddRoles(user)}>+</button>
+                {selectedUser === user && availableRoles.length > 0 && (
+                  <div>
+                    {availableRoles.map((role) => (
+                      <Chip
+                        key={role}
+                        label={role}
+                        onClick={() => handleRoleSelection(role)}
+                        sx={{ margin: "4px" }}
+                      />
+                    ))}
+                  </div>
+                )}
               </TableCell>
             </TableRow>
           ))}
