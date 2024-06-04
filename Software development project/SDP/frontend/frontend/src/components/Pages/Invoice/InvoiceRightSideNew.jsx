@@ -168,7 +168,7 @@ function InvoiceRightSideNew() {
 
   return (
     <Paper
-      sx={{ height: "581px", width: "100%", p: 4, borderRadius: 4 }}
+      sx={{ height: "55vh", width: "100%", p: 4, borderRadius: 4 }}
       elevation={3}
     >
       <form noValidate onSubmit={handleSubmitId}>

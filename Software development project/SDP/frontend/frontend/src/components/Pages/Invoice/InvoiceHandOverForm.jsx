@@ -190,7 +190,7 @@ function InvoiceHandOverForm() {
 
   return (
     <Paper
-      sx={{ height: "581px", width: "100%",p:2, borderRadius: 4 }}
+      sx={{ height: "55vh", width: "100%",p:2, borderRadius: 4 }}
       elevation={3}
     >
       <form noValidate onSubmit={handleSubmitId}>
@@ -297,15 +297,9 @@ function InvoiceHandOverForm() {
             Rem Borrowed Stock: {eqQuantity}
           </Typography>
           <Box
-            sx={{ display: "flex", justifyContent: "space-evenly" }}
+            sx={{ display: "flex", justifyContent: "space-evenly",pt:"45px" }}
           >
-            <Box
-              display={"flex"}
-              flexDirection={"column"}
-              alignItems={"center"}
-            >
-              
-            </Box>
+
             <Button
               variant="contained"
               color="warning"

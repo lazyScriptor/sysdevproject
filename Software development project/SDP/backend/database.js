@@ -505,14 +505,13 @@ export async function createInvoiceDetails(InvoiceCompleteDetail) {
 export async function getInvoiceDetails(invoiceIdSearch) {
   try {
     // Fetch customer, invoice, equipment, and additional invoice details
-    // Fetch customer, invoice, equipment, and additional invoice details
     const [invoiceDetails] = await pool.query(
-      `SELECT customer.*, invoice.*, invoiceEquipment.*, equipment.*, invoice.inv_advance, invoice.inv_special_message, invoice.inv_idcardstatus 
-   FROM invoice
-   LEFT JOIN customer ON customer.cus_id = invoice.inv_cusid
-   LEFT JOIN invoiceEquipment ON invoice.inv_id = invoiceEquipment.inveq_invid
-   LEFT JOIN equipment ON invoiceEquipment.inveq_eqid = equipment.eq_id
-   WHERE invoice.inv_id = ?`,
+      `SELECT customer.*, invoice.*, invoiceEquipment.*, equipment.*, invoice.inv_advance, invoice.inv_special_message, invoice.inv_idcardstatus, invoice.inv_createddate
+       FROM invoice
+       LEFT JOIN customer ON customer.cus_id = invoice.inv_cusid
+       LEFT JOIN invoiceEquipment ON invoice.inv_id = invoiceEquipment.inveq_invid
+       LEFT JOIN equipment ON invoiceEquipment.inveq_eqid = equipment.eq_id
+       WHERE invoice.inv_id = ?`,
       [invoiceIdSearch]
     );
 
@@ -527,6 +526,41 @@ export async function getInvoiceDetails(invoiceIdSearch) {
         idStatus: null,
       };
 
+      function dateformatterr(dateString) {
+        const dateObject = new Date(dateString);
+
+        // Get year, month (0-indexed), day, hour, minutes, seconds, and milliseconds
+        const year = dateObject.getFullYear();
+        const month = dateObject.getMonth();
+        const day = dateObject.getDate();
+        const hour = dateObject.getHours();
+        const minutes = dateObject.getMinutes();
+        const seconds = dateObject.getSeconds();
+        const milliseconds = dateObject.getMilliseconds();
+
+        // Format the date and time with timezone information
+        const formattedDateTime = `${year}-${month + 1}-${day
+          .toString()
+          .padStart(2, "0")}T${hour.toString().padStart(2, "0")}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds
+          .toString()
+          .padStart(2, "0")}`;
+
+        return formattedDateTime;
+      }
+      function getTimeFromISODateString(isoDateString) {
+        const date = new Date(isoDateString);
+        const hours = `0${date.getUTCHours()}`.slice(-2);
+        const minutes = `0${date.getUTCMinutes()}`.slice(-2);
+        const seconds = `0${date.getUTCSeconds()}`.slice(-2);
+        return `${hours}:${minutes}:${seconds}`;
+      }
+
+      console.log(
+        "This is the incoive Object",
+        getTimeFromISODateString(invoiceDetails[0].inv_createddate)
+      );
       const customerDetails = Object.keys(invoiceDetails[0])
         .filter((key) => key.startsWith("cus_") || key === "nic")
         .reduce((obj, key) => {
@@ -538,13 +572,7 @@ export async function getInvoiceDetails(invoiceIdSearch) {
 
       function dateformatter(date) {
         const createdDate = new Date(date);
-        const datePart = createdDate.toLocaleDateString("en-GB");
-        const timePart = createdDate.toLocaleTimeString("en-GB", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        });
-        return `${datePart} ${timePart}`;
+        return createdDate;
       }
 
       invoiceObject.createdDate = dateformatter(
@@ -574,14 +602,13 @@ export async function getInvoiceDetails(invoiceIdSearch) {
         inveq_return_quantity: record.inveq_returned_quantity,
         inveq_updated_status: record.inveq_updated_status,
       }));
-
       invoiceObject.eqdetails = equipmentDetails;
 
       // Fetch payment details
       const [invoicePayments] = await pool.query(
         `SELECT invpay_payment_id, invpay_payment_date, invpay_amount 
-     FROM invoicePayments 
-     WHERE invpay_inv_id = ?`,
+         FROM invoicePayments 
+         WHERE invpay_inv_id = ?`,
         [invoiceIdSearch]
       );
 
@@ -660,7 +687,11 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
     // Function to format the date for SQL
     function formatDateForSQL(date) {
       if (!date) return null;
-      return new Date(date).toISOString().slice(0, 19).replace("T", " ");
+      const d = new Date(date);
+      const pad = (n) => (n < 10 ? "0" + n : n);
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(
+        d.getDate()
+      )} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
     }
 
     for (const equipment of InvoiceCompleteDetail.eqdetails) {

@@ -33,7 +33,8 @@ import InvoiceRightSideNew from "./Invoice/InvoiceRightSideNew.jsx";
 import InvoiceUpdateForm from "./Invoice/InvoiceUpdateForm.jsx";
 import InvoiceHandOverForm from "./Invoice/InvoiceHandOverForm.jsx";
 import NavigationIcon from "@mui/icons-material/Navigation";
-import FeedbackComponent from '../SubComponents/FeedbackComponent.jsx'
+import FeedbackComponent from "../SubComponents/FeedbackComponent.jsx";
+import CompleteInvoiceTable from "./Invoice/CompleteInvoiceTable.jsx";
 
 function Invoice() {
   const {
@@ -135,6 +136,7 @@ function Invoice() {
         setData(data[0]);
         updateValue("customerDetails", data[0]);
       } else if (data.message) {
+        setValidationMessage("No customer Found with this Phone number or NIC")
         setData({
           cus_fname: "",
           cus_address1: "",
@@ -143,10 +145,11 @@ function Invoice() {
           cus_phone_number: "",
           cus_id: "",
         });
-        updateValue("customerDetails", null);
+        updateValue("customerDetails", clearData);
         console.log(data.message);
       } else {
         console.error("Unexpected response format:", data);
+        setValidationMessage("Unexpected error occured")
         setData({
           cus_fname: "",
           cus_address1: "",
@@ -155,9 +158,10 @@ function Invoice() {
           cus_phone_number: "",
           cus_id: "",
         });
-        updateValue("customerDetails", null);
+        updateValue("customerDetails", clearData);
       }
     } catch (error) {
+      setValidationMessage("Error occured in front end")
       setData({
         cus_fname: "",
         cus_address1: "",
@@ -166,7 +170,7 @@ function Invoice() {
         cus_phone_number: "",
         cus_id: "",
       });
-      updateValue("customerDetails", null);
+      updateValue("customerDetails", clearData);
       console.error("Error in handleSearchPhoneNumberorNic:", error);
     }
   };
@@ -209,6 +213,7 @@ function Invoice() {
           // Pass each payment object to the updateValue function
           updateValue("payments", payment);
         });
+        console.log(response.data.customerDetails.length);
         updateValue("customerDetails", response.data.customerDetails);
         response.data.eqdetails.forEach((eqdetail) => {
           // Pass each payment object to the updateValue function
@@ -226,45 +231,6 @@ function Invoice() {
     } catch (error) {
       console.log("Error:", error);
     }
-  };
-
-  const handleFeedback = () => {
-    Swal.fire({
-      title: "Submit your Github username",
-      input: "text",
-      inputAttributes: {
-        autocapitalize: "off",
-      },
-      showCancelButton: true,
-      confirmButtonText: "Look up",
-      showLoaderOnConfirm: true,
-      preConfirm: async (login) => {
-        try {
-          const githubUrl = `
-        https://api.github.com/users/${login}
-      `;
-          const response = await fetch(githubUrl);
-          if (!response.ok) {
-            return Swal.showValidationMessage(`
-          ${JSON.stringify(await response.json())}
-        `);
-          }
-          return response.json();
-        } catch (error) {
-          Swal.showValidationMessage(`
-        Request failed: ${error}
-      `);
-        }
-      },
-      allowOutsideClick: () => !Swal.isLoading(),
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: `${result.value.login}'s avatar`,
-          imageUrl: result.value.avatar_url,
-        });
-      }
-    });
   };
   return (
     <>
@@ -339,7 +305,7 @@ function Invoice() {
           sx={{
             display: "flex",
             width: "100%",
-            minHeight: "50vh",
+            height: "55vh",
           }}
         >
           <Box
@@ -348,6 +314,7 @@ function Invoice() {
               flexDirection: "column",
               gap: 3,
               width: "23.6%",
+              
             }}
           >
             {updateBtnStatus == true ? (
@@ -418,7 +385,9 @@ function Invoice() {
                   }}
                 >
                   <TextField
-                    onChange={(e) => setPhoneNumberorNic(e.target.value)}
+                    onChange={(e) =>{ setPhoneNumberorNic(e.target.value)
+                      setValidationMessage("")
+                    }}
                     value={phoneNumberorNic}
                     sx={{ width: "350px" }}
                     id="outlined-basic"
@@ -535,7 +504,7 @@ function Invoice() {
                     <NavigationIcon sx={{ mr: 1 }} />
                     Feedback
                   </Fab> */}
-                {invoiceSearchBtnStatus&&  <FeedbackComponent/>}
+                  {invoiceSearchBtnStatus && <FeedbackComponent />}
                 </Box>
               </Box>
             </Paper>
@@ -558,7 +527,7 @@ function Invoice() {
           sx={{
             display: "flex",
             width: "100%",
-            height: "34vh",
+            height: "37vh",
           }}
         >
           <Box
@@ -575,11 +544,13 @@ function Invoice() {
             sx={{
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
+              alignItems: "start",
               width: "52.4%",
               p: 3,
             }}
-          ></Box>
+          >
+            <CompleteInvoiceTable />
+          </Box>
           <Box
             sx={{
               display: "flex",

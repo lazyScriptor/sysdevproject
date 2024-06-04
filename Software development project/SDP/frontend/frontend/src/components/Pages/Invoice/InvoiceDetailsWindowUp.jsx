@@ -117,7 +117,7 @@ function InvoiceDetailsWindowUp() {
               key={index}
               sx={{
                 backgroundColor: item.inveq_return_date
-                  ? "lightgreen"
+                  ? (theme)=>theme.palette.primary[50]
                   : "white",
                 display: "flex",
                 height: "70px",

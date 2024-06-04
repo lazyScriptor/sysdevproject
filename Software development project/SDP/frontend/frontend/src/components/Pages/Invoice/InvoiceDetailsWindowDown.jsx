@@ -203,7 +203,7 @@ function InvoiceDetailsWindowDown(props) {
           justifyContent: "start",
           p: 3,
           borderRadius: "0px 0px 12px 12px",
-          height: "390px",
+          height: "80%",
         }}
       >
         {/* <Box width="60%" sx={{display:"flex",flexDirection:"column",gap:3}}>
