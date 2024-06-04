@@ -21,6 +21,7 @@ function LoginFormMUI() {
   const [LoadUsername, setLoadUsername] = useState("");
   const [usernameArray, setUsernameArray] = useState([]);
   const [selectValue, setSelectValue] = useState();
+  const [passwordWrong, setPasswordWrong] = useState("");
   const navigate = useNavigate();
 
   const schema = yup.object().shape({
@@ -70,15 +71,13 @@ function LoginFormMUI() {
         .get(`http://localhost:8085/getUserRole/${userName}`)
         .then((res) => {
           console.log("This is the response ", res.data);
-          
+
           setUsernameArray(res.data);
         });
     } catch (error) {
       setIsLoading(false);
       console.log("handleSearch NIC error");
     }
-
-    
   };
 
   const handleSelectChange = (event) => {
@@ -86,7 +85,6 @@ function LoginFormMUI() {
   };
 
   const onSubmit = async (data) => {
-   
     try {
       await axios
         .get(`http://localhost:8085/loginValidate`, {
@@ -95,6 +93,7 @@ function LoginFormMUI() {
         .then((res) => {
           console.log("This is the response", res.data);
           if (!res.data.auth) {
+            setPasswordWrong("Password is wrong");
             // setLogInStatus(false);
             // setIsAuthenticated(false);
           } else {
@@ -119,10 +118,12 @@ function LoginFormMUI() {
     <>
       <Paper
         elevation={10}
-        sx={{ display: "inline-block", p:5,pt:0, borderRadius: 4 }}
+        sx={{ display: "inline-block", p: 5, pt: 0, borderRadius: 4 }}
       >
-        <Typography variant="h2" sx={{textAlign:"center"}}>
-          <HealthAndSafetyTwoToneIcon sx={{ fontSize: 48 ,color:(theme)=>theme.palette.primary[800]}}/>
+        <Typography variant="h2" sx={{ textAlign: "center" }}>
+          <HealthAndSafetyTwoToneIcon
+            sx={{ fontSize: 48, color: (theme) => theme.palette.primary[800] }}
+          />
         </Typography>
 
         <h1 style={{ textAlign: "center", marginBottom: 50 }}>Login</h1>
@@ -168,8 +169,17 @@ function LoginFormMUI() {
               label="Password"
               type="password"
               {...register("password")}
+              onChange={() => {
+                setPasswordWrong("");
+              }}
               error={!!errors.password}
-              helperText={errors.password?.message}
+              helperText={
+                errors.password?.message || (
+                  <Typography variant="caption" color={"error"}>
+                    {passwordWrong}
+                  </Typography>
+                )
+              }
             />
             <Button type="submit" variant="contained" color="primary">
               Submit

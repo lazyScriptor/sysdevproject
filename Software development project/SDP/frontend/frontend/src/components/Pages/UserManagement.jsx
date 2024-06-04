@@ -37,13 +37,27 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import DoneIcon from "@mui/icons-material/Done";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Swal from "sweetalert2";
+import backgroundImage from "../../assets/background.jpg";
 
 export default function UserManagement({ username }) {
   const [users, setUsers] = useState([]);
   const [imageMap, setImageMap] = useState({}); // State to store image URLs mapped by username
   const imageListRef = ref(storage, "UserImages/");
   const [existingUsernames, setExistingUsernames] = useState([]);
+  const [offsetY, setOffsetY] = useState(0);
 
+  const handleScroll = () => {
+    setOffsetY(window.pageYOffset);
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   useEffect(() => {
     const fetchImages = async () => {
       const response = await listAll(imageListRef);
@@ -85,9 +99,6 @@ export default function UserManagement({ username }) {
   return (
     <Box id="main-body">
       <Box id="body" sx={{ display: "flex", flexDirection: "column" }}>
-        {/* <Box sx={{ overflowX: "auto", width: "100%", position: "relative" }}>
-        For the user staack  
-        </Box> */}
         <Box
           sx={{
             overflowX: "auto",
@@ -97,13 +108,18 @@ export default function UserManagement({ username }) {
             display: "flex",
             flexDirection: "column",
             justifyContent: "end",
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundAttachment: "fixed",
+            backgroundPosition: `center calc(50% + ${offsetY * 0.5}px)`, // Adjust this factor for desired effect
+            backgroundSize: "cover", // Ensures the background image covers the entire box
+            backgroundRepeat: "no-repeat", // Prevents the background image from repeating
             p: 4,
             gap: 3,
           }}
         >
           <Typography variant="h4">Add New User</Typography>
           <Typography>
-            Carefully observ the privillages and assign accordingly
+            Observe the privillages and assign accordingly
           </Typography>
         </Box>
         <Box
@@ -116,8 +132,34 @@ export default function UserManagement({ username }) {
           }}
         >
           <UserForm existingUsernames={existingUsernames} />{" "}
-          <Box component={Paper} sx={{ width: "60%", borderRadius: 4 }}>
+          <Box
+            component={Paper}
+            sx={{ width: "70%", borderRadius: 4, height: "800px", p: 2 }}
+          >
             <UserTable />
+            <Box
+              sx={{
+                overflowX: "auto",
+                mt: 8,
+                height: "250px",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{ minWidth: "max-content" }}
+              >
+                {users.map((user) => (
+                  <UserPaper
+                    key={user.user_id}
+                    user={user}
+                    imageUrl={imageMap[user.username] || defaultImage}
+                  />
+                ))}
+              </Stack>
+            </Box>
           </Box>
         </Box>
       </Box>
@@ -129,17 +171,16 @@ function UserPaper({ user, imageUrl }) {
   return (
     <Paper
       sx={{
-        width: "300px",
-        height: "100%",
-        minHeight: "254px",
+        width: "150px",
+        height: "170px",
         borderRadius: 4,
         flexShrink: 0,
       }}
-      elevation={3}
+      elevation={10}
     >
       <Box
         sx={{
-          height: "200px",
+          height: "100px",
           width: "100%",
           display: "flex",
           justifyContent: "center",
@@ -161,35 +202,8 @@ function UserPaper({ user, imageUrl }) {
       </Box>
       <Box sx={{ height: "40%", width: "100%", p: 2 }}>
         <Typography variant="body2">
-          Full name: {user.user_first_name}
+          {user.user_first_name} {user.user_last_name}
         </Typography>
-        <Typography variant="body2">Role: {user.role}</Typography>
-        <Typography variant="body2">Username: {user.username}</Typography>
-        <Typography variant="body2">NIC: {user.nic}</Typography>
-        <Typography variant="body2">
-          Phone number: {user.user_phone_number}
-        </Typography>
-        <Box sx={{ width: "100%", display: "flex", height: "60px" }}>
-          <Typography variant="body2" sx={{ width: "30%" }}>
-            Address:
-          </Typography>
-          <Box sx={{ width: "60%" }}>
-            <Typography variant="body2" sx={{ width: "100%" }}>
-              {user.user_address1} {user.user_address2}
-            </Typography>
-          </Box>
-        </Box>
-        <Box>
-          <ButtonGroup
-            variant="outlined"
-            aria-label="Basic button group"
-            sx={{ display: "flex", justifyContent: "center" }}
-          >
-            <Button>One</Button>
-            <Button>Two</Button>
-            <Button>Three</Button>
-          </ButtonGroup>
-        </Box>
       </Box>
     </Paper>
   );
@@ -262,7 +276,9 @@ function UserForm({ existingUsernames }) {
       console.log("Error occured in front end createUser", error);
     }
   };
-
+  const handleClear = () => {
+    reset(); // Reset the form when "Clear" button is clicked
+  };
   const textFieldStyle = {
     "& .MuiOutlinedInput-root": {
       borderRadius: "12px",
@@ -394,8 +410,20 @@ function UserForm({ existingUsernames }) {
               helperText={errors.address2?.message}
             />
           </Box>
-          <Button type="submit">Submit</Button>
-          <Button type="reset">Clear</Button>
+          <Box display={"flex"} gap={2} justifyContent={"center"}>
+            <Button type="submit" variant="contained" customvariant="custom">
+              Submit
+            </Button>
+            <Button
+              type="reset"
+              variant="contained"
+              color="error"
+              onClick={handleClear}
+              customvariant="custom"
+            >
+              Clear
+            </Button>
+          </Box>
         </Stack>
       </form>
     </Box>
@@ -414,39 +442,111 @@ function UserTable() {
   const handleDelete = async (userId, role) => {
     try {
       console.info("You clicked the delete icon.", role, userId);
-      const response = await axios.delete(
-        `http://localhost:8085/deleteUserRole/${userId}/${role}`
-      );
-      console.log("Delete response:", response.data);
 
-      // Update the local state to reflect the deletion
+      // Optimistically update the local state
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
-          user.user_id === userId
+          user.user_id == userId
             ? { ...user, user_roles: user.user_roles.filter((r) => r !== role) }
             : user
         )
       );
+
+      const response = await axios.delete(
+        `http://localhost:8085/deleteUserRole/${userId}/${role}`
+      );
+
+      if (response.status === 200) {
+        console.log("User role deleted successfully.");
+      } else {
+        console.error("Failed to delete user role. Status:", response.status);
+
+        // Revert the local state if the deletion fails
+        fetchUsers(); // Re-fetch users from the server to get the latest data
+      }
     } catch (error) {
       console.error("Error deleting user role:", error);
     }
   };
 
-
   const handleAddRoles = (user) => {
     setSelectedUser(user);
-    setAvailableRoles(["Admin", "Cashier", "Warehouse Handler"]); // Assuming these are the available roles
+    const occupiedRoles = new Set(user.user_roles);
+    const filteredRoles = Object.entries(roleLabels)
+      .filter(([roleId]) => !occupiedRoles.has(parseInt(roleId)))
+      .map(([, roleName]) => roleName);
+    setAvailableRoles(filteredRoles);
   };
 
-  const handleRoleSelection = async (role) => {
+  const handleRoleSelection = async (roleId) => {
     try {
-      console.log(`Assigning role ${role} to user ${selectedUser.user_id}`);
-      // Simulated API call to assign role to user
+      const { value: password } = await Swal.fire({
+        title: `Enter password for ${selectedUser.user_first_name}s role : ${roleId} `,
+        input: "password",
+        text: roleId == "Admin" ? "You are about to give full access!" : null,
+        inputAttributes: {
+          autocapitalize: "off",
+        },
+        inputValidator: (value) => {
+          if (!value || value.length <= 12) {
+            return null; // No validation message if value is empty or less than 12 characters
+          }
+          return "Password must be at most 12 characters long"; // Validation message if value is longer than 12 characters
+        },
+        showCancelButton: true,
+        confirmButtonText: "Assign Role",
+        showLoaderOnConfirm: true,
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+
+      if (password) {
+        let roleIdToSend;
+        switch (roleId) {
+          case "Admin":
+            roleIdToSend = 1;
+            break;
+          case "Cashier":
+            roleIdToSend = 2;
+            break;
+          case "Warehouse Handler":
+            roleIdToSend = 3;
+            break;
+          default:
+            return;
+        }
+
+        console.log(
+          `Assigning role ${roleIdToSend} to user ${selectedUser.user_id} with password ${password}`
+        );
+
+        const response = await axios.put(
+          `http://localhost:8085/updateUserRole/${selectedUser.user_id}/${roleIdToSend}`,
+          { password }
+        );
+
+        if (response.status === 200) {
+          Swal.fire("Success!", "User role updated successfully", "success");
+          // Update the local state to reflect the newly added role
+          const updatedUsers = users.map((user) =>
+            user.user_id === selectedUser.user_id
+              ? {
+                  ...user,
+                  user_roles: [...user.user_roles, roleIdToSend],
+                }
+              : user
+          );
+          setUsers(updatedUsers);
+        } else {
+          Swal.fire("Error!", "Failed to update user role", "error");
+        }
+      } else {
+        console.log("Role assignment cancelled by user.");
+      }
     } catch (error) {
       console.error("Error assigning user role:", error);
+      Swal.fire("Error!", "Failed to update user role", "error");
     }
   };
-
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -531,13 +631,3 @@ function UserTable() {
     </TableContainer>
   );
 }
-
-// <Stack direction="row" spacing={2} sx={{ minWidth: "max-content"}}>
-// {users.map((user) => (
-//   <UserPaper
-//     key={user.user_id}
-//     user={user}
-//     imageUrl={imageMap[user.username] || defaultImage}
-//   />
-// ))}
-// </Stack>

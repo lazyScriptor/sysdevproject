@@ -32,6 +32,7 @@ import {
   getUserDetails,
   setUserDetails,
   deleteUserRole,
+  updateUserRole,
 } from "./database.js";
 
 const app = express();
@@ -99,6 +100,7 @@ app.get("/isUserAuth", verifyJWT, (req, res) => {
 app.get("/loginValidate", async (req, res) => {
   try {
     const response = await loginValidate(req.query);
+    console.log("response",response)
     const id = response[1][0].user_id;
     const userRole = response[1][0].ur_role;
     const userName = response[1][0].username;
@@ -420,13 +422,24 @@ app.delete("/deleteUserRole/:userId/:role", async (req, res) => {
 });
 app.put("/updateUserRole/:userId/:role", async (req, res) => {
   try {
-    const {userId,role}=req.params;
-    console.log("Express app paramter", userId,role);
-    const result = await updateUserRole(userId,role);
+    const { userId, role } = req.params;
+    const { password } = req.body;
+    console.log("Express app parameters:", userId, role, password);
+
+    const success = await updateUserRole(userId, role, password);
+    console.log("success value", success);
+    if (success) {
+      console.log(success);
+      res.status(200).send("User role updated successfully");
+    } else {
+      res.status(400).send("Failed to update user role");
+    }
   } catch (error) {
-    console.log("Error occured in the express app", error);
+    console.error("Error occurred in the Express app:", error);
+    res.status(500).send("Internal server error");
   }
 });
+
 dotenv.config();
 const port = process.env.PORT;
 app.listen(port, () => {

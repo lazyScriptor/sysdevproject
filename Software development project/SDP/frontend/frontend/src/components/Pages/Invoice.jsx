@@ -4,6 +4,7 @@ import NewCustomerForm from "./NewCustomerForm.jsx";
 import {
   Box,
   Button,
+  Fab,
   FormLabel,
   Paper,
   TextField,
@@ -31,6 +32,8 @@ import InvoicePaymentsTable from "./Invoice/InvoicePaymentsTable.jsx";
 import InvoiceRightSideNew from "./Invoice/InvoiceRightSideNew.jsx";
 import InvoiceUpdateForm from "./Invoice/InvoiceUpdateForm.jsx";
 import InvoiceHandOverForm from "./Invoice/InvoiceHandOverForm.jsx";
+import NavigationIcon from "@mui/icons-material/Navigation";
+import FeedbackComponent from '../SubComponents/FeedbackComponent.jsx'
 
 function Invoice() {
   const {
@@ -170,7 +173,7 @@ function Invoice() {
 
   const handleCreateNew = async () => {
     localStorage.removeItem("CIObject");
-    setInvoiceSearchBtnStatus(false)
+    setInvoiceSearchBtnStatus(false);
     setData(clearData);
     setEqObject("");
     clearObject();
@@ -189,7 +192,7 @@ function Invoice() {
   };
 
   const handleInvoiceSearch = async (invoiceIdSearch) => {
-    setInvoiceSearchBtnStatus(true)
+    setInvoiceSearchBtnStatus(true);
     clearObject();
 
     try {
@@ -225,6 +228,44 @@ function Invoice() {
     }
   };
 
+  const handleFeedback = () => {
+    Swal.fire({
+      title: "Submit your Github username",
+      input: "text",
+      inputAttributes: {
+        autocapitalize: "off",
+      },
+      showCancelButton: true,
+      confirmButtonText: "Look up",
+      showLoaderOnConfirm: true,
+      preConfirm: async (login) => {
+        try {
+          const githubUrl = `
+        https://api.github.com/users/${login}
+      `;
+          const response = await fetch(githubUrl);
+          if (!response.ok) {
+            return Swal.showValidationMessage(`
+          ${JSON.stringify(await response.json())}
+        `);
+          }
+          return response.json();
+        } catch (error) {
+          Swal.showValidationMessage(`
+        Request failed: ${error}
+      `);
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: `${result.value.login}'s avatar`,
+          imageUrl: result.value.avatar_url,
+        });
+      }
+    });
+  };
   return (
     <>
       <Box
@@ -474,7 +515,14 @@ function Invoice() {
                     variant="outlined"
                   />
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 4,
+                  }}
+                >
                   <Button
                     customvariant="custom"
                     variant="contained"
@@ -482,6 +530,12 @@ function Invoice() {
                   >
                     Payments
                   </Button>
+
+                  {/* <Fab variant="extended" onClick={handleFeedback}>
+                    <NavigationIcon sx={{ mr: 1 }} />
+                    Feedback
+                  </Fab> */}
+                {invoiceSearchBtnStatus&&  <FeedbackComponent/>}
                 </Box>
               </Box>
             </Paper>

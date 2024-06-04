@@ -1,7 +1,10 @@
 import mysql from "mysql2";
 import dotenv from "dotenv";
 import dayjs from "dayjs";
+import bcrypt, { hash } from "bcrypt";
 dotenv.config();
+
+const saltRound = 10;
 
 // insted of createconnection, Overall, using createPool simplifies connection
 // management by handling the opening, closing, and reuse of connections automatically,
@@ -23,13 +26,19 @@ export async function loginValidate(userObject) {
     [userObject.username, userObject.role]
   );
   const id = user[0].user_id;
-  if (userObject.password === user[0].urm_password) {
-    console.log("Successful", user);
+
+  const success = await bcrypt.compare(
+    userObject.password,
+    user[0].urm_password
+  );
+
+  if (success) {
     return ["/DashboardMain", user];
   } else {
     return ["/"];
   }
 }
+
 export async function getUsers() {
   const [users] = await pool.query("SELECT * FROM users");
   console.log(users);
@@ -604,21 +613,18 @@ export async function getInvoiceDetails(invoiceIdSearch) {
 
 export async function updateInvoiceDetails(InvoiceCompleteDetail) {
   // Update invoice details
-  // try {
-  //   await pool.query(
-  //     "UPDATE invoice SET inv_advance = ?, inv_special_message = ?, inv_idcardstatus = ?, inv_cusid = ?, inv_updatedstatus = ? WHERE inv_id = ?",
-  //     [
-  //       InvoiceCompleteDetail.advance,
-  //       "", // Empty string for inv_special_message
-  //       InvoiceCompleteDetail.idStatus,
-  //       InvoiceCompleteDetail.customerDetails.cus_id,
-  //       1,
-  //       InvoiceCompleteDetail.InvoiceID,
-  //     ]
-  //   );
-  // } catch (error) {
-  //   console.log("Error occurred in backend invoice details update", error);
-  // }
+  try {
+    await pool.query(
+      "UPDATE invoice SET inv_special_message = ?,inv_rating = ? WHERE inv_id = ?",
+      [
+        InvoiceCompleteDetail.inv_special_message,
+        InvoiceCompleteDetail.inv_rating,
+        InvoiceCompleteDetail.InvoiceID,
+      ]
+    );
+  } catch (error) {
+    console.log("Error occurred in backend invoice details update", error);
+  }
 
   // Update invoice payment table
   try {
@@ -817,8 +823,8 @@ export async function setUserDetails(object) {
     console.log("Error occured in backend setUserDetails", error);
   }
 }
-export async function deleteUserRole(userId,role) {
-  console.log("object,",role,userId)
+export async function deleteUserRole(userId, role) {
+  console.log("object,", role, userId);
   return new Promise((resolve, reject) => {
     pool.query(
       "DELETE FROM userRoleMap WHERE urm_roleid = ? AND urm_userid = ?",
@@ -836,10 +842,18 @@ export async function deleteUserRole(userId,role) {
     );
   });
 }
-export async function updateUserRole({userId,role}){
-  try{  
-    pool.query(`SELECT urm_password FROM userRoleMap WHERE urm_userid = ? AND`)
-  }catch(error){
-    console.log("Error occured in the backend",error)
+export async function updateUserRole(userId, role, password) {
+  try {
+    const hashedPassword = await bcrypt.hash(password, saltRound);
+    console.log("object", userId, role, hashedPassword);
+    const [result] = await pool.query(
+      `INSERT INTO userRoleMap (urm_userid, urm_roleid, urm_password) VALUES (?,?,?)`,
+      [userId, role, hashedPassword]
+    );
+    console.log("Result from updateUserRole query:", result.affectedRows);
+    return result.affectedRows > 0; // Return true if the update was successful
+  } catch (error) {
+    console.log("Error occurred in the backend:", error);
+    throw error; // Throw the error to be caught in the calling function
   }
 }
