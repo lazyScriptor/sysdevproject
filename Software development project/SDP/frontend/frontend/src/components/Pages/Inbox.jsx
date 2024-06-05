@@ -4,6 +4,10 @@ import { AuthContext } from "../../Contexts/Contexts";
 import InvoiceNew from "./Invoice/InvoiceNew";
 import BackgroundStyleNew from "../SubComponents/BackgroundStyleNew";
 import InvoiceHandOverForm from "./Invoice/InvoiceHandOverForm";
+import { Box, Paper } from "@mui/material";
+import InvoiceTable from "../SubComponents/InvoiceTable";
+import CompleteInvoiceTable from "./Invoice/CompleteInvoiceTable";
+import InvoicePdf from "./Invoice/InvoicePdf";
 
 function Inbox() {
   const { setIsAuthenticated } = useContext(AuthContext);
@@ -18,9 +22,9 @@ function Inbox() {
   return (
     <>
       {/* <InvoiceNew/> */}
-      <BackgroundStyleNew title="Inbox"> 
-      <InvoiceHandOverForm/>
-      </BackgroundStyleNew>
+
+       
+     
     </>
   );
 }

@@ -440,33 +440,68 @@ function UserTable() {
   };
 
   const handleDelete = async (userId, role) => {
-    try {
-      console.info("You clicked the delete icon.", role, userId);
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger",
+      },
+      buttonsStyling: false,
+    });
+    swalWithBootstrapButtons
+      .fire({
+        title: "Are you sure?",
+        text: "This user will lose access with this role",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          console.info("You clicked the delete icon.", role, userId);
 
-      // Optimistically update the local state
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.user_id == userId
-            ? { ...user, user_roles: user.user_roles.filter((r) => r !== role) }
-            : user
-        )
-      );
+          // Optimistically update the local state
+          setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user.user_id == userId
+                ? {
+                    ...user,
+                    user_roles: user.user_roles.filter((r) => r !== role),
+                  }
+                : user
+            )
+          );
 
-      const response = await axios.delete(
-        `http://localhost:8085/deleteUserRole/${userId}/${role}`
-      );
+          const response = axios.delete(
+            `http://localhost:8085/deleteUserRole/${userId}/${role}`
+          );
 
-      if (response.status === 200) {
-        console.log("User role deleted successfully.");
-      } else {
-        console.error("Failed to delete user role. Status:", response.status);
+          if (response.status === 200) {
+            console.log("User role deleted successfully.");
+          } else {
+            console.error(
+              "Failed to delete user role. Status:",
+              response.status
+            );
+          }
 
-        // Revert the local state if the deletion fails
-        fetchUsers(); // Re-fetch users from the server to get the latest data
-      }
-    } catch (error) {
-      console.error("Error deleting user role:", error);
-    }
+          swalWithBootstrapButtons.fire({
+            title: "Deleted!",
+            text: "User role has been deleted.",
+            icon: "success",
+          });
+        } else if (
+          /* Read more about handling dismissals below */
+          result.dismiss === Swal.DismissReason.cancel
+        ) {
+          swalWithBootstrapButtons.fire({
+            title: "Cancelled",
+            text: "You didn't delete the Role :)",
+            icon: "info",
+          });
+        }
+      });
   };
 
   const handleAddRoles = (user) => {
@@ -579,7 +614,7 @@ function UserTable() {
             <TableCell align="center">Phone number</TableCell>
             <TableCell align="center">Address</TableCell>
             <TableCell align="center">Roles</TableCell>
-            <TableCell align="center">Access permissions</TableCell>
+            <TableCell align="center">Grant permissions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { createRoot } from "react-dom/client"; // Import createRoot
 import Swal from "sweetalert2"; // Assuming you have SweetAlert installed
 import PropTypes from "prop-types";
@@ -52,7 +52,11 @@ IconContainer.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-function RadioGroupRating() {
+function RadioGroupRating({ setRating }) {
+  const handleChange = (event, newValue) => {
+    setRating(newValue);
+  };
+
   return (
     <StyledRating
       name="feedback-rating"
@@ -60,6 +64,7 @@ function RadioGroupRating() {
       IconContainerComponent={IconContainer}
       getLabelText={(value) => customIcons[value].label}
       highlightSelectedOnly
+      onChange={handleChange}
     />
   );
 }
@@ -85,7 +90,15 @@ export default function FeedBack(props) {
 
   const handleFeedback = () => {
     const container = document.createElement("div");
-    createRoot(container).render(<RadioGroupRating />); // Use createRoot to render the component
+    const ratingContainer = document.createElement("div");
+    container.appendChild(ratingContainer);
+    let rating = 3; // Default rating value
+
+    const setRating = (newRating) => {
+      rating = newRating;
+    };
+
+    createRoot(ratingContainer).render(<RadioGroupRating setRating={setRating} />);
 
     Swal.fire({
       title: "Submit your feedback",
@@ -100,13 +113,13 @@ export default function FeedBack(props) {
         document.getElementById("rating-container").appendChild(container);
       },
       preConfirm: async () => {
-        const rating = document.querySelector('[name="feedback-rating"]').value;
         const comments = document.getElementById("feedback-text").value || "";
 
         try {
           console.log(rating, comments);
           invoiceObject.inv_rating = rating;
           invoiceObject.inv_special_message = comments;
+          // Assume axios is properly configured
           return Swal.fire({
             title: "Thank you for your feedback!",
             icon: "success",
@@ -121,7 +134,7 @@ export default function FeedBack(props) {
 
   return (
     <>
-      <Fab variant="extended" onClick={handleFeedback}>
+      <Fab variant="extended" size="small" onClick={handleFeedback}>
         <InsertCommentOutlinedIcon sx={{ mr: 1 }} />
         Feedback
       </Fab>

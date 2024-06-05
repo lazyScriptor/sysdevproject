@@ -1,6 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../Stylings/rootstyles.css";
 import NewCustomerForm from "./NewCustomerForm.jsx";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import {
   Box,
   Button,
@@ -35,6 +37,7 @@ import InvoiceHandOverForm from "./Invoice/InvoiceHandOverForm.jsx";
 import NavigationIcon from "@mui/icons-material/Navigation";
 import FeedbackComponent from "../SubComponents/FeedbackComponent.jsx";
 import CompleteInvoiceTable from "./Invoice/CompleteInvoiceTable.jsx";
+import InvoicePdf from "./Invoice/InvoicePdf.jsx";
 
 function Invoice() {
   const {
@@ -136,7 +139,7 @@ function Invoice() {
         setData(data[0]);
         updateValue("customerDetails", data[0]);
       } else if (data.message) {
-        setValidationMessage("No customer Found with this Phone number or NIC")
+        setValidationMessage("No customer Found with this Phone number or NIC");
         setData({
           cus_fname: "",
           cus_address1: "",
@@ -149,7 +152,7 @@ function Invoice() {
         console.log(data.message);
       } else {
         console.error("Unexpected response format:", data);
-        setValidationMessage("Unexpected error occured")
+        setValidationMessage("Unexpected error occured");
         setData({
           cus_fname: "",
           cus_address1: "",
@@ -161,7 +164,7 @@ function Invoice() {
         updateValue("customerDetails", clearData);
       }
     } catch (error) {
-      setValidationMessage("Error occured in front end")
+      setValidationMessage("Error occured in front end");
       setData({
         cus_fname: "",
         cus_address1: "",
@@ -232,10 +235,28 @@ function Invoice() {
       console.log("Error:", error);
     }
   };
+  const textFieldStyle = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "12px",
+    },
+  };
+  const handleDownload = () => {
+    const capture = document.querySelector(`.complete-invoice`);
+
+    html2canvas(capture).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const doc = new jsPDF("p", "mm", "a4");
+      const componentWidth = doc.internal.pageSize.getWidth();
+      const componentHeight = (canvas.height * componentWidth) / canvas.width;
+      doc.addImage(imgData, "PNG", 0, 0, componentWidth, componentHeight);
+      doc.save("recipt.pdf");
+    });
+  };
+
   return (
     <>
       <Box
-        sx={{
+        style={{
           backgroundColor: "white",
           display: "flex",
           flexDirection: "column",
@@ -247,6 +268,7 @@ function Invoice() {
       >
         <Box
           sx={{
+            backgroundColor: (theme) => theme.palette.primary[50],
             display: "flex",
             width: "100%",
             minHeight: "8vh",
@@ -273,7 +295,7 @@ function Invoice() {
           >
             <TextField
               onChange={(e) => setInvoiceIdSearch(e.target.value)}
-              sx={{ width: "350px" }}
+              sx={[{ width: "350px" }, textFieldStyle]}
               id="outlined-basic"
               label="Search with invoice Id"
               variant="outlined"
@@ -296,7 +318,7 @@ function Invoice() {
             </Button>
             <Box>
               <h5>Invoice ID: {invoiceObject.InvoiceID}</h5>
-              <h6>{invoiceObject.createdDate}</h6>
+              <h6> {new Date(invoiceObject.createdDate).toLocaleString()}</h6>
             </Box>
           </Box>
         </Box>
@@ -314,7 +336,6 @@ function Invoice() {
               flexDirection: "column",
               gap: 3,
               width: "23.6%",
-              
             }}
           >
             {updateBtnStatus == true ? (
@@ -385,8 +406,9 @@ function Invoice() {
                   }}
                 >
                   <TextField
-                    onChange={(e) =>{ setPhoneNumberorNic(e.target.value)
-                      setValidationMessage("")
+                    onChange={(e) => {
+                      setPhoneNumberorNic(e.target.value);
+                      setValidationMessage("");
                     }}
                     value={phoneNumberorNic}
                     sx={{ width: "350px" }}
@@ -568,6 +590,7 @@ function Invoice() {
           </Box>
         </Box>
       </Box>
+      <InvoicePdf />
       <OverlayDialogBox>
         <Payments />
       </OverlayDialogBox>

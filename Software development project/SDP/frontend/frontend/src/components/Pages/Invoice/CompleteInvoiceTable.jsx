@@ -31,7 +31,11 @@ function CompleteInvoiceTable() {
   };
   return (
     <>
-      <TableContainer component={Paper} elevation={4} sx={{ borderRadius: 3 ,height:"100%"}}>
+      <TableContainer
+        component={Paper}
+        elevation={4}
+        sx={{ borderRadius: 3, height: "100%" }}
+      >
         <Table sx={{ minWidth: 650 }} stickyHeader aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -56,13 +60,16 @@ function CompleteInvoiceTable() {
                     backgroundColor: colorFunction(row.duration_in_days),
                   }}
                 >
-                  <TableCell align="center">{index+1}</TableCell>
+                  <TableCell align="center">{index + 1}</TableCell>
                   <TableCell align="center" component="th" scope="row">
                     {row.eq_id}
                   </TableCell>
                   <TableCell align="center">{row.eq_name}</TableCell>
                   <TableCell align="center">{row.eq_rental}</TableCell>
-                  <TableCell align="center">{row.inveq_return_date}</TableCell>
+                  <TableCell align="center">
+                    {" "}
+                    {new Date(row.inveq_return_date).toLocaleString()}
+                  </TableCell>
                   <TableCell align="center">{row.inveq_borrowqty}</TableCell>
 
                   <TableCell align="center">{row.duration_in_days}</TableCell>
@@ -76,7 +83,7 @@ function CompleteInvoiceTable() {
                       border: "solid 1px solid",
                     }}
                   >
-                    {row.eq_rental * row.duration_in_days}
+                    {row.eq_rental * row.duration_in_days} LKR
                   </TableCell>
                 </TableRow>
               ))}

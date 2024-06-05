@@ -56,7 +56,7 @@ export default function InvoicePaymentsTable() {
       elevation={4}
     >
       <Table stickyHeader sx={{ minWidth: 10 }} aria-label="simple table">
-        <TableHead sx={{height:"80px"}}>
+        <TableHead sx={{ height: "80px" }}>
           <TableRow>
             <TableCell align="center">Payment Id</TableCell>
             <TableCell align="center">Payment</TableCell>
@@ -118,7 +118,7 @@ export default function InvoicePaymentsTable() {
               }}
             >
               <TableCell align="center">
-                {payment.invpay_payment_date}
+                {new Date(payment.invpay_payment_date).toLocaleString()}
               </TableCell>
               <TableCell align="center">{payment.invpay_amount}</TableCell>
               <TableCell align="center">

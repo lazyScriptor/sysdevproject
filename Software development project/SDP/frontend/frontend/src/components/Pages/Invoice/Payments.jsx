@@ -49,12 +49,11 @@ export default function Payments() {
     <Box
       sx={{
         width: "25vw",
-        height: "520px",
+        height: "350px",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
-        pb: 7,
       }}
     >
       <Box sx={{ display: "flex" }}>
@@ -208,10 +207,6 @@ export function AdvancePayment() {
             error={!!errors.advance}
             helperText={errors.advance?.message}
           />
-          <Box>
-            <FormLabel>Advance paid </FormLabel>
-            <Switch defaultChecked />
-          </Box>
           <Box sx={{ display: "flex", justifyContent: "center" }}>
             <Button variant="contained" sx={ButtonstylesSubmit} type="submit">
               Pay
