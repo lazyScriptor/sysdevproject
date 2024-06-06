@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   TextField,
   Button,
@@ -7,6 +7,7 @@ import {
   Select,
   MenuItem,
   Typography,
+  Box,
 } from "@mui/material";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
@@ -24,11 +25,20 @@ function LoginFormMUI() {
   const [passwordWrong, setPasswordWrong] = useState("");
   const navigate = useNavigate();
 
+  const usernameRef = useRef(null);
+
+  useEffect(() => {
+    if (usernameRef.current) {
+      usernameRef.current.focus();
+    }
+  }, []);
+
   const schema = yup.object().shape({
     username: yup.string().required().min(3),
     password: yup.string().min(3).max(10).required(),
     // select: yup.required(),
   });
+
   const {
     register,
     handleSubmit,
@@ -36,29 +46,6 @@ function LoginFormMUI() {
   } = useForm({
     resolver: yupResolver(schema),
   });
-
-  // const getErrorMessage = (fieldName) => {
-  //   switch (fieldName) {
-  //     // case "username":
-  //     //   return {
-  //     //     required: "Username is required",
-  //     //     minLength: {
-  //     //       value: 6,
-  //     //       message: "Username must be at least 6 characters long",
-  //     //     },
-  //     //   };
-  //     case "password":
-  //       return {
-  //         required: "Password is required to proceed",
-  //         minLength: {
-  //           value: 3,
-  //           message: "Password must be at least 8 characters long",
-  //         },
-  //       };
-  //     default:
-  //       return {};
-  //   }
-  // };
 
   const handleLoadingButton = async (userName) => {
     setIsLoading(true);
@@ -114,6 +101,21 @@ function LoginFormMUI() {
     }
   };
 
+  const textFieldStyle = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "12px",
+      "& fieldset": {
+        borderWidth: "2px", // Increase the border width here
+      },
+      "&:hover fieldset": {
+        borderWidth: "2px", // Increase the border width on hover
+      },
+      "&.Mui-focused fieldset": {
+        borderWidth: "2px", // Increase the border width when focused
+      },
+    },
+  };
+
   return (
     <>
       <Paper
@@ -128,8 +130,23 @@ function LoginFormMUI() {
 
         <h1 style={{ textAlign: "center", marginBottom: 50 }}>Login</h1>
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
-          <Stack spacing={4} width={400}>
+          <Stack
+            spacing={4}
+            width={400}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+
+            <Box width={"100%"}>
+
+
             <TextField
+              fullWidth
+              sx={[textFieldStyle,{width:"80%"}]}
+              inputRef={usernameRef}
               onChange={(e) => {
                 setLoadUsername(e.target.value);
                 console.log(e.target.value);
@@ -145,10 +162,16 @@ function LoginFormMUI() {
             <LoadingButton
               loading={isLoading}
               onClick={() => handleLoadingButton(LoadUsername)}
+              sx={{minHeight:"55px",ml:2,borderRadius:3}}
               variant="outlined"
             >
-              <span>Fetch user role</span>
+              
             </LoadingButton>
+            </Box>
+
+
+
+
             <Select
               {...register("role")}
               error={!!errors.select}
@@ -157,6 +180,15 @@ function LoginFormMUI() {
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={selectValue || ""}
+              sx={{
+                borderRadius: "12px",
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "12px",
+                },
+                "& fieldset": {
+                  borderRadius: "12px",
+                },
+              }}
               onChange={(event) => handleSelectChange(event)}
             >
               {usernameArray.map((users, index) => (
@@ -166,6 +198,8 @@ function LoginFormMUI() {
               ))}
             </Select>
             <TextField
+              fullWidth
+              sx={textFieldStyle}
               label="Password"
               type="password"
               {...register("password")}
@@ -181,7 +215,13 @@ function LoginFormMUI() {
                 )
               }
             />
-            <Button type="submit" variant="contained" color="primary">
+            <Button
+            
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{ borderRadius: 3, height: "55px", width: "200px" }}
+            >
               Submit
             </Button>
           </Stack>

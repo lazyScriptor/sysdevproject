@@ -367,15 +367,25 @@ export async function getInvoiceId() {
 }
 
 export async function createInvoiceDetails(InvoiceCompleteDetail) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+  const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
   // Update invoice details
   try {
     await pool.query(
-      "UPDATE invoice SET inv_advance = ?, inv_special_message = ?, inv_idcardstatus = ?,inv_cusid=?, inv_updatedstatus = ? WHERE inv_id = ?",
+      "UPDATE invoice SET inv_advance = ?, inv_special_message = ?, inv_idcardstatus = ?,inv_cusid=?,inv_createddate=?, inv_updatedstatus = ? WHERE inv_id = ?",
       [
         InvoiceCompleteDetail.advance,
         "", // Empty string for inv_special_message
         InvoiceCompleteDetail.iDstatus,
         InvoiceCompleteDetail.customerDetails.cus_id, // Assuming idStatus is a boolean value
+        formattedDate, // Format the date correctly for MySQL
         1,
         InvoiceCompleteDetail.InvoiceID,
       ]
@@ -543,9 +553,7 @@ export async function getInvoiceDetails(invoiceIdSearch) {
           .toString()
           .padStart(2, "0")}T${hour.toString().padStart(2, "0")}:${minutes
           .toString()
-          .padStart(2, "0")}:${seconds
-          .toString()
-          .padStart(2, "0")}`;
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 
         return formattedDateTime;
       }
@@ -886,5 +894,69 @@ export async function updateUserRole(userId, role, password) {
   } catch (error) {
     console.log("Error occurred in the backend:", error);
     throw error; // Throw the error to be caught in the calling function
+  }
+}
+
+export async function reportsGetCustomerRatings() {
+  try {
+    const [response] = await pool.query(`SELECT 
+  customer.cus_fname,cus_lname,cus_phone_number,cus_delete_status,
+  AVG(invoice.inv_rating) AS average_rating,
+  COUNT(invoice.inv_id) AS number_of_invoices,
+  SUM(equipment.eq_rental * invoiceEquipment.duration_in_days) AS total_sales
+FROM 
+  customer
+JOIN 
+  invoice ON invoice.inv_cusid = customer.cus_id
+JOIN 
+  invoiceEquipment ON invoiceEquipment.inveq_invid = invoice.inv_id
+JOIN 
+  equipment ON equipment.eq_id = invoiceEquipment.inveq_eqid
+WHERE 
+ invoiceEquipment.duration_in_days IS NOT NULL
+GROUP BY 
+  customer.cus_id;
+`);
+    return response;
+  } catch (error) {
+    console.log("This is the backend reports customerRatings", error);
+  }
+}
+
+export async function reportsGetCustomerInvoiceDetails() {
+  try {
+    const [response] = await pool.query(`
+    SELECT 
+    invoice.inv_id,
+    customer.cus_fname,
+    customer.cus_lname,
+    customer.cus_phone_number,
+    invoice.inv_rating,
+    invoice.inv_special_message,
+    invoice.inv_createddate,
+    SUM(equipment.eq_rental * IFNULL(invoiceEquipment.duration_in_days, 1)) AS total_sales,
+    IF(invoiceEquipment.duration_in_days IS NULL, 1, 0) AS not_completed
+FROM 
+    customer
+JOIN 
+    invoice ON invoice.inv_cusid = customer.cus_id
+JOIN 
+    invoiceEquipment ON invoiceEquipment.inveq_invid = invoice.inv_id
+JOIN 
+    equipment ON equipment.eq_id = invoiceEquipment.inveq_eqid
+GROUP BY 
+    invoice.inv_id, 
+    customer.cus_fname, 
+    customer.cus_lname, 
+    customer.cus_phone_number, 
+    invoice.inv_rating, 
+    invoice.inv_special_message, 
+    invoice.inv_createddate
+
+
+`);
+    return response;
+  } catch (error) {
+    console.log("This is the backend reports customerRatings", error);
   }
 }

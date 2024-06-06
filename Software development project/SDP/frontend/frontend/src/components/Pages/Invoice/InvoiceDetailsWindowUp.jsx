@@ -113,7 +113,7 @@ function InvoiceDetailsWindowUp() {
         {invoiceObject.eqdetails &&
           invoiceObject.eqdetails.map((item, index) => (
             <Paper
-              elevation={2}
+              elevation={1}
               key={index}
               sx={{
                 backgroundColor: item.inveq_return_date
@@ -123,8 +123,10 @@ function InvoiceDetailsWindowUp() {
                 height: "70px",
                 p: 1,
                 m: 1,
-                borderRadius: 2,
-                border: "solid 1px rgb(222, 222, 222)",
+                borderRadius: 6,
+                "&:hover": {
+                  backgroundColor: (theme) => theme.palette.primary[100], // Change to your desired hover color
+                },
               }}
             >
               <Box

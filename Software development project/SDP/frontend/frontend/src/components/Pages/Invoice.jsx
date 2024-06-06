@@ -63,6 +63,8 @@ function Invoice() {
   const { setIsAuthenticated } = useContext(AuthContext);
   const [phoneNumberorNic, setPhoneNumberorNic] = useState("");
   const [invoiceId, setInvoiceId] = useState("0000");
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+
   const [currentDate, setCurrentDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
@@ -71,9 +73,19 @@ function Invoice() {
   const [updateBtnStatus, setUpdateBtnStatus] = useState(false);
 
   useEffect(() => {}, [invoiceObject]);
+  //Create new invoice
   useEffect(() => {
     handleCreateNew();
   }, []);
+  //Clock
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, []);
+
 
   const [data, setData] = useState({
     cus_fname: "",
@@ -316,9 +328,13 @@ function Invoice() {
             <Button onClick={handleCreateNew} variant="contained">
               Create new
             </Button>
-            <Box>
+            <Box sx={{width:"180px"}}>
               <h5>Invoice ID: {invoiceObject.InvoiceID}</h5>
-              <h6> {new Date(invoiceObject.createdDate).toLocaleString()}</h6>
+              {updateBtnStatus ? (
+                <h6>{new Date(invoiceObject.createdDate).toLocaleString()}</h6>
+              ) : (
+                <h6>{currentDateTime.toLocaleString()}</h6>
+              )}
             </Box>
           </Box>
         </Box>

@@ -32,7 +32,7 @@ const schema = yup.object().shape({
       (value) => {
         if (!value) return false;
         const nineDigitsAndV = /^[0-9]{9}v$/i;
-        const validFormatCheck = /^[1-9]\d{8,10}$/;
+        // const validFormatCheck = /^[1-9]\d{8,10}$/;
         const twelveDigits = /^[0-9]{12}$/;
         return nineDigitsAndV.test(value) || twelveDigits.test(value);
       }

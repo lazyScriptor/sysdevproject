@@ -225,7 +225,7 @@ function InvoiceDocumentTable() {
                 Advance
               </div>
             </TableCell>
-            <TableCell align="center">{invoiceObject.advance}</TableCell>
+            <TableCell align="center">{invoiceObject.advance} LKR</TableCell>
           </TableRow>
           <TableRow>
             <TableCell colSpan={7} />

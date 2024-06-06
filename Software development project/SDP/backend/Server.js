@@ -33,6 +33,8 @@ import {
   setUserDetails,
   deleteUserRole,
   updateUserRole,
+  reportsGetCustomerRatings,
+  reportsGetCustomerInvoiceDetails,
 } from "./database.js";
 
 const app = express();
@@ -100,7 +102,7 @@ app.get("/isUserAuth", verifyJWT, (req, res) => {
 app.get("/loginValidate", async (req, res) => {
   try {
     const response = await loginValidate(req.query);
-    console.log("response",response)
+    console.log("response", response);
     const id = response[1][0].user_id;
     const userRole = response[1][0].ur_role;
     const userName = response[1][0].username;
@@ -437,6 +439,31 @@ app.put("/updateUserRole/:userId/:role", async (req, res) => {
   } catch (error) {
     console.error("Error occurred in the Express app:", error);
     res.status(500).send("Internal server error");
+  }
+});
+
+app.get(`/reports/getCustomerRatings`,async (req, res) => {
+  try {
+    const response =await reportsGetCustomerRatings();
+    console.log(response)
+    res.json({ status: true, message: "Value retrieved", response });
+  } catch (error) {
+    res.json({
+      status: false,
+      message: "failed to retrieve customer rating information",
+    });
+  }
+});
+app.get(`/reports/getCustomerInvoiceDetails`,async (req, res) => {
+  try {
+    const response =await reportsGetCustomerInvoiceDetails();
+    console.log(response)
+    res.json({ status: true, message: "Value retrieved", response });
+  } catch (error) {
+    res.json({
+      status: false,
+      message: "failed to retrieve customer rating information",
+    });
   }
 });
 

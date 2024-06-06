@@ -115,6 +115,9 @@ export default function InvoicePaymentsTable() {
                 "&:last-child td, &:last-child th": { border: 0 },
                 height: "40px",
                 backgroundColor: (theme) => theme.palette.primary[25],
+                "&:hover": {
+                  backgroundColor: (theme) => theme.palette.primary[50], // Change to your desired hover color
+                },
               }}
             >
               <TableCell align="center">
