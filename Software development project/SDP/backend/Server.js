@@ -35,6 +35,11 @@ import {
   updateUserRole,
   reportsGetCustomerRatings,
   reportsGetCustomerInvoiceDetails,
+  getEquipmentUtilizationReport,
+  getEquipmentRevenueReport,
+  getUnderutilizedEquipment,
+  getEquipmentRentalDetails,
+  getIncompleteRentals,
 } from "./database.js";
 
 const app = express();
@@ -457,12 +462,127 @@ app.get(`/reports/getCustomerRatings`,async (req, res) => {
 app.get(`/reports/getCustomerInvoiceDetails`,async (req, res) => {
   try {
     const response =await reportsGetCustomerInvoiceDetails();
-    console.log(response)
     res.json({ status: true, message: "Value retrieved", response });
   } catch (error) {
     res.json({
       status: false,
       message: "failed to retrieve customer rating information",
+    });
+  }
+});
+// Updated API endpoint
+app.get('/reports/getEquipmentUtilizationDetails', async (req, res) => {
+  console.log("calling");
+  const { startDate, endDate } = req.query;
+
+  try {
+    let response;
+
+    // If both start date and end date are provided
+    if (startDate && endDate) {
+      response = await getEquipmentUtilizationReport(startDate, endDate);
+    } 
+    // If only start date is provided
+    else if (startDate && !endDate) {
+      response = await getEquipmentUtilizationReport(startDate, new Date().toISOString());
+    } 
+    // If only end date is provided
+    else if (!startDate && endDate) {
+      response = await getEquipmentUtilizationReport(new Date(0).toISOString(), endDate);
+    } 
+    // If both start date and end date are missing
+    else {
+      response = await getEquipmentUtilizationReport(new Date(0).toISOString(), new Date().toISOString());
+    }
+
+    console.log(response);
+    res.json({ status: true, message: "Value retrieved", response });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Failed to retrieve equipment utilization report",
+      error: error.message
+    });
+  }
+});
+
+app.get('/reports/getEquipmentRevenueDetails', async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  try {
+    let response;
+    if (startDate && endDate) {
+      response = await getEquipmentRevenueReport(startDate, endDate);
+    } else {
+      response = await getEquipmentRevenueReport(null, null); // If start date or end date is missing, retrieve all data
+    }
+    console.log(response);
+    res.json({ status: true, message: "Value retrieved", response });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Failed to retrieve equipment revenue report",
+      error: error.message
+    });
+  }
+});
+app.get('/reports/getUnderutilizedEquipment', async (req, res) => {
+  console.log("calling");
+  const { startDate, endDate } = req.query;
+
+  try {
+    let response;
+    if (startDate && endDate) {
+      response = await getUnderutilizedEquipment(startDate, endDate);
+    } else {
+      response = await getUnderutilizedEquipment(null, null); // If start date or end date is missing, retrieve all data
+    }
+    console.log(response);
+    res.json({ status: true, message: "Value retrieved", response });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Failed to retrieve underutilized equipment report",
+      error: error.message
+    });
+  }
+});
+
+
+app.get('/reports/getEquipmentRentalDetails', async (req, res) => {
+  console.log("calling");
+  const { startDate, endDate } = req.query;
+
+  try {
+    let response;
+    if (startDate && endDate) {
+      response = await getEquipmentRentalDetails(startDate, endDate);
+    } else {
+      response = await getEquipmentRentalDetails(null, null); // If start date or end date is missing, retrieve all data
+    }
+    console.log(response);
+    res.json({ status: true, message: "Value retrieved", response });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Failed to retrieve equipment rental details report",
+      error: error.message
+    });
+  }
+});
+
+app.get('/reports/getIncompleteRentals', async (req, res) => {
+  console.log("calling");
+  
+  try {
+    const response = await getIncompleteRentals();
+    console.log(response);
+    res.json({ status: true, message: "Value retrieved", response });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Failed to retrieve incomplete rentals report",
+      error: error.message
     });
   }
 });

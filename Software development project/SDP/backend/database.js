@@ -960,3 +960,152 @@ GROUP BY
     console.log("This is the backend reports customerRatings", error);
   }
 }
+export async function getEquipmentUtilizationReport(startDate, endDate) {
+  try {
+    const [rows] = await pool.query(
+      `SELECT 
+        equipment.eq_id,
+        equipment.eq_name,
+        COUNT(invoiceEquipment.inveq_eqid) AS total_rentals,
+        SUM(invoiceEquipment.duration_in_days) AS total_rental_days,
+        AVG(invoiceEquipment.duration_in_days) AS average_rental_duration
+      FROM 
+        equipment
+      JOIN 
+        invoiceEquipment ON equipment.eq_id = invoiceEquipment.inveq_eqid
+      JOIN 
+        invoice ON invoice.inv_id = invoiceEquipment.inveq_invid
+      WHERE 
+        invoice.inv_createddate BETWEEN ? AND ?
+      GROUP BY 
+        equipment.eq_id, equipment.eq_name
+      ORDER BY 
+        total_rentals DESC`,
+      [startDate, endDate]
+    );
+    return rows;
+  } catch (error) {
+    console.log("Error fetching equipment utilization report:", error);
+    throw error;
+  }
+}
+export async function getEquipmentRevenueReport(startDate, endDate) {
+  try {
+    const [rows] = await pool.query(
+      `SELECT 
+      equipment.eq_id,
+      equipment.eq_name,
+      SUM(equipment.eq_rental * COALESCE(invoiceEquipment.duration_in_days, 1)) AS total_revenue
+    FROM 
+      equipment
+     JOIN 
+      invoiceEquipment ON equipment.eq_id = invoiceEquipment.inveq_eqid
+     JOIN
+      invoice ON invoice.inv_id = invoiceEquipment.inveq_invid
+    ${
+      startDate && endDate
+        ? "WHERE invoice.inv_createddate BETWEEN ? AND ?"
+        : ""
+    }
+    GROUP BY 
+      equipment.eq_id, equipment.eq_name
+    ORDER BY 
+      total_revenue DESC
+    `,
+      startDate && endDate ? [startDate, endDate] : []
+    );
+    return rows;
+  } catch (error) {
+    console.log("Error fetching equipment revenue report:", error);
+    throw error;
+  }
+}
+
+export async function getUnderutilizedEquipment(startDate, endDate) {
+  try {
+    const [rows] = await pool.query(
+      `SELECT 
+        equipment.eq_id,
+        equipment.eq_name,
+        COUNT(invoiceEquipment.inveq_eqid) AS total_rentals
+      FROM 
+        equipment
+      JOIN 
+        invoiceEquipment ON equipment.eq_id = invoiceEquipment.inveq_eqid
+      ${
+        startDate && endDate
+          ? "WHERE invoice.inv_createddate BETWEEN ? AND ?"
+          : ""
+      }
+      GROUP BY 
+        equipment.eq_id, equipment.eq_name
+      HAVING 
+        total_rentals < 5
+      ORDER BY 
+        total_rentals ASC`,
+      startDate && endDate ? [startDate, endDate] : []
+    );
+    return rows;
+  } catch (error) {
+    console.log("Error fetching underutilized equipment report:", error);
+    throw error;
+  }
+}
+
+export async function getEquipmentRentalDetails(startDate, endDate) {
+  try {
+    const [rows] = await pool.query(
+      `SELECT 
+        equipment.eq_id,
+        equipment.eq_name,
+        COUNT(invoiceEquipment.inveq_eqid) AS total_rentals,
+        SUM(COALESCE(invoiceEquipment.duration_in_days, 1)) AS total_rental_days
+      FROM 
+        equipment
+      JOIN 
+        invoiceEquipment ON equipment.eq_id = invoiceEquipment.inveq_eqid
+      ${
+        startDate && endDate
+          ? "WHERE invoice.inv_createddate BETWEEN ? AND ?"
+          : ""
+      }
+      GROUP BY 
+        equipment.eq_id, equipment.eq_name
+      ORDER BY 
+        total_rental_days DESC, total_rentals DESC`,
+      startDate && endDate ? [startDate, endDate] : []
+    );
+    return rows;
+  } catch (error) {
+    console.log("Error fetching equipment rental details report:", error);
+    throw error;
+  }
+}
+
+export async function getIncompleteRentals() {
+  try {
+    const [rows] = await pool.query(
+      `SELECT 
+        equipment.eq_id,
+        equipment.eq_name,
+        invoice.inv_id,
+        invoice.inv_createddate,
+        COALESCE(invoiceEquipment.duration_in_days, 1) AS duration_in_days,
+        (CASE WHEN invoiceEquipment.duration_in_days IS NULL THEN 1 ELSE 0 END) AS not_completed
+      FROM 
+        equipment
+      JOIN 
+        invoiceEquipment ON equipment.eq_id = invoiceEquipment.inveq_eqid
+      JOIN 
+        invoice ON invoice.inv_id = invoiceEquipment.inveq_invid
+      WHERE 
+        invoiceEquipment.duration_in_days IS NULL
+      ORDER BY 
+        equipment.eq_name, invoice.inv_createddate`
+    );
+    return rows;
+  } catch (error) {
+    console.log("Error fetching incomplete rentals report:", error);
+    throw error;
+  }
+}

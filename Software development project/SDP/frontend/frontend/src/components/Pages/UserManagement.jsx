@@ -124,7 +124,7 @@ export default function UserManagement({ username }) {
         </Box>
         <Box
           sx={{
-            height: "100vh",
+            height: "auto",
             backgroundColor: "#f2f4f7",
             display: "flex",
             justifyContent: "end",

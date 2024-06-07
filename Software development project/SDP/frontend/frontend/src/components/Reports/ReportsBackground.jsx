@@ -15,10 +15,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Rating from "@mui/material/Rating";
+import EquipmentItem1 from "./EquipmentItem1";
 
 import axios from "axios";
 import { Item1 } from "./CustomerItem1";
 import Item2 from "./CustomerItem2";
+import EquipmentItem2 from "./EquipmentItem2";
+import EquipmentItem3 from "./EquipmentItem3";
+import EquipmentItem4 from "./EquipmentItem4";
+import { EquipmentItem5 } from "./EquipmentItem5";
 
 export default function ReportsBackground() {
   function CustomTabPanel(props) {
@@ -57,11 +62,12 @@ export default function ReportsBackground() {
 
   return (
     <>
-      <Box component={Paper} sx={{ width: "100%", height: "100vh" }}>
-        <Box sx={{ height: "30%" }}></Box>
+      <Box component={Paper} sx={{ width: "100%", height: "auto" }}>
+        <Box sx={{ height: "30vh" }}></Box>
         <Box
           sx={{
-            height: "70%",
+            height: "auto",
+            minHeight: "70vh",
             display: "flex",
             backgroundColor: "#f2f4f7",
             p: 2,
@@ -78,20 +84,35 @@ export default function ReportsBackground() {
               </AccordionSummary>
               <AccordionDetails>
                 <Tabs
-                orientation="vertical"
+                  orientation="vertical"
+                  selectionFollowsFocus
                   value={value}
                   onChange={handleChange}
                   variant="scrollable"
                   scrollButtons="auto"
                   aria-label="scrollable auto tabs example"
                 >
-                  <Tab label="Customer rating report " {...a11yProps(0)} />
+                  <Tab label="Customer Sale " {...a11yProps(0)} />
                   <Tab label="Customer Invoice details" {...a11yProps(1)} />
                   <Tab label="Item Three" {...a11yProps(2)} />
+                  <Tab label="Equipment Utilization Report" {...a11yProps(3)} />
+                  <Tab label="Equipment Revenue Report" {...a11yProps(4)} />
+                  <Tab
+                    label="Under Utilized Equipment Report"
+                    {...a11yProps(5)}
+                  />
+                  <Tab
+                    label="Equipment Maintenance Needs Report"
+                    {...a11yProps(6)}
+                  />
+                  <Tab
+                    label="Incomplete Rentals by Equipment"
+                    {...a11yProps(7)}
+                  />
                 </Tabs>
               </AccordionDetails>
             </Accordion>
-            <Accordion>
+            {/* <Accordion>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel2-content"
@@ -122,17 +143,34 @@ export default function ReportsBackground() {
                 <Button>Cancel</Button>
                 <Button>Agree</Button>
               </AccordionActions>
-            </Accordion>
+            </Accordion> */}
           </Box>
           <Box width={"80%"}>
             <CustomTabPanel value={value} index={0}>
-              <Item1/>
+              <Item1 />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-             <Item2/>
+              <Item2 />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
               Item Three
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={3}>
+              <EquipmentItem1 />
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={4}>
+              <EquipmentItem2 />
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={5}>
+              <EquipmentItem3 />
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={6}>
+              <EquipmentItem4/>
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={7}>
+              <EquipmentItem5/>
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={8}>
             </CustomTabPanel>
           </Box>
         </Box>
