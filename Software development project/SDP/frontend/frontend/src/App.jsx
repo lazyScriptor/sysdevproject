@@ -17,6 +17,8 @@ import NewLogin from './components/Pages/NewLogin.jsx';
 import Settings from './components/Pages/Settings.jsx';
 import AuthContextProvider from './Contexts/AuthContextProvider.jsx';
 import UserManagement from './components/Pages/UserManagement.jsx';
+import ReportsBackgroundInvoices from './components/Reports/ReportsBackgroundInvoices.jsx';
+import ReportsBackgroundEquipment from './components/Reports/ReportsBackgroundCustomers.jsx';
 
 export const AppCustomContext = createContext();
 
@@ -82,29 +84,29 @@ function App() {
         // 900: '#0d47a1',
 
         // purpleShades
-        // 25: "#faf0fa",
-        // 50: "#f3e5f5",
-        // 100: "#e1bee7",
-        // 200: "#ce93d8",
-        // 300: "#ba68c8",
-        // 400: "#ab47bc",
-        // 500: "#9c27b0",
-        // 600: "#8e24aa",
-        // 700: "#7b1fa2",
-        // 800: "#6a1b9a",
-        // 900: "#4a148c",
+        25: "#faf0fa",
+        50: "#f3e5f5",
+        100: "#e1bee7",
+        200: "#ce93d8",
+        300: "#ba68c8",
+        400: "#ab47bc",
+        500: "#9c27b0",
+        600: "#8e24aa",
+        700: "#7b1fa2",
+        800: "#6a1b9a",
+        900: "#4a148c",
 
         //orange shades
-        50: "#FFF3E0",
-        100: "#FFE0B2",
-        200: "#FFCC80",
-        300: "#FFB74D",
-        400: "#FFA726",
-        500: "#FF9800",
-        600: "#FB8C00",
-        700: "#F57C00",
-        800: "#EF6C00",
-        900: "#E65100",
+        // 50: "#FFF3E0",
+        // 100: "#FFE0B2",
+        // 200: "#FFCC80",
+        // 300: "#FFB74D",
+        // 400: "#FFA726",
+        // 500: "#FF9800",
+        // 600: "#FB8C00",
+        // 700: "#F57C00",
+        // 800: "#EF6C00",
+        // 900: "#E65100",
 
         error: {
           10: '#ffe6e6',
@@ -220,7 +222,24 @@ function App() {
                   </>
                 }
               />
-              
+              <Route
+                path="/Reports-invoices"
+                element={
+                  <>
+                    <Sidebar />
+                    <ReportsBackgroundInvoices />
+                  </>
+                }
+              />
+                <Route
+                path="/Reports-customers"
+                element={
+                  <>
+                    <Sidebar />
+                    <ReportsBackgroundEquipment />
+                  </>
+                }
+              />
 
               <Route
                 path="/Settings"
@@ -240,6 +259,7 @@ function App() {
                   </>
                 }
               />
+              
               {/* 404 Route */}
               <Route path="*" element={<Notfoundd />} />
             </Routes>

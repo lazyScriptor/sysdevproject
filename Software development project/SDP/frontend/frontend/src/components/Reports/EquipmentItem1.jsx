@@ -1,8 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
+import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import axios from 'axios';
+import axios from "axios";
 
 function EquipmentItem1() {
   const [startDate, setStartDate] = useState(null);
@@ -12,25 +20,29 @@ function EquipmentItem1() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let response;
-        if (startDate && endDate) {
-          response = await axios.get('http://localhost:8085/reports/getEquipmentUtilizationDetails', {
+        // Ensure startDate and endDate are defined
+        const start = startDate ? startDate.toISOString() : new Date(0).toISOString();
+        const end = endDate ? endDate.toISOString() : new Date().toISOString();
+  
+        const response = await axios.get(
+          "http://localhost:8085/reports/getEquipmentUtilizationDetails",
+          {
             params: {
-              startDate: startDate.format(),
-              endDate: endDate.format()
-            }
-          });
-        } else {
-          response = await axios.get('http://localhost:8085/reports/getEquipmentUtilizationDetails');
-        }
+              startDate: start,
+              endDate: end,
+            },
+          }
+        );
+  
         setData(response.data.response);
       } catch (error) {
-        console.error('Error fetching equipment utilization data:', error);
+        console.error("Error fetching equipment utilization data:", error);
       }
     };
-
+  
     fetchData();
   }, [startDate, endDate]);
+  
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -39,13 +51,23 @@ function EquipmentItem1() {
           label="Start Date"
           value={startDate}
           onChange={(date) => setStartDate(date)}
-          renderInput={(props) => <TextField {...props} style={{ marginBottom: '1rem', marginRight: '1rem' }} />}
+          renderInput={(props) => (
+            <TextField
+              {...props}
+              style={{ marginBottom: "1rem", marginRight: "1rem" }}
+            />
+          )}
         />
         <DateTimePicker
           label="End Date"
           value={endDate}
           onChange={(date) => setEndDate(date)}
-          renderInput={(props) => <TextField {...props} style={{ marginBottom: '1rem', marginRight: '1rem' }} />}
+          renderInput={(props) => (
+            <TextField
+              {...props}
+              style={{ marginBottom: "1rem", marginRight: "1rem" }}
+            />
+          )}
         />
 
         <TableContainer component={Paper}>

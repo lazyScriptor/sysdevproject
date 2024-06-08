@@ -246,16 +246,29 @@ export async function getCustomerbyLastName(LastName) {
   return customers;
 }
 
-export async function getCustomerbyPhoneNumberOrNic(phoneNumber) {
-  const [customers] = await pool.query(
-    "SELECT * FROM customer WHERE (cus_phone_number LIKE ? OR nic LIKE ?) AND cus_delete_status = 0",
-    [`%${phoneNumber}%`, `%${phoneNumber}%`]
-  );
-  if (customers.length > 0) {
-    console.log(customers);
-    return customers;
+export async function getCustomerbyPhoneNumberOrNic(searchValue) {
+  if (searchValue < 10000) {
+    const [customers] = await pool.query(
+      `SELECT * FROM customer WHERE cus_id = ? AND cus_delete_status = 0`,
+      [searchValue]
+    );
+    if (customers.length > 0) {
+      console.log(customers);
+      return customers;
+    } else {
+      return { message: `No customer found with ${searchValue}` };
+    }
   } else {
-    return { message: `No customer found with ${phoneNumber}` };
+    const [customers] = await pool.query(
+      "SELECT * FROM customer WHERE (cus_phone_number LIKE ? OR nic LIKE ?) AND cus_delete_status = 0",
+      [`%${searchValue}%`, `%${searchValue}%`]
+    );
+    if (customers.length > 0) {
+      console.log(customers);
+      return customers;
+    } else {
+      return { message: `No customer found with ${searchValue}` };
+    }
   }
 }
 

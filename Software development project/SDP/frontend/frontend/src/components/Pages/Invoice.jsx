@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../Stylings/rootstyles.css";
-import NewCustomerForm from "./NewCustomerForm.jsx";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import {
@@ -22,19 +21,14 @@ import {
 } from "../../Contexts/Contexts.jsx";
 import OverlayDialogBox from "../SubComponents/OverlayDialogBox.jsx";
 import axios from "axios";
-import InvoiceRightSide from "./Invoice/InvoiceRightSide.jsx";
-import InvoiceTable from "../SubComponents/InvoiceTable.jsx";
 import IdCardStatus from "./Invoice/IdCardStatus.jsx";
 import InvoiceDetailsWindowUp from "./Invoice/InvoiceDetailsWindowUp.jsx";
 import InvoiceDetailsWindowDown from "./Invoice/InvoiceDetailsWindowDown.jsx";
 import Payments from "./Invoice/Payments.jsx";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 import InvoicePaymentsTable from "./Invoice/InvoicePaymentsTable.jsx";
 import InvoiceRightSideNew from "./Invoice/InvoiceRightSideNew.jsx";
-import InvoiceUpdateForm from "./Invoice/InvoiceUpdateForm.jsx";
 import InvoiceHandOverForm from "./Invoice/InvoiceHandOverForm.jsx";
-import NavigationIcon from "@mui/icons-material/Navigation";
 import FeedbackComponent from "../SubComponents/FeedbackComponent.jsx";
 import CompleteInvoiceTable from "./Invoice/CompleteInvoiceTable.jsx";
 import InvoicePdf from "./Invoice/InvoicePdf.jsx";
@@ -112,46 +106,39 @@ function Invoice() {
   const { boolvalue, setBoolvalue, userData, setUserData } =
     useContext(PopupContext);
 
-  const isValidNIC = (nic) => {
-    const nineDigitsAndV = /^[0-9]{9}v$/i;
-    const twelveDigits = /^[0-9]{12}$/;
-    return nineDigitsAndV.test(nic) || twelveDigits.test(nic);
-  };
 
-  const isValidPhoneNumber = (phoneNumber) => {
-    phoneNumber = phoneNumber.replace(/[-\s]/g, "").trim();
-    const validFormatCheck1 = /^[1-9]\d{8}$/;
-    const validFormatCheck2 = /^[0]\d{9}$/;
-    return (
-      validFormatCheck1.test(phoneNumber) || validFormatCheck2.test(phoneNumber)
-    );
-  };
+  
 
   const handleSearchPhoneNumberorNic = async () => {
     if (!phoneNumberorNic) {
-      setValidationMessage("Phone number or NIC is required");
+      setValidationMessage("Phone number, NIC, or customer ID is required");
       return;
     }
-
+  
     const trimmedValue = phoneNumberorNic.trim();
-    if (!isValidNIC(trimmedValue) && !isValidPhoneNumber(trimmedValue)) {
-      setValidationMessage("Invalid phone number or NIC format");
+  
+    if (!isValidNIC(trimmedValue) && !isValidPhoneNumber(trimmedValue) && !isValidId(trimmedValue)) {
+      setValidationMessage("Invalid phone number, NIC, or ID format");
       return;
     }
-
+  
     setValidationMessage("");
-
+  
     try {
-      const res = await axios.get(
-        `http://localhost:8085/getCustomerbyPhoneNumberOrNic/${phoneNumberorNic}`
-      );
+      let res;
+      if (isValidId(trimmedValue)) {
+        res = await axios.get(`http://localhost:8085/getCustomerbyPhoneNumberOrNic/${trimmedValue}`);
+      } else {
+        res = await axios.get(`http://localhost:8085/getCustomerbyPhoneNumberOrNic/${trimmedValue}`);
+      }
+  
       const data = res.data;
-
+  
       if (Array.isArray(data) && data.length > 0) {
         setData(data[0]);
         updateValue("customerDetails", data[0]);
       } else if (data.message) {
-        setValidationMessage("No customer Found with this Phone number or NIC");
+        setValidationMessage("No customer found with this ID, phone number, or NIC");
         setData({
           cus_fname: "",
           cus_address1: "",
@@ -161,10 +148,9 @@ function Invoice() {
           cus_id: "",
         });
         updateValue("customerDetails", clearData);
-        console.log(data.message);
       } else {
         console.error("Unexpected response format:", data);
-        setValidationMessage("Unexpected error occured");
+        setValidationMessage("Unexpected error occurred");
         setData({
           cus_fname: "",
           cus_address1: "",
@@ -176,7 +162,7 @@ function Invoice() {
         updateValue("customerDetails", clearData);
       }
     } catch (error) {
-      setValidationMessage("Error occured in front end");
+      setValidationMessage("Error occurred in front end");
       setData({
         cus_fname: "",
         cus_address1: "",
@@ -189,6 +175,25 @@ function Invoice() {
       console.error("Error in handleSearchPhoneNumberorNic:", error);
     }
   };
+  
+  const isValidId = (id) => {
+    const validIdFormat = /^\d{1,4}$/;
+    return validIdFormat.test(id) && parseInt(id) < 10000;
+  }
+  
+  const isValidNIC = (nic) => {
+    const nineDigitsAndV = /^[0-9]{9}v$/i;
+    const twelveDigits = /^[0-9]{12}$/;
+    return nineDigitsAndV.test(nic) || twelveDigits.test(nic);
+  };
+  
+  const isValidPhoneNumber = (phoneNumber) => {
+    phoneNumber = phoneNumber.replace(/[-\s]/g, "").trim();
+    const validFormatCheck1 = /^[1-9]\d{8}$/;
+    const validFormatCheck2 = /^[0]\d{9}$/;
+    return validFormatCheck1.test(phoneNumber) || validFormatCheck2.test(phoneNumber);
+  };
+  
 
   const handleCreateNew = async () => {
     localStorage.removeItem("CIObject");

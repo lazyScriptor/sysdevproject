@@ -1,19 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Box, Paper, Button, TextField } from "@mui/material";
-
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Rating from "@mui/material/Rating";
-
+import { Box, Paper, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Rating } from "@mui/material";
 import axios from "axios";
 
 export function Item1() {
   const [customerRatings, setCustomerRatings] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
     const fetchCustomerRatings = async () => {
@@ -37,6 +29,18 @@ export function Item1() {
 
   const filterCustomers = (searchValue) => {
     setSearchValue(searchValue);
+  };
+
+  const handleSort = () => {
+    const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+    setSortOrder(newSortOrder);
+    setCustomerRatings((prevRatings) =>
+      [...prevRatings].sort((a, b) =>
+        newSortOrder === "asc"
+          ? a.total_sales - b.total_sales
+          : b.total_sales - a.total_sales
+      )
+    );
   };
 
   const filteredCustomerRatings = customerRatings.filter(
@@ -64,7 +68,13 @@ export function Item1() {
                   <TableCell align="center">Customer Phone Number</TableCell>
                   <TableCell align="center">Average Rating</TableCell>
                   <TableCell align="center">Number of Invoices</TableCell>
-                  <TableCell align="center">Total Sales</TableCell>
+                  <TableCell
+                    align="center"
+                    onClick={handleSort}
+                    sx={{ cursor: "pointer" }}
+                  >
+                    Total Sales {sortOrder === "asc" ? "▲" : "▼"}
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -75,7 +85,7 @@ export function Item1() {
                       "&:last-child td, &:last-child th": { border: 0 },
                       backgroundColor:
                         row.cus_delete_status === 1
-                          ? (theme) => theme.palette.primary.error[100]
+                          ? (theme) => theme.palette.error.light
                           : "inherit",
                     }}
                   >

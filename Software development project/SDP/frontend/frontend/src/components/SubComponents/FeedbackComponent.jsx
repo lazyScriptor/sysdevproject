@@ -60,7 +60,7 @@ function RadioGroupRating({ setRating }) {
   return (
     <StyledRating
       name="feedback-rating"
-      defaultValue={3}
+      // defaultValue={3}
       IconContainerComponent={IconContainer}
       getLabelText={(value) => customIcons[value].label}
       highlightSelectedOnly
@@ -70,35 +70,21 @@ function RadioGroupRating({ setRating }) {
 }
 
 export default function FeedBack(props) {
-  const {
-    fullDetailsEquipmentArray,
-    setFullDetailsEquipmentArray,
-    checkState,
-    setCheckState,
-    setPaymentArray,
-    eqObject,
-    setEqObject,
-    invoiceSearchBtnStatus,
-    setInvoiceSearchBtnStatus,
-    invoiceObject,
-    setInvoiceObject,
-    clearObject,
-    updateValue,
-    clearValues,
-    updateEqObject,
-  } = useContext(InvoiceContext);
+  const { invoiceObject } = useContext(InvoiceContext);
 
   const handleFeedback = () => {
     const container = document.createElement("div");
     const ratingContainer = document.createElement("div");
     container.appendChild(ratingContainer);
-    let rating = 3; // Default rating value
+    let rating = null; // Default rating value
 
     const setRating = (newRating) => {
       rating = newRating;
     };
 
-    createRoot(ratingContainer).render(<RadioGroupRating setRating={setRating} />);
+    createRoot(ratingContainer).render(
+      <RadioGroupRating setRating={setRating} />
+    );
 
     Swal.fire({
       title: "Submit your feedback",
@@ -117,7 +103,8 @@ export default function FeedBack(props) {
 
         try {
           console.log(rating, comments);
-          invoiceObject.inv_rating = rating;
+          if(rating!=null){invoiceObject.inv_rating = rating;}
+          
           invoiceObject.inv_special_message = comments;
           // Assume axios is properly configured
           return Swal.fire({

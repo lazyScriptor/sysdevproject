@@ -113,7 +113,7 @@ app.get("/loginValidate", async (req, res) => {
     const userName = response[1][0].username;
     console.log("id is", id, "Role is ", userRole);
     const token = jwt.sign({ userRole }, "jwtSecret", {
-      expiresIn: 3600,
+      expiresIn: 60 * 60 * 24,
     });
 
     return res.json({
@@ -447,10 +447,10 @@ app.put("/updateUserRole/:userId/:role", async (req, res) => {
   }
 });
 
-app.get(`/reports/getCustomerRatings`,async (req, res) => {
+app.get(`/reports/getCustomerRatings`, async (req, res) => {
   try {
-    const response =await reportsGetCustomerRatings();
-    console.log(response)
+    const response = await reportsGetCustomerRatings();
+    console.log(response);
     res.json({ status: true, message: "Value retrieved", response });
   } catch (error) {
     res.json({
@@ -459,9 +459,9 @@ app.get(`/reports/getCustomerRatings`,async (req, res) => {
     });
   }
 });
-app.get(`/reports/getCustomerInvoiceDetails`,async (req, res) => {
+app.get(`/reports/getCustomerInvoiceDetails`, async (req, res) => {
   try {
-    const response =await reportsGetCustomerInvoiceDetails();
+    const response = await reportsGetCustomerInvoiceDetails();
     res.json({ status: true, message: "Value retrieved", response });
   } catch (error) {
     res.json({
@@ -471,29 +471,25 @@ app.get(`/reports/getCustomerInvoiceDetails`,async (req, res) => {
   }
 });
 // Updated API endpoint
-app.get('/reports/getEquipmentUtilizationDetails', async (req, res) => {
-  console.log("calling");
+app.get("/reports/getEquipmentUtilizationDetails", async (req, res) => {
   const { startDate, endDate } = req.query;
 
   try {
     let response;
 
-    // If both start date and end date are provided
-    if (startDate && endDate) {
-      response = await getEquipmentUtilizationReport(startDate, endDate);
-    } 
-    // If only start date is provided
-    else if (startDate && !endDate) {
-      response = await getEquipmentUtilizationReport(startDate, new Date().toISOString());
-    } 
-    // If only end date is provided
-    else if (!startDate && endDate) {
-      response = await getEquipmentUtilizationReport(new Date(0).toISOString(), endDate);
-    } 
-    // If both start date and end date are missing
-    else {
-      response = await getEquipmentUtilizationReport(new Date(0).toISOString(), new Date().toISOString());
+    // Parse start and end dates if they exist
+    const parsedStartDate = startDate ? new Date(startDate) : new Date(0);
+    const parsedEndDate = endDate ? new Date(endDate) : new Date();
+
+    if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid date format",
+      });
     }
+
+    // Call the report function with parsed dates
+    response = await getEquipmentUtilizationReport(parsedStartDate.toISOString(), parsedEndDate.toISOString());
 
     console.log(response);
     res.json({ status: true, message: "Value retrieved", response });
@@ -501,12 +497,13 @@ app.get('/reports/getEquipmentUtilizationDetails', async (req, res) => {
     res.status(500).json({
       status: false,
       message: "Failed to retrieve equipment utilization report",
-      error: error.message
+      error: error.message,
     });
   }
 });
 
-app.get('/reports/getEquipmentRevenueDetails', async (req, res) => {
+
+app.get("/reports/getEquipmentRevenueDetails", async (req, res) => {
   const { startDate, endDate } = req.query;
 
   try {
@@ -522,11 +519,11 @@ app.get('/reports/getEquipmentRevenueDetails', async (req, res) => {
     res.status(500).json({
       status: false,
       message: "Failed to retrieve equipment revenue report",
-      error: error.message
+      error: error.message,
     });
   }
 });
-app.get('/reports/getUnderutilizedEquipment', async (req, res) => {
+app.get("/reports/getUnderutilizedEquipment", async (req, res) => {
   console.log("calling");
   const { startDate, endDate } = req.query;
 
@@ -543,13 +540,12 @@ app.get('/reports/getUnderutilizedEquipment', async (req, res) => {
     res.status(500).json({
       status: false,
       message: "Failed to retrieve underutilized equipment report",
-      error: error.message
+      error: error.message,
     });
   }
 });
 
-
-app.get('/reports/getEquipmentRentalDetails', async (req, res) => {
+app.get("/reports/getEquipmentRentalDetails", async (req, res) => {
   console.log("calling");
   const { startDate, endDate } = req.query;
 
@@ -566,14 +562,14 @@ app.get('/reports/getEquipmentRentalDetails', async (req, res) => {
     res.status(500).json({
       status: false,
       message: "Failed to retrieve equipment rental details report",
-      error: error.message
+      error: error.message,
     });
   }
 });
 
-app.get('/reports/getIncompleteRentals', async (req, res) => {
+app.get("/reports/getIncompleteRentals", async (req, res) => {
   console.log("calling");
-  
+
   try {
     const response = await getIncompleteRentals();
     console.log(response);
@@ -582,7 +578,7 @@ app.get('/reports/getIncompleteRentals', async (req, res) => {
     res.status(500).json({
       status: false,
       message: "Failed to retrieve incomplete rentals report",
-      error: error.message
+      error: error.message,
     });
   }
 });

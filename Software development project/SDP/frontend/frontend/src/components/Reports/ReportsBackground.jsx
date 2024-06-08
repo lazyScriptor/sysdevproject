@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Paper, Button, TextField } from "@mui/material";
+import { Box, Paper, Button, TextField, colors, useTheme } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionActions from "@mui/material/AccordionActions";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -24,8 +24,11 @@ import EquipmentItem2 from "./EquipmentItem2";
 import EquipmentItem3 from "./EquipmentItem3";
 import EquipmentItem4 from "./EquipmentItem4";
 import { EquipmentItem5 } from "./EquipmentItem5";
+import ReportsNavBar from "./ReportsNavBar";
 
 export default function ReportsBackground() {
+  const theme = useTheme();
+
   function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -54,16 +57,23 @@ export default function ReportsBackground() {
       "aria-controls": `simple-tabpanel-${index}`,
     };
   }
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const [invoice, setInvoice] = useState();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+  const handleInvoiceChange = (event, newValue) => {
+    setInvoice(newValue);
   };
 
   return (
     <>
       <Box component={Paper} sx={{ width: "100%", height: "auto" }}>
-        <Box sx={{ height: "30vh" }}></Box>
+        <Box sx={{ height: "20vh" }}></Box>
+        <Box sx={{ height: "10vh", display: "flex", width: "100%" }}>
+          <ReportsNavBar />
+        </Box>
         <Box
           sx={{
             height: "auto",
@@ -92,86 +102,40 @@ export default function ReportsBackground() {
                   scrollButtons="auto"
                   aria-label="scrollable auto tabs example"
                 >
-                  <Tab label="Customer Sale " {...a11yProps(0)} />
-                  <Tab label="Customer Invoice details" {...a11yProps(1)} />
-                  <Tab label="Item Three" {...a11yProps(2)} />
-                  <Tab label="Equipment Utilization Report" {...a11yProps(3)} />
-                  <Tab label="Equipment Revenue Report" {...a11yProps(4)} />
+                  <Tab label="Equipment Utilization Report" {...a11yProps(0)} />
+                  <Tab label="Equipment Revenue Report" {...a11yProps(1)} />
                   <Tab
                     label="Under Utilized Equipment Report"
-                    {...a11yProps(5)}
+                    {...a11yProps(2)}
                   />
                   <Tab
                     label="Equipment Maintenance Needs Report"
-                    {...a11yProps(6)}
+                    {...a11yProps(3)}
                   />
                   <Tab
                     label="Incomplete Rentals by Equipment"
-                    {...a11yProps(7)}
+                    {...a11yProps(4)}
                   />
                 </Tabs>
               </AccordionDetails>
             </Accordion>
-            {/* <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel2-content"
-                id="panel2-header"
-              >
-                Invoice Reports
-              </AccordionSummary>
-              <AccordionDetails>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget.
-              </AccordionDetails>
-            </Accordion>
-            <Accordion defaultExpanded>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel3-content"
-                id="panel3-header"
-              >
-                Equipment Reports
-              </AccordionSummary>
-              <AccordionDetails>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget.
-              </AccordionDetails>
-              <AccordionActions>
-                <Button>Cancel</Button>
-                <Button>Agree</Button>
-              </AccordionActions>
-            </Accordion> */}
           </Box>
           <Box width={"80%"}>
             <CustomTabPanel value={value} index={0}>
-              <Item1 />
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={1}>
-              <Item2 />
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={2}>
-              Item Three
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={3}>
               <EquipmentItem1 />
             </CustomTabPanel>
-            <CustomTabPanel value={value} index={4}>
+            <CustomTabPanel value={value} index={1}>
               <EquipmentItem2 />
             </CustomTabPanel>
-            <CustomTabPanel value={value} index={5}>
+            <CustomTabPanel value={value} index={2}>
               <EquipmentItem3 />
             </CustomTabPanel>
-            <CustomTabPanel value={value} index={6}>
-              <EquipmentItem4/>
+            <CustomTabPanel value={value} index={3}>
+              <EquipmentItem4 />
             </CustomTabPanel>
-            <CustomTabPanel value={value} index={7}>
-              <EquipmentItem5/>
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={8}>
-            </CustomTabPanel>
+            <CustomTabPanel value={value} index={4}>
+              <EquipmentItem5 />
+            </CustomTabPanel>{" "}
           </Box>
         </Box>
       </Box>
