@@ -3,7 +3,7 @@ import { AuthContext } from "./Contexts";
 import { Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function AuthContextProvider({ children }) {
+function AuthContextProvider({ children , CURRENT_USER }) {
   const [name, setName] = useState("def");
   const [isAuthenticated, setIsAuthenticated] = useState();
   const [userRole, setUserRole] = useState();
@@ -26,15 +26,15 @@ function AuthContextProvider({ children }) {
     }
   },[]);
 
-  // if (isAuthenticated==false || !localStorage.getItem("token")) {
-  //   navigate("/");
-  // }
-
   return (
     <AuthContext.Provider
       value={{ isAuthenticated, setIsAuthenticated, userRole, setUserRole }}
     >
-      {children}
+      {CURRENT_USER === "admin" ? (
+        children
+      ) : (
+        <div>Unauthorized</div>
+      )}
     </AuthContext.Provider>
   );
 }

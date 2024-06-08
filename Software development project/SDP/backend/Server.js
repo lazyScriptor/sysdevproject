@@ -40,6 +40,7 @@ import {
   getUnderutilizedEquipment,
   getEquipmentRentalDetails,
   getIncompleteRentals,
+  getDeletedInvoices,
 } from "./database.js";
 
 const app = express();
@@ -508,11 +509,24 @@ app.get("/reports/getEquipmentRevenueDetails", async (req, res) => {
 
   try {
     let response;
+
+    // If both start date and end date are provided
     if (startDate && endDate) {
       response = await getEquipmentRevenueReport(startDate, endDate);
-    } else {
-      response = await getEquipmentRevenueReport(null, null); // If start date or end date is missing, retrieve all data
     }
+    // If only start date is provided
+    else if (startDate && !endDate) {
+      response = await getEquipmentRevenueReport(startDate, new Date().toISOString());
+    }
+    // If only end date is provided
+    else if (!startDate && endDate) {
+      response = await getEquipmentRevenueReport(new Date(0).toISOString(), endDate);
+    }
+    // If both start date and end date are missing
+    else {
+      response = await getEquipmentRevenueReport(null, null); // Retrieve all data
+    }
+
     console.log(response);
     res.json({ status: true, message: "Value retrieved", response });
   } catch (error) {
@@ -523,17 +537,25 @@ app.get("/reports/getEquipmentRevenueDetails", async (req, res) => {
     });
   }
 });
+
 app.get("/reports/getUnderutilizedEquipment", async (req, res) => {
   console.log("calling");
   const { startDate, endDate } = req.query;
 
   try {
     let response;
-    if (startDate && endDate) {
-      response = await getUnderutilizedEquipment(startDate, endDate);
+
+    // Parse start and end dates if they exist
+    const parsedStartDate = startDate ? new Date(startDate) : new Date(0);
+    const parsedEndDate = endDate ? new Date(endDate) : new Date();
+
+    // Call the report function with parsed dates
+    if (parsedStartDate && parsedEndDate) {
+      response = await getUnderutilizedEquipment(parsedStartDate, parsedEndDate);
     } else {
-      response = await getUnderutilizedEquipment(null, null); // If start date or end date is missing, retrieve all data
+      response = await getUnderutilizedEquipment(); // If start date or end date is missing, retrieve all data
     }
+
     console.log(response);
     res.json({ status: true, message: "Value retrieved", response });
   } catch (error) {
@@ -545,17 +567,25 @@ app.get("/reports/getUnderutilizedEquipment", async (req, res) => {
   }
 });
 
+
 app.get("/reports/getEquipmentRentalDetails", async (req, res) => {
   console.log("calling");
   const { startDate, endDate } = req.query;
 
   try {
     let response;
-    if (startDate && endDate) {
-      response = await getEquipmentRentalDetails(startDate, endDate);
+
+    // Parse start and end dates if they exist or else pass current date and begining date
+    const parsedStartDate = startDate ? new Date(startDate) : new Date(0);
+    const parsedEndDate = endDate ? new Date(endDate) : new Date();
+
+    // Call the report function with parsed dates
+    if (parsedStartDate && parsedEndDate) {
+      response = await getEquipmentRentalDetails(parsedStartDate, parsedEndDate);
     } else {
-      response = await getEquipmentRentalDetails(null, null); // If start date or end date is missing, retrieve all data
+      response = await getEquipmentRentalDetails(); // If start date or end date is missing, retrieve all data
     }
+
     console.log(response);
     res.json({ status: true, message: "Value retrieved", response });
   } catch (error) {
@@ -566,6 +596,7 @@ app.get("/reports/getEquipmentRentalDetails", async (req, res) => {
     });
   }
 });
+
 
 app.get("/reports/getIncompleteRentals", async (req, res) => {
   console.log("calling");
@@ -582,6 +613,28 @@ app.get("/reports/getIncompleteRentals", async (req, res) => {
     });
   }
 });
+
+app.get('/reports/getDeletedInvoices', async (req, res) => {
+  let { start_date, end_date } = req.query;
+
+  // If start_date is not provided, set it to the Unix epoch (1970-01-01)
+  if (!start_date) {
+    start_date = new Date(0).toISOString().split('T')[0];
+  }
+
+  // If end_date is not provided, set it to today's date
+  if (!end_date) {
+    end_date = new Date().toISOString().split('T')[0];
+  }
+
+  try {
+    const data = await getDeletedInvoices(start_date, end_date);
+    res.json({ status: true, response: data });
+  } catch (error) {
+    res.status(500).json({ status: false, error: "Failed to retrieve deleted invoices" });
+  }
+});
+
 
 dotenv.config();
 const port = process.env.PORT;

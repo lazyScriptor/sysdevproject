@@ -12,20 +12,26 @@ function EquipmentItem3() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8085/reports/getUnderutilizedEquipment', {
-          params: {
-            startDate: startDate?.format(),
-            endDate: endDate?.format()
-          }
-        });
+        let response;
+  
+        // Prepare parameters
+        const params = {};
+        if (startDate) params.startDate = startDate.format();
+        if (endDate) params.endDate = endDate.format();
+  
+        // Fetch data with parameters
+        response = await axios.get('http://localhost:8085/reports/getUnderutilizedEquipment', { params });
+  
         setData(response.data.response);
       } catch (error) {
         console.error('Error fetching underutilized equipment data:', error);
       }
     };
-
+  
     fetchData();
   }, [startDate, endDate]);
+  
+  
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>

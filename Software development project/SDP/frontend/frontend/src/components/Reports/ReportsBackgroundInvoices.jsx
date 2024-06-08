@@ -20,6 +20,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Rating from "@mui/material/Rating";
 import EquipmentItem1 from "./EquipmentItem1";
+import InvoiceItem1 from "./InvoiceItem1";
 
 
 function ReportsBackgroundInvoices() {
@@ -82,7 +83,7 @@ function ReportsBackgroundInvoices() {
                     aria-controls="panel1-content"
                     id="panel1-header"
                   >
-                    Customer Reports
+                    Invoice Reports
                   </AccordionSummary>
                   <AccordionDetails>
                     <Tabs
@@ -94,18 +95,18 @@ function ReportsBackgroundInvoices() {
                       scrollButtons="auto"
                       aria-label="scrollable auto tabs example"
                     >
-                      <Tab label="Customer Sale " {...a11yProps(0)} />
-                      <Tab label="Customer Invoice details" {...a11yProps(1)} />
+                      <Tab label="Invoice Deleted report " {...a11yProps(0)} />
+                      <Tab label="" {...a11yProps(1)} />
                     </Tabs>
                   </AccordionDetails>
                 </Accordion>
               </Box>
               <Box sx={{width:"80%"}}>
               <CustomTabPanel value={value} index={0}>
-                1
+                <InvoiceItem1/>
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-                2
+              
             </CustomTabPanel>
               </Box>
             </Box>

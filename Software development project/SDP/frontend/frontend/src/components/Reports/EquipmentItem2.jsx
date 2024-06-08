@@ -12,20 +12,30 @@ function EquipmentItem2() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8085/reports/getEquipmentRevenueDetails', {
+        let response;
+  
+        // Format startDate and endDate
+        const start = startDate ? startDate.format() : null;
+        const end = endDate ? endDate.format() : null;
+  
+        // Fetch data from the backend
+        response = await axios.get('http://localhost:8085/reports/getEquipmentRevenueDetails', {
           params: {
-            startDate: startDate?.format(),
-            endDate: endDate?.format()
+            startDate: start,
+            endDate: end
           }
         });
+  
+        // Set the fetched data to state
         setData(response.data.response);
       } catch (error) {
         console.error('Error fetching equipment revenue data:', error);
       }
     };
-
+  
     fetchData();
   }, [startDate, endDate]);
+  
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>

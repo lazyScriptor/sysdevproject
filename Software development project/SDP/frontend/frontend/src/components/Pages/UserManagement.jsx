@@ -39,6 +39,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Swal from "sweetalert2";
 import backgroundImage from "../../assets/background.jpg";
+import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 
 export default function UserManagement({ username }) {
   const [users, setUsers] = useState([]);
@@ -434,6 +435,12 @@ function UserTable() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [availableRoles, setAvailableRoles] = useState([]);
+  const addButtonStyle = {
+    backgroundColor: null,
+    color: (theme)=>theme.plaette.primary,
+    border: 0,
+    
+  };
 
   const handleClick = () => {
     console.info("You clicked the Chip.");
@@ -645,7 +652,12 @@ function UserTable() {
                   ))}
               </TableCell>
               <TableCell align="center">
-                <button onClick={() => handleAddRoles(user)}>+</button>
+                <Button
+                  style={addButtonStyle}
+                  onClick={() => handleAddRoles(user)}
+                >
+                  <AddCircleTwoToneIcon />
+                </Button>
                 {selectedUser === user && availableRoles.length > 0 && (
                   <div>
                     {availableRoles.map((role) => (

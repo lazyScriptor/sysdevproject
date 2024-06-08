@@ -90,7 +90,7 @@ export default function ReportsBackground() {
                 aria-controls="panel1-content"
                 id="panel1-header"
               >
-                Customer Reports
+                Equipment Reports
               </AccordionSummary>
               <AccordionDetails>
                 <Tabs

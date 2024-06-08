@@ -1038,24 +1038,25 @@ export async function getUnderutilizedEquipment(startDate, endDate) {
   try {
     const [rows] = await pool.query(
       `SELECT 
-        equipment.eq_id,
-        equipment.eq_name,
-        COUNT(invoiceEquipment.inveq_eqid) AS total_rentals
-      FROM 
-        equipment
-      JOIN 
-        invoiceEquipment ON equipment.eq_id = invoiceEquipment.inveq_eqid
-      ${
-        startDate && endDate
-          ? "WHERE invoice.inv_createddate BETWEEN ? AND ?"
-          : ""
-      }
-      GROUP BY 
-        equipment.eq_id, equipment.eq_name
-      HAVING 
-        total_rentals < 5
-      ORDER BY 
-        total_rentals ASC`,
+      equipment.eq_id,
+      equipment.eq_name,
+      COUNT(invoiceEquipment.inveq_eqid) AS total_rentals
+  FROM 
+      equipment
+  JOIN 
+      invoiceEquipment ON equipment.eq_id = invoiceEquipment.inveq_eqid
+  ${
+    startDate && endDate
+      ? "JOIN invoice ON invoice.inv_id = invoiceEquipment.inveq_invid WHERE invoice.inv_createddate BETWEEN ? AND ? "
+      : ""
+  }
+  GROUP BY 
+      equipment.eq_id, equipment.eq_name
+  HAVING 
+      total_rentals < 5
+  ORDER BY 
+      total_rentals ASC
+  `,
       startDate && endDate ? [startDate, endDate] : []
     );
     return rows;
@@ -1077,16 +1078,15 @@ export async function getEquipmentRentalDetails(startDate, endDate) {
         equipment
       JOIN 
         invoiceEquipment ON equipment.eq_id = invoiceEquipment.inveq_eqid
-      ${
-        startDate && endDate
-          ? "WHERE invoice.inv_createddate BETWEEN ? AND ?"
-          : ""
-      }
+      LEFT JOIN 
+        invoice ON invoice.inv_id = invoiceEquipment.inveq_invid
+      WHERE 
+        (invoice.inv_createddate BETWEEN ? AND ?) OR (? IS NULL AND ? IS NULL)
       GROUP BY 
         equipment.eq_id, equipment.eq_name
       ORDER BY 
         total_rental_days DESC, total_rentals DESC`,
-      startDate && endDate ? [startDate, endDate] : []
+      startDate && endDate ? [startDate, endDate, startDate, endDate] : []
     );
     return rows;
   } catch (error) {
@@ -1099,26 +1099,54 @@ export async function getIncompleteRentals() {
   try {
     const [rows] = await pool.query(
       `SELECT 
-        equipment.eq_id,
-        equipment.eq_name,
-        invoice.inv_id,
-        invoice.inv_createddate,
-        COALESCE(invoiceEquipment.duration_in_days, 1) AS duration_in_days,
-        (CASE WHEN invoiceEquipment.duration_in_days IS NULL THEN 1 ELSE 0 END) AS not_completed
-      FROM 
-        equipment
-      JOIN 
-        invoiceEquipment ON equipment.eq_id = invoiceEquipment.inveq_eqid
-      JOIN 
-        invoice ON invoice.inv_id = invoiceEquipment.inveq_invid
-      WHERE 
-        invoiceEquipment.duration_in_days IS NULL
-      ORDER BY 
-        equipment.eq_name, invoice.inv_createddate`
+      equipment.eq_id,
+      equipment.eq_name,
+      invoice.inv_id,
+      invoice.inv_createddate,
+      DATEDIFF(CURRENT_DATE, invoice.inv_createddate) AS duration_in_days,
+      (CASE WHEN DATEDIFF(CURRENT_DATE, invoice.inv_createddate) IS NULL THEN 1 ELSE 0 END) AS not_completed
+    FROM 
+      equipment
+    JOIN 
+      invoiceEquipment ON equipment.eq_id = invoiceEquipment.inveq_eqid
+    JOIN 
+      invoice ON invoice.inv_id = invoiceEquipment.inveq_invid
+    WHERE 
+      invoiceEquipment.duration_in_days IS NULL
+    ORDER BY 
+      equipment.eq_name, invoice.inv_createddate;
+    `
     );
     return rows;
   } catch (error) {
     console.log("Error fetching incomplete rentals report:", error);
+    throw error;
+  }
+}
+export async function getDeletedInvoices(startDate, endDate) {
+  console.log("object",startDate,endDate)
+  try {
+    const query = `
+      SELECT 
+        c.cus_fname AS first_name,
+        c.cus_lname AS last_name,
+        i.inv_id AS invoice_id,
+        i.inv_createddate AS created_date,
+        i.inv_updatedstatus AS updated_status
+      FROM 
+        customer c
+      JOIN 
+        invoice i ON i.inv_cusid = c.cus_id
+      WHERE 
+        i.inv_delete_status = 1
+        AND i.inv_createddate BETWEEN ? AND ?;
+    `;
+
+    const [rows] = await pool.query(query, [startDate, endDate]);
+    console.log("deelted",rows)
+    return rows;
+  } catch (error) {
+    console.log("Error fetching deleted invoices report:", error);
     throw error;
   }
 }

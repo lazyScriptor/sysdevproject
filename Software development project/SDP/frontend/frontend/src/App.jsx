@@ -1,65 +1,90 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Login from './components/Pages/Login';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Customers from './components/Pages/Customers.jsx';
-import Sidebar from './components/Pages/Sidebar.jsx';
-import DashboardMain from './components/Pages/DasboardMain.jsx';
-import Equipment from './components/Pages/Equipment.jsx';
-import Inbox from './components/Pages/Inbox.jsx';
-import Invoice from './components/Pages/Invoice.jsx';
-import Reports from './components/Pages/Reports.jsx';
-import Notfoundd from '../additionalcomponents/Notfoundd.jsx';
+import "bootstrap/dist/css/bootstrap.min.css";
+import Login from "./components/Pages/Login";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Customers from "./components/Pages/Customers.jsx";
+import Sidebar from "./components/Pages/Sidebar.jsx";
+import DashboardMain from "./components/Pages/DasboardMain.jsx";
+import Equipment from "./components/Pages/Equipment.jsx";
+import Inbox from "./components/Pages/Inbox.jsx";
+import Invoice from "./components/Pages/Invoice.jsx";
+import Reports from "./components/Pages/Reports.jsx";
+import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
+
 // import './index.css';
 
-import { useState, createContext } from 'react';
-import { ThemeProvider, createTheme } from '@mui/material';
-import NewLogin from './components/Pages/NewLogin.jsx';
-import Settings from './components/Pages/Settings.jsx';
-import AuthContextProvider from './Contexts/AuthContextProvider.jsx';
-import UserManagement from './components/Pages/UserManagement.jsx';
-import ReportsBackgroundInvoices from './components/Reports/ReportsBackgroundInvoices.jsx';
-import ReportsBackgroundEquipment from './components/Reports/ReportsBackgroundCustomers.jsx';
+import { useState, createContext, useEffect } from "react";
+import { ThemeProvider, createTheme } from "@mui/material";
+import NewLogin from "./components/Pages/NewLogin.jsx";
+import Settings from "./components/Pages/Settings.jsx";
+import AuthContextProvider from "./Contexts/AuthContextProvider.jsx";
+import UserManagement from "./components/Pages/UserManagement.jsx";
+import ReportsBackgroundInvoices from "./components/Reports/ReportsBackgroundInvoices.jsx";
+import ReportsBackgroundEquipment from "./components/Reports/ReportsBackgroundCustomers.jsx";
 
 export const AppCustomContext = createContext();
 
+const USER_TYPES = {
+  ADMIN: "admin",
+  CASHIER: "cashier",
+  WAREHOUSE_HANDLER: "warehouse handler",
+};
+const CURRENT_USER = USER_TYPES.ADMIN;
+
 function App() {
-  const [usernamee, setUsernamee] = useState('new dummy data');
-  const [rolee, setRolee] = useState('new role data');
+  const [usernamee, setUsernamee] = useState("new dummy data");
+  const [rolee, setRolee] = useState("new role data");
   const [show, setShow] = useState(false);
+  const [decodedToken, setDecodedToken] = useState(null);
 
 
-  const Buttonstyles =(theme)=> ({
-    display:"flex",
-    flexDirection:"column",
-    alignItems:"center",
+  useEffect(()=>{
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwt_decode(token); // Assuming you have jwt_decode imported
+        setDecodedToken(decoded);
+        console.log("decoded token",decoded)
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  },[])
+  const Buttonstyles = (theme) => ({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
     width: "100px",
     height: "80px",
     borderRadius: 15,
     opacity: 0.8,
-    m:2
+    m: 2,
   });
-  const Buttonstyles2 =(theme)=> ({
-    display:"flex",
-    flexDirection:"row",
-    alignItems:"center",
+  const Buttonstyles2 = (theme) => ({
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
     width: "160px",
     height: "50px",
-    color:"white",
-    backgroundColor:(theme)=>theme.palette.primary,
+    color: "white",
+    backgroundColor: (theme) => theme.palette.primary,
     border: "solid 1px",
     borderRadius: 5,
     opacity: 0.8,
-    m:2
+    m: 2,
   });
 
   const theme = createTheme({
     typography: {
-      fontFamily: ['-apple-system-', 'BlinkMacSystemFont', 'Roboto', 'sans-serif'].join(','),
+      fontFamily: [
+        "-apple-system-",
+        "BlinkMacSystemFont",
+        "Roboto",
+        "sans-serif",
+      ].join(","),
     },
     // Define your theme here
     palette: {
       primary: {
-        
         // 50: "#e0f7fa",
         // 100: "#b2ebf2",
         // 200: "#80deea",
@@ -109,48 +134,49 @@ function App() {
         // 900: "#E65100",
 
         error: {
-          10: '#ffe6e6',
-          50: '#FFCCCC',
-          100: '#FF9999',
-          200: '#FF6666',
-          300: '#FF3333',
-          400: '#FF0000',
-          500: '#CC0000',
-          600: '#990000',
-          700: '#660000',
-        },warning: {
-          10: '#fff5e6',
-          50: '#FFEB99',
-          100: '#FFD966',
-          200: '#FFC133',
-          300: '#FFAD00',
-          400: '#FF9900',
-          500: '#FF8800',
-          600: '#FF7700',
-          700: '#FF6600',
-          800: '#FF5500',
-          900: '#FF4400',
-      },
-        monochromic: '#00C9B6',
+          10: "#ffe6e6",
+          50: "#FFCCCC",
+          100: "#FF9999",
+          200: "#FF6666",
+          300: "#FF3333",
+          400: "#FF0000",
+          500: "#CC0000",
+          600: "#990000",
+          700: "#660000",
+        },
+        warning: {
+          10: "#fff5e6",
+          50: "#FFEB99",
+          100: "#FFD966",
+          200: "#FFC133",
+          300: "#FFAD00",
+          400: "#FF9900",
+          500: "#FF8800",
+          600: "#FF7700",
+          700: "#FF6600",
+          800: "#FF5500",
+          900: "#FF4400",
+        },
+        monochromic: "#00C9B6",
       },
       secondary: {
-        main: '#00ff00',
+        main: "#00ff00",
       },
-      ps: { main: '#00ff00' },
+      ps: { main: "#00ff00" },
       common: {
-        maincolour1: 'red',
-        maincolour2: 'green',
+        maincolour1: "red",
+        maincolour2: "green",
       },
     },
     components: {
       MuiButton: {
         variants: [
           {
-            props: { customvariant: 'custom' },
+            props: { customvariant: "custom" },
             style: Buttonstyles,
           },
           {
-            props: { customvariant2: 'custom2' },
+            props: { customvariant2: "custom2" },
             style: Buttonstyles2,
           },
         ],
@@ -160,9 +186,20 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <AppCustomContext.Provider value={{ usernamee, setUsernamee, rolee, setRolee, theme,show, setShow }}>
+      <AppCustomContext.Provider
+        value={{
+          usernamee,
+          setUsernamee,
+          rolee,
+          setRolee,
+          theme,
+          show,
+          setShow,
+        }}
+      >
+        {CURRENT_USER == USER_TYPES.ADMIN ? (
         <Router>
-          <AuthContextProvider>
+          <AuthContextProvider CURRENT_USER={CURRENT_USER}>
             <Routes>
               {/* Routes without Sidebar */}
 
@@ -231,7 +268,7 @@ function App() {
                   </>
                 }
               />
-                <Route
+              <Route
                 path="/Reports-customers"
                 element={
                   <>
@@ -250,7 +287,7 @@ function App() {
                   </>
                 }
               />
-                <Route
+              <Route
                 path="/userManagement"
                 element={
                   <>
@@ -259,12 +296,201 @@ function App() {
                   </>
                 }
               />
-              
+
               {/* 404 Route */}
               <Route path="*" element={<Notfoundd />} />
             </Routes>
           </AuthContextProvider>
         </Router>
+        ):CURRENT_USER == USER_TYPES.CASHIER ? (
+          <Router>
+          <AuthContextProvider CURRENT_USER={CURRENT_USER}>
+            <Routes>
+              {/* Routes without Sidebar */}
+
+              <Route path="/" element={<NewLogin />} />
+              {/* Other routes with Sidebar */}
+              <Route
+                path="/customers"
+                element={
+                  <>
+                    <Sidebar />
+                    <Customers />
+                  </>
+                }
+              />
+              <Route
+                path="/DashboardMain"
+                element={
+                  <>
+                    <Sidebar />
+                    <DashboardMain />
+                  </>
+                }
+              />
+              <Route
+                path="/Equipment"
+                element={
+                  <>
+                    <Sidebar />
+                    <Equipment />
+                  </>
+                }
+              />
+              <Route
+                path="/Inbox"
+                element={
+                  <>
+                    <Sidebar />
+                    <Inbox />
+                  </>
+                }
+              />
+              <Route
+                path="/Invoice"
+                element={
+                  <>
+                    <Sidebar />
+                    <Invoice />
+                  </>
+                }
+              />
+
+              <Route
+                path="/Settings"
+                element={
+                  <>
+                    <Sidebar />
+                    <Settings />
+                  </>
+                }
+              />
+              <Route
+                path="/userManagement"
+                element={
+                  <>
+                    <Sidebar />
+                    <UserManagement />
+                  </>
+                }
+              />
+
+              {/* 404 Route */}
+              <Route path="*" element={<Notfoundd />} />
+            </Routes>
+          </AuthContextProvider>
+        </Router>
+        ):CURRENT_USER == USER_TYPES.WAREHOUSE_HANDLER ? (
+          <Router>
+          <AuthContextProvider CURRENT_USER={CURRENT_USER}>
+            <Routes>
+              {/* Routes without Sidebar */}
+
+              <Route path="/" element={<NewLogin />} />
+              {/* Other routes with Sidebar */}
+              <Route
+                path="/customers"
+                element={
+                  <>
+                    <Sidebar />
+                    <Customers />
+                  </>
+                }
+              />
+              <Route
+                path="/DashboardMain"
+                element={
+                  <>
+                    <Sidebar />
+                    <DashboardMain />
+                  </>
+                }
+              />
+              <Route
+                path="/Equipment"
+                element={
+                  <>
+                    <Sidebar />
+                    <Equipment />
+                  </>
+                }
+              />
+              <Route
+                path="/Inbox"
+                element={
+                  <>
+                    <Sidebar />
+                    <Inbox />
+                  </>
+                }
+              />
+              <Route
+                path="/Invoice"
+                element={
+                  <>
+                    <Sidebar />
+                    <Invoice />
+                  </>
+                }
+              />
+              <Route
+                path="/Reports"
+                element={
+                  <>
+                    <Sidebar />
+                    <Reports />
+                  </>
+                }
+              />
+              <Route
+                path="/Reports-invoices"
+                element={
+                  <>
+                    <Sidebar />
+                    <ReportsBackgroundInvoices />
+                  </>
+                }
+              />
+              <Route
+                path="/Reports-customers"
+                element={
+                  <>
+                    <Sidebar />
+                    <ReportsBackgroundEquipment />
+                  </>
+                }
+              />
+
+              <Route
+                path="/Settings"
+                element={
+                  <>
+                    <Sidebar />
+                    <Settings />
+                  </>
+                }
+              />
+              <Route
+                path="/userManagement"
+                element={
+                  <>
+                    <Sidebar />
+                    <UserManagement />
+                  </>
+                }
+              />
+
+              {/* 404 Route */}
+              <Route path="*" element={<Notfoundd />} />
+            </Routes>
+          </AuthContextProvider>
+        </Router>
+        ):(
+          <div>Unauthorized</div>
+        )
+
+
+        }
       </AppCustomContext.Provider>
     </ThemeProvider>
   );
