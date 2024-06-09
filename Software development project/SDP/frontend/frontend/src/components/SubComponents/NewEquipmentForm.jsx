@@ -22,6 +22,22 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import EquipmentStockComponent from "./EquipmentStockComponent";
 
+function parseJwt(token) {
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
+}
+
 export function NewEquipmentForm(props) {
   const { eq_id } = props;
   const [toggle, setToggle] = useState(false);
@@ -29,6 +45,7 @@ export function NewEquipmentForm(props) {
   const [stockValue, setStockValue] = useState();
   const [workingStock, setworkingStock] = useState();
   const [defectedStock, setDefectedStock] = useState();
+  const [userRole, setUserRole] = useState("");
 
   const validationSchema = yup.object().shape({
     eq_name: yup.string().required("Machine Name is required"),
@@ -76,6 +93,9 @@ export function NewEquipmentForm(props) {
   });
 
   useEffect(() => {
+    const token = parseJwt(localStorage.getItem("token"));
+    setUserRole(token.userRole);
+
     const fetchEquipmentById = async (id) => {
       try {
         const res = await axios.get(
@@ -128,9 +148,43 @@ export function NewEquipmentForm(props) {
     setToggle(false); // Reset toggle state
     console.log(equipment.eq_catid);
   };
+  const handleDelete = (id) => {
+    console.log("id", id);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`http://localhost:8085/deleteEquipmentbyId/${id}`)
+          .then((response) => {
+            Swal.fire({
+              title: "Deleted!",
+              text: response.data.message,
+              icon: "success",
+            });
+          })
+          .catch((error) => {
+            console.error("Error deleting equipment:", error);
+            Swal.fire({
+              title: "Error!",
+              text:
+                error.response?.data?.message ||
+                "Something went wrong. Please try again.",
+              icon: "error",
+            });
+          });
+      }
+    });
+  };
 
   const onSubmit = async (data) => {
-    data.eq_defected_status=defectedStock
+    data.eq_defected_status = defectedStock;
     try {
       const response = await axios.post(
         "http://localhost:8085/setEquipment",
@@ -274,7 +328,7 @@ export function NewEquipmentForm(props) {
                 helperText={errors.eq_completestock?.message}
                 onChange={(e) => {
                   setStockValue(e.target.value);
-                  setworkingStock(e.target.value-defectedStock);
+                  setworkingStock(e.target.value - defectedStock);
                 }}
               />
               <EquipmentStockComponent
@@ -319,6 +373,11 @@ export function NewEquipmentForm(props) {
               >
                 Clear
               </Button>
+              {userRole == "admin" && (
+                <Button type="button" onClick={() => handleDelete(eq_id)}>
+                  Delete
+                </Button>
+              )}
             </Grid>
           </Grid>
         </form>

@@ -5,13 +5,6 @@ import ReportsBackground from "../Reports/ReportsBackground.jsx";
 import { Box } from "@mui/material";
 import "../Stylings/rootstyles.css";
 function Reports() {
-  const { setIsAuthenticated } = useContext(AuthContext);
-  useEffect(() => {
-    if (!localStorage.getItem("token")) {
-      navigate("/");
-      setIsAuthenticated(false);
-    }
-  }, []);
   return (
     <>
       <Box id="main-body">

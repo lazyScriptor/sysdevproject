@@ -115,6 +115,33 @@ export async function getEquipmentbyName(name) {
   console.log(equipment);
   return equipment;
 }
+export async function deleteEquipmentById(id) {
+  try {
+    const [result] = await pool.query('UPDATE equipment SET eq_delete_status = 1 WHERE eq_id = ?', [id]);
+    if (result.affectedRows === 0) {
+
+      return {
+        success: false,
+        statusCode: 404,
+        message: 'Equipment not found',
+      };
+    }
+    return {
+      success: true,
+      statusCode: 200,
+      message: 'Equipment deleted successfully',
+      affectedRows: result.affectedRows,
+    };
+  } catch (error) {
+    console.error('Back end error occurred in delete equipment:', error);
+    return {
+      success: false,
+      statusCode: 500,
+      message: 'Error deleting equipment',
+      error: error,
+    };
+  }
+}
 export async function addEquipment(bodydata) {
   const {
     eq_name,
@@ -1124,7 +1151,7 @@ export async function getIncompleteRentals() {
   }
 }
 export async function getDeletedInvoices(startDate, endDate) {
-  console.log("object",startDate,endDate)
+  console.log("object", startDate, endDate);
   try {
     const query = `
       SELECT 
@@ -1143,7 +1170,7 @@ export async function getDeletedInvoices(startDate, endDate) {
     `;
 
     const [rows] = await pool.query(query, [startDate, endDate]);
-    console.log("deelted",rows)
+    console.log("deelted", rows);
     return rows;
   } catch (error) {
     console.log("Error fetching deleted invoices report:", error);

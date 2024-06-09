@@ -5,12 +5,6 @@ import { Box } from "@mui/material";
 import EquipmentPageContentNew from "../SubComponents/EquipmentPageContentNew";
 
 function Equipment() {
-  useEffect(() => {
-    if (!localStorage.getItem("token")) {
-      navigate("/");
-      setIsAuthenticated(false);
-    }
-  }, []);
   return (
     <>
       {/*   
@@ -25,7 +19,7 @@ function Equipment() {
 
       <Box id="main-body">
         <Box id="body">
-          <EquipmentPageContentNew/>
+          <EquipmentPageContentNew />
         </Box>
       </Box>
     </>

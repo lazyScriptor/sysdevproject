@@ -24,7 +24,7 @@ import { useContext } from "react";
 import { AppCustomContext } from "../../../App.jsx";
 import Button from "@mui/material/Button";
 
-function SideBarWarehouseHandler() {
+export default function SidebarCashier() {
   //context data
   const { usernamee, rolee,show, setShow  } = useContext(AppCustomContext);
   const [contextUserName, setContextUserName] = useState();
@@ -54,11 +54,6 @@ function SideBarWarehouseHandler() {
       >
         <div className="offcanvas-header-wrapper">
           <Offcanvas.Header closeButton={true}>
-            <img
-              className="profile-image"
-            //   src={adminImage}
-              alt="image not found"
-            />
             <div className="header-text">
               <h4>{localStorage.getItem("userRole")}</h4>
               <h6>{localStorage.getItem("username")}</h6>
@@ -91,27 +86,35 @@ function SideBarWarehouseHandler() {
               handlefunction={handleShow}
               name="Dashboard"
               icon={faTableCellsLarge}
-              destination="/WH-dashboard"
+              destination="/C-dashboard"
             />
             <DashboardCategoryBtn
-              handlefunction={handleShow}
-              name="invoices"
+              handlefunction={handleClose}
+              name="Invoices"
               icon={faLayerGroup}
-              destination="/WH-invoice"
+              destination="/C-invoice"
             />
             <DashboardCategoryBtn
               handlefunction={handleShow}
               name="Customers"
               icon={faUser}
-              destination="/WH-customers"
+              destination="/C-customer"
             />
             <DashboardCategoryBtn
               handlefunction={handleShow}
               name="Equipment"
               icon={faToolbox}
-              destination="/WH-equipment"
+              destination="/C-equipment"
             />
+            <DashboardCategoryBtn
+              handlefunction={handleShow}
+              name="Reports"
+              icon={faNewspaper}
+              destination="/Reports"
+            />
+       
             <hr />
+            
             <DashboardCategoryBtn
               handlefunction={handleShow}
               name="Logout"
@@ -125,4 +128,4 @@ function SideBarWarehouseHandler() {
   );
 }
 
-export default SideBarWarehouseHandler;
+

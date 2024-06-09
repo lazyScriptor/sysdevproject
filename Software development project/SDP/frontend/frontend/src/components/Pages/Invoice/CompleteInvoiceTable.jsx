@@ -7,8 +7,16 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { useTheme } from '@mui/material/styles';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircle
+} from "@fortawesome/free-solid-svg-icons";
 
 function CompleteInvoiceTable() {
+  const theme = useTheme();
+
   const {
     fullDetailsEquipmentArray,
     setFullDetailsEquipmentArray,
@@ -60,7 +68,7 @@ function CompleteInvoiceTable() {
                     backgroundColor: colorFunction(row.duration_in_days),
                   }}
                 >
-                  <TableCell align="center">{index + 1}</TableCell>
+                  <TableCell align="center">{index + 1}#</TableCell>
                   <TableCell align="center" component="th" scope="row">
                     {row.eq_id}
                   </TableCell>
@@ -68,7 +76,7 @@ function CompleteInvoiceTable() {
                   <TableCell align="center">{row.eq_rental}</TableCell>
                   <TableCell align="center">
                     {" "}
-                    {new Date(row.inveq_return_date).toLocaleString()}
+                    {row.inveq_return_date==null ?<FontAwesomeIcon icon={faCircle} beatFade style={{color: "#FFD43B",}} />: new Date(row.inveq_return_date).toLocaleString()}
                   </TableCell>
                   <TableCell align="center">{row.inveq_borrowqty}</TableCell>
 

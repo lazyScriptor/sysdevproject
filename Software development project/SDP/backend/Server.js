@@ -41,6 +41,7 @@ import {
   getEquipmentRentalDetails,
   getIncompleteRentals,
   getDeletedInvoices,
+  deleteEquipmentById,
 } from "./database.js";
 
 const app = express();
@@ -168,6 +169,26 @@ app.get("/getEquipmentbyID/:equipmentID", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+
+app.delete('/deleteEquipmentbyId/:id', async (req, res) => {
+  const equipmentId = req.params.id;
+  const result = await deleteEquipmentById(equipmentId);
+
+  if (result.success) {
+    res.status(result.statusCode).json({
+      message: result.message,
+      affectedRows: result.affectedRows,
+    });
+  } else {
+    res.status(result.statusCode).json({
+      message: result.message,
+      error: result.error,
+    });
+  }
+});
+
 app.get("/getEquipmentbyName/:equipmentName", async (req, res) => {
   try {
     console.log("Server side getEquipmentbyName", req.params.equipmentName);

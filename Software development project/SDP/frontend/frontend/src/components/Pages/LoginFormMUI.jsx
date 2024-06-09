@@ -33,7 +33,6 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
-
 function LoginFormMUI() {
   const [isLoading, setIsLoading] = useState(false);
   const [LoadUsername, setLoadUsername] = useState("");
@@ -110,14 +109,15 @@ function LoginFormMUI() {
             localStorage.setItem("username", res.data.username);
 
             // setUserRole(res.data.result);
-            const userRole = parseJwt(res.data.token).userRole
-            console.log(userRole)
-            if(userRole == 'warehouse handler'){
-              navigate('/WH-customers')
+            const userRole = parseJwt(res.data.token).userRole;
+            console.log(userRole);
+            if (userRole == "warehouse handler") {
+              navigate("/WH-customers");
+            } else if (userRole == "cashier") {
+              navigate("/C-dashboard");
+            } else if (userRole == "admin") {
+              navigate("/dashboardmain");
             }
-              // navigate("/dashboardmain");
-     
-            
           }
         });
     } catch (error) {
@@ -163,38 +163,30 @@ function LoginFormMUI() {
               alignItems: "center",
             }}
           >
-
             <Box width={"100%"}>
+              <TextField
+                fullWidth
+                sx={[textFieldStyle, { width: "80%" }]}
+                inputRef={usernameRef}
+                onChange={(e) => {
+                  setLoadUsername(e.target.value);
+                  console.log(e.target.value);
+                  // Ensure that you keep your custom functionality here
+                }}
+                label="Username"
+                type="text"
+                inputProps={{ ...register("username") }} // Register explicitly here
+                error={!!errors.username}
+                helperText={errors.username?.message}
+              />
 
-
-            <TextField
-              fullWidth
-              sx={[textFieldStyle,{width:"80%"}]}
-              inputRef={usernameRef}
-              onChange={(e) => {
-                setLoadUsername(e.target.value);
-                console.log(e.target.value);
-                // Ensure that you keep your custom functionality here
-              }}
-              label="Username"
-              type="text"
-              inputProps={{ ...register("username") }} // Register explicitly here
-              error={!!errors.username}
-              helperText={errors.username?.message}
-            />
-
-            <LoadingButton
-              loading={isLoading}
-              onClick={() => handleLoadingButton(LoadUsername)}
-              sx={{minHeight:"55px",ml:2,borderRadius:3}}
-              variant="outlined"
-            >
-              
-            </LoadingButton>
+              <LoadingButton
+                loading={isLoading}
+                onClick={() => handleLoadingButton(LoadUsername)}
+                sx={{ minHeight: "55px", ml: 2, borderRadius: 3 }}
+                variant="outlined"
+              ></LoadingButton>
             </Box>
-
-
-
 
             <Select
               {...register("role")}
@@ -240,7 +232,6 @@ function LoginFormMUI() {
               }
             />
             <Button
-            
               type="submit"
               variant="contained"
               color="primary"

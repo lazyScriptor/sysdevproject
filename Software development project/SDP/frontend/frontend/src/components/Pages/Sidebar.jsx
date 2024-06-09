@@ -26,12 +26,11 @@ import { AppCustomContext } from "../../App.jsx";
 import Button from "@mui/material/Button";
 
 function Sidebar() {
+  
   //context data
-  const { usernamee, rolee,show, setShow  } = useContext(AppCustomContext);
+  const { usernamee, rolee, show, setShow } = useContext(AppCustomContext);
   const [contextUserName, setContextUserName] = useState();
   const [contextRole, setContextRole] = useState();
-
-  
 
   //context data over
   const handleClose = () => setShow(false);
@@ -47,9 +46,9 @@ function Sidebar() {
       </Button>
       <Offcanvas
         backdrop={false}
+        onHide={handleClose}
         scroll={true}
         show={show}
-        onHide={handleClose}
         placement="start"
         className="sidebar-container"
       >
@@ -95,12 +94,6 @@ function Sidebar() {
               destination="/DashboardMain"
             />
             <DashboardCategoryBtn
-              handlefunction={handleShow}
-              name="Inbox"
-              icon={faInbox}
-              destination="/Inbox"
-            />
-            <DashboardCategoryBtn
               handlefunction={handleClose}
               name="Invoices"
               icon={faLayerGroup}
@@ -124,7 +117,7 @@ function Sidebar() {
               icon={faNewspaper}
               destination="/Reports"
             />
-             <DashboardCategoryBtn
+            <DashboardCategoryBtn
               handlefunction={handleShow}
               name="User"
               icon={faUserAstronaut}

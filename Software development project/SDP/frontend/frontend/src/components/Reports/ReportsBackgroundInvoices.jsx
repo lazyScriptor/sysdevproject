@@ -2,31 +2,21 @@
 import React from "react";
 import ReportsNavBar from "./ReportsNavBar";
 import "../Stylings/rootstyles.css";
-import { useEffect, useState } from "react";
-import { Box, Paper, Button, TextField, colors, useTheme } from "@mui/material";
+import { useState } from "react";
+import { Box, Paper } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
-import AccordionActions from "@mui/material/AccordionActions";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Rating from "@mui/material/Rating";
-import EquipmentItem1 from "./EquipmentItem1";
 import InvoiceItem1 from "./InvoiceItem1";
 
 
 function ReportsBackgroundInvoices() {
     function CustomTabPanel(props) {
         const { children, value, index, ...other } = props;
-    
         return (
           <div
             role="tabpanel"
@@ -56,8 +46,6 @@ function ReportsBackgroundInvoices() {
       const handleChange = (event, newValue) => {
         setValue(newValue);
       };
-
-      
   return (
     <>
       <Box id="main-body">

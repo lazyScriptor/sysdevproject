@@ -1,6 +1,12 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./components/Pages/Login";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+} from "react-router-dom";
 import Customers from "./components/Pages/Customers.jsx";
 import Sidebar from "./components/Pages/Sidebar.jsx";
 import DashboardMain from "./components/Pages/DasboardMain.jsx";
@@ -19,6 +25,14 @@ import AuthContextProvider from "./Contexts/AuthContextProvider.jsx";
 import UserManagement from "./components/Pages/UserManagement.jsx";
 import SideBarWarehouseHandler from "./components/RoleBasedAccess/Warehouse handler/SideBarWarehouseHandler.jsx";
 import CustomersWarehouseHandler from "./components/RoleBasedAccess/Warehouse handler/CustomersWarehouseHandler.jsx";
+import InvoiceWarehouseHandler from "./components/RoleBasedAccess/Warehouse handler/Invoice/InvoiceWarehouseHandler.jsx";
+import EquipmentWarehouseHandler from "./components/RoleBasedAccess/Warehouse handler/EquipmentWarehouseHandler.jsx";
+import ReportsBackgroundInvoices from "./components/Reports/ReportsBackgroundInvoices.jsx";
+import ReportsBackgroundCustomers from "./components/Reports/ReportsBackgroundCustomers.jsx";
+import CashierDashBoard from "./components/RoleBasedAccess/Cashier/CashierDashboard.jsx";
+import SidebarCashier from "./components/RoleBasedAccess/Cashier/SidebarCashier.jsx";
+import CashierCustomers from "./components/RoleBasedAccess/Cashier/CashierCustomers.jsx";
+import Swal from "sweetalert2";
 
 export const AppCustomContext = createContext();
 
@@ -38,9 +52,9 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
+const token = localStorage.getItem("token");
 export default function App() {
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (token) {
       try {
         const decoded = parseJwt(token); // Assuming you have jwt_decode imported
@@ -49,9 +63,9 @@ export default function App() {
         console.error("Error decoding token:", error);
       }
     }
-  }, []);
+  }, [token]);
 
-  const [currentUser, setCurrentUser] = useState("admin");
+  const [currentUser, setCurrentUser] = useState("");
   const [usernamee, setUsernamee] = useState("new dummy data");
   const [rolee, setRolee] = useState("new role data");
   const [show, setShow] = useState(false);
@@ -215,8 +229,10 @@ export default function App() {
                 path="/customers"
                 element={
                   <>
-                    <Sidebar />
-                    <Customers />
+                    <AdminAuth currentUser={currentUser}>
+                      <Sidebar />
+                      <Customers />
+                    </AdminAuth>
                   </>
                 }
               />
@@ -224,8 +240,10 @@ export default function App() {
                 path="/DashboardMain"
                 element={
                   <>
-                    <Sidebar />
-                    <DashboardMain />
+                    <AdminAuth currentUser={currentUser}>
+                      <Sidebar />
+                      <DashboardMain />
+                    </AdminAuth>
                   </>
                 }
               />
@@ -233,17 +251,10 @@ export default function App() {
                 path="/Equipment"
                 element={
                   <>
-                    <Sidebar />
-                    <Equipment />
-                  </>
-                }
-              />
-              <Route
-                path="/Inbox"
-                element={
-                  <>
-                    <Sidebar />
-                    <Inbox />
+                    <AdminAuth currentUser={currentUser}>
+                      <Sidebar />
+                      <Equipment />
+                    </AdminAuth>
                   </>
                 }
               />
@@ -251,8 +262,30 @@ export default function App() {
                 path="/Invoice"
                 element={
                   <>
+                    <CashierAuth currentUser={currentUser}>
+                      <Sidebar />
+                      <Invoice />
+                    </CashierAuth>
+                  </>
+                }
+              />
+              <Route
+                path="/Settings"
+                element={
+                  <>
                     <Sidebar />
-                    <Invoice />
+                    <Settings />
+                  </>
+                }
+              />
+              <Route
+                path="/userManagement"
+                element={
+                  <>
+                    <AdminAuth currentUser={currentUser}>
+                      <Sidebar />
+                      <UserManagement />
+                    </AdminAuth>
                   </>
                 }
               />
@@ -269,31 +302,102 @@ export default function App() {
               />
 
               <Route
-                path="/Settings"
+                path="/Reports-invoices"
                 element={
                   <>
-                    <Sidebar />
-                    <Settings />
+                    <AdminAuth currentUser={currentUser}>
+                      <Sidebar />
+                      <ReportsBackgroundInvoices />
+                    </AdminAuth>
                   </>
                 }
               />
               <Route
-                path="/userManagement"
+                path="/Reports-customers"
                 element={
                   <>
-                    <Sidebar />
-                    <UserManagement />
+                    <AdminAuth currentUser={currentUser}>
+                      <Sidebar />
+                      <ReportsBackgroundCustomers />
+                    </AdminAuth>
+                  </>
+                }
+              />
+
+              <Route
+                path="/WH-dashboard"
+                element={
+                  <>
+                    <SideBarWarehouseHandler />
+                    <DashboardMain />
                   </>
                 }
               />
               <Route
-              path='/WH-customers'
-              element={
+                path="/WH-customers"
+                element={
                   <>
-                  <SideBarWarehouseHandler/>
-                  <CustomersWarehouseHandler/>
+                    <SideBarWarehouseHandler />
+                    <CustomersWarehouseHandler />
                   </>
-              }/>
+                }
+              />
+
+              <Route
+                path="/WH-invoice"
+                element={
+                  <>
+                    <SideBarWarehouseHandler />
+                    <InvoiceWarehouseHandler />
+                  </>
+                }
+              />
+              <Route
+                path="/WH-equipment"
+                element={
+                  <>
+                    <SideBarWarehouseHandler />
+                    <EquipmentWarehouseHandler />
+                  </>
+                }
+              />
+
+              <Route
+                path="/C-dashboard"
+                element={
+                  <>
+                    <SidebarCashier />
+                    <CashierDashBoard />
+                  </>
+                }
+              />
+              <Route
+                path="/C-invoice"
+                element={
+                  <>
+                    <SidebarCashier />
+                    <Invoice />
+                  </>
+                }
+              />
+              <Route
+                path="/C-customer"
+                element={
+                  <>
+                    <SidebarCashier />
+                    <CashierCustomers />
+                  </>
+                }
+              />
+              <Route
+                path="/C-equipment"
+                element={
+                  <>
+                    <SidebarCashier />
+                    <Equipment/>
+                  </>
+                }
+              />
               {/* 404 Route */}
               <Route path="*" element={<Notfoundd />} />
             </Routes>
@@ -304,18 +408,154 @@ export default function App() {
   );
 }
 
-function AdminAuth(currentUser) {
-  if (currentUser == "admin") {
-    return { children };
-  } else return <div>Unauthorized <Link to="http://localhost:5173/DashboardMain">bye</Link> </div>;
+function AdminAuth({ children }) {
+  const [currentUser, setCurrentUser] = useState("");
+  const [roleChecked, setRoleChecked] = useState(false); // State to track if the role has been checked
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token) {
+      try {
+        const decoded = parseJwt(token);
+        setCurrentUser(decoded.userRole);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      } finally {
+        setRoleChecked(true); // Set roleChecked to true once the role has been checked
+      }
+    } else {
+      setRoleChecked(true); // Set roleChecked to true if there's no token
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (roleChecked && currentUser !== "admin") {
+      Swal.fire({
+        title: "Unauthorized",
+        html: "Redirecting to login in <b></b> milliseconds.",
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+          const timer = Swal.getHtmlContainer().querySelector("b");
+          setInterval(() => {
+            timer.textContent = Swal.getTimerLeft();
+          }, 100);
+        },
+        willClose: () => {
+          navigate("/");
+        },
+      });
+    }
+  }, [roleChecked, currentUser, navigate]);
+
+  if (roleChecked && currentUser === "admin") {
+    return children;
+  } else {
+    return null;
+  }
 }
-function CashierAuth(currentUser) {
-  if (currentUser == "cashier" || currentUser == "admin") {
-    return { children };
-  } else return <div>You are a {currentUser} so Unauthorized</div>;
+function CashierAuth({ children }) {
+  const [currentUser, setCurrentUser] = useState("");
+  const [roleChecked, setRoleChecked] = useState(false);
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token) {
+      try {
+        const decoded = parseJwt(token);
+        setCurrentUser(decoded.userRole);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      } finally {
+        setRoleChecked(true);
+      }
+    } else {
+      setRoleChecked(true);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (roleChecked && currentUser !== "cashier" && currentUser !== "admin") {
+      Swal.fire({
+        title: "Unauthorized",
+        html: "Redirecting to login in <b></b> milliseconds.",
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+          const timer = Swal.getHtmlContainer().querySelector("b");
+          setInterval(() => {
+            timer.textContent = Swal.getTimerLeft();
+          }, 100);
+        },
+        willClose: () => {
+          navigate("/");
+        },
+      });
+    }
+  }, [roleChecked, currentUser, navigate]);
+
+  if (roleChecked && (currentUser === "cashier" || currentUser === "admin")) {
+    return children;
+  } else {
+    return null;
+  }
 }
-function WarehouseHandlerAuth(currentUser) {
-  if (currentUser == "warehouse handler" || currentUser == "admin") {
-    return { children };
-  } else return <div>You are a {currentUser} so Unauthorized</div>;
+function WarehouseHandlerAuth({ children }) {
+  const [currentUser, setCurrentUser] = useState("");
+  const [roleChecked, setRoleChecked] = useState(false);
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token) {
+      try {
+        const decoded = parseJwt(token);
+        setCurrentUser(decoded.userRole);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      } finally {
+        setRoleChecked(true);
+      }
+    } else {
+      setRoleChecked(true);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (
+      roleChecked &&
+      currentUser !== "warehouse handler" &&
+      currentUser !== "admin"
+    ) {
+      Swal.fire({
+        title: "Unauthorized",
+        html: "Redirecting to login in <b></b> milliseconds.",
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+          const timer = Swal.getHtmlContainer().querySelector("b");
+          setInterval(() => {
+            timer.textContent = Swal.getTimerLeft();
+          }, 100);
+        },
+        willClose: () => {
+          navigate("/");
+        },
+      });
+    }
+  }, [roleChecked, currentUser, navigate]);
+
+  if (
+    roleChecked &&
+    (currentUser === "warehouse handler" || currentUser === "admin")
+  ) {
+    return children;
+  } else {
+    return null;
+  }
 }

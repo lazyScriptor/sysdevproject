@@ -28,7 +28,7 @@ import EquipmentItem4 from "./EquipmentItem4";
 import { EquipmentItem5 } from "./EquipmentItem5";
 import ReportsNavBar from "./ReportsNavBar";
 
-function ReportsBackgroundEquipment() {
+function ReportsBackgroundCustomers() {
   function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -121,4 +121,4 @@ function ReportsBackgroundEquipment() {
   );
 }
 
-export default ReportsBackgroundEquipment;
+export default ReportsBackgroundCustomers;
