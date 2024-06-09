@@ -29,14 +29,12 @@ function NewLogin() {
   const [toogle, settoogle] = useState(false);
 
   const [logInStatus, setLogInStatus] = useState(false);
-  const { isAuthenticated, setIsAuthenticated, userRole, setUserRole } =
-    useContext(AuthContext);
+
 
   const navigate = useNavigate();
 
   useEffect(() => {
 
-    setIsAuthenticated(false);
     localStorage.clear();
     //meka oni wenne session eka madde token eka clear karot.kelinma login ekata enawa.ethanadi authenticated
     //variable eka 0 krnawa
@@ -97,12 +95,11 @@ function NewLogin() {
           if (!res.data.auth) {
             setLogInStatus(false);
 
-            setIsAuthenticated(false);
+        
           } else {
             console.log("elsepart", res.data.auth);
             localStorage.setItem("token", res.data.token);
             setLogInStatus(true);
-            setIsAuthenticated(true);
             // After successful login
             localStorage.setItem("userRole", res.data.result);
             localStorage.setItem("username", res.data.username);
@@ -227,7 +224,6 @@ function NewLogin() {
             onClick={() => {
               localStorage.removeItem("token");
               setLogInStatus(false);
-              setIsAuthenticated(false);
             }}
           >
             logout

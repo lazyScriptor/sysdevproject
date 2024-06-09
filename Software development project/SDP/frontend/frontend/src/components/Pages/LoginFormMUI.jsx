@@ -17,6 +17,23 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import HealthAndSafetyTwoToneIcon from "@mui/icons-material/HealthAndSafetyTwoTone";
 
+function parseJwt(token) {
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
+}
+
+
 function LoginFormMUI() {
   const [isLoading, setIsLoading] = useState(false);
   const [LoadUsername, setLoadUsername] = useState("");
@@ -93,7 +110,14 @@ function LoginFormMUI() {
             localStorage.setItem("username", res.data.username);
 
             // setUserRole(res.data.result);
-            navigate("/dashboardmain");
+            const userRole = parseJwt(res.data.token).userRole
+            console.log(userRole)
+            if(userRole == 'warehouse handler'){
+              navigate('/WH-customers')
+            }
+              // navigate("/dashboardmain");
+     
+            
           }
         });
     } catch (error) {

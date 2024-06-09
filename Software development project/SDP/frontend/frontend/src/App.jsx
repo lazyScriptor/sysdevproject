@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./components/Pages/Login";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Customers from "./components/Pages/Customers.jsx";
 import Sidebar from "./components/Pages/Sidebar.jsx";
 import DashboardMain from "./components/Pages/DasboardMain.jsx";
@@ -9,7 +9,6 @@ import Inbox from "./components/Pages/Inbox.jsx";
 import Invoice from "./components/Pages/Invoice.jsx";
 import Reports from "./components/Pages/Reports.jsx";
 import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
-
 // import './index.css';
 
 import { useState, createContext, useEffect } from "react";
@@ -18,37 +17,45 @@ import NewLogin from "./components/Pages/NewLogin.jsx";
 import Settings from "./components/Pages/Settings.jsx";
 import AuthContextProvider from "./Contexts/AuthContextProvider.jsx";
 import UserManagement from "./components/Pages/UserManagement.jsx";
-import ReportsBackgroundInvoices from "./components/Reports/ReportsBackgroundInvoices.jsx";
-import ReportsBackgroundEquipment from "./components/Reports/ReportsBackgroundCustomers.jsx";
+import SideBarWarehouseHandler from "./components/RoleBasedAccess/Warehouse handler/SideBarWarehouseHandler.jsx";
+import CustomersWarehouseHandler from "./components/RoleBasedAccess/Warehouse handler/CustomersWarehouseHandler.jsx";
 
 export const AppCustomContext = createContext();
 
-const USER_TYPES = {
-  ADMIN: "admin",
-  CASHIER: "cashier",
-  WAREHOUSE_HANDLER: "warehouse handler",
-};
-const CURRENT_USER = USER_TYPES.ADMIN;
+function parseJwt(token) {
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
 
-function App() {
-  const [usernamee, setUsernamee] = useState("new dummy data");
-  const [rolee, setRolee] = useState("new role data");
-  const [show, setShow] = useState(false);
-  const [decodedToken, setDecodedToken] = useState(null);
+  return JSON.parse(jsonPayload);
+}
 
-
-  useEffect(()=>{
+export default function App() {
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        const decoded = jwt_decode(token); // Assuming you have jwt_decode imported
-        setDecodedToken(decoded);
-        console.log("decoded token",decoded)
+        const decoded = parseJwt(token); // Assuming you have jwt_decode imported
+        setCurrentUser(decoded.userRole);
       } catch (error) {
         console.error("Error decoding token:", error);
       }
     }
-  },[])
+  }, []);
+
+  const [currentUser, setCurrentUser] = useState("admin");
+  const [usernamee, setUsernamee] = useState("new dummy data");
+  const [rolee, setRolee] = useState("new role data");
+  const [show, setShow] = useState(false);
+
   const Buttonstyles = (theme) => ({
     display: "flex",
     flexDirection: "column",
@@ -109,29 +116,29 @@ function App() {
         // 900: '#0d47a1',
 
         // purpleShades
-        25: "#faf0fa",
-        50: "#f3e5f5",
-        100: "#e1bee7",
-        200: "#ce93d8",
-        300: "#ba68c8",
-        400: "#ab47bc",
-        500: "#9c27b0",
-        600: "#8e24aa",
-        700: "#7b1fa2",
-        800: "#6a1b9a",
-        900: "#4a148c",
+        // 25: "#faf0fa",
+        // 50: "#f3e5f5",
+        // 100: "#e1bee7",
+        // 200: "#ce93d8",
+        // 300: "#ba68c8",
+        // 400: "#ab47bc",
+        // 500: "#9c27b0",
+        // 600: "#8e24aa",
+        // 700: "#7b1fa2",
+        // 800: "#6a1b9a",
+        // 900: "#4a148c",
 
         //orange shades
-        // 50: "#FFF3E0",
-        // 100: "#FFE0B2",
-        // 200: "#FFCC80",
-        // 300: "#FFB74D",
-        // 400: "#FFA726",
-        // 500: "#FF9800",
-        // 600: "#FB8C00",
-        // 700: "#F57C00",
-        // 800: "#EF6C00",
-        // 900: "#E65100",
+        50: "#FFF3E0",
+        100: "#FFE0B2",
+        200: "#FFCC80",
+        300: "#FFB74D",
+        400: "#FFA726",
+        500: "#FF9800",
+        600: "#FB8C00",
+        700: "#F57C00",
+        800: "#EF6C00",
+        900: "#E65100",
 
         error: {
           10: "#ffe6e6",
@@ -197,9 +204,8 @@ function App() {
           setShow,
         }}
       >
-        {CURRENT_USER == USER_TYPES.ADMIN ? (
         <Router>
-          <AuthContextProvider CURRENT_USER={CURRENT_USER}>
+          <AuthContextProvider>
             <Routes>
               {/* Routes without Sidebar */}
 
@@ -254,26 +260,10 @@ function App() {
                 path="/Reports"
                 element={
                   <>
-                    <Sidebar />
-                    <Reports />
-                  </>
-                }
-              />
-              <Route
-                path="/Reports-invoices"
-                element={
-                  <>
-                    <Sidebar />
-                    <ReportsBackgroundInvoices />
-                  </>
-                }
-              />
-              <Route
-                path="/Reports-customers"
-                element={
-                  <>
-                    <Sidebar />
-                    <ReportsBackgroundEquipment />
+                    <AdminAuth currentUser={currentUser}>
+                      <Sidebar />
+                      <Reports />
+                    </AdminAuth>
                   </>
                 }
               />
@@ -296,204 +286,36 @@ function App() {
                   </>
                 }
               />
-
+              <Route
+              path='/WH-customers'
+              element={
+                  <>
+                  <SideBarWarehouseHandler/>
+                  <CustomersWarehouseHandler/>
+                  </>
+              }/>
               {/* 404 Route */}
               <Route path="*" element={<Notfoundd />} />
             </Routes>
           </AuthContextProvider>
         </Router>
-        ):CURRENT_USER == USER_TYPES.CASHIER ? (
-          <Router>
-          <AuthContextProvider CURRENT_USER={CURRENT_USER}>
-            <Routes>
-              {/* Routes without Sidebar */}
-
-              <Route path="/" element={<NewLogin />} />
-              {/* Other routes with Sidebar */}
-              <Route
-                path="/customers"
-                element={
-                  <>
-                    <Sidebar />
-                    <Customers />
-                  </>
-                }
-              />
-              <Route
-                path="/DashboardMain"
-                element={
-                  <>
-                    <Sidebar />
-                    <DashboardMain />
-                  </>
-                }
-              />
-              <Route
-                path="/Equipment"
-                element={
-                  <>
-                    <Sidebar />
-                    <Equipment />
-                  </>
-                }
-              />
-              <Route
-                path="/Inbox"
-                element={
-                  <>
-                    <Sidebar />
-                    <Inbox />
-                  </>
-                }
-              />
-              <Route
-                path="/Invoice"
-                element={
-                  <>
-                    <Sidebar />
-                    <Invoice />
-                  </>
-                }
-              />
-
-              <Route
-                path="/Settings"
-                element={
-                  <>
-                    <Sidebar />
-                    <Settings />
-                  </>
-                }
-              />
-              <Route
-                path="/userManagement"
-                element={
-                  <>
-                    <Sidebar />
-                    <UserManagement />
-                  </>
-                }
-              />
-
-              {/* 404 Route */}
-              <Route path="*" element={<Notfoundd />} />
-            </Routes>
-          </AuthContextProvider>
-        </Router>
-        ):CURRENT_USER == USER_TYPES.WAREHOUSE_HANDLER ? (
-          <Router>
-          <AuthContextProvider CURRENT_USER={CURRENT_USER}>
-            <Routes>
-              {/* Routes without Sidebar */}
-
-              <Route path="/" element={<NewLogin />} />
-              {/* Other routes with Sidebar */}
-              <Route
-                path="/customers"
-                element={
-                  <>
-                    <Sidebar />
-                    <Customers />
-                  </>
-                }
-              />
-              <Route
-                path="/DashboardMain"
-                element={
-                  <>
-                    <Sidebar />
-                    <DashboardMain />
-                  </>
-                }
-              />
-              <Route
-                path="/Equipment"
-                element={
-                  <>
-                    <Sidebar />
-                    <Equipment />
-                  </>
-                }
-              />
-              <Route
-                path="/Inbox"
-                element={
-                  <>
-                    <Sidebar />
-                    <Inbox />
-                  </>
-                }
-              />
-              <Route
-                path="/Invoice"
-                element={
-                  <>
-                    <Sidebar />
-                    <Invoice />
-                  </>
-                }
-              />
-              <Route
-                path="/Reports"
-                element={
-                  <>
-                    <Sidebar />
-                    <Reports />
-                  </>
-                }
-              />
-              <Route
-                path="/Reports-invoices"
-                element={
-                  <>
-                    <Sidebar />
-                    <ReportsBackgroundInvoices />
-                  </>
-                }
-              />
-              <Route
-                path="/Reports-customers"
-                element={
-                  <>
-                    <Sidebar />
-                    <ReportsBackgroundEquipment />
-                  </>
-                }
-              />
-
-              <Route
-                path="/Settings"
-                element={
-                  <>
-                    <Sidebar />
-                    <Settings />
-                  </>
-                }
-              />
-              <Route
-                path="/userManagement"
-                element={
-                  <>
-                    <Sidebar />
-                    <UserManagement />
-                  </>
-                }
-              />
-
-              {/* 404 Route */}
-              <Route path="*" element={<Notfoundd />} />
-            </Routes>
-          </AuthContextProvider>
-        </Router>
-        ):(
-          <div>Unauthorized</div>
-        )
-
-
-        }
       </AppCustomContext.Provider>
     </ThemeProvider>
   );
 }
 
-export default App;
+function AdminAuth(currentUser) {
+  if (currentUser == "admin") {
+    return { children };
+  } else return <div>Unauthorized <Link to="http://localhost:5173/DashboardMain">bye</Link> </div>;
+}
+function CashierAuth(currentUser) {
+  if (currentUser == "cashier" || currentUser == "admin") {
+    return { children };
+  } else return <div>You are a {currentUser} so Unauthorized</div>;
+}
+function WarehouseHandlerAuth(currentUser) {
+  if (currentUser == "warehouse handler" || currentUser == "admin") {
+    return { children };
+  } else return <div>You are a {currentUser} so Unauthorized</div>;
+}

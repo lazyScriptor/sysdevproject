@@ -30,11 +30,7 @@ function AuthContextProvider({ children , CURRENT_USER }) {
     <AuthContext.Provider
       value={{ isAuthenticated, setIsAuthenticated, userRole, setUserRole }}
     >
-      {CURRENT_USER === "admin" ? (
-        children
-      ) : (
-        <div>Unauthorized</div>
-      )}
+     {children}
     </AuthContext.Provider>
   );
 }
