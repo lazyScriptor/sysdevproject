@@ -89,8 +89,8 @@ function Chart2() {
   }, [chartData]);
 
   return (
-    <div>
-      <canvas ref={chartRef} id="myChart" width="400" height="400"></canvas>
+    <div style={{width:"700px"}}>
+      <canvas ref={chartRef} id="myChart"></canvas>
     </div>
   );
 }

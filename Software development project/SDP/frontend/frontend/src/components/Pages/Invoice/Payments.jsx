@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  FormLabel,
-  Stack,
-  Switch,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Stack, TextField } from "@mui/material";
 import React, { useContext, useState } from "react";
 import Lottie from "react-lottie";
 import Cash from "../../../assets/Cash.json";
@@ -40,9 +32,14 @@ const ButtonstylesSubmit = {
   opacity: 0.8,
   m: 2,
 };
+const textFieldStyle = {
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "12px",
+  },
+};
 
 export default function Payments() {
-  const [payment, setPayment] = useState("");
+  const { invoiceSearchBtnStatus } = useContext(InvoiceContext);
   const [buttonToogle, setButtonToogle] = useState(true);
 
   return (
@@ -60,45 +57,49 @@ export default function Payments() {
         <ButtonSection
           buttonToogle={buttonToogle}
           setButtonToogle={setButtonToogle}
+          invoiceSearchBtnStatus={invoiceSearchBtnStatus}
         />
       </Box>
 
       <Box sx={{ height: "273px", width: "300px" }}>
-        {buttonToogle == true ? <AdvancePayment /> : <PaymentForm />}
+        {invoiceSearchBtnStatus ? (
+          <PaymentForm />
+        ) : buttonToogle ? (
+          <AdvancePayment />
+        ) : (
+          <PaymentForm />
+        )}
       </Box>
     </Box>
   );
 }
 
 export function PaymentForm() {
-  const { setPaymentArray, updateValue, invoiceObject } =
-    useContext(InvoiceContext);
+  const { updateValue, invoiceObject } = useContext(InvoiceContext);
 
   const generatePaymentId = (invoiceId, amount) => {
     const date = new Date();
-    const month = ("0" + (date.getMonth() + 1)).slice(-2); // Month (zero-padded)
-    const day = ("0" + date.getDate()).slice(-2); // Date (zero-padded)
-    const milliseconds = ("00" + date.getMilliseconds()).slice(-3); // Milliseconds (zero-padded)
-    const amountFormatted = amount.toFixed(2).replace(".", "").padStart(5, "0"); // Amount formatted as 5-digit number
-
-    const uniquePart = uuidv4().slice(0, 3); // Using part of a UUID for additional uniqueness
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+    const milliseconds = ("00" + date.getMilliseconds()).slice(-3);
+    const amountFormatted = amount.toFixed(2).replace(".", "").padStart(5, "0");
+    const uniquePart = uuidv4().slice(0, 3);
 
     return `${invoiceId}${month}${day}${milliseconds}${amountFormatted}${uniquePart}`;
   };
+
   function dateformatter() {
     const createdDate = new Date();
-    
     const year = createdDate.getFullYear();
-    const month = String(createdDate.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so add 1
-    const day = String(createdDate.getDate()).padStart(2, '0');
-  
-    const hours = String(createdDate.getHours()).padStart(2, '0');
-    const minutes = String(createdDate.getMinutes()).padStart(2, '0');
-    const seconds = String(createdDate.getSeconds()).padStart(2, '0');
-  
+    const month = String(createdDate.getMonth() + 1).padStart(2, "0");
+    const day = String(createdDate.getDate()).padStart(2, "0");
+    const hours = String(createdDate.getHours()).padStart(2, "0");
+    const minutes = String(createdDate.getMinutes()).padStart(2, "0");
+    const seconds = String(createdDate.getSeconds()).padStart(2, "0");
+
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
-  
+
   const schema = yup.object().shape({
     payment: yup
       .number()
@@ -116,67 +117,45 @@ export function PaymentForm() {
   });
 
   const onSubmit = (data) => {
-    // Generate the payment ID based on the InvoiceID and payment data
     const paymentId = generatePaymentId(invoiceObject.InvoiceID, data.payment);
-  
-    // Create the new payment object
+
     const newPayment = {
       invpay_payment_id: paymentId,
-      invpay_payment_date: dateformatter(), // Current date and time
+      invpay_payment_date: dateformatter(),
       invpay_amount: data.payment,
     };
-  
-    // Update the payments array in the invoiceObject context
+
     updateValue("payments", newPayment);
-  
-    // // Update the local payment array state
-    // setPaymentArray((prev) => {
-    //   const updatedArray = [...prev, newPayment];
-    //   return updatedArray;
-    // });
   };
-  
+
   return (
-    <>
-      <form
-        style={{ height: "60%", display: "flex", flexDirection: "column" }}
-        noValidate
-        onSubmit={handleSubmit(onSubmit)}
+    <form
+      style={{ height: "100%", display: "flex", flexDirection: "column" }}
+      noValidate
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <TextField
+        sx={textFieldStyle}
+        fullWidth
+        label="Payment Amount"
+        {...register("payment")}
+        error={!!errors.payment}
+        helperText={errors.payment?.message}
+      />
+      <Box sx={{ flexGrow: 1 }} />
+      <Box
+        sx={{ display: "flex", justifyContent: "center", alignItems: "end" }}
       >
-        <TextField
-          fullWidth
-          label="Payment Amount"
-          {...register("payment")}
-          error={!!errors.payment}
-          helperText={errors.payment?.message}
-        />
-        <Box sx={{ flexGrow: 1 }} />
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Button variant="contained" sx={ButtonstylesSubmit} type="submit">
-            Pay
-          </Button>
-        </Box>
-      </form>
-    </>
+        <Button variant="contained" sx={ButtonstylesSubmit} type="submit">
+          Pay
+        </Button>
+      </Box>
+    </form>
   );
 }
 
 export function AdvancePayment() {
-  const {
-    fullDetailsEquipmentArray,
-    setFullDetailsEquipmentArray,
-    checkState,
-    responseManageToogle,
-    setResponseManageToogle,
-    setCheckState,
-    eqObject,
-    setEqObject,
-    invoiceObject,
-    setInvoiceObject,
-    clearObject,
-    updateValue,
-    updateEqObject,
-  } = useContext(InvoiceContext);
+  const { updateValue } = useContext(InvoiceContext);
 
   const schema = yup.object().shape({
     advance: yup
@@ -198,43 +177,54 @@ export function AdvancePayment() {
   };
 
   return (
-    <>
-      <form noValidate onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={4} width="100%">
-          <TextField
-            label="Advance payment"
-            {...register("advance")}
-            error={!!errors.advance}
-            helperText={errors.advance?.message}
-          />
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <Button variant="contained" sx={ButtonstylesSubmit} type="submit">
-              Pay
-            </Button>
-          </Box>
-        </Stack>
-      </form>
-    </>
+    <form noValidate onSubmit={handleSubmit(onSubmit)}>
+      <Stack spacing={4} width="100%">
+        <TextField
+          sx={textFieldStyle}
+          label="Advance payment"
+          {...register("advance")}
+          error={!!errors.advance}
+          helperText={errors.advance?.message}
+        />
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Button variant="contained" sx={ButtonstylesSubmit} type="submit">
+            Pay
+          </Button>
+        </Box>
+      </Stack>
+    </form>
   );
 }
 
 export function ButtonSection(props) {
-  const { buttonToogle, setButtonToogle } = props;
+  const { buttonToogle, setButtonToogle, invoiceSearchBtnStatus } = props;
 
   return (
     <>
+      {!invoiceSearchBtnStatus && (
+        <Button
+          sx={{
+            ...Buttonstyles,
+            backgroundColor: buttonToogle
+              ? (theme) => theme.palette.primary[100]
+              : "inherit",
+          }}
+          variant="outlined"
+          onClick={() => {
+            setButtonToogle(true);
+          }}
+        >
+          <Lottie options={{ animationData: Advance }} width={100} />
+          Advance
+        </Button>
+      )}
       <Button
-        sx={Buttonstyles}
-        variant="outlined"
-        onClick={() => {
-          setButtonToogle(true);
+        sx={{
+          ...Buttonstyles,
+          backgroundColor: !buttonToogle
+            ? (theme) => theme.palette.primary[100]
+            : "inherit",
         }}
-      >
-        <Lottie options={{ animationData: Advance }} width={100} />
-        Advance
-      </Button>
-      <Button
-        sx={Buttonstyles}
         variant="outlined"
         onClick={() => {
           setButtonToogle(false);

@@ -91,7 +91,7 @@ const Chart1 = () => {
 
   // Render the Doughnut chart
   return (
-    <Box >
+    <Box width={"500px"}>
       <Doughnut data={data} options={options} />
     </Box>
   );

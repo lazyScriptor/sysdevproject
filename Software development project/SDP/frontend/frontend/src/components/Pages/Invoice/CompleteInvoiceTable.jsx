@@ -45,15 +45,15 @@ function CompleteInvoiceTable() {
         <Table sx={{ minWidth: 650 }} stickyHeader aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell align="center">Row number</TableCell>
-              <TableCell align="center">equipment id</TableCell>
-              <TableCell align="center">Machine name</TableCell>
-              <TableCell align="center">Rental per day(LKR)</TableCell>
-              <TableCell align="center">Handover Time period</TableCell>
-              <TableCell align="center">Borrow Qty</TableCell>
-              <TableCell align="center">Duration</TableCell>
-              <TableCell align="center">Return Qty</TableCell>
-              <TableCell align="center">Rental for the equipment</TableCell>
+              <TableCell variant="caption" align="center">Row number</TableCell>
+              <TableCell variant="caption" align="center">equipment id</TableCell>
+              <TableCell variant="caption" align="center">Machine name</TableCell>
+              <TableCell variant="caption" align="center">Rental per day(LKR)</TableCell>
+              <TableCell variant="caption" align="center">Handover Time period</TableCell>
+              <TableCell variant="caption" align="center">Borrow Qty</TableCell>
+              <TableCell variant="caption" align="center">Duration</TableCell>
+              <TableCell variant="caption" align="center">Return Qty</TableCell>
+              <TableCell variant="caption" align="center">Rental for the equipment</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

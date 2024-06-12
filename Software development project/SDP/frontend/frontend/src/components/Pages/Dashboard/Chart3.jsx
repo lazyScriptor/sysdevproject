@@ -42,6 +42,16 @@ function Chart3() {
   const revenues = dates.map(date => groupedData[date].revenue);
   const incomes = dates.map(date => groupedData[date].income);
 
+  // Calculate today's revenue
+  const calculateTodaysRevenue = () => {
+    const today = new Date().toLocaleDateString();
+    return chartData
+      .filter((item) => new Date(item.inv_createddate).toLocaleDateString() === today)
+      .reduce((total, item) => total + parseFloat(item.total_revenue), 0);
+  };
+
+  const todaysRevenue = calculateTodaysRevenue();
+
   // Render the chart when data changes
   useEffect(() => {
     if (chartInstance.current) {
@@ -107,8 +117,9 @@ function Chart3() {
   }, [chartData]);
 
   return (
-    <div>
-      <canvas ref={chartRef} id="myChart" width="400" height="400"></canvas>
+    <div style={{ width: "700px" }}>
+      <canvas ref={chartRef} id="myChart"></canvas>
+      <h3>Today's Revenue: ${todaysRevenue.toFixed(2)}</h3>
     </div>
   );
 }
