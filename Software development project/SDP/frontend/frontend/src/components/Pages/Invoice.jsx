@@ -38,7 +38,9 @@ import YoutubeSearchedForIcon from "@mui/icons-material/YoutubeSearchedFor";
 import BackspaceOutlinedIcon from "@mui/icons-material/BackspaceOutlined";
 import Swal from "sweetalert2";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
-
+import AddIcCallOutlinedIcon from "@mui/icons-material/AddIcCallOutlined";
+import ContactMailOutlinedIcon from "@mui/icons-material/ContactMailOutlined";
+import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
 const textFieldStyle = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "12px",
@@ -467,11 +469,14 @@ function Invoice() {
               >
                 <Box
                   sx={{
+                    backgroundColor:"#f0f0f0",
                     display: "flex",
-                    justifyContent: "space-between",
+                    justifyContent: "start",
                     alignItems: "center",
                     width: "100%",
                     gap: 2,
+                    p:1,
+                    borderRadius:5
                   }}
                 >
                   <TextField
@@ -487,9 +492,25 @@ function Invoice() {
                     error={!!validationMessage}
                     helperText={validationMessage}
                   />
-                  <Button onClick={handleSearchPhoneNumberorNic}>
+                  <Button sx={{height:"35px"}} onClick={handleSearchPhoneNumberorNic}>
                     <FontAwesomeIcon icon={faSearch} />
                   </Button>
+
+                  <Button
+                    onClick={() => {
+                      setData(clearData);
+                      setPhoneNumberorNic("");
+                      setValidationMessage("");
+                      updateValue("customerDetails", clearData);
+                    }}
+                    sx={{
+                      color: (theme) => theme.palette.primary.error[400],
+                    
+                    }}
+                  >
+                    <BackspaceOutlinedIcon />{" "}
+                  </Button>
+                  <Box flexGrow={1} />
                   <Button
                     variant="outlined"
                     sx={{
@@ -504,22 +525,6 @@ function Invoice() {
                     <Typography variant="caption">
                       <PersonSearchIcon />
                     </Typography>
-                  </Button>
-
-                  <Button
-                    onClick={() => {
-                      setData(clearData);
-                      setPhoneNumberorNic("");
-                      setValidationMessage("");
-                      updateValue("customerDetails", clearData);
-                    }}
-                    sx={{
-                      color: (theme) => theme.palette.primary.error[400],
-                      backgroundColor: (theme) =>
-                        theme.palette.primary.error[10],
-                    }}
-                  >
-                    Clear
                   </Button>
                 </Box>
 
@@ -540,19 +545,20 @@ function Invoice() {
                 </Box>
 
                 <Box>
-  <TextField
-    sx={[textFieldStyle]}
-    fullWidth
-    label="Customer Address"
-    disabled
-    value={
-      invoiceObject.customerDetails.cus_address1 && invoiceObject.customerDetails.cus_address2
-        ? `${invoiceObject.customerDetails.cus_address1} ${invoiceObject.customerDetails.cus_address2}`
-        : invoiceObject.customerDetails.cus_address1 || ""
-    }
-    variant="outlined"
-  />
-</Box>
+                  <TextField
+                    sx={[textFieldStyle]}
+                    fullWidth
+                    label="Customer Address"
+                    disabled
+                    value={
+                      invoiceObject.customerDetails.cus_address1 &&
+                      invoiceObject.customerDetails.cus_address2
+                        ? `${invoiceObject.customerDetails.cus_address1} ${invoiceObject.customerDetails.cus_address2}`
+                        : invoiceObject.customerDetails.cus_address1 || ""
+                    }
+                    variant="outlined"
+                  />
+                </Box>
 
                 <Box sx={{ display: "flex", gap: 4 }}>
                   <TextField

@@ -870,27 +870,39 @@ export async function setUserDetails(object) {
     userRole,
   } = object;
 
-  console.log("backend object", object);
   try {
     const [response] = await pool.query(
       `
-  INSERT INTO users (user_first_name,user_last_name,username,nic,user_phone_number,user_address1,user_address2)
-  VALUES(?,?,?,?,?,?,?)
-  `,
-      [firstname, lastname, username, nic, phonenumber, address1, address2]
+      INSERT INTO users (user_first_name, user_last_name, username, nic, user_phone_number, user_address1, user_address2)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+      `,
+      [
+        firstname,
+        lastname,
+        username,
+        nic,
+        phonenumber,
+        address1,
+        address2,
+      ]
     );
 
-    const userid = response.insertId;
+    const userId = response.insertId;
 
-    for (const role of object.userRole) {
-      const [roleMapresponse] = await pool.query(
+    for (const role of userRole) {
+      await pool.query(
         `
-      INSERT INTO userRoleMap (urm_userid,urm_roleid,urm_password) VALUES (?,?,?)`,
-        [userid, role, password]
+        INSERT INTO userRoleMap (urm_userid, urm_roleid, urm_password)
+        VALUES (?, ?, ?)
+        `,
+        [userId, role, password]
       );
     }
+
+    return { success: true, userId };
   } catch (error) {
-    console.log("Error occured in backend setUserDetails", error);
+    console.error('Error occurred in setUserDetails:', error);
+    throw error; // Rethrow the error to be caught by the caller
   }
 }
 export async function deleteUserRole(userId, role) {

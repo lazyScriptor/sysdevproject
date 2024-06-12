@@ -433,12 +433,20 @@ app.get("/fetchUserDetails", async (req, res) => {
   }
 });
 
-app.post("/createUser", async (req, res) => {
+app.post('/createUser', async (req, res) => {
   try {
-    const response = await setUserDetails(req.body);
-    return res.json(response);
-  } catch (error) {}
+    const userDetails = req.body;
+
+    const response = await setUserDetails(userDetails);
+
+    // Respond with success message or data if needed
+    res.status(200).json(response);
+  } catch (error) {
+    console.error('Error occurred in createUser API:', error);
+    res.status(500).json({ error: 'Failed to create user' });
+  }
 });
+
 
 app.delete("/deleteUserRole/:userId/:role", async (req, res) => {
   const { userId, role } = req.params;

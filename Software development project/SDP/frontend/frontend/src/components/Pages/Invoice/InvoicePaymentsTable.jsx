@@ -14,8 +14,12 @@ import { useState } from "react";
 import AppRegistrationTwoToneIcon from "@mui/icons-material/AppRegistrationTwoTone";
 
 export default function InvoicePaymentsTable() {
-  const { invoiceObject, setInvoiceObject, updateValue ,invoiceSearchBtnStatus} =
-    useContext(InvoiceContext);
+  const {
+    invoiceObject,
+    setInvoiceObject,
+    updateValue,
+    invoiceSearchBtnStatus,
+  } = useContext(InvoiceContext);
 
   const deleteButtonStyles = {
     width: "auto",
@@ -58,9 +62,13 @@ export default function InvoicePaymentsTable() {
       <Table stickyHeader sx={{ minWidth: 10 }} aria-label="simple table">
         <TableHead sx={{ height: "80px" }}>
           <TableRow>
-            <TableCell align="center">Payment Id</TableCell>
-            <TableCell align="center">Payment</TableCell>
-            <TableCell align="center">
+            <TableCell variant="caption" align="center">
+              Payment Id
+            </TableCell>
+            <TableCell variant="caption" align="center">
+              Payment
+            </TableCell>
+            <TableCell variant="caption" align="center">
               <Box
                 sx={{
                   backgroundColor: editToggle
@@ -70,7 +78,10 @@ export default function InvoicePaymentsTable() {
                   width: "100px",
                 }}
               >
-                <Switch disabled={invoiceSearchBtnStatus} onChange={(e) => setEditToggle(e.target.checked)} />
+                <Switch
+                  disabled={invoiceSearchBtnStatus}
+                  onChange={(e) => setEditToggle(e.target.checked)}
+                />
                 <Typography
                   color={
                     editToggle

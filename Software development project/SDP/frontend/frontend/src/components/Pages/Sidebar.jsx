@@ -21,7 +21,7 @@ import { AppCustomContext } from "../../App.jsx";
 import Button from "@mui/material/Button";
 import { ref, listAll, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../imagedbfirebase.js";
-import defaultImage from '../../assets/username.png'
+import defaultImage from "../../assets/username.png";
 import { Typography } from "@mui/material";
 
 function Sidebar() {
@@ -66,14 +66,14 @@ function Sidebar() {
         sx={{ position: "absolute", backgroundColor: "" }}
         onClick={() => setShow(!show)}
       >
-        <WidgetsIcon fontSize="large" sx={{ }} />
+        <WidgetsIcon fontSize="large" sx={{}} />
       </Button>
       <Offcanvas
+        name="Disable backdrop"
         backdrop={false}
-        onHide={handleClose}
+        onHide={() => setShow(false)}
         scroll={true}
         show={show}
-        placement="start"
         className="sidebar-container"
       >
         <div className="offcanvas-header-wrapper">
@@ -93,8 +93,12 @@ function Sidebar() {
               </div>
             )}
             <div className="header-text">
-             <Typography variant="body2">{localStorage.getItem("userRole").toUpperCase()}</Typography>
-           <Typography variant="body2">{username.toLocaleUpperCase()}</Typography>
+              <Typography variant="body2">
+                {localStorage.getItem("userRole").toUpperCase()}
+              </Typography>
+              <Typography variant="body2">
+                {username.toLocaleUpperCase()}
+              </Typography>
             </div>
             <Button
               onClick={handleClose}

@@ -1,6 +1,5 @@
 import {
   Box,
-  ButtonGroup,
   Button,
   Paper,
   Stack,
@@ -10,21 +9,15 @@ import {
   InputLabel,
   Input,
   Chip,
-  FormHelperText,
   FormLabel,
-  Checkbox,
+  CircularProgress,
+  Skeleton,
 } from "@mui/material";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import { useTheme } from "@mui/material/styles";
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../Stylings/rootstyles.css";
 import { ref, listAll, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../imagedbfirebase";
-import defaultImage from "../../assets/username.png"; // Import the default image
+import defaultImage from "../../assets/username.png";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -40,10 +33,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Swal from "sweetalert2";
 import backgroundImage from "../../assets/background.jpg";
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
+import UserImageUpload from "../SubComponents/UserImageUpload";
 
 export default function UserManagement({ username }) {
   const [users, setUsers] = useState([]);
   const [imageMap, setImageMap] = useState({}); // State to store image URLs mapped by username
+  const [loading, setLoading] = useState(true); // Loading state
   const imageListRef = ref(storage, "UserImages/");
   const [existingUsernames, setExistingUsernames] = useState([]);
   const [offsetY, setOffsetY] = useState(0);
@@ -59,23 +54,30 @@ export default function UserManagement({ username }) {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
   useEffect(() => {
     const fetchImages = async () => {
-      const response = await listAll(imageListRef);
-      const imageMap = {};
-      for (const item of response.items) {
-        const url = await getDownloadURL(item);
-        const name = item.name.split(".")[0]; // Assuming the image name is the username
-        imageMap[name] = url;
-      }
-      setImageMap(imageMap);
+      try {
+        const response = await listAll(imageListRef);
+        const imageMap = {};
+        for (const item of response.items) {
+          const url = await getDownloadURL(item);
+          const name = item.name.split(".")[0]; // Assuming the image name is the username
+          imageMap[name] = url;
+        }
+        setImageMap(imageMap);
 
-      // Check if the username exists in the imageMap
-      if (username && !imageMap[username]) {
-        setImageMap((prevImageMap) => ({
-          ...prevImageMap,
-          [username]: defaultImage, // Set the default image for the username
-        }));
+        // Check if the username exists in the imageMap
+        if (username && !imageMap[username]) {
+          setImageMap((prevImageMap) => ({
+            ...prevImageMap,
+            [username]: defaultImage, // Set the default image for the username
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      } finally {
+        setLoading(false); // Set loading to false once images are loaded
       }
     };
     fetchImages();
@@ -119,9 +121,7 @@ export default function UserManagement({ username }) {
           }}
         >
           <Typography variant="h4">Add New User</Typography>
-          <Typography>
-            Observe the privillages and assign accordingly
-          </Typography>
+          <Typography>Observe the privileges and assign accordingly</Typography>
         </Box>
         <Box
           sx={{
@@ -132,7 +132,7 @@ export default function UserManagement({ username }) {
             p: 4,
           }}
         >
-          <UserForm existingUsernames={existingUsernames} />{" "}
+          <UserForm existingUsernames={existingUsernames} />
           <Box
             component={Paper}
             sx={{ width: "70%", borderRadius: 4, height: "800px", p: 2 }}
@@ -140,26 +140,44 @@ export default function UserManagement({ username }) {
             <UserTable />
             <Box
               sx={{
+                mt:2,
                 overflowX: "auto",
-                mt: 8,
-                height: "250px",
+                height: "200px",
                 display: "flex",
                 justifyContent: "center",
               }}
             >
-              <Stack
-                direction="row"
-                spacing={2}
-                sx={{ minWidth: "max-content" }}
-              >
-                {users.map((user) => (
-                  <UserPaper
-                    key={user.user_id}
-                    user={user}
-                    imageUrl={imageMap[user.username] || defaultImage}
-                  />
-                ))}
-              </Stack>
+              {loading ? (
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  sx={{ minWidth: "max-content" }}
+                >
+                  {[...Array(5)].map((_, index) => (
+                    <Skeleton
+                      key={index}
+                      variant="rectangular"
+                      sx={{ borderRadius: 4 }}
+                      width={150}
+                      height={170}
+                    />
+                  ))}
+                </Stack>
+              ) : (
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  sx={{ minWidth: "max-content" }}
+                >
+                  {users.map((user) => (
+                    <UserPaper
+                      key={user.user_id}
+                      user={user}
+                      imageUrl={imageMap[user.username] || defaultImage}
+                    />
+                  ))}
+                </Stack>
+              )}
             </Box>
           </Box>
         </Box>
@@ -175,9 +193,8 @@ function UserPaper({ user, imageUrl }) {
         width: "150px",
         height: "170px",
         borderRadius: 4,
-        flexShrink: 0,
       }}
-      elevation={10}
+      elevation={4}
     >
       <Box
         sx={{
@@ -223,36 +240,44 @@ function UserForm({ existingUsernames }) {
   const [roles, setRoles] = useState([]);
 
   const schema = yup.object().shape({
-    firstname: yup.string().required("First name is required"),
-    userRole: yup.array().min(1, "At least one role must be selected"),
-    lastname: yup.string().required("Last name is required"),
+    firstname: yup.string().required('First name is required'),
+    userRole: yup.array().min(1, 'At least one role must be selected'),
+    lastname: yup.string().required('Last name is required'),
     nic: yup
       .string()
       .required()
       .transform((value) => value.trim())
-      .test("is-valid-nic", "Please enter a valid NIC number", (value) => {
-        if (!value) return false;
-        const nineDigitsAndV = /^[0-9]{9}v$/i;
-        const validFormatCheck = /^[1-9]\d{8,10}$/;
-        const twelveDigits = /^[0-9]{12}$/;
-        return nineDigitsAndV.test(value) || twelveDigits.test(value);
-      }),
+      .test(
+        'is-valid-nic',
+        'Please enter a valid NIC number',
+        (value) => {
+          if (!value) return false;
+          const nineDigitsAndV = /^[0-9]{9}v$/i;
+          const validFormatCheck = /^[1-9]\d{8,10}$/;
+          const twelveDigits = /^[0-9]{12}$/;
+          return nineDigitsAndV.test(value) || twelveDigits.test(value);
+        }
+      ),
     username: yup
       .string()
-      .required("Username is required")
-      .min(3, "Username must be at least 3 characters")
-      .notOneOf(existingUsernames, "Username already exists"),
+      .required('Username is required')
+      .min(3, 'Username must be at least 3 characters')
+      .notOneOf(existingUsernames, 'Username already exists'),
     password: yup
       .string()
-      .min(3, "Password must be at least 3 characters")
-      .max(10, "Password cannot exceed 10 characters")
-      .required("Password is required"),
+      .min(5, 'Password must be at least 5 characters')
+      .max(10, 'Password cannot exceed 10 characters')
+      .required('Password is required')
+      .matches(
+        /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{5,10})/,
+        'Password must include at least one uppercase letter and one symbol (!@#$%^&*)'
+      ),
     confirmpassword: yup
       .string()
-      .oneOf([yup.ref("password"), null], "Passwords must match"),
-    phonenumber: yup.string().required("Phone number is required"),
-    address1: yup.string().required("Address line 1 is required"),
-    address2: yup.string().required("Address line 2 is required"),
+      .oneOf([yup.ref('password'), null], 'Passwords must match'),
+    phonenumber: yup.string().required('Phone number is required'),
+    address1: yup.string().required('Address line 1 is required'),
+    address2: yup.string().required('Address line 2 is required'),
   });
 
   const {
@@ -266,23 +291,34 @@ function UserForm({ existingUsernames }) {
   });
 
   useEffect(() => {
-    setValue("userRole", roles);
+    setValue('userRole', roles);
   }, [roles, setValue]);
 
   const onSubmit = async (data) => {
     try {
-      axios.post("http://localhost:8085/createUser", data);
-      reset();
+      const response = await axios.post('http://localhost:8085/createUser', data);
+      reset(); // Assuming reset is a function that resets your form fields
+
+      // Display success message using SweetAlert
+      Swal.fire({
+        icon: 'success',
+        title: 'User Created Successfully',
+        showConfirmButton: false,
+        timer: 1500, // Close alert after 1.5 seconds
+      });
     } catch (error) {
-      console.log("Error occured in front end createUser", error);
+      console.log('Error occurred in frontend createUser', error);
+      // Handle error here if needed
     }
   };
+
   const handleClear = () => {
     reset(); // Reset the form when "Clear" button is clicked
   };
+
   const textFieldStyle = {
-    "& .MuiOutlinedInput-root": {
-      borderRadius: "12px",
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '12px',
     },
   };
 
@@ -290,55 +326,55 @@ function UserForm({ existingUsernames }) {
     <Box
       sx={{
         m: 2,
-        width: "700px",
-        height: "810px",
-        display: "flex",
-        justifyContent: "center",
+        width: '700px',
+        height: 'auto',
+        display: 'flex',
+        justifyContent: 'center',
       }}
     >
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
         <Stack gap={3}>
           <Box>
-            <FormLabel sx={{ m: 1, width: "150px" }}>First name</FormLabel>
+            <FormLabel sx={{ m: 1, width: '150px' }}>First name</FormLabel>
             <TextField
               label="First name"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register("firstname") }}
+              inputProps={{ ...register('firstname') }}
               error={!!errors.firstname}
               helperText={errors.firstname?.message}
             />
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: "150px" }}>Last name</FormLabel>
+            <FormLabel sx={{ m: 1, width: '150px' }}>Last name</FormLabel>
             <TextField
               label="Last name"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register("lastname") }}
+              inputProps={{ ...register('lastname') }}
               error={!!errors.lastname}
               helperText={errors.lastname?.message}
             />
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: "150px" }}>User name</FormLabel>
+            <FormLabel sx={{ m: 1, width: '150px' }}>User name</FormLabel>
             <TextField
               label="User name"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register("username") }}
+              inputProps={{ ...register('username') }}
               error={!!errors.username}
               helperText={errors.username?.message}
             />
           </Box>
-          <Box sx={{ display: "flex" }}>
-            <FormLabel sx={{ m: 1, width: "150px" }}>Password</FormLabel>
+          <Box sx={{ display: 'flex' }}>
+            <FormLabel sx={{ m: 1, width: '150px' }}>Password</FormLabel>
             <TextField
               label="Password"
               type="password"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register("password") }}
+              inputProps={{ ...register('password') }}
               error={!!errors.password}
               helperText={errors.password?.message}
             />
@@ -347,71 +383,65 @@ function UserForm({ existingUsernames }) {
               size="small"
               type="password"
               sx={[textFieldStyle, { ml: 2 }]}
-              inputProps={{ ...register("confirmpassword") }}
+              inputProps={{ ...register('confirmpassword') }}
               error={!!errors.confirmpassword}
               helperText={errors.confirmpassword?.message}
             />
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: "150px" }}>User role</FormLabel>
+            <FormLabel sx={{ m: 1, width: '150px' }}>User role</FormLabel>
             <RoleSelect roles={roles} setRoles={setRoles} register={register} />
             {errors.userRole && (
-              <Typography variant="caption" color={"error"}>
+              <Typography variant="caption" color={'error'}>
                 {errors.userRole.message}
               </Typography>
             )}
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: "150px" }}>User NIC number</FormLabel>
+            <FormLabel sx={{ m: 1, width: '150px' }}>User NIC number</FormLabel>
             <TextField
               label="nic"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register("nic") }}
+              inputProps={{ ...register('nic') }}
               error={!!errors.nic}
               helperText={errors.nic?.message}
             />
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: "150px" }}>
-              User phone number
-            </FormLabel>
+            <FormLabel sx={{ m: 1, width: '150px' }}>User phone number</FormLabel>
             <TextField
               label="User phone number"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register("phonenumber") }}
+              inputProps={{ ...register('phonenumber') }}
               error={!!errors.phonenumber}
               helperText={errors.phonenumber?.message}
             />
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: "150px" }}>
-              User address Line 1
-            </FormLabel>
+            <FormLabel sx={{ m: 1, width: '150px' }}>User address Line 1</FormLabel>
             <TextField
               label="User address"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register("address1") }}
+              inputProps={{ ...register('address1') }}
               error={!!errors.address1}
               helperText={errors.address1?.message}
             />
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: "150px" }}>
-              User address Line 2
-            </FormLabel>
+            <FormLabel sx={{ m: 1, width: '150px' }}>User address Line 2</FormLabel>
             <TextField
               label="User address"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register("address2") }}
+              inputProps={{ ...register('address2') }}
               error={!!errors.address2}
               helperText={errors.address2?.message}
             />
           </Box>
-          <Box display={"flex"} gap={2} justifyContent={"center"}>
+          <Box display={'flex'} gap={2} justifyContent={'center'}>
             <Button type="submit" variant="contained" customvariant="custom">
               Submit
             </Button>
@@ -437,9 +467,8 @@ function UserTable() {
   const [availableRoles, setAvailableRoles] = useState([]);
   const addButtonStyle = {
     backgroundColor: null,
-    color: (theme)=>theme.plaette.primary,
+    color: (theme) => theme.plaette.primary,
     border: 0,
-    
   };
 
   const handleClick = () => {
@@ -485,7 +514,7 @@ function UserTable() {
           );
 
           if (response.status === 200) {
-            console.log("User role deleted successfully.");
+            window.location.reload();
           } else {
             console.error(
               "Failed to delete user role. Status:",
@@ -523,24 +552,29 @@ function UserTable() {
   const handleRoleSelection = async (roleId) => {
     try {
       const { value: password } = await Swal.fire({
-        title: `Enter password for ${selectedUser.user_first_name}s role : ${roleId} `,
+        title: `Enter password for ${selectedUser.user_first_name}s role: ${roleId}`,
         input: "password",
-        text: roleId == "Admin" ? "You are about to give full access!" : null,
+        text: roleId === "Admin" ? "You are about to give full access!" : null,
         inputAttributes: {
           autocapitalize: "off",
         },
         inputValidator: (value) => {
-          if (!value || value.length <= 12) {
-            return null; // No validation message if value is empty or less than 12 characters
+          if (!value) {
+            return "Password is required";
           }
-          return "Password must be at most 12 characters long"; // Validation message if value is longer than 12 characters
+          // Password validation criteria
+          const regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{5,10})/;
+          if (!regex.test(value)) {
+            return "Password must be 5-10 characters long and include at least one uppercase letter and one symbol (!@#$%^&*)";
+          }
+          return null; // Return null for no validation message
         },
         showCancelButton: true,
         confirmButtonText: "Assign Role",
         showLoaderOnConfirm: true,
         allowOutsideClick: () => !Swal.isLoading(),
       });
-
+  
       if (password) {
         let roleIdToSend;
         switch (roleId) {
@@ -556,16 +590,16 @@ function UserTable() {
           default:
             return;
         }
-
+  
         console.log(
           `Assigning role ${roleIdToSend} to user ${selectedUser.user_id} with password ${password}`
         );
-
+  
         const response = await axios.put(
           `http://localhost:8085/updateUserRole/${selectedUser.user_id}/${roleIdToSend}`,
           { password }
         );
-
+  
         if (response.status === 200) {
           Swal.fire("Success!", "User role updated successfully", "success");
           // Update the local state to reflect the newly added role
@@ -589,7 +623,7 @@ function UserTable() {
       Swal.fire("Error!", "Failed to update user role", "error");
     }
   };
-
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -622,6 +656,8 @@ function UserTable() {
             <TableCell align="center">Address</TableCell>
             <TableCell align="center">Roles</TableCell>
             <TableCell align="center">Grant permissions</TableCell>
+            <TableCell align="left">Upload image</TableCell>
+           
           </TableRow>
         </TableHead>
         <TableBody>
@@ -671,6 +707,8 @@ function UserTable() {
                   </div>
                 )}
               </TableCell>
+              <TableCell align="right"><UserImageUpload username={user.username}/></TableCell>
+              
             </TableRow>
           ))}
         </TableBody>
