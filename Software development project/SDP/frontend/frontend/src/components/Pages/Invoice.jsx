@@ -34,13 +34,18 @@ import CompleteInvoiceTable from "./Invoice/CompleteInvoiceTable.jsx";
 import InvoicePdf from "./Invoice/InvoicePdf.jsx";
 import { useTheme } from "@emotion/react";
 import { faAddressCard } from "@fortawesome/free-regular-svg-icons";
+import YoutubeSearchedForIcon from "@mui/icons-material/YoutubeSearchedFor";
+import BackspaceOutlinedIcon from "@mui/icons-material/BackspaceOutlined";
+import Swal from "sweetalert2";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+
 const textFieldStyle = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "12px",
   },
 };
 function Invoice() {
-  const theme=useTheme();
+  const theme = useTheme();
   const {
     fullDetailsEquipmentArray,
     setFullDetailsEquipmentArray,
@@ -89,7 +94,7 @@ function Invoice() {
 
   const [data, setData] = useState({
     cus_fname: "",
-    cus_address1: " ",
+    cus_address1: "",
     cus_address2: "",
     nic: "",
     cus_phone_number: "",
@@ -266,6 +271,21 @@ function Invoice() {
       console.log("Error:", error);
     }
   };
+  const handleAdvanceSearch = () => {
+    Swal.fire({
+      title: "Redirect to the customer page?",
+      text: "Your current work will be lost!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, Proceed!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/customers");
+      }
+    });
+  };
   const textFieldStyle = {
     "& .MuiOutlinedInput-root": {
       borderRadius: "12px",
@@ -332,7 +352,7 @@ function Invoice() {
               variant="outlined"
             />
             <Button onClick={() => handleInvoiceSearch(invoiceIdSearch)}>
-              Search
+              <YoutubeSearchedForIcon />
             </Button>
           </Box>
           <Box
@@ -400,15 +420,21 @@ function Invoice() {
                 borderRadius: 3,
               }}
             >
-                  <Box
-
-                    width={"100px"}
-                    height={"100px"}
-                    position={"inherit"}
-                    sx={{mt:-1,ml:-22}}
-                  >
-                    <FontAwesomeIcon icon={faAddressCard}  size="2xl" style={{fontSize:"3rem",color:theme.palette.primary[100]}} />
-                  </Box>
+              <Box
+                width={"100px"}
+                height={"100px"}
+                position={"inherit"}
+                sx={{ mt: -1, ml: -22 }}
+              >
+                <FontAwesomeIcon
+                  icon={faAddressCard}
+                  size="2xl"
+                  style={{
+                    fontSize: "3rem",
+                    color: theme.palette.primary[100],
+                  }}
+                />
+              </Box>
               {/* <Box
                 sx={{
                   display: "flex",
@@ -454,7 +480,7 @@ function Invoice() {
                       setValidationMessage("");
                     }}
                     value={phoneNumberorNic}
-                    sx={[{ width: "350px" },textFieldStyle]}
+                    sx={[{ width: "350px" }, textFieldStyle]}
                     id="outlined-basic"
                     label="Search with phone number or NIC"
                     variant="outlined"
@@ -466,15 +492,17 @@ function Invoice() {
                   </Button>
                   <Button
                     variant="outlined"
-                    size="small"
-                    onClick={() => {
-                      showAlert();
+                    sx={{
+                      borderRadius: "50%",
+                      width: "50px",
+                      height: "55px",
+                      p: 0,
                     }}
+                    size="small"
+                    onClick={() => handleAdvanceSearch()}
                   >
                     <Typography variant="caption">
-                      Advance
-                      <br />
-                      search
+                      <PersonSearchIcon />
                     </Typography>
                   </Button>
 
@@ -497,35 +525,39 @@ function Invoice() {
 
                 <Box>
                   <TextField
-                  sx={[textFieldStyle]}
+                    sx={[textFieldStyle]}
                     fullWidth
                     disabled
                     value={
-                      invoiceObject.customerDetails.cus_fname == undefined
-                        ? ""
-                        : invoiceObject.customerDetails.cus_fname
+                      invoiceObject.customerDetails.cus_fname &&
+                      invoiceObject.customerDetails.cus_lname
+                        ? `${invoiceObject.customerDetails.cus_fname} ${invoiceObject.customerDetails.cus_lname}`
+                        : invoiceObject.customerDetails.cus_fname || ""
                     }
-                    label="first name"
+                    label="Customer Full Name"
                     variant="outlined"
                   />
                 </Box>
+
                 <Box>
-                  <TextField
-                  sx={[textFieldStyle]}
-                    fullWidth
-                    disabled
-                    value={
-                      invoiceObject.customerDetails.cus_address1 == undefined ||
-                      invoiceObject.customerDetails.cus_address2 == undefined
-                        ? ""
-                        : `${invoiceObject.customerDetails.cus_address1}  ${invoiceObject.customerDetails.cus_address2}`
-                    }
-                    variant="outlined"
-                  />
-                </Box>
+  <TextField
+    sx={[textFieldStyle]}
+    fullWidth
+    label="Customer Address"
+    disabled
+    value={
+      invoiceObject.customerDetails.cus_address1 && invoiceObject.customerDetails.cus_address2
+        ? `${invoiceObject.customerDetails.cus_address1} ${invoiceObject.customerDetails.cus_address2}`
+        : invoiceObject.customerDetails.cus_address1 || ""
+    }
+    variant="outlined"
+  />
+</Box>
+
                 <Box sx={{ display: "flex", gap: 4 }}>
                   <TextField
                     disabled
+                    label="Customer NIC"
                     sx={[textFieldStyle]}
                     value={
                       invoiceObject.customerDetails.nic == undefined
@@ -548,7 +580,7 @@ function Invoice() {
                         : invoiceObject.customerDetails.cus_phone_number
                     }
                     id="outlined-basic"
-                    label=""
+                    label="Customer Phone number"
                     variant="outlined"
                   />
                 </Box>

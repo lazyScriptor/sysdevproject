@@ -14,8 +14,14 @@ import {
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import axios from "axios";
-import dayjs from "dayjs";
+import dayjs from "dayjs"; // Import dayjs library
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter"; // Import the isSameOrAfter plugin
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore"; // Import the isSameOrBefore plugin
 import TablePagination from "@mui/material/TablePagination";
+
+dayjs.extend(isSameOrAfter); // Extend dayjs with the isSameOrAfter plugin
+dayjs.extend(isSameOrBefore); // Extend dayjs with the isSameOrBefore plugin
+
 const rowsPerPageOptions = [5, 10, 25];
 
 function InvoiceItem2() {
@@ -34,20 +40,19 @@ function InvoiceItem2() {
     setPage(0);
   };
 
-  const fetchData = async (startDateTime, endDateTime) => {
+  const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8085/reports/getCombinedInvoiceReports",
-        {
-          params: {
-            startDateTime: startDateTime ? startDateTime.toISOString() : null,
-            endDateTime: endDateTime ? endDateTime.toISOString() : null,
-          },
-        }
+        "http://localhost:8085/reports/getCombinedInvoiceReports"
       );
       if (response.data.status) {
-        console.log(response.data.response);
-        setData(response.data.response);
+        const filteredData = response.data.response.filter(
+          (row) =>
+            row.customer_name &&
+            (!startDate || dayjs(row.inv_createddate).isSameOrAfter(startDate)) &&
+            (!endDate || dayjs(row.inv_createddate).isSameOrBefore(endDate))
+        );
+        setData(filteredData);
       } else {
         console.log("Failed to retrieve data");
       }
@@ -57,11 +62,11 @@ function InvoiceItem2() {
   };
 
   useEffect(() => {
-    fetchData(startDate, endDate);
+    fetchData();
   }, [startDate, endDate]);
 
   const handleSearch = () => {
-    fetchData(startDate, endDate);
+    fetchData();
   };
 
   const handleClear = () => {
@@ -92,9 +97,7 @@ function InvoiceItem2() {
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>
-        <Button variant="contained" color="primary" onClick={handleSearch}>
-          Search
-        </Button>
+       
         <Button variant="contained" color="error" onClick={handleClear}>
           Clear
         </Button>
@@ -119,7 +122,7 @@ function InvoiceItem2() {
                 <TableCell align="center">{row.invoice_id}</TableCell>
                 <TableCell align="center">{row.customer_name}</TableCell>
                 <TableCell align="center">
-                  {dayjs(row.created_date).format("YYYY-MM-DD HH:mm:ss")}
+                  {dayjs(row.inv_createddate).format("YYYY-MM-DD HH:mm:ss")}
                 </TableCell>
                 <TableCell align="center">{row.total_revenue}</TableCell>
                 <TableCell align="center">{row.total_income}</TableCell>

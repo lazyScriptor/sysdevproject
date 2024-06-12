@@ -963,7 +963,7 @@ export async function reportsGetCustomerInvoiceDetails() {
     invoice.inv_rating,
     invoice.inv_special_message,
     invoice.inv_createddate,
-    SUM(equipment.eq_rental * IFNULL(invoiceEquipment.duration_in_days, 1)) AS total_sales,
+    SUM(equipment.eq_rental * IFNULL(invoiceEquipment.duration_in_days, 0) * equipment.eq_rental)  AS total_sales,
     IF(invoiceEquipment.duration_in_days IS NULL, 1, 0) AS not_completed
 FROM 
     customer
@@ -1166,19 +1166,20 @@ export async function getDeletedInvoices(startDate, endDate) {
 export async function getCombinedInvoiceReports(startDate, endDate) {
   try {
     const [revenue] = await pool.query(`
-      SELECT 
-        i.inv_id AS invoice_id,
-        (SUM(invpay_amount) + i.inv_advance) AS total_revenue
-      FROM 
-        invoicePayments p
-      JOIN 
-        invoice i ON p.invpay_inv_id = i.inv_id
-      WHERE 
-        i.inv_delete_status = 0
-      GROUP BY 
-        i.inv_id;
-    `);
+   SELECT 
+    i.inv_id AS invoice_id,
+        i.inv_createddate,
+    (SUM(IFNULL(p.invpay_amount, 0)) + i.inv_advance) AS total_revenue
+FROM 
+    invoice i
+LEFT JOIN 
+    invoicePayments p ON p.invpay_inv_id = i.inv_id
+WHERE 
+    i.inv_delete_status = 0
+GROUP BY 
+    i.inv_id;
 
+    `);
     const [totalIncome] = await pool.query(`
       SELECT 
         i.inv_id AS invoice_id,
@@ -1200,13 +1201,20 @@ export async function getCombinedInvoiceReports(startDate, endDate) {
     `);
 
     // Combine the results based on the common column `invoice_id`
-    const combinedResults = revenue.map(revItem => {
-      const matchingTotalIncome = totalIncome.find(incomeItem => incomeItem.invoice_id === revItem.invoice_id);
+    const combinedResults = revenue.map((revItem) => {
+      const matchingTotalIncome = totalIncome.find(
+        (incomeItem) => incomeItem.invoice_id === revItem.invoice_id
+      );
       return {
         invoice_id: revItem.invoice_id,
+        inv_createddate: revItem.inv_createddate,
         total_revenue: revItem.total_revenue,
-        customer_name: matchingTotalIncome ? matchingTotalIncome.customer_name : null,
-        total_income: matchingTotalIncome ? matchingTotalIncome.total_income : null,
+        customer_name: matchingTotalIncome
+          ? matchingTotalIncome.customer_name
+          : null,
+        total_income: matchingTotalIncome
+          ? matchingTotalIncome.total_income
+          : null,
       };
     });
 

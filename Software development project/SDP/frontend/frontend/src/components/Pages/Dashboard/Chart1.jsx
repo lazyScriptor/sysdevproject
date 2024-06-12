@@ -13,7 +13,7 @@ import { Box } from "@mui/material";
 
 ChartJS.register(ArcElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const DoughnutChartComponent = () => {
+const Chart1 = () => {
   const [chartData, setChartData] = useState(null);
 
   useEffect(() => {
@@ -97,4 +97,4 @@ const DoughnutChartComponent = () => {
   );
 };
 
-export default DoughnutChartComponent;
+export default Chart1;
