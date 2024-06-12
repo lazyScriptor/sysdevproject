@@ -190,9 +190,9 @@ export function NewEquipmentForm(props) {
         "http://localhost:8085/setEquipment",
         data
       );
-      Swal.fire("Success", "Machine added successfully", "success");
+      Swal.fire("Success", "Machine edited successfully", "success");
     } catch (error) {
-      Swal.fire("Error", "Failed to add machine", "error");
+      Swal.fire("Error", "Failed to edit machine", "error");
     }
   };
 

@@ -13,6 +13,10 @@ import { Button } from "@mui/material";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import KeyboardArrowLeftTwoToneIcon from "@mui/icons-material/KeyboardArrowLeftTwoTone";
+import KeyboardDoubleArrowLeftTwoToneIcon from "@mui/icons-material/KeyboardDoubleArrowLeftTwoTone";
 
 export default function EquipmentStockComponent(props) {
   const {
@@ -25,25 +29,39 @@ export default function EquipmentStockComponent(props) {
   useEffect(() => {
     // setworkingStock(stockValue);
     // setDefectedStock(0);
-  }, [stockValue,workingStock,defectedStock]);
+  }, [stockValue, workingStock, defectedStock]);
 
   const handleStock = () => {};
   return (
     <>
       <Collapse in={stockValue > 1} timeout="auto">
         <Paper
+          elevation={2}
           sx={{
+            backgroundColor: (theme) => theme.palette.primary[25],
+            borderRadius: 0,
             width: "auto",
-            height: "200px",
+            height: "120px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <Typography>Quantity : {stockValue}</Typography>
+          <Typography
+            sx={{ color: (theme) => theme.palette.primary[800] }}
+            variant="caption"
+          >
+            Complete Stock : {stockValue}
+          </Typography>
           <Box sx={{ display: "flex" }}>
-            <TextField variant="standard" value={workingStock} />
+            <TextField
+              disabled={true}
+              label="Working stock"
+              sx={{ width: "120px", mr: 3 }}
+              variant="outlined"
+              value={workingStock}
+            />
             <Box>
               <Button
                 sx={{
@@ -58,7 +76,7 @@ export default function EquipmentStockComponent(props) {
                   setDefectedStock(0);
                 }}
               >
-                --------
+                <KeyboardDoubleArrowLeftTwoToneIcon />{" "}
               </Button>
               <Button
                 sx={{
@@ -75,7 +93,7 @@ export default function EquipmentStockComponent(props) {
                   }
                 }}
               >
-                -
+                <KeyboardArrowLeftTwoToneIcon />
               </Button>
             </Box>
             <Box>
@@ -94,7 +112,7 @@ export default function EquipmentStockComponent(props) {
                   }
                 }}
               >
-                +
+                <KeyboardArrowRightIcon />
               </Button>
               <Button
                 sx={{
@@ -109,34 +127,42 @@ export default function EquipmentStockComponent(props) {
                   setDefectedStock((prev) => parseInt(workingStock) + prev);
                 }}
               >
-                +++++
+                <KeyboardDoubleArrowRightIcon />
               </Button>
             </Box>
             <TextField
-              variant="standard"
+              disabled={true}
+              sx={{ width: "120px", ml: 3 }}
+              variant="outlined"
               label="Defected stock"
               value={defectedStock}
             />
           </Box>
         </Paper>
       </Collapse>
-      <Collapse in={stockValue ==1} timeout="auto">
+      <Collapse in={stockValue == 1} timeout="auto">
         <FormControl fullWidth>
           <InputLabel>Defective Status</InputLabel>
-                
-          <Select value={defectedStock} onChange={(e) => setDefectedStock(e.target.value)}>
+
+          <Select
+            value={defectedStock}
+            onChange={(e) => setDefectedStock(e.target.value)}
+          >
             <MenuItem value={0}>Not Defective</MenuItem>
             <MenuItem value={1}>Defective</MenuItem>
           </Select>
-          <Typography variant="caption" sx={{ ml: 2 }} color="error">
-          </Typography>
+          <Typography
+            variant="caption"
+            sx={{ ml: 2 }}
+            color="error"
+          ></Typography>
         </FormControl>
       </Collapse>
     </>
   );
 }
 
-export  function EquipmentStockDefectiveStatus(props) {
+export function EquipmentStockDefectiveStatus(props) {
   const {
     stockValue,
     workingStock,
@@ -147,7 +173,7 @@ export  function EquipmentStockDefectiveStatus(props) {
 
   return (
     <>
-      <Collapse in={stockValue ==1} timeout="auto">
+      <Collapse in={stockValue == 1} timeout="auto">
         <FormControl fullWidth>
           <InputLabel>Defective Status</InputLabel>
           <Select onChange={(e) => setDefectedStock(e.target.value)}>

@@ -246,7 +246,7 @@ function InvoiceDocumentTable() {
       let total = 0;
       if (invoiceObject && invoiceObject.eqdetails) {
         total = invoiceObject.eqdetails.reduce((sum, item) => {
-          return sum + item.eq_rental * item.duration_in_days;
+          return sum + item.eq_rental * item.duration_in_days * item.inveq_borrowqty;
         }, 0);
       }
       setSubTotal(total);

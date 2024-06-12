@@ -1165,38 +1165,52 @@ export async function getDeletedInvoices(startDate, endDate) {
 }
 export async function getCombinedInvoiceReports(startDate, endDate) {
   try {
-    const query = `
+    const [revenue] = await pool.query(`
       SELECT 
-    DATE_FORMAT(i.inv_createddate, '%Y-%m') AS month,
-    COUNT(DISTINCT i.inv_id) AS invoice_count,
-    SUM(p.invpay_amount) AS total_revenue, -- Sum of advance and payments made against the invoice
-    c.cus_fname AS first_name,
-    c.cus_lname AS last_name,
-    i.inv_id AS invoice_id,
-    i.inv_createddate AS created_date,
-    i.inv_updatedstatus AS updated_status,
-    SUM((e.eq_rental * ie.inveq_borrowqty) * DATEDIFF(ie.inveq_return_date, ie.inveq_borrow_date)) AS invoice_total_amount
+        i.inv_id AS invoice_id,
+        (SUM(invpay_amount) + i.inv_advance) AS total_revenue
       FROM 
-    customer c
+        invoicePayments p
       JOIN 
-    invoice i ON i.inv_cusid = c.cus_id
-      JOIN 
-    invoiceEquipment ie ON ie.inveq_invid = i.inv_id
-      JOIN 
-    equipment e ON e.eq_id = ie.inveq_eqid
-      LEFT JOIN 
-    invoicePayments p ON p.invpay_inv_id = i.inv_id
+        invoice i ON p.invpay_inv_id = i.inv_id
       WHERE 
-    i.inv_createddate BETWEEN ? AND ?
-    AND ie.inveq_return_date IS NOT NULL
+        i.inv_delete_status = 0
       GROUP BY 
-    DATE_FORMAT(i.inv_createddate, '%Y-%m'),
-    c.cus_id, i.inv_id
-      ORDER BY 
-    DATE_FORMAT(i.inv_createddate, '%Y-%m'), i.inv_createddate;
-    `;
-    const [rows] = await pool.query(query, [startDate, endDate]);
-    return rows;
+        i.inv_id;
+    `);
+
+    const [totalIncome] = await pool.query(`
+      SELECT 
+        i.inv_id AS invoice_id,
+        CONCAT(c.cus_fname, ' ', c.cus_lname) AS customer_name,
+        SUM((DATEDIFF(COALESCE(ie.inveq_return_date, CURRENT_DATE()), ie.inveq_borrow_date) * ie.inveq_borrowqty * e.eq_rental)) AS total_income
+      FROM 
+        invoice i
+      JOIN 
+        customer c ON i.inv_cusid = c.cus_id
+      JOIN 
+        invoiceEquipment ie ON ie.inveq_invid = i.inv_id
+      JOIN 
+        equipment e ON ie.inveq_eqid = e.eq_id
+      WHERE 
+        (ie.inveq_return_date IS NOT NULL OR ie.inveq_borrow_date IS NOT NULL)
+        AND i.inv_delete_status = 0
+      GROUP BY 
+        i.inv_id, c.cus_id;
+    `);
+
+    // Combine the results based on the common column `invoice_id`
+    const combinedResults = revenue.map(revItem => {
+      const matchingTotalIncome = totalIncome.find(incomeItem => incomeItem.invoice_id === revItem.invoice_id);
+      return {
+        invoice_id: revItem.invoice_id,
+        total_revenue: revItem.total_revenue,
+        customer_name: matchingTotalIncome ? matchingTotalIncome.customer_name : null,
+        total_income: matchingTotalIncome ? matchingTotalIncome.total_income : null,
+      };
+    });
+
+    return combinedResults;
   } catch (error) {
     console.log("Error fetching combined invoice reports:", error);
     throw error;

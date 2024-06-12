@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Line } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 import axios from "axios";
-import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, Legend, Title } from 'chart.js';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Box } from "@mui/material";
 
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Legend, Title);
+ChartJS.register(ArcElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const LineChartComponent = () => {
+const DoughnutChartComponent = () => {
   const [chartData, setChartData] = useState(null);
 
   useEffect(() => {
@@ -14,8 +22,11 @@ const LineChartComponent = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:8085/reports/getEquipmentRevenueDetails");
+      const response = await axios.get(
+        "http://localhost:8085/reports/getEquipmentRevenueDetails"
+      );
       if (response.data.status) {
+        console.log(response.data.response);
         setChartData(response.data.response);
       } else {
         console.log("Failed to retrieve data");
@@ -29,53 +40,61 @@ const LineChartComponent = () => {
     return <div>Loading...</div>;
   }
 
-  // Extracting labels and revenue data from chartData
-  const labels = chartData.map((equipment) => equipment.eq_name);
-  const revenueData = chartData.map((equipment) => parseFloat(equipment.total_revenue));
+  // Extracting equipment names and revenues
+  const labels = chartData.map((item) => item.eq_name);
+  const revenues = chartData.map((item) => parseFloat(item.total_revenue));
 
-  // Constructing the Line chart data
+  // Constructing the Doughnut chart data
   const data = {
     labels: labels,
-    datasets: [{
-      label: 'Total Revenue',
-      data: revenueData,
-      backgroundColor: 'rgba(54, 162, 235, 0.5)', // Adjust color as needed
-      borderColor: 'rgb(54, 162, 235)',
-      borderWidth: 1
-    }]
+    datasets: [
+      {
+        label: "Total Revenue",
+        data: revenues,
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
   };
 
   // Chart options
   const options = {
     responsive: true,
     plugins: {
+      legend: {
+        position: "left",
+      },
       title: {
         display: true,
-        text: 'Equipment Revenue'
+        text: "Equipment Revenue",
       },
-      legend: {
-        display: false // You can adjust legend display as needed
-      }
+      tooltip: {
+        enabled: true,
+      },
     },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'Total Revenue'
-        }
-      },
-      x: {
-        title: {
-          display: true,
-          text: 'Equipment'
-        }
-      }
-    }
   };
 
-  // Render the Line chart
-  return <Line data={data} options={options} />;
+  // Render the Doughnut chart
+  return (
+    <Box >
+      <Doughnut data={data} options={options} />
+    </Box>
+  );
 };
 
-export default LineChartComponent;
+export default DoughnutChartComponent;

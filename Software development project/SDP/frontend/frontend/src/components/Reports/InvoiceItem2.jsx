@@ -46,6 +46,7 @@ function InvoiceItem2() {
         }
       );
       if (response.data.status) {
+        console.log(response.data.response);
         setData(response.data.response);
       } else {
         console.log("Failed to retrieve data");
@@ -102,13 +103,10 @@ function InvoiceItem2() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell align="center">Month</TableCell>
-              <TableCell align="center">Invoice Count</TableCell>
-              <TableCell align="center">Total Revenue</TableCell>
-              <TableCell align="center">Customer Name</TableCell>
               <TableCell align="center">Invoice ID</TableCell>
+              <TableCell align="center">Customer Name</TableCell>
               <TableCell align="center">Created Date</TableCell>
-              <TableCell align="center">Updated Status</TableCell>
+              <TableCell align="center">Total payments done</TableCell>
               <TableCell align="center">Invoice Total Amount</TableCell>
             </TableRow>
           </TableHead>
@@ -118,16 +116,13 @@ function InvoiceItem2() {
               : data
             ).map((row, index) => (
               <TableRow key={index}>
-                <TableCell align="center">{row.month}</TableCell>
-                <TableCell align="center">{row.invoice_count}</TableCell>
-                <TableCell align="center">{row.total_revenue}</TableCell>
-                <TableCell align="center">{`${row.first_name} ${row.last_name}`}</TableCell>
                 <TableCell align="center">{row.invoice_id}</TableCell>
+                <TableCell align="center">{row.customer_name}</TableCell>
                 <TableCell align="center">
                   {dayjs(row.created_date).format("YYYY-MM-DD HH:mm:ss")}
                 </TableCell>
-                <TableCell align="center">{row.updated_status}</TableCell>
-                <TableCell align="center">{row.invoice_total_amount}</TableCell>
+                <TableCell align="center">{row.total_revenue}</TableCell>
+                <TableCell align="center">{row.total_income}</TableCell>
               </TableRow>
             ))}
           </TableBody>

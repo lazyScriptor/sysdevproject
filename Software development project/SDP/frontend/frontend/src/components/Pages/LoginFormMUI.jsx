@@ -16,6 +16,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import HealthAndSafetyTwoToneIcon from "@mui/icons-material/HealthAndSafetyTwoTone";
+import { SnackbarProvider, useSnackbar } from "notistack";
 
 function parseJwt(token) {
   var base64Url = token.split(".")[1];
@@ -34,6 +35,7 @@ function parseJwt(token) {
 }
 
 function LoginFormMUI() {
+  const { enqueueSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
   const [LoadUsername, setLoadUsername] = useState("");
   const [usernameArray, setUsernameArray] = useState([]);
@@ -63,23 +65,27 @@ function LoginFormMUI() {
     resolver: yupResolver(schema),
   });
 
+  const handleClickVariant = (variant) => () => {
+    // variant could be success, error, warning, info, or default
+    enqueueSnackbar("This is a success message!", { variant });
+  };
   const handleLoadingButton = async (userName) => {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    // clearTimeout();
     try {
-      await axios
-        .get(`http://localhost:8085/getUserRole/${userName}`)
-        .then((res) => {
-          console.log("This is the response ", res.data);
-
-          setUsernameArray(res.data);
-        });
+      const response = await axios.get(
+        `http://localhost:8085/getUserRole/${userName}`
+      );
+      if (response.data.length > 0) {
+        setUsernameArray(response.data);
+        enqueueSnackbar("Username found!", { variant: "success" });
+      } else {
+        enqueueSnackbar("Username not found!", { variant: "error" });
+      }
     } catch (error) {
+      console.error("Error fetching user role:", error);
+      enqueueSnackbar("Error fetching user role!", { variant: "error" });
+    } finally {
       setIsLoading(false);
-      console.log("handleSearch NIC error");
     }
   };
 
@@ -96,7 +102,7 @@ function LoginFormMUI() {
         .then((res) => {
           console.log("This is the response", res.data);
           if (!res.data.auth) {
-            setPasswordWrong("Password is wrong");
+            setPasswordWrong("Your Password is wrong ");
             // setLogInStatus(false);
             // setIsAuthenticated(false);
           } else {
@@ -225,12 +231,13 @@ function LoginFormMUI() {
               error={!!errors.password}
               helperText={
                 errors.password?.message || (
-                  <Typography variant="caption" color={"error"}>
-                    {passwordWrong}
+                  <Typography variant="caption" color="error">
+                    {passwordWrong && "Wrong Password"}
                   </Typography>
                 )
               }
             />
+
             <Button
               type="submit"
               variant="contained"

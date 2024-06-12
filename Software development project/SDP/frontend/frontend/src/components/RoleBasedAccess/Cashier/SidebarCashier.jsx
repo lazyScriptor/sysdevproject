@@ -1,38 +1,58 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import "../../Stylings/sidebar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import WidgetsIcon from "@mui/icons-material/Widgets";
-
 import {
   faTableCellsLarge,
-  faHouse,
-  faInbox,
   faLayerGroup,
   faUser,
   faToolbox,
-  faBars,
   faXmark,
   faRightFromBracket,
   faNewspaper,
-  faUserAstronaut,
 } from "@fortawesome/free-solid-svg-icons";
 import DashboardCategoryBtn from "../../Buttons/DashboardButtons.jsx";
-
-// context imports
-import { useContext } from "react";
 import { AppCustomContext } from "../../../App.jsx";
 import Button from "@mui/material/Button";
+import { ref, listAll, getDownloadURL } from "firebase/storage";
+import { storage } from "../../../../imagedbfirebase.js";
+import defaultImage from "../../../assets/username.png"; // Make sure this path is correct
+import { Typography } from "@mui/material";
 
 export default function SidebarCashier() {
-  //context data
-  const { usernamee, rolee,show, setShow  } = useContext(AppCustomContext);
+  const [imageMap, setImageMap] = useState({});
+  const imageListRef = ref(storage, "UserImages/");
+
+  // context data
+  const { usernamee, rolee, show, setShow } = useContext(AppCustomContext);
   const [contextUserName, setContextUserName] = useState();
   const [contextRole, setContextRole] = useState();
+  const [username, setUsername] = useState(localStorage.getItem("username"));
 
-  
+  useEffect(() => {
+    const fetchImages = async () => {
+      const response = await listAll(imageListRef);
+      const imageMap = {};
+      for (const item of response.items) {
+        const url = await getDownloadURL(item);
+        const name = item.name.split(".")[0];
+        imageMap[name] = url;
+      }
+      setImageMap(imageMap);
 
-  //context data over
+      // Check if the username exists in the imageMap
+      if (username && !imageMap[username]) {
+        setImageMap((prevImageMap) => ({
+          ...prevImageMap,
+          [username]: defaultImage,
+        }));
+      }
+    };
+    fetchImages();
+  }, [username]);
+
+  // context data over
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -42,7 +62,7 @@ export default function SidebarCashier() {
         sx={{ position: "absolute", backgroundColor: "" }}
         onClick={() => setShow(!show)}
       >
-        <WidgetsIcon fontSize="large" sx={{ colorL: "red" }} />
+        <WidgetsIcon fontSize="large" sx={{ }} />
       </Button>
       <Offcanvas
         backdrop={false}
@@ -54,22 +74,38 @@ export default function SidebarCashier() {
       >
         <div className="offcanvas-header-wrapper">
           <Offcanvas.Header closeButton={true}>
+            {username && (
+              <div>
+                <img
+                  src={imageMap[username] || defaultImage}
+                  alt={username}
+                  style={{
+                    maxWidth: "50px",
+                    maxHeight: "50px",
+                    borderRadius: "50%",
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+                  }}
+                />
+              </div>
+            )}
             <div className="header-text">
-              <h4>{localStorage.getItem("userRole")}</h4>
-              <h6>{localStorage.getItem("username")}</h6>
+              <Typography variant="body2">
+                {localStorage.getItem("userRole").toUpperCase()}
+              </Typography>
+              <Typography variant="body2">
+                {username.toLocaleUpperCase()}
+              </Typography>
             </div>
             <Button
               onClick={handleClose}
               sx={{
                 visibility: "hidden",
                 borderRadius: 3,
-
                 position: "absolute",
                 right: "20px",
                 top: "15px",
-                maxWidthwidth: "50px",
+                maxWidth: "50px",
                 maxHeight: "50px",
-
                 "&:hover": {
                   backgroundColor: (theme) => theme.palette.primary[800], // Change to the desired hover color
                 },
@@ -112,9 +148,7 @@ export default function SidebarCashier() {
               icon={faNewspaper}
               destination="/Reports"
             />
-       
             <hr />
-            
             <DashboardCategoryBtn
               handlefunction={handleShow}
               name="Logout"
@@ -127,5 +161,3 @@ export default function SidebarCashier() {
     </div>
   );
 }
-
-

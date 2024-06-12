@@ -401,11 +401,11 @@ function Invoice() {
               }}
             >
                   <Box
+
                     width={"100px"}
                     height={"100px"}
-                    position={"absolute"}
-                    top={95}
-                    left={480}
+                    position={"inherit"}
+                    sx={{mt:-1,ml:-22}}
                   >
                     <FontAwesomeIcon icon={faAddressCard}  size="2xl" style={{fontSize:"3rem",color:theme.palette.primary[100]}} />
                   </Box>
