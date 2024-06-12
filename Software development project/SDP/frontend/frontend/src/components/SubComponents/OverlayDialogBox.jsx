@@ -23,6 +23,7 @@ export default function OverlayDialogBox({ children }) {
   return (
     <>
       <Dialog
+      
         sx={{ borderRadius: 5 }}
         maxWidth="xl"
         TransitionComponent={Transition}
@@ -30,6 +31,11 @@ export default function OverlayDialogBox({ children }) {
         open={boolvalue}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
+        BackdropProps={{
+          style: {
+            backdropFilter: "blur(5px)", // Adjust the blur intensity as needed
+          },
+        }}
       >
         {children}
       </Dialog>

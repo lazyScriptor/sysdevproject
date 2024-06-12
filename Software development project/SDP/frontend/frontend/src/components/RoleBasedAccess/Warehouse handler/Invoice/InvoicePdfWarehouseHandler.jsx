@@ -89,11 +89,6 @@ export default function InvoicePdfWarehouseHandler() {
   );
 }
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [createData("Gingerbread", 356, 16.0, 49, 3.9)];
 
 function InvoiceDocumentTable() {
   const [subTotal, setSubTotal] = useState(0);

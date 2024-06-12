@@ -14,7 +14,7 @@ import { useState } from "react";
 import AppRegistrationTwoToneIcon from "@mui/icons-material/AppRegistrationTwoTone";
 
 export default function InvoicePaymentsTable() {
-  const { invoiceObject, setInvoiceObject, updateValue } =
+  const { invoiceObject, setInvoiceObject, updateValue ,invoiceSearchBtnStatus} =
     useContext(InvoiceContext);
 
   const deleteButtonStyles = {
@@ -70,7 +70,7 @@ export default function InvoicePaymentsTable() {
                   width: "100px",
                 }}
               >
-                <Switch onChange={(e) => setEditToggle(e.target.checked)} />
+                <Switch disabled={invoiceSearchBtnStatus} onChange={(e) => setEditToggle(e.target.checked)} />
                 <Typography
                   color={
                     editToggle

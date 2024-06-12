@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import axios from 'axios';
+import dayjs from 'dayjs';
 
 export function EquipmentItem5() {
   const [data, setData] = useState([]);
@@ -19,6 +20,10 @@ export function EquipmentItem5() {
 
     fetchData();
   }, []);
+
+  const formatDate = (date) => {
+    return dayjs(date).format('DD/MM/YYYY HH:mm'); // Customize the format as per your requirement
+  };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -41,7 +46,7 @@ export function EquipmentItem5() {
                   <TableCell>{row.eq_id}</TableCell>
                   <TableCell>{row.eq_name}</TableCell>
                   <TableCell>{row.inv_id}</TableCell>
-                  <TableCell>{row.inv_createddate}</TableCell>
+                  <TableCell>{formatDate(row.inv_createddate)}</TableCell>
                   <TableCell>{row.duration_in_days}</TableCell>
                   <TableCell>{row.not_completed}</TableCell>
                 </TableRow>
@@ -53,4 +58,3 @@ export function EquipmentItem5() {
     </LocalizationProvider>
   );
 }
-

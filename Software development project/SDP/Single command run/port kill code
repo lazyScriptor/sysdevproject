@@ -12,3 +12,5 @@ pure version works even if the function is called twice every time. Pure functio
 and solving y = 2x twice doesn’t change what y is. Same inputs, same outputs. Always.
 
 Strict Mode has no effect in production, so it won’t slow down the app for your users. To opt into Strict Mode, you can wrap your root component into <React.StrictMode>. Some frameworks do this by default.
+
+sudo /Applications/XAMPP/xamppfiles/bin/apachectl start

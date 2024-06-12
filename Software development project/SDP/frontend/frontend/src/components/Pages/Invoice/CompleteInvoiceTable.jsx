@@ -7,12 +7,10 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import { useTheme } from '@mui/material/styles';
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import { useTheme } from "@mui/material/styles";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCircle
-} from "@fortawesome/free-solid-svg-icons";
+import { faCircle } from "@fortawesome/free-solid-svg-icons";
 
 function CompleteInvoiceTable() {
   const theme = useTheme();
@@ -76,13 +74,23 @@ function CompleteInvoiceTable() {
                   <TableCell align="center">{row.eq_rental}</TableCell>
                   <TableCell align="center">
                     {" "}
-                    {row.inveq_return_date==null ?<FontAwesomeIcon icon={faCircle} beatFade style={{color: "#FFD43B",}} />: new Date(row.inveq_return_date).toLocaleString()}
+                    {row.inveq_return_date == null ? (
+                      <FontAwesomeIcon
+                        icon={faCircle}
+                        beatFade
+                        style={{ color: "#FFD43B" }}
+                      />
+                    ) : (
+                      new Date(row.inveq_return_date).toLocaleString()
+                    )}
                   </TableCell>
                   <TableCell align="center">{row.inveq_borrowqty}</TableCell>
 
                   <TableCell align="center">{row.duration_in_days}</TableCell>
                   <TableCell align="center">
-                    {row.inveq_return_quantity}
+                    {row.inveq_return_quantity == 0
+                      ? ""
+                      : row.inveq_return_quantity}
                   </TableCell>
                   <TableCell
                     align="center"
@@ -91,7 +99,10 @@ function CompleteInvoiceTable() {
                       border: "solid 1px solid",
                     }}
                   >
-                    {row.eq_rental * row.duration_in_days} LKR
+                    {!row.duration_in_days
+                      ? ""
+                      : row.eq_rental * row.duration_in_days * row.inveq_borrowqty}{" "}
+                    {row.duration_in_days && 'LKR'}
                   </TableCell>
                 </TableRow>
               ))}

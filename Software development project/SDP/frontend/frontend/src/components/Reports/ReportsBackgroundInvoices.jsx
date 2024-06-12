@@ -1,4 +1,3 @@
-
 import React from "react";
 import ReportsNavBar from "./ReportsNavBar";
 import "../Stylings/rootstyles.css";
@@ -12,40 +11,40 @@ import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import InvoiceItem1 from "./InvoiceItem1";
-
+import InvoiceItem2 from "./InvoiceItem2";
 
 function ReportsBackgroundInvoices() {
-    function CustomTabPanel(props) {
-        const { children, value, index, ...other } = props;
-        return (
-          <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-          >
-            {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-          </div>
-        );
-      }
-    
-      CustomTabPanel.propTypes = {
-        children: PropTypes.node,
-        index: PropTypes.number.isRequired,
-        value: PropTypes.number.isRequired,
-      };
-    
-      function a11yProps(index) {
-        return {
-          id: `simple-tab-${index}`,
-          "aria-controls": `simple-tabpanel-${index}`,
-        };
-      }
-      const [value, setValue] = useState(0);
-      const handleChange = (event, newValue) => {
-        setValue(newValue);
-      };
+  function CustomTabPanel(props) {
+    const { children, value, index, ...other } = props;
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      </div>
+    );
+  }
+
+  CustomTabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
+  };
+
+  function a11yProps(index) {
+    return {
+      id: `simple-tab-${index}`,
+      "aria-controls": `simple-tabpanel-${index}`,
+    };
+  }
+  const [value, setValue] = useState(0);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   return (
     <>
       <Box id="main-body">
@@ -64,7 +63,7 @@ function ReportsBackgroundInvoices() {
                 p: 2,
               }}
             >
-                <Box sx={{ width: "20%" }}>
+              <Box sx={{ width: "20%" }}>
                 <Accordion>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
@@ -83,19 +82,19 @@ function ReportsBackgroundInvoices() {
                       scrollButtons="auto"
                       aria-label="scrollable auto tabs example"
                     >
-                      <Tab label="Invoice Deleted report " {...a11yProps(0)} />
-                      <Tab label="" {...a11yProps(1)} />
+                      <Tab label="Detailed invoice Report" {...a11yProps(0)} />
+                      <Tab label="Invoice Deleted report " {...a11yProps(1)} />
                     </Tabs>
                   </AccordionDetails>
                 </Accordion>
               </Box>
-              <Box sx={{width:"80%"}}>
-              <CustomTabPanel value={value} index={0}>
-                <InvoiceItem1/>
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={1}>
-              
-            </CustomTabPanel>
+              <Box sx={{ width: "80%" }}>
+                <CustomTabPanel value={value} index={0}>
+                  <InvoiceItem2 />
+                </CustomTabPanel>
+                <CustomTabPanel value={value} index={1}>
+                  <InvoiceItem1 />
+                </CustomTabPanel>
               </Box>
             </Box>
           </Box>

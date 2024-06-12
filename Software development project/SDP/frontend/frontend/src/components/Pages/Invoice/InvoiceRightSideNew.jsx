@@ -13,8 +13,18 @@ import { InvoiceContext } from "../../../Contexts/Contexts";
 import YoutubeSearchedForIcon from "@mui/icons-material/YoutubeSearchedFor";
 import MousePopOver from "../../SubComponents/AlertComponents/MousePopOver";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { faAddressCard } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import { useTheme } from "@emotion/react";
+import { faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons";
 function InvoiceRightSideNew() {
+  const textFieldStyle = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "12px",
+    },
+  };
+  const theme = useTheme();
   const [idFormData, setIdFormData] = useState({
     id: "",
   });
@@ -172,8 +182,12 @@ function InvoiceRightSideNew() {
       elevation={3}
     >
       <form noValidate onSubmit={handleSubmitId}>
-        <Typography>Equipment Form</Typography>
-        <hr />
+        <Box ml={-2} mt={-2}>
+          <FontAwesomeIcon
+            icon={faScrewdriverWrench}
+            style={{ fontSize: "2.8rem", color: theme.palette.primary[100] }}
+          />
+        </Box>
 
         <Box sx={{ display: "flex", height: "80px" }}>
           <FormLabel
@@ -189,6 +203,7 @@ function InvoiceRightSideNew() {
             ID
           </FormLabel>
           <TextField
+            sx={textFieldStyle}
             id="id"
             label="ID"
             name="id"
@@ -229,6 +244,8 @@ function InvoiceRightSideNew() {
               disabled={true}
               fullWidth
               id="name"
+              sx={textFieldStyle}
+
               label={eqName || "Name"}
               name="name"
               type="text"
@@ -251,6 +268,8 @@ function InvoiceRightSideNew() {
             </FormLabel>
             <TextField
               fullWidth
+              sx={textFieldStyle}
+              size=""
               disabled={addButtonDisable}
               id="quantity"
               label={["remaining : ", eqQuantity || "No equipment found"]}

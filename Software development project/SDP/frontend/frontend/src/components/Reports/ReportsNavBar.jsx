@@ -8,8 +8,11 @@ function ReportsNavBar() {
   const theme = useTheme();
   const reportCategoryButton = {
     width: "100vw",
-    backgroundColor: theme.palette.primary[50],
-    borderRadius: "5px",
+    backgroundColor: theme.palette.primary[300],
+    borderRadius: "50px",
+    border:"0",
+    marginBottom:10,
+    color:"white",
   };
   return (
     <>

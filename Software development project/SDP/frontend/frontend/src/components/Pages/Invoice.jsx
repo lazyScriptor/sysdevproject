@@ -32,8 +32,15 @@ import InvoiceHandOverForm from "./Invoice/InvoiceHandOverForm.jsx";
 import FeedbackComponent from "../SubComponents/FeedbackComponent.jsx";
 import CompleteInvoiceTable from "./Invoice/CompleteInvoiceTable.jsx";
 import InvoicePdf from "./Invoice/InvoicePdf.jsx";
-
+import { useTheme } from "@emotion/react";
+import { faAddressCard } from "@fortawesome/free-regular-svg-icons";
+const textFieldStyle = {
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "12px",
+  },
+};
 function Invoice() {
+  const theme=useTheme();
   const {
     fullDetailsEquipmentArray,
     setFullDetailsEquipmentArray,
@@ -80,7 +87,6 @@ function Invoice() {
     return () => clearInterval(interval); // Cleanup interval on component unmount
   }, []);
 
-
   const [data, setData] = useState({
     cus_fname: "",
     cus_address1: " ",
@@ -106,39 +112,46 @@ function Invoice() {
   const { boolvalue, setBoolvalue, userData, setUserData } =
     useContext(PopupContext);
 
-
-  
-
   const handleSearchPhoneNumberorNic = async () => {
     if (!phoneNumberorNic) {
       setValidationMessage("Phone number, NIC, or customer ID is required");
       return;
     }
-  
+
     const trimmedValue = phoneNumberorNic.trim();
-  
-    if (!isValidNIC(trimmedValue) && !isValidPhoneNumber(trimmedValue) && !isValidId(trimmedValue)) {
+
+    if (
+      !isValidNIC(trimmedValue) &&
+      !isValidPhoneNumber(trimmedValue) &&
+      !isValidId(trimmedValue)
+    ) {
       setValidationMessage("Invalid phone number, NIC, or ID format");
       return;
     }
-  
+
     setValidationMessage("");
-  
+
     try {
       let res;
       if (isValidId(trimmedValue)) {
-        res = await axios.get(`http://localhost:8085/getCustomerbyPhoneNumberOrNic/${trimmedValue}`);
+        res = await axios.get(
+          `http://localhost:8085/getCustomerbyPhoneNumberOrNic/${trimmedValue}`
+        );
       } else {
-        res = await axios.get(`http://localhost:8085/getCustomerbyPhoneNumberOrNic/${trimmedValue}`);
+        res = await axios.get(
+          `http://localhost:8085/getCustomerbyPhoneNumberOrNic/${trimmedValue}`
+        );
       }
-  
+
       const data = res.data;
-  
+
       if (Array.isArray(data) && data.length > 0) {
         setData(data[0]);
         updateValue("customerDetails", data[0]);
       } else if (data.message) {
-        setValidationMessage("No customer found with this ID, phone number, or NIC");
+        setValidationMessage(
+          "No customer found with this ID, phone number, or NIC"
+        );
         setData({
           cus_fname: "",
           cus_address1: "",
@@ -175,25 +188,26 @@ function Invoice() {
       console.error("Error in handleSearchPhoneNumberorNic:", error);
     }
   };
-  
+
   const isValidId = (id) => {
     const validIdFormat = /^\d{1,4}$/;
     return validIdFormat.test(id) && parseInt(id) < 10000;
-  }
-  
+  };
+
   const isValidNIC = (nic) => {
     const nineDigitsAndV = /^[0-9]{9}v$/i;
     const twelveDigits = /^[0-9]{12}$/;
     return nineDigitsAndV.test(nic) || twelveDigits.test(nic);
   };
-  
+
   const isValidPhoneNumber = (phoneNumber) => {
     phoneNumber = phoneNumber.replace(/[-\s]/g, "").trim();
     const validFormatCheck1 = /^[1-9]\d{8}$/;
     const validFormatCheck2 = /^[0]\d{9}$/;
-    return validFormatCheck1.test(phoneNumber) || validFormatCheck2.test(phoneNumber);
+    return (
+      validFormatCheck1.test(phoneNumber) || validFormatCheck2.test(phoneNumber)
+    );
   };
-  
 
   const handleCreateNew = async () => {
     localStorage.removeItem("CIObject");
@@ -333,7 +347,7 @@ function Invoice() {
             <Button onClick={handleCreateNew} variant="contained">
               Create new
             </Button>
-            <Box sx={{width:"180px"}}>
+            <Box sx={{ width: "180px" }}>
               <h5>Invoice ID: {invoiceObject.InvoiceID}</h5>
               {updateBtnStatus ? (
                 <h6>{new Date(invoiceObject.createdDate).toLocaleString()}</h6>
@@ -386,19 +400,27 @@ function Invoice() {
                 borderRadius: 3,
               }}
             >
-              <Box
+                  <Box
+                    width={"100px"}
+                    height={"100px"}
+                    position={"absolute"}
+                    top={95}
+                    left={480}
+                  >
+                    <FontAwesomeIcon icon={faAddressCard}  size="2xl" style={{fontSize:"3rem",color:theme.palette.primary[100]}} />
+                  </Box>
+              {/* <Box
                 sx={{
                   display: "flex",
                   width: "20%",
                   flexDirection: "column",
-                  justifyContent: "start",
+                  justifyContent: "space-evenly",
                   alignItems: "end",
+
                   mr: 2,
-                  pt: 5,
-                  gap: 8.3,
                 }}
               >
-                <FormLabel sx={{ fontSize: "12px" }}> </FormLabel>
+
                 <FormLabel sx={{ fontSize: "15px" }}>Customer Name</FormLabel>
                 <FormLabel sx={{ fontSize: "15px" }}>
                   Customer Address
@@ -407,7 +429,7 @@ function Invoice() {
                 <FormLabel sx={{ fontSize: "15px" }}>
                   Customer Phone number
                 </FormLabel>
-              </Box>
+              </Box> */}
               <Box
                 sx={{
                   display: "flex",
@@ -432,7 +454,7 @@ function Invoice() {
                       setValidationMessage("");
                     }}
                     value={phoneNumberorNic}
-                    sx={{ width: "350px" }}
+                    sx={[{ width: "350px" },textFieldStyle]}
                     id="outlined-basic"
                     label="Search with phone number or NIC"
                     variant="outlined"
@@ -475,6 +497,7 @@ function Invoice() {
 
                 <Box>
                   <TextField
+                  sx={[textFieldStyle]}
                     fullWidth
                     disabled
                     value={
@@ -482,12 +505,13 @@ function Invoice() {
                         ? ""
                         : invoiceObject.customerDetails.cus_fname
                     }
-                    label=""
+                    label="first name"
                     variant="outlined"
                   />
                 </Box>
                 <Box>
                   <TextField
+                  sx={[textFieldStyle]}
                     fullWidth
                     disabled
                     value={
@@ -502,6 +526,7 @@ function Invoice() {
                 <Box sx={{ display: "flex", gap: 4 }}>
                   <TextField
                     disabled
+                    sx={[textFieldStyle]}
                     value={
                       invoiceObject.customerDetails.nic == undefined
                         ? ""
@@ -515,7 +540,7 @@ function Invoice() {
                   <TextField
                     fullWidth
                     disabled
-                    sx={{}}
+                    sx={[textFieldStyle]}
                     value={
                       invoiceObject.customerDetails.cus_phone_number ==
                       undefined

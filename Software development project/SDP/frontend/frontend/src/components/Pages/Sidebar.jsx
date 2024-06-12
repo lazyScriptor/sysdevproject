@@ -126,12 +126,6 @@ function Sidebar() {
             <hr />
             <DashboardCategoryBtn
               handlefunction={handleShow}
-              name="Settings"
-              icon={faHouse}
-              destination="/Settings"
-            />
-            <DashboardCategoryBtn
-              handlefunction={handleShow}
               name="Logout"
               icon={faRightFromBracket}
               destination="/"

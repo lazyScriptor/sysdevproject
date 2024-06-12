@@ -42,6 +42,7 @@ import {
   getIncompleteRentals,
   getDeletedInvoices,
   deleteEquipmentById,
+  getCombinedInvoiceReports,
 } from "./database.js";
 
 const app = express();
@@ -656,7 +657,26 @@ app.get('/reports/getDeletedInvoices', async (req, res) => {
   }
 });
 
+app.get('/reports/getCombinedInvoiceReports', async (req, res) => {
+  let { start_date, end_date } = req.query;
 
+  // If start_date is not provided, set it to the Unix epoch (1970-01-01)
+  if (!start_date) {
+    start_date = new Date(0).toISOString().split('T')[0];
+  }
+
+  // If end_date is not provided, set it to today's date
+  if (!end_date) {
+    end_date = new Date().toISOString().split('T')[0];
+  }
+
+  try {
+    const data = await getCombinedInvoiceReports(start_date, end_date);
+    res.json({ status: true, response: data });
+  } catch (error) {
+    res.status(500).json({ status: false, error: "Failed to retrieve combined invoice reports" });
+  }
+});
 dotenv.config();
 const port = process.env.PORT;
 app.listen(port, () => {

@@ -38,13 +38,11 @@ export async function loginValidate(userObject) {
     return ["/"];
   }
 }
-
 export async function getUsers() {
   const [users] = await pool.query("SELECT * FROM users");
   console.log(users);
   return users;
 }
-
 export async function getCustomers() {
   const [customers] = await pool.query(
     "SELECT * FROM customer WHERE cus_delete_status = 0"
@@ -117,27 +115,29 @@ export async function getEquipmentbyName(name) {
 }
 export async function deleteEquipmentById(id) {
   try {
-    const [result] = await pool.query('UPDATE equipment SET eq_delete_status = 1 WHERE eq_id = ?', [id]);
+    const [result] = await pool.query(
+      "UPDATE equipment SET eq_delete_status = 1 WHERE eq_id = ?",
+      [id]
+    );
     if (result.affectedRows === 0) {
-
       return {
         success: false,
         statusCode: 404,
-        message: 'Equipment not found',
+        message: "Equipment not found",
       };
     }
     return {
       success: true,
       statusCode: 200,
-      message: 'Equipment deleted successfully',
+      message: "Equipment deleted successfully",
       affectedRows: result.affectedRows,
     };
   } catch (error) {
-    console.error('Back end error occurred in delete equipment:', error);
+    console.error("Back end error occurred in delete equipment:", error);
     return {
       success: false,
       statusCode: 500,
-      message: 'Error deleting equipment',
+      message: "Error deleting equipment",
       error: error,
     };
   }
@@ -230,7 +230,6 @@ export async function setEquipment(bodydata) {
     throw error;
   }
 }
-
 export async function getCustomerbyNIC(nic) {
   const [customers] = await pool.query(
     "SELECT * FROM customer WHERE nic =? AND cus_delete_status = 0",
@@ -272,7 +271,6 @@ export async function getCustomerbyLastName(LastName) {
   console.log(customers);
   return customers;
 }
-
 export async function getCustomerbyPhoneNumberOrNic(searchValue) {
   if (searchValue < 10000) {
     const [customers] = await pool.query(
@@ -298,7 +296,6 @@ export async function getCustomerbyPhoneNumberOrNic(searchValue) {
     }
   }
 }
-
 export async function getCustomerbyAddress1(SAddress1) {
   const [customers] = await pool.query(
     "SELECT * FROM customer WHERE cus_address1 LIKE ? AND cus_delete_status = 0",
@@ -315,7 +312,6 @@ export async function getCustomerbyAddress2(SAddress2) {
   console.log(customers);
   return customers;
 }
-
 export async function getUserRole(userName) {
   const [user] = await pool.query(
     `SELECT userRole.ur_role FROM users JOIN userRoleMap ON users.user_id=userRoleMap.urm_userid JOIN userRole ON userRoleMap.urm_roleid=userRole.ur_roleid WHERE username=?`,
@@ -324,7 +320,6 @@ export async function getUserRole(userName) {
   console.log(user);
   return user;
 }
-
 export async function deleteCustomer(id) {
   try {
     // await pool.query("DELETE FROM customer WHERE cus_id = ?", [id]);
@@ -405,7 +400,6 @@ export async function getInvoiceId() {
     console.error("Error in the updateCustomerDetails db connection", error);
   }
 }
-
 export async function createInvoiceDetails(InvoiceCompleteDetail) {
   const now = new Date();
   const year = now.getFullYear();
@@ -551,7 +545,6 @@ export async function createInvoiceDetails(InvoiceCompleteDetail) {
     }
   }
 }
-
 export async function getInvoiceDetails(invoiceIdSearch) {
   try {
     // Fetch customer, invoice, equipment, and additional invoice details
@@ -593,7 +586,7 @@ export async function getInvoiceDetails(invoiceIdSearch) {
           .toString()
           .padStart(2, "0")}T${hour.toString().padStart(2, "0")}:${minutes
           .toString()
-          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+          .padStart(2, "0")}`;
 
         return formattedDateTime;
       }
@@ -685,7 +678,6 @@ export async function getInvoiceDetails(invoiceIdSearch) {
     return false;
   }
 }
-
 export async function updateInvoiceDetails(InvoiceCompleteDetail) {
   // Update invoice details
   try {
@@ -865,7 +857,6 @@ export async function getUserDetails() {
     throw error;
   }
 }
-
 export async function setUserDetails(object) {
   const {
     firstname,
@@ -936,7 +927,6 @@ export async function updateUserRole(userId, role, password) {
     throw error; // Throw the error to be caught in the calling function
   }
 }
-
 export async function reportsGetCustomerRatings() {
   try {
     const [response] = await pool.query(`SELECT 
@@ -962,7 +952,6 @@ GROUP BY
     console.log("This is the backend reports customerRatings", error);
   }
 }
-
 export async function reportsGetCustomerInvoiceDetails() {
   try {
     const [response] = await pool.query(`
@@ -1035,8 +1024,8 @@ export async function getEquipmentRevenueReport(startDate, endDate) {
       `SELECT 
       equipment.eq_id,
       equipment.eq_name,
-      SUM(equipment.eq_rental * COALESCE(invoiceEquipment.duration_in_days, 1)) AS total_revenue
-    FROM 
+      SUM(equipment.eq_rental * invoiceEquipment.duration_in_days * invoiceEquipment.inveq_borrowqty) AS total_revenue
+      FROM 
       equipment
      JOIN 
       invoiceEquipment ON equipment.eq_id = invoiceEquipment.inveq_eqid
@@ -1060,7 +1049,6 @@ export async function getEquipmentRevenueReport(startDate, endDate) {
     throw error;
   }
 }
-
 export async function getUnderutilizedEquipment(startDate, endDate) {
   try {
     const [rows] = await pool.query(
@@ -1092,7 +1080,6 @@ export async function getUnderutilizedEquipment(startDate, endDate) {
     throw error;
   }
 }
-
 export async function getEquipmentRentalDetails(startDate, endDate) {
   try {
     const [rows] = await pool.query(
@@ -1121,7 +1108,6 @@ export async function getEquipmentRentalDetails(startDate, endDate) {
     throw error;
   }
 }
-
 export async function getIncompleteRentals() {
   try {
     const [rows] = await pool.query(
@@ -1174,6 +1160,45 @@ export async function getDeletedInvoices(startDate, endDate) {
     return rows;
   } catch (error) {
     console.log("Error fetching deleted invoices report:", error);
+    throw error;
+  }
+}
+export async function getCombinedInvoiceReports(startDate, endDate) {
+  try {
+    const query = `
+      SELECT 
+    DATE_FORMAT(i.inv_createddate, '%Y-%m') AS month,
+    COUNT(DISTINCT i.inv_id) AS invoice_count,
+    SUM(p.invpay_amount) AS total_revenue, -- Sum of advance and payments made against the invoice
+    c.cus_fname AS first_name,
+    c.cus_lname AS last_name,
+    i.inv_id AS invoice_id,
+    i.inv_createddate AS created_date,
+    i.inv_updatedstatus AS updated_status,
+    SUM((e.eq_rental * ie.inveq_borrowqty) * DATEDIFF(ie.inveq_return_date, ie.inveq_borrow_date)) AS invoice_total_amount
+      FROM 
+    customer c
+      JOIN 
+    invoice i ON i.inv_cusid = c.cus_id
+      JOIN 
+    invoiceEquipment ie ON ie.inveq_invid = i.inv_id
+      JOIN 
+    equipment e ON e.eq_id = ie.inveq_eqid
+      LEFT JOIN 
+    invoicePayments p ON p.invpay_inv_id = i.inv_id
+      WHERE 
+    i.inv_createddate BETWEEN ? AND ?
+    AND ie.inveq_return_date IS NOT NULL
+      GROUP BY 
+    DATE_FORMAT(i.inv_createddate, '%Y-%m'),
+    c.cus_id, i.inv_id
+      ORDER BY 
+    DATE_FORMAT(i.inv_createddate, '%Y-%m'), i.inv_createddate;
+    `;
+    const [rows] = await pool.query(query, [startDate, endDate]);
+    return rows;
+  } catch (error) {
+    console.log("Error fetching combined invoice reports:", error);
     throw error;
   }
 }
