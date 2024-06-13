@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 import PictureAsPdfRoundedIcon from "@mui/icons-material/PictureAsPdfRounded";
 import { InvoicePdfWarehouseHandler } from "../../RoleBasedAccess/Warehouse handler/Invoice/InvoiceWarehouseHandler";
 import TemporaryBill from "../../SubComponents/TemporaryBill";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 function InvoiceDetailsWindowDown(props) {
   const [openDialog, setOpenDialog] = useState(false);
   const [openOtherDialog, setOpenOtherDialog] = useState(false);
@@ -311,34 +312,33 @@ function InvoiceDetailsWindowDown(props) {
           </Button>
         )}
         <Button
-        onClick={handlePdfButtonClick}
+          onClick={handlePdfButtonClick}
           variant="contained"
           sx={{ height: "60px", width: "20px", mt: 1 }}
         >
-          <PictureAsPdfRoundedIcon  sx={{ color: "white" }} />
+          <PictureAsPdfRoundedIcon sx={{ color: "white" }} />
         </Button>
         <Button
-        onClick={handleOtherDialogButtonClick}
-          variant="contained"
+          onClick={handleOtherDialogButtonClick}
+          variant="outlined"
           sx={{ height: "60px", width: "20px", mt: 1 }}
         >
-          <PictureAsPdfRoundedIcon  sx={{ color: "white" }} />
+          <ReceiptIcon />
         </Button>
       </Box>
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="lg" fullWidth>
-       
-        <DialogContent sx={{display:"flex",justifyContent:"center"}}>
-         <InvoicePdfWarehouseHandler/>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogContent sx={{ display: "flex", justifyContent: "center" }}>
+          <InvoicePdfWarehouseHandler />
         </DialogContent>
       </Dialog>
-      <Dialog
-        open={openOtherDialog}
-        onClose={handleCloseDialog}
-     
-      >
-       
+      <Dialog open={openOtherDialog} onClose={handleCloseDialog}>
         <DialogContent>
-          <TemporaryBill/>
+          <TemporaryBill />
         </DialogContent>
       </Dialog>
     </>

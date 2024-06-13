@@ -98,7 +98,9 @@ function InvoiceHandOverForm() {
     if (Object.keys(validationErrors).length === 0) {
       // Search for the equipment details in invoiceObject
       const equipment = invoiceObject.eqdetails.find(
-        (item) => item.eq_id == parseInt(idFormData.id.trim()) && item.inveq_return_date ==null
+        (item) =>
+          item.eq_id == parseInt(idFormData.id.trim()) &&
+          item.inveq_return_date == null
       );
       if (equipment) {
         // Set equipment details to state
@@ -144,53 +146,56 @@ function InvoiceHandOverForm() {
     e.preventDefault();
     const validationErrors = validateForm();
     setEqErrors(validationErrors);
-  
+
     if (Object.keys(validationErrors).length === 0) {
       const currentDate = dateformatter();
-  
+
       // Find the equipment in the invoiceObject where inveq_return_quantity is 0
       const index = invoiceObject.eqdetails.findIndex(
-        (item) => item.eq_id == parseInt(idFormData.id.trim()) && item.inveq_return_quantity == 0
+        (item) =>
+          item.eq_id == parseInt(idFormData.id.trim()) &&
+          item.inveq_return_quantity == 0
       );
-  
+
       if (index !== -1) {
         // Clone the equipment object to avoid mutating the original state directly
         const updatedEquipment = { ...invoiceObject.eqdetails[index] };
-  
+
         // Add additional key-value pairs
         updatedEquipment.inveq_return_quantity = parseInt(formData.quantity);
         updatedEquipment.inveq_return_date = currentDate;
-  
+
         // Update the equipment in the invoiceObject
         const updatedInvoiceObject = { ...invoiceObject };
         updatedInvoiceObject.eqdetails[index] = updatedEquipment;
-  
+
         // Set the updated invoiceObject state
         setInvoiceObject(updatedInvoiceObject);
-  
+
         // Reset form data
         setFormData({ name: "", quantity: "" });
-  
       } else {
         // Handle case when equipment is not found
-        console.error("Equipment not found in invoiceObject or already returned");
+        console.error(
+          "Equipment not found in invoiceObject or already returned"
+        );
       }
     }
   };
-  
-//   const handleHandover = () => {
-//     const validationErrors = validateForm();
-//     setEqErrors(validationErrors);
 
-//     if (Object.keys(validationErrors).length === 0) {
-//       console.log("This is the data", dateformatter());
-//       // Add your handover logic here, similar to handleSubmit
-//     }
-//   };
+  //   const handleHandover = () => {
+  //     const validationErrors = validateForm();
+  //     setEqErrors(validationErrors);
+
+  //     if (Object.keys(validationErrors).length === 0) {
+  //       console.log("This is the data", dateformatter());
+  //       // Add your handover logic here, similar to handleSubmit
+  //     }
+  //   };
 
   return (
     <Paper
-      sx={{ height: "55vh", width: "100%",p:2, borderRadius: 4 }}
+      sx={{ height: "55vh", width: "100%", p: 2, borderRadius: 4 }}
       elevation={3}
     >
       <form noValidate onSubmit={handleSubmitId}>
@@ -297,19 +302,20 @@ function InvoiceHandOverForm() {
             Rem Borrowed Stock: {eqQuantity}
           </Typography>
           <Box
-            sx={{ display: "flex", justifyContent: "space-evenly",pt:"45px" }}
+            sx={{ display: "flex", justifyContent: "space-evenly", pt: "45px" }}
           >
-
             <Button
+              sx={{ mt: 2.5 }}
               variant="contained"
               color="warning"
               customvariant="custom"
-            //   onClick={handleHandover}
+              //   onClick={handleHandover}
               type="submit"
             >
               Handover
             </Button>
             <Button
+              sx={{ mt: 2.5 }}
               variant="contained"
               color="error"
               customvariant="custom"

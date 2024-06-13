@@ -13,6 +13,8 @@ import {
 import { InvoiceContext } from "../../Contexts/Contexts";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
+
 
 const TemporaryBill = () => {
   const { invoiceObject } = useContext(InvoiceContext);
@@ -30,7 +32,7 @@ const TemporaryBill = () => {
 
     html2canvas(capture, options).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
-      
+
       // Calculate dimensions for the PDF
       const pdfWidth = canvas.width * 0.264583; // Convert px to mm (1px = 0.264583mm)
       const pdfHeight = canvas.height * 0.264583; // Convert px to mm (1px = 0.264583mm)
@@ -41,24 +43,18 @@ const TemporaryBill = () => {
         format: [pdfWidth, pdfHeight], // Custom dimensions
       });
 
-      doc.addImage(
-        imgData,
-        "PNG",
-        0,
-        0,
-        pdfWidth,
-        pdfHeight,
-      );
+      doc.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
 
       doc.save(`${name}-${invoiceid}-tempBill.pdf`);
     });
   };
 
   return (
-    <Box>
+    <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
       <div ref={billRef} className="bill">
         <Box
           component={Paper}
+          elevation={5}
           sx={{
             display: "flex",
             p: 2,
@@ -141,8 +137,17 @@ const TemporaryBill = () => {
           </Box>
         </Box>
       </div>
-      <Button onClick={() => handleDownload(invoiceObject.customerDetails.cus_fname, invoiceObject.InvoiceID)}>
-        Download PDF
+      <Button
+      sx={{width:"20px",mt:2,color:"white"}}
+      variant="contained"
+        onClick={() =>
+          handleDownload(
+            invoiceObject.customerDetails.cus_fname,
+            invoiceObject.InvoiceID
+          )
+        }
+      >
+        <BrowserUpdatedIcon/>
       </Button>
     </Box>
   );

@@ -132,7 +132,7 @@ export default function InvoicePaymentsTable() {
               }}
             >
               <TableCell align="center">
-                {new Date(payment.invpay_payment_date).toLocaleString()}
+                {payment.invpay_payment_date ? new Date(payment.invpay_payment_date).toLocaleDateString():''}
               </TableCell>
               <TableCell align="center">{payment.invpay_amount}</TableCell>
               <TableCell align="center">

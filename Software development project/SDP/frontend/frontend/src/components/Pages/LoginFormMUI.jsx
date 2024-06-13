@@ -53,7 +53,7 @@ function LoginFormMUI() {
 
   const schema = yup.object().shape({
     username: yup.string().required().min(3),
-    password: yup.string().min(3).max(10).required(),
+    password: yup.string().min(3).max(25).required(),
     // select: yup.required(),
   });
 

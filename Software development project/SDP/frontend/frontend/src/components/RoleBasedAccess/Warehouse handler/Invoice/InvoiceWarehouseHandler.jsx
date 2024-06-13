@@ -30,6 +30,7 @@ import BackspaceOutlinedIcon from "@mui/icons-material/BackspaceOutlined";
 import AddIcCallOutlinedIcon from "@mui/icons-material/AddIcCallOutlined";
 import ContactMailOutlinedIcon from "@mui/icons-material/ContactMailOutlined";
 import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
+import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 
 const handleDownload = (name, invoiceid) => {
   const capture = document.querySelector(`.invoice`);
@@ -217,18 +218,7 @@ export default function InvoiceWarehouseHandler() {
             alignItems={"center"}
           >
             <InvoicePdfWarehouseHandler />
-            <Button
-              onClick={() =>
-                handleDownload(
-                  invoiceObject.customerDetails.cus_fname,
-                  invoiceObject.InvoiceID
-                )
-              }
-              variant="contained"
-              sx={{ width: "90px", height: "100px", ml: 2, color: "white" }}
-            >
-              <PictureAsPdfOutlinedIcon fontSize={"large"} />
-            </Button>
+        
           </Box>
         </Box>
       </Box>
@@ -246,7 +236,9 @@ function InvoiceDocumentTable() {
       let total = 0;
       if (invoiceObject && invoiceObject.eqdetails) {
         total = invoiceObject.eqdetails.reduce((sum, item) => {
-          return sum + item.eq_rental * item.duration_in_days * item.inveq_borrowqty;
+          return (
+            sum + item.eq_rental * item.duration_in_days * item.inveq_borrowqty
+          );
         }, 0);
       }
       setSubTotal(total);
@@ -362,7 +354,8 @@ function InvoiceDocumentTable() {
                     borderRadius: "5px",
                   }}
                 >
-                  {row.eq_rental * row.duration_in_days * row.inveq_borrowqty} LKR
+                  {row.eq_rental * row.duration_in_days * row.inveq_borrowqty}{" "}
+                  LKR
                 </TableCell>
               </TableRow>
             ))}
@@ -428,90 +421,104 @@ export function InvoicePdfWarehouseHandler() {
     console.log(invoiceObject);
   }, [invoiceObject]);
   return (
-    <div className="invoice">
-      <Box
-        display={"flex"}
-        flexDirection={"column"}
-        component={Paper}
-        elevation={10}
-        sx={{
-          width: "800px",
-          minHeight: "80vh",
-          height: "auto",
-          p: 3,
-          mt: 5,
-          borderRadius: 3,
-        }}
-      >
-        {/* Top */}
-        <Box sx={{ width: "100%", height: "20%", display: "flex" }}>
-          <Box display={"flex"} alignItems={"end"}>
-            <Typography variant="h5">Invoice to :</Typography>{" "}
-          </Box>
-          <Box flexGrow={1} />
-          <Box width={"40%"}>
-            <Typography variant="h4" align="center" sx={{ p: 4 }}>
-              <strong>INVOICE</strong>
-            </Typography>
-            <Stack gap={1}>
-              <Typography>Invoice id : {invoiceObject.InvoiceID}</Typography>
-              <Typography>
-                Date :{" "}
-                {invoiceObject.createdDate == null
-                  ? ""
-                  : new Date(invoiceObject.createdDate).toLocaleDateString()}
+    <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
+      <div className="invoice">
+        <Box
+          display={"flex"}
+          flexDirection={"column"}
+          component={Paper}
+          elevation={10}
+          sx={{
+            width: "800px",
+            minHeight: "80vh",
+            height: "auto",
+            p: 3,
+            mt: 5,
+            borderRadius: 3,
+          }}
+        >
+          {/* Top */}
+          <Box sx={{ width: "100%", height: "20%", display: "flex" }}>
+            <Box display={"flex"} alignItems={"end"}>
+              <Typography variant="h5">Invoice to :</Typography>{" "}
+            </Box>
+            <Box flexGrow={1} />
+            <Box width={"40%"}>
+              <Typography variant="h4" align="center" sx={{ p: 4 }}>
+                <strong>INVOICE</strong>
               </Typography>
-              <Typography>
-                Time :{" "}
-                {invoiceObject.createdDate == null
-                  ? ""
-                  : new Date(invoiceObject.createdDate).toLocaleTimeString()}
-              </Typography>
-            </Stack>
+              <Stack gap={1}>
+                <Typography>Invoice id : {invoiceObject.InvoiceID}</Typography>
+                <Typography>
+                  Date :{" "}
+                  {invoiceObject.createdDate == null
+                    ? ""
+                    : new Date(invoiceObject.createdDate).toLocaleDateString()}
+                </Typography>
+                <Typography>
+                  Time :{" "}
+                  {invoiceObject.createdDate == null
+                    ? ""
+                    : new Date(invoiceObject.createdDate).toLocaleTimeString()}
+                </Typography>
+              </Stack>
+            </Box>
           </Box>
-        </Box>
-        {/* Middle */}
-        <Box sx={{ width: "100%", height: "20%", display: "flex" }}>
-          <Box width={"60%"}>
-            <Typography variant="h4">
-              {invoiceObject.customerDetails.cus_fname}{" "}
-              {invoiceObject.customerDetails.cus_lname}
-            </Typography>
-            <Box display={"flex"} sx={{ height: "80%", mt: 2 }}>
-              <Box height={"100%"}>
-                {invoiceObject.customerDetails.cus_fname && (
-                  <>
-                    <AddIcCallOutlinedIcon fontSize={"10px"} sx={{ mb: 2 }} />
-                    <ContactMailOutlinedIcon fontSize={"10px"} />
-                  </>
-                )}
-              </Box>
-              <Box width={"100%"}>
-                <Box sx={{ mb: 1.1 }}>
-                  <Typography>
-                    {invoiceObject.customerDetails.cus_phone_number}
-                  </Typography>
+          {/* Middle */}
+          <Box sx={{ width: "100%", height: "20%", display: "flex" }}>
+            <Box width={"60%"}>
+              <Typography variant="h4">
+                {invoiceObject.customerDetails.cus_fname}{" "}
+                {invoiceObject.customerDetails.cus_lname}
+              </Typography>
+              <Box display={"flex"} sx={{ height: "80%", mt: 2 }}>
+                <Box height={"100%"}>
+                  {invoiceObject.customerDetails.cus_fname && (
+                    <>
+                      <AddIcCallOutlinedIcon fontSize={"10px"} sx={{ mb: 2 }} />
+                      <ContactMailOutlinedIcon fontSize={"10px"} />
+                    </>
+                  )}
                 </Box>
-                <Box>
-                  <Typography>
-                    {invoiceObject.customerDetails.cus_address1}
-                  </Typography>
-                  <Typography>
-                    {invoiceObject.customerDetails.cus_address2}
-                  </Typography>
+                <Box width={"100%"}>
+                  <Box sx={{ mb: 1.1 }}>
+                    <Typography>
+                      {invoiceObject.customerDetails.cus_phone_number}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography>
+                      {invoiceObject.customerDetails.cus_address1}
+                    </Typography>
+                    <Typography>
+                      {invoiceObject.customerDetails.cus_address2}
+                    </Typography>
+                  </Box>
                 </Box>
               </Box>
             </Box>
+            <Box flexGrow={1} />
+            <Box width="40%"></Box>
           </Box>
-          <Box flexGrow={1} />
-          <Box width="40%"></Box>
+          {/* body */}
+          <Box sx={{ width: "100%", height: "60%" }}>
+            {" "}
+            <InvoiceDocumentTable />
+          </Box>
         </Box>
-        {/* body */}
-        <Box sx={{ width: "100%", height: "60%" }}>
-          {" "}
-          <InvoiceDocumentTable />
-        </Box>
-      </Box>
-    </div>
+      </div>
+      <Button
+        sx={{ width: "20px", mt: 2, color: "white" }}
+        variant="contained"
+        onClick={() =>
+          handleDownload(
+            invoiceObject.customerDetails.cus_fname,
+            invoiceObject.InvoiceID
+          )
+        }
+      >
+        <BrowserUpdatedIcon />
+      </Button>
+    </Box>
   );
 }

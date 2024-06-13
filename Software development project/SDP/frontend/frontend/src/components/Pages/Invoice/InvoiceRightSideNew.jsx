@@ -300,6 +300,7 @@ function InvoiceRightSideNew() {
               display={"flex"}
               flexDirection={"column"}
               alignItems={"center"}
+              sx={{mt:7}}
             >
               <Button
                 disabled={addButtonDisable}
@@ -326,15 +327,16 @@ function InvoiceRightSideNew() {
                 />
               )}
             </Box>
-            <Button
+            {/* <Button
               variant="contained"
               color="warning"
               customvariant="custom"
               onClick={handleHandover}
             >
               Handover
-            </Button>
+            </Button> */}
             <Button
+             sx={{mt:7}}
               variant="contained"
               color="error"
               customvariant="custom"
