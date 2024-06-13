@@ -9,6 +9,8 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { useTheme } from "@mui/material";
+
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -22,7 +24,14 @@ import {
   faInfo,
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
-import { Button, FormControl, Grid, Stack, TextField } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  Grid,
+  Stack,
+  TextField,
+  makeStyles,
+} from "@mui/material";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
@@ -31,6 +40,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Swal from "sweetalert2";
 import Lottie from "react-lottie";
 import CustomerPage from "../../assets/CustomerPage.json";
+
 
 function Row(props) {
   const { row, searchValue } = props;
@@ -80,22 +90,22 @@ function Row(props) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
+        <TableCell align="center" component="th" scope="row">
           {highlightText(row.cus_id, searchValue)}
         </TableCell>
         <TableCell align="center">
           {highlightText(`${row.cus_fname} ${row.cus_lname}`, searchValue)}
         </TableCell>
-        <TableCell align="right">
+        <TableCell align="center">
           {highlightText(row.cus_phone_number, searchValue)}
         </TableCell>
-        <TableCell align="right">
+        <TableCell align="center">
           {highlightText(row.nic, searchValue)}
         </TableCell>
-        <TableCell align="right">
+        <TableCell align="center">
           {highlightText(row.cus_address1, searchValue)}
         </TableCell>
-        <TableCell align="right">
+        <TableCell align="center">
           {highlightText(row.cus_address2, searchValue)}
         </TableCell>
       </TableRow>
@@ -129,17 +139,36 @@ export default function CustomerTableNew() {
   return (
     <>
       <CustomerPageUpper setData={setData} setSearchValue={setSearchValue} />
-      <TableContainer component={Paper} sx={{ mt: 16 }}>
+      <TableContainer component={Paper} sx={{ mt: 16, height: "55vh" }}>
         <Table aria-label="collapsible table">
           <TableHead>
-            <TableRow>
+            <TableRow
+              sx={{
+                position: "sticky",
+                top: 0,
+                zIndex: 1000, // Adjust the z-index as needed
+                backgroundColor: (theme) => theme.palette.primary[600], // Optional: Customize the header background color
+              }}
+            >
               <TableCell />
-              <TableCell>Customer Id</TableCell>
-              <TableCell align="center">Customer Name</TableCell>
-              <TableCell align="right">Customer Phone number</TableCell>
-              <TableCell align="right">Customer NIC</TableCell>
-              <TableCell align="right">Customer Address line 1</TableCell>
-              <TableCell align="right">Customer Address line 2</TableCell>
+              <TableCell sx={{ color: "white" }} align="center">
+                Customer Id
+              </TableCell>
+              <TableCell sx={{ color: "white" }} align="center">
+                Customer Name
+              </TableCell>
+              <TableCell sx={{ color: "white" }} align="center">
+                Customer Phone number
+              </TableCell>
+              <TableCell sx={{ color: "white" }} align="center">
+                Customer NIC
+              </TableCell>
+              <TableCell sx={{ color: "white" }} align="center">
+                Customer Address line 1
+              </TableCell>
+              <TableCell sx={{ color: "white" }} align="center">
+                Customer Address line 2
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -193,15 +222,17 @@ export function CustomerPageUpper(props) {
           <Box></Box>
           <Box display="flex" justifyContent="center">
             <TextField
+              elevation={10}
+              component={Paper}
               label={[<ManageSearchIcon />, " Search by anything"]}
               onChange={(e) => {
                 trimvariablesForAdvanceSearch(e.target.value);
               }}
-              sx={{ width: "420px" }}
+              sx={[{ width: "420px" }]}
             />
           </Box>
-          <Box display="flex" justifyContent="flex-start">
-            <Box>
+          <Box display="flex">
+            <Box display="flex" justifyContent={"center"}>
               <CustomerPageMiddle />
             </Box>
           </Box>
@@ -212,6 +243,7 @@ export function CustomerPageUpper(props) {
 }
 
 export function CustomerPageMiddle() {
+  const theme = useTheme();
   const [toogle, setToogle] = useState(false);
   const [dbCustomerFound, setDbCustomerFound] = useState("");
 
@@ -364,8 +396,17 @@ export function CustomerPageMiddle() {
   };
   return (
     <>
-      <form noValidate onSubmit={handleSubmit(onSubmit)}>
-        {/* <TextField
+      <Paper
+        elevation={1}
+        sx={{
+          backgroundColor: (theme) => theme.palette.primary[25],
+          p: 5,
+          borderRadius: 3,
+          width: "95%",
+        }}
+      >
+        <form noValidate onSubmit={handleSubmit(onSubmit)}>
+          {/* <TextField
               disabled={true}
               id="customer-id"
               name="id"
@@ -375,229 +416,239 @@ export function CustomerPageMiddle() {
               sx={{ width: "10%", mb: 2, ml: 2 }}
               value={customer.id}
             /> */}
-        <Grid
-          container
-          spacing={2}
-          p={2}
-          ml={1}
-          width={"100%"}
-          height={"100%"}
-          borderRadius={2}
-        >
-          {/* Left side Box names,mic,pno*/}
-          <Grid item xs={4}>
-            <FormControl sx={{ gap: "20px", width: "100%" }}>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Box className="dey">
-                    <TextField
-                      disabled={toogle}
-                      id="customer-fname"
-                      name="fname"
-                      variant="outlined"
-                      inputProps={{ ...register("fname") }}
-                      error={!!errors.fname}
-                      helperText={errors.fname?.message}
-                      size="small"
-                      label="first name"
-                      sx={textFieldStyle}
-                      value={customer.fname}
-                      onChange={handleInputChange}
-                    />
-                  </Box>
+          <Grid
+            container
+            spacing={2}
+            p={2}
+            ml={1}
+            width={"100%"}
+            height={"100%"}
+            borderRadius={2}
+          >
+            {/* Left side Box names,mic,pno*/}
+            <Grid item xs={4}>
+              <FormControl sx={{ gap: "20px", width: "100%" }}>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <Box className="dey">
+                      <TextField
+                        disabled={toogle}
+                        id="customer-fname"
+                        name="fname"
+                        variant="outlined"
+                        inputProps={{ ...register("fname") }}
+                        error={!!errors.fname}
+                        helperText={errors.fname?.message}
+                        size="small"
+                        label="first name"
+                        sx={textFieldStyle}
+                        value={customer.fname}
+                        onChange={handleInputChange}
+                      />
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box className="dey">
+                      <TextField
+                        disabled={toogle}
+                        id="customer-lname"
+                        name="lname"
+                        label="last name"
+                        inputProps={{ ...register("lname") }}
+                        error={!!errors.lname}
+                        helperText={errors.lname?.message}
+                        variant="outlined"
+                        size="small"
+                        sx={textFieldStyle}
+                        value={customer.lname}
+                        onChange={handleInputChange}
+                      />
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box className="dey">
+                      <TextField
+                        disabled={toogle}
+                        id="customer-nic"
+                        name="nic"
+                        label="national ID card number"
+                        inputProps={{ ...register("nic") }}
+                        error={!!errors.nic}
+                        helperText={errors.nic?.message}
+                        variant="outlined"
+                        size="small"
+                        sx={textFieldStyle}
+                        value={customer.nic}
+                        onChange={handleInputChange}
+                      />
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box className="dey">
+                      <TextField
+                        disabled={toogle}
+                        id="customer-phoneNumber"
+                        label="phone number"
+                        name="phoneNumber"
+                        inputProps={{ ...register("phoneNumber") }}
+                        error={!!errors.phoneNumber}
+                        helperText={errors.phoneNumber?.message}
+                        variant="outlined"
+                        size="small"
+                        sx={textFieldStyle}
+                        value={customer.phoneNumber}
+                        onChange={handleInputChange}
+                      />
+                    </Box>
+                  </Grid>
                 </Grid>
-                <Grid item xs={6}>
-                  <Box className="dey">
-                    <TextField
-                      disabled={toogle}
-                      id="customer-lname"
-                      name="lname"
-                      label="last name"
-                      inputProps={{ ...register("lname") }}
-                      error={!!errors.lname}
-                      helperText={errors.lname?.message}
-                      variant="outlined"
-                      size="small"
-                      sx={textFieldStyle}
-                      value={customer.lname}
-                      onChange={handleInputChange}
-                    />
-                  </Box>
-                </Grid>
-                <Grid item xs={6}>
-                  <Box className="dey">
-                    <TextField
-                      disabled={toogle}
-                      id="customer-nic"
-                      name="nic"
-                      label="national ID card number"
-                      inputProps={{ ...register("nic") }}
-                      error={!!errors.nic}
-                      helperText={errors.nic?.message}
-                      variant="outlined"
-                      size="small"
-                      sx={textFieldStyle}
-                      value={customer.nic}
-                      onChange={handleInputChange}
-                    />
-                  </Box>
-                </Grid>
-                <Grid item xs={6}>
-                  <Box className="dey">
-                    <TextField
-                      disabled={toogle}
-                      id="customer-phoneNumber"
-                      label="phone number"
-                      name="phoneNumber"
-                      inputProps={{ ...register("phoneNumber") }}
-                      error={!!errors.phoneNumber}
-                      helperText={errors.phoneNumber?.message}
-                      variant="outlined"
-                      size="small"
-                      sx={textFieldStyle}
-                      value={customer.phoneNumber}
-                      onChange={handleInputChange}
-                    />
-                  </Box>
-                </Grid>
-              </Grid>
-            </FormControl>
-          </Grid>
+              </FormControl>
+            </Grid>
 
-          {/* address column */}
-          <Grid item xs={3}>
-            <FormControl sx={{ gap: "20px", width: "100%", pr: 1 }}>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Box className="dey">
-                    <TextField
-                      disabled={toogle}
-                      id="customer-address1"
-                      name="address1"
-                      inputProps={{ ...register("address1") }}
-                      error={!!errors.address1}
-                      helperText={errors.address1?.message}
-                      label="address line1"
-                      variant="outlined"
-                      size="small"
-                      sx={textFieldStyle}
-                      value={customer.address1}
-                      onChange={handleInputChange}
-                    />
-                  </Box>
+            {/* address column */}
+            <Grid item xs={3}>
+              <FormControl sx={{ gap: "20px", width: "100%", pr: 1 }}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Box className="dey">
+                      <TextField
+                        disabled={toogle}
+                        id="customer-address1"
+                        name="address1"
+                        inputProps={{ ...register("address1") }}
+                        error={!!errors.address1}
+                        helperText={errors.address1?.message}
+                        label="address line1"
+                        variant="outlined"
+                        size="small"
+                        sx={textFieldStyle}
+                        value={customer.address1}
+                        onChange={handleInputChange}
+                      />
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Box className="dey">
+                      <TextField
+                        disabled={toogle}
+                        id="customer-address2"
+                        name="address2"
+                        inputProps={{ ...register("address2") }}
+                        error={!!errors.address2}
+                        helperText={errors.address2?.message}
+                        label="address line2"
+                        variant="outlined"
+                        size="small"
+                        sx={textFieldStyle}
+                        value={customer.address2}
+                        onChange={handleInputChange}
+                      />
+                    </Box>
+                  </Grid>
                 </Grid>
-
-                <Grid item xs={12}>
-                  <Box className="dey">
-                    <TextField
-                      disabled={toogle}
-                      id="customer-address2"
-                      name="address2"
-                      inputProps={{ ...register("address2") }}
-                      error={!!errors.address2}
-                      helperText={errors.address2?.message}
-                      label="address line2"
-                      variant="outlined"
-                      size="small"
-                      sx={textFieldStyle}
-                      value={customer.address2}
-                      onChange={handleInputChange}
-                    />
-                  </Box>
-                </Grid>
-              </Grid>
-            </FormControl>
-          </Grid>
-          {/* validation part column */}
-          <Grid item xs={2}>
-            <Stack component={Paper} elevation={1} sx={{ p: 1 }}>
-              <Box display={"flex"} alignItems={"center"}>
-                <Checkbox
-                  checked={!!errors.fname?.message}
-                  icon={<FontAwesomeIcon icon={faCheckDouble} />}
-                  checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
-                />
-                <Typography>First Name</Typography>
-              </Box>
-              <Box display={"flex"} alignItems={"center"}>
-                <Checkbox
-                  checked={!!errors.nic?.message}
-                  icon={<FontAwesomeIcon icon={faCheckDouble} />}
-                  checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
-                />
-                <Typography>National ID card</Typography>
-              </Box>
-              <Box display={"flex"} alignItems={"center"}>
-                <Checkbox
-                  checked={!!errors.phoneNumber?.message}
-                  icon={<FontAwesomeIcon icon={faCheckDouble} />}
-                  checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
-                />
-                <Typography>Phone number</Typography>
-              </Box>
-              <Box display={"flex"} alignItems={"center"}>
-                <Checkbox
-                  checked={!!errors.address1?.message}
-                  icon={<FontAwesomeIcon icon={faCheckDouble} />}
-                  checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
-                />
-                <Typography>Address Line 1</Typography>
-              </Box>
-              <Box display={"flex"} alignItems={"center"}>
-                <Typography color={"error"}>
-                  {dbCustomerFound && (
-                    <FontAwesomeIcon icon={faTriangleExclamation} />
-                  )}
-                  {dbCustomerFound}
-                </Typography>
-              </Box>
-            </Stack>
-
-            {/* button column */}
-          </Grid>
-          <Grid item xs={2}>
-            <Lottie options={{ animationData: CustomerPage }} width={200} />
-
-            {/* button column */}
-          </Grid>
-          <Grid item xs={1}>
-            <Box
-              sx={{
-                gap: 3,
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                marginTop: "20px",
-              }}
-            >
-              <Button
-                // onClick={handleSaveDetails}
-                variant="contained"
-                type="submit"
-              >
-                Save
-              </Button>
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => {
-                  setCustomer({
-                    fname: "",
-                    lname: "",
-                    nic: "",
-                    phoneNumber: "",
-                    address1: "",
-                    address2: "",
-                  });
+              </FormControl>
+            </Grid>
+            {/* validation part column */}
+            <Grid item xs={2}>
+              <Stack
+                component={Paper}
+                elevation={0}
+                sx={{
+                  p: 1,
+                  borderRadius: 3,
+                  width: "200px",
+                  border: `1px solid ${theme.palette.primary[500]}`,
                 }}
               >
-                Clear
-              </Button>
-            </Box>
+                <Box display={"flex"} alignItems={"center"}>
+                  <Checkbox
+                    checked={!!errors.fname?.message}
+                    icon={<FontAwesomeIcon icon={faCheckDouble} />}
+                    checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
+                  />
+                  <Typography>First Name</Typography>
+                </Box>
+                <Box display={"flex"} alignItems={"center"}>
+                  <Checkbox
+                    checked={!!errors.nic?.message}
+                    icon={<FontAwesomeIcon icon={faCheckDouble} />}
+                    checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
+                  />
+                  <Typography>National ID card</Typography>
+                </Box>
+                <Box display={"flex"} alignItems={"center"}>
+                  <Checkbox
+                    checked={!!errors.phoneNumber?.message}
+                    icon={<FontAwesomeIcon icon={faCheckDouble} />}
+                    checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
+                  />
+                  <Typography>Phone number</Typography>
+                </Box>
+                <Box display={"flex"} alignItems={"center"}>
+                  <Checkbox
+                    checked={!!errors.address1?.message}
+                    icon={<FontAwesomeIcon icon={faCheckDouble} />}
+                    checkedIcon={<FontAwesomeIcon icon={faInfo} shake />}
+                  />
+                  <Typography>Address Line 1</Typography>
+                </Box>
+                <Box display={"flex"} alignItems={"center"}>
+                  <Typography color={"error"}>
+                    {dbCustomerFound && (
+                      <FontAwesomeIcon icon={faTriangleExclamation} />
+                    )}
+                    {dbCustomerFound}
+                  </Typography>
+                </Box>
+              </Stack>
+
+              {/* button column */}
+            </Grid>
+            <Grid item xs={2}>
+              <Lottie options={{ animationData: CustomerPage }} width={200} />
+
+              {/* button column */}
+            </Grid>
+            <Grid item xs={1}>
+              <Box
+                sx={{
+                  gap: 3,
+                  display: "flex",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  marginTop: "20px",
+                }}
+              >
+                <Button
+                  // onClick={handleSaveDetails}
+                  variant="contained"
+                  type="submit"
+                >
+                  Save
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => {
+                    setCustomer({
+                      fname: "",
+                      lname: "",
+                      nic: "",
+                      phoneNumber: "",
+                      address1: "",
+                      address2: "",
+                    });
+                  }}
+                >
+                  Clear
+                </Button>
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
-        {/* Buttons */}
-      </form>
+          {/* Buttons */}
+        </form>
+      </Paper>
     </>
   );
 }

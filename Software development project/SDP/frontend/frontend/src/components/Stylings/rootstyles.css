@@ -9,10 +9,10 @@
   width: 100vw;
   min-height: 100vh;
   height: auto;
-  background-color: rgb(251, 251, 251);
+  background-color: #f2fdfe;
 }
 #body{
-  width: 83vw;
+  width: 85vw;
   margin-left: 15vw;
   height: 100%;
 }

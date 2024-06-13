@@ -125,11 +125,14 @@ export default function UserManagement({ username }) {
         </Box>
         <Box
           sx={{
+            borderRadius: "0 0 10px 10px", // Rounded corners at the bottom, adjust as needed
             height: "auto",
-            backgroundColor: "#f2f4f7",
+            backgroundColor: "#f2fdfe",
             display: "flex",
-            justifyContent: "end",
+            justifyContent: "flex-end", // Adjust alignment as needed
             p: 4,
+            boxShadow:
+              "0px 5px 5px -3px rgba(0,0,0,0.1), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)", // Box shadow applied only at the top
           }}
         >
           <UserForm existingUsernames={existingUsernames} />
@@ -280,15 +283,13 @@ function UserForm({ existingUsernames }) {
         if (value.startsWith("0")) {
           if (value.length !== 10) {
             return this.createError({
-              message:
-                `Enter a valid phone number`,
+              message: `Enter a valid phone number`,
             });
           }
         } else {
           if (value.length !== 9) {
             return this.createError({
-              message:
-                "Enter a valid phone number",
+              message: "Enter a valid phone number",
             });
           }
         }
@@ -348,7 +349,6 @@ function UserForm({ existingUsernames }) {
       borderRadius: "12px",
     },
   };
-  
 
   return (
     <Box
@@ -417,11 +417,13 @@ function UserForm({ existingUsernames }) {
             />
           </Box>
           <Box>
-            <FormLabel sx={[{ m: 1, width: "150px" },textFieldStyle]}>User role</FormLabel>
+            <FormLabel sx={[{ m: 1, width: "150px" }, textFieldStyle]}>
+              User role
+            </FormLabel>
             <RoleSelect roles={roles} setRoles={setRoles} register={register} />
-            <br/>
+            <br />
             {errors.userRole && (
-              <Typography sx={{ml:22}} variant="caption" color={"error"}>
+              <Typography sx={{ ml: 22 }} variant="caption" color={"error"}>
                 {errors.userRole.message}
               </Typography>
             )}

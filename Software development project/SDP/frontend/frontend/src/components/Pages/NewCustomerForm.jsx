@@ -67,6 +67,12 @@ function NewCustomerForm(props) {
   const { register, handleSubmit, formState: { errors }, setValue, trigger } = useForm({
     resolver: yupResolver(schema)
   });
+  const textFieldStyle = {
+    width: "100%",
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "12px", // Increase the border radius
+    },
+  };
   const [customer, setCustomer] = useState({
     fname: 'John',
     lname: 'Doe',
@@ -278,7 +284,7 @@ function NewCustomerForm(props) {
                           helperText={errors.fname?.message}
                           size="small"
                           label="first name"
-                          sx={{ width: "100%" }}
+                          sx={[{ width: "100%" },textFieldStyle]}
                           value={customer.fname}
                           onChange={handleInputChange}
                         />
@@ -296,7 +302,7 @@ function NewCustomerForm(props) {
                           helperText={errors.lname?.message}
                           variant="outlined"
                           size="small"
-                          sx={{ width: "100%" }}
+                          sx={[{ width: "100%" },textFieldStyle]}
                           value={customer.lname}
                           onChange={handleInputChange}
                         />
@@ -314,7 +320,7 @@ function NewCustomerForm(props) {
                           helperText={errors.nic?.message}
                           variant="outlined"
                           size="small"
-                          sx={{ width: "100%" }}
+                          sx={[{ width: "100%" },textFieldStyle]}
                           value={customer.nic}
                           onChange={handleInputChange}
                         />
@@ -332,7 +338,7 @@ function NewCustomerForm(props) {
                           helperText={errors.phoneNumber?.message}
                           variant="outlined"
                           size="small"
-                          sx={{ width: "100%" }}
+                          sx={[{ width: "100%" },textFieldStyle]}
                           value={customer.phoneNumber}
                           onChange={handleInputChange}
                         />
@@ -358,7 +364,7 @@ function NewCustomerForm(props) {
                           label="address line1"
                           variant="outlined"
                           size="small"
-                          sx={{ width: "100%" }}
+                          sx={[{ width: "100%" },textFieldStyle]}
                           value={customer.address1}
                           onChange={handleInputChange}
                         />
@@ -377,7 +383,7 @@ function NewCustomerForm(props) {
                           label="address line2"
                           variant="outlined"
                           size="small"
-                          sx={{ width: "100%" }}
+                          sx={[{ width: "100%" },textFieldStyle]}
                           value={customer.address2}
                           onChange={handleInputChange}
                         />
