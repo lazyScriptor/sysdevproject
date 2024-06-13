@@ -1,12 +1,36 @@
-import { Box, Paper, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Stack,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+} from "@mui/material";
 import { Button } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { InvoiceContext } from "../../../Contexts/Contexts";
 import axios from "axios";
 import Swal from "sweetalert2";
-
+import PictureAsPdfRoundedIcon from "@mui/icons-material/PictureAsPdfRounded";
+import { InvoicePdfWarehouseHandler } from "../../RoleBasedAccess/Warehouse handler/Invoice/InvoiceWarehouseHandler";
+import TemporaryBill from "../../SubComponents/TemporaryBill";
 function InvoiceDetailsWindowDown(props) {
-  const { updateBtnStatus, setUpdateBtnStatus,handleCreateNew } = props;
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openOtherDialog, setOpenOtherDialog] = useState(false);
+  const handlePdfButtonClick = () => {
+    setOpenDialog(true);
+  };
+
+  const handleOtherDialogButtonClick = () => {
+    setOpenOtherDialog(true);
+  };
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setOpenOtherDialog(false);
+  };
+
+  const { updateBtnStatus, setUpdateBtnStatus, handleCreateNew } = props;
   const {
     fullDetailsEquipmentArray,
     setFullDetailsEquipmentArray,
@@ -136,7 +160,7 @@ function InvoiceDetailsWindowDown(props) {
                   timer: 1500,
                 });
                 handleCreateNew();
-                setUpdateBtnStatus(false)
+                setUpdateBtnStatus(false);
                 console.log("Invoice details updated successfully");
               } catch (error) {
                 Swal.fire({
@@ -266,26 +290,57 @@ function InvoiceDetailsWindowDown(props) {
           <Box sx={{ height: "100%", width: "100%" }}></Box>
         </Box>
       </Paper>
-      {invoiceSearchBtnStatus == true ? (
+      <Box display={"flex"} alignItems={"center"} gap={1}>
+        {invoiceSearchBtnStatus == true ? (
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{ mt: 1, borderRadius: 0, height: "60px", width: "17vw" }}
+            onClick={handleInvoiceUpdate}
+          >
+            Update Invoice
+          </Button>
+        ) : (
+          <Button
+            color="success"
+            variant="contained"
+            sx={{ mt: 1, borderRadius: 0, height: "60px", width: "17vw" }}
+            onClick={handleInvoiceSubmit}
+          >
+            Create Invoice
+          </Button>
+        )}
         <Button
-          fullWidth
+        onClick={handlePdfButtonClick}
           variant="contained"
-          sx={{ mt: 2, borderRadius: 0, height: "60px" }}
-          onClick={handleInvoiceUpdate}
+          sx={{ height: "60px", width: "20px", mt: 1 }}
         >
-          Update Invoice
+          <PictureAsPdfRoundedIcon  sx={{ color: "white" }} />
         </Button>
-      ) : (
         <Button
-          fullWidth
-          color="success"
+        onClick={handleOtherDialogButtonClick}
           variant="contained"
-          sx={{ mt: 2, borderRadius: 0, height: "60px" }}
-          onClick={handleInvoiceSubmit}
+          sx={{ height: "60px", width: "20px", mt: 1 }}
         >
-          Create Invoice
+          <PictureAsPdfRoundedIcon  sx={{ color: "white" }} />
         </Button>
-      )}
+      </Box>
+      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="lg" fullWidth>
+       
+        <DialogContent sx={{display:"flex",justifyContent:"center"}}>
+         <InvoicePdfWarehouseHandler/>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={openOtherDialog}
+        onClose={handleCloseDialog}
+     
+      >
+       
+        <DialogContent>
+          <TemporaryBill/>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

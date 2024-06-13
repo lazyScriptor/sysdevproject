@@ -421,7 +421,7 @@ function InvoiceDocumentTable() {
   );
 }
 
-function InvoicePdfWarehouseHandler() {
+export function InvoicePdfWarehouseHandler() {
   const { invoiceObject } = useContext(InvoiceContext);
 
   useEffect(() => {

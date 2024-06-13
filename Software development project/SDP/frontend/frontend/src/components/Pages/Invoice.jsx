@@ -41,6 +41,7 @@ import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import AddIcCallOutlinedIcon from "@mui/icons-material/AddIcCallOutlined";
 import ContactMailOutlinedIcon from "@mui/icons-material/ContactMailOutlined";
 import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
+import { InvoicePdfWarehouseHandler } from "../RoleBasedAccess/Warehouse handler/Invoice/InvoiceWarehouseHandler.jsx";
 const textFieldStyle = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "12px",
@@ -469,14 +470,14 @@ function Invoice() {
               >
                 <Box
                   sx={{
-                    backgroundColor:"#f0f0f0",
+                    backgroundColor: "#f0f0f0",
                     display: "flex",
                     justifyContent: "start",
                     alignItems: "center",
                     width: "100%",
                     gap: 2,
-                    p:1,
-                    borderRadius:5
+                    p: 1,
+                    borderRadius: 5,
                   }}
                 >
                   <TextField
@@ -492,7 +493,10 @@ function Invoice() {
                     error={!!validationMessage}
                     helperText={validationMessage}
                   />
-                  <Button sx={{height:"35px"}} onClick={handleSearchPhoneNumberorNic}>
+                  <Button
+                    sx={{ height: "35px" }}
+                    onClick={handleSearchPhoneNumberorNic}
+                  >
                     <FontAwesomeIcon icon={faSearch} />
                   </Button>
 
@@ -505,7 +509,6 @@ function Invoice() {
                     }}
                     sx={{
                       color: (theme) => theme.palette.primary.error[400],
-                    
                     }}
                   >
                     <BackspaceOutlinedIcon />{" "}
@@ -674,7 +677,7 @@ function Invoice() {
           </Box>
         </Box>
       </Box>
-      <InvoicePdf />
+      <InvoicePdfWarehouseHandler/>
       <OverlayDialogBox>
         <Payments />
       </OverlayDialogBox>

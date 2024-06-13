@@ -26,8 +26,7 @@ const ButtonstylesSubmit = {
   alignItems: "center",
   width: "100px",
   height: "80px",
-  color: "primary",
-  border: "solid 1px",
+  color: "white",
   borderRadius: 4,
   opacity: 0.8,
   m: 2,
@@ -130,7 +129,7 @@ export function PaymentForm() {
 
   return (
     <form
-      style={{ height: "100%", display: "flex", flexDirection: "column" }}
+      style={{ height: "100%" }}
       noValidate
       onSubmit={handleSubmit(onSubmit)}
     >
@@ -144,7 +143,7 @@ export function PaymentForm() {
       />
       <Box sx={{ flexGrow: 1 }} />
       <Box
-        sx={{ display: "flex", justifyContent: "center", alignItems: "end" }}
+        sx={{ display: "flex", justifyContent: "center" }}
       >
         <Button variant="contained" sx={ButtonstylesSubmit} type="submit">
           Pay

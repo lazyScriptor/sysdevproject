@@ -3,7 +3,6 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import "../Stylings/sidebar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import WidgetsIcon from "@mui/icons-material/Widgets";
-
 import {
   faTableCellsLarge,
   faLayerGroup,
@@ -15,8 +14,6 @@ import {
   faUserAstronaut,
 } from "@fortawesome/free-solid-svg-icons";
 import DashboardCategoryBtn from "../Buttons/DashboardButtons.jsx";
-
-// context imports
 import { AppCustomContext } from "../../App.jsx";
 import Button from "@mui/material/Button";
 import { ref, listAll, getDownloadURL } from "firebase/storage";
@@ -27,8 +24,6 @@ import { Typography } from "@mui/material";
 function Sidebar() {
   const [imageMap, setImageMap] = useState({});
   const imageListRef = ref(storage, "UserImages/");
-
-  // context data
   const { usernamee, rolee, show, setShow } = useContext(AppCustomContext);
   const [contextUserName, setContextUserName] = useState();
   const [contextRole, setContextRole] = useState();
@@ -45,7 +40,6 @@ function Sidebar() {
       }
       setImageMap(imageMap);
 
-      // Check if the username exists in the imageMap
       if (username && !imageMap[username]) {
         setImageMap((prevImageMap) => ({
           ...prevImageMap,
@@ -56,7 +50,6 @@ function Sidebar() {
     fetchImages();
   }, [username]);
 
-  // context data over
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -111,7 +104,7 @@ function Sidebar() {
                 maxWidth: "50px",
                 maxHeight: "50px",
                 "&:hover": {
-                  backgroundColor: (theme) => theme.palette.primary[800], // Change to the desired hover color
+                  backgroundColor: (theme) => theme.palette.primary[800],
                 },
               }}
             >
