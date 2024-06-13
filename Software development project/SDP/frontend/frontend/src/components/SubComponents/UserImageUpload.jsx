@@ -5,12 +5,7 @@ import { storage } from "../../../imagedbfirebase";
 import { Alert } from "@mui/material";
 import CloudUploadTwoToneIcon from '@mui/icons-material/CloudUploadTwoTone';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faCheck,
-  faCheckDouble,
-  faInfo,
-  faTriangleExclamation,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 const UserImageUpload = ({ username }) => {
   const [image, setImage] = useState(null);
@@ -25,6 +20,7 @@ const UserImageUpload = ({ username }) => {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
+      setShowConfirmButton(true); // Show the confirm button when an image is selected
     }
   };
 
@@ -58,12 +54,12 @@ const UserImageUpload = ({ username }) => {
         setOpenSnackbar(true);
         setUploading(false);
         setShowConfirmButton(false); // Hide the confirm button after successful upload
-        window.location.reload()
+        setImage(null); // Clear the selected image
+        window.location.reload();
       }
     );
 
     setUploading(true);
-    setShowConfirmButton(true); // Show the confirm button when uploading starts
   };
 
   const handleSnackbarClose = (event, reason) => {
@@ -79,11 +75,11 @@ const UserImageUpload = ({ username }) => {
         type="file"
         accept="image/*"
         style={{ display: "none" }}
-        id="upload-button"
+        id={`upload-button-${username}`}
         onChange={handleFileChange}
       />
       {!uploading && !showConfirmButton && (
-        <label htmlFor="upload-button">
+        <label htmlFor={`upload-button-${username}`}>
           <Button
             component="span"
             disabled={uploading}
@@ -93,18 +89,13 @@ const UserImageUpload = ({ username }) => {
           </Button>
         </label>
       )}
-      {image && !uploading && !showConfirmButton && (
+      {showConfirmButton && (
         <Button
           onClick={handleUpload}
           disabled={uploading}
           sx={{ ml: 1, mt: 1 }}
         >
           <FontAwesomeIcon icon={faCheck} beat />
-        </Button>
-      )}
-      {uploading && !showConfirmButton && (
-        <Button disabled={true} sx={{ ml: 1, mt: 1 }}>
-          <CircularProgress size={10} />
         </Button>
       )}
       {uploading && (

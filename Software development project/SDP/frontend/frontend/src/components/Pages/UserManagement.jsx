@@ -140,7 +140,7 @@ export default function UserManagement({ username }) {
             <UserTable />
             <Box
               sx={{
-                mt:2,
+                mt: 2,
                 overflowX: "auto",
                 height: "200px",
                 display: "flex",
@@ -240,44 +240,62 @@ function UserForm({ existingUsernames }) {
   const [roles, setRoles] = useState([]);
 
   const schema = yup.object().shape({
-    firstname: yup.string().required('First name is required'),
-    userRole: yup.array().min(1, 'At least one role must be selected'),
-    lastname: yup.string().required('Last name is required'),
+    firstname: yup.string().required("First name is required"),
+    userRole: yup.array().min(1, "At least one role must be selected"),
+    lastname: yup.string().required("Last name is required"),
     nic: yup
       .string()
       .required()
       .transform((value) => value.trim())
-      .test(
-        'is-valid-nic',
-        'Please enter a valid NIC number',
-        (value) => {
-          if (!value) return false;
-          const nineDigitsAndV = /^[0-9]{9}v$/i;
-          const validFormatCheck = /^[1-9]\d{8,10}$/;
-          const twelveDigits = /^[0-9]{12}$/;
-          return nineDigitsAndV.test(value) || twelveDigits.test(value);
-        }
-      ),
+      .test("is-valid-nic", "Please enter a valid NIC number", (value) => {
+        if (!value) return false;
+        const nineDigitsAndV = /^[0-9]{9}v$/i;
+        const validFormatCheck = /^[1-9]\d{8,10}$/;
+        const twelveDigits = /^[0-9]{12}$/;
+        return nineDigitsAndV.test(value) || twelveDigits.test(value);
+      }),
     username: yup
       .string()
-      .required('Username is required')
-      .min(3, 'Username must be at least 3 characters')
-      .notOneOf(existingUsernames, 'Username already exists'),
+      .required("Username is required")
+      .min(3, "Username must be at least 3 characters")
+      .notOneOf(existingUsernames, "Username already exists"),
     password: yup
       .string()
-      .min(5, 'Password must be at least 5 characters')
-      .max(10, 'Password cannot exceed 10 characters')
-      .required('Password is required')
+      .min(5, "Password must be at least 5 characters")
+      .max(15, "Password cannot exceed 10 characters")
+      .required("Password is required")
       .matches(
         /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{5,10})/,
-        'Password must include at least one uppercase letter and one symbol (!@#$%^&*)'
+        "Password must include at least one uppercase letter and one symbol (!@#$%^&*)"
       ),
     confirmpassword: yup
       .string()
-      .oneOf([yup.ref('password'), null], 'Passwords must match'),
-    phonenumber: yup.string().required('Phone number is required'),
-    address1: yup.string().required('Address line 1 is required'),
-    address2: yup.string().required('Address line 2 is required'),
+      .oneOf([yup.ref("password"), null], "Passwords must match"),
+    phonenumber: yup
+      .string()
+      .required("Phone number is required")
+      .matches(/^\d+$/, "Phone number must contain only digits")
+      .test("phone-number-validation", function (value) {
+        if (!value) return false; // In case the value is undefined or null, required will handle this case
+        if (value.startsWith("0")) {
+          if (value.length !== 10) {
+            return this.createError({
+              message:
+                `Enter a valid phone number`,
+            });
+          }
+        } else {
+          if (value.length !== 9) {
+            return this.createError({
+              message:
+                "Enter a valid phone number",
+            });
+          }
+        }
+        return true;
+      }),
+    address1: yup.string().required("Address line 1 is required"),
+    address2: yup.string().required("Address line 2 is required"),
   });
 
   const {
@@ -291,23 +309,26 @@ function UserForm({ existingUsernames }) {
   });
 
   useEffect(() => {
-    setValue('userRole', roles);
+    setValue("userRole", roles);
   }, [roles, setValue]);
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post('http://localhost:8085/createUser', data);
+      const response = await axios.post(
+        "http://localhost:8085/createUser",
+        data
+      );
       reset(); // Assuming reset is a function that resets your form fields
 
       // Display success message using SweetAlert
       Swal.fire({
-        icon: 'success',
-        title: 'User Created Successfully',
+        icon: "success",
+        title: "User Created Successfully",
         showConfirmButton: false,
         timer: 1500, // Close alert after 1.5 seconds
       });
     } catch (error) {
-      console.log('Error occurred in frontend createUser', error);
+      console.log("Error occurred in frontend createUser", error);
       // Handle error here if needed
     }
   };
@@ -317,64 +338,71 @@ function UserForm({ existingUsernames }) {
   };
 
   const textFieldStyle = {
-    '& .MuiOutlinedInput-root': {
-      borderRadius: '12px',
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "12px",
+    },
+    "& .MuiInputBase-root": {
+      borderRadius: "12px",
+    },
+    "& .MuiPaper-root": {
+      borderRadius: "12px",
     },
   };
+  
 
   return (
     <Box
       sx={{
         m: 2,
-        width: '700px',
-        height: 'auto',
-        display: 'flex',
-        justifyContent: 'center',
+        width: "700px",
+        height: "auto",
+        display: "flex",
+        justifyContent: "center",
       }}
     >
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
         <Stack gap={3}>
           <Box>
-            <FormLabel sx={{ m: 1, width: '150px' }}>First name</FormLabel>
+            <FormLabel sx={{ m: 1, width: "150px" }}>First name</FormLabel>
             <TextField
               label="First name"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register('firstname') }}
+              inputProps={{ ...register("firstname") }}
               error={!!errors.firstname}
               helperText={errors.firstname?.message}
             />
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: '150px' }}>Last name</FormLabel>
+            <FormLabel sx={{ m: 1, width: "150px" }}>Last name</FormLabel>
             <TextField
               label="Last name"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register('lastname') }}
+              inputProps={{ ...register("lastname") }}
               error={!!errors.lastname}
               helperText={errors.lastname?.message}
             />
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: '150px' }}>User name</FormLabel>
+            <FormLabel sx={{ m: 1, width: "150px" }}>User name</FormLabel>
             <TextField
               label="User name"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register('username') }}
+              inputProps={{ ...register("username") }}
               error={!!errors.username}
               helperText={errors.username?.message}
             />
           </Box>
-          <Box sx={{ display: 'flex' }}>
-            <FormLabel sx={{ m: 1, width: '150px' }}>Password</FormLabel>
+          <Box sx={{ display: "flex" }}>
+            <FormLabel sx={{ m: 1, width: "150px" }}>Password</FormLabel>
             <TextField
               label="Password"
               type="password"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register('password') }}
+              inputProps={{ ...register("password") }}
               error={!!errors.password}
               helperText={errors.password?.message}
             />
@@ -383,65 +411,72 @@ function UserForm({ existingUsernames }) {
               size="small"
               type="password"
               sx={[textFieldStyle, { ml: 2 }]}
-              inputProps={{ ...register('confirmpassword') }}
+              inputProps={{ ...register("confirmpassword") }}
               error={!!errors.confirmpassword}
               helperText={errors.confirmpassword?.message}
             />
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: '150px' }}>User role</FormLabel>
+            <FormLabel sx={[{ m: 1, width: "150px" },textFieldStyle]}>User role</FormLabel>
             <RoleSelect roles={roles} setRoles={setRoles} register={register} />
+            <br/>
             {errors.userRole && (
-              <Typography variant="caption" color={'error'}>
+              <Typography sx={{ml:22}} variant="caption" color={"error"}>
                 {errors.userRole.message}
               </Typography>
             )}
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: '150px' }}>User NIC number</FormLabel>
+            <FormLabel sx={{ m: 1, width: "150px" }}>User NIC number</FormLabel>
             <TextField
               label="nic"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register('nic') }}
+              inputProps={{ ...register("nic") }}
               error={!!errors.nic}
               helperText={errors.nic?.message}
             />
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: '150px' }}>User phone number</FormLabel>
+            <FormLabel sx={{ m: 1, width: "150px" }}>
+              User phone number
+            </FormLabel>
             <TextField
               label="User phone number"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register('phonenumber') }}
+              inputProps={{ ...register("phonenumber") }}
               error={!!errors.phonenumber}
               helperText={errors.phonenumber?.message}
             />
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: '150px' }}>User address Line 1</FormLabel>
+            <FormLabel sx={{ m: 1, width: "150px" }}>
+              User address Line 1
+            </FormLabel>
             <TextField
               label="User address"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register('address1') }}
+              inputProps={{ ...register("address1") }}
               error={!!errors.address1}
               helperText={errors.address1?.message}
             />
           </Box>
           <Box>
-            <FormLabel sx={{ m: 1, width: '150px' }}>User address Line 2</FormLabel>
+            <FormLabel sx={{ m: 1, width: "150px" }}>
+              User address Line 2
+            </FormLabel>
             <TextField
               label="User address"
               size="small"
               sx={textFieldStyle}
-              inputProps={{ ...register('address2') }}
+              inputProps={{ ...register("address2") }}
               error={!!errors.address2}
               helperText={errors.address2?.message}
             />
           </Box>
-          <Box display={'flex'} gap={2} justifyContent={'center'}>
+          <Box display={"flex"} gap={2} justifyContent={"center"}>
             <Button type="submit" variant="contained" customvariant="custom">
               Submit
             </Button>
@@ -574,7 +609,7 @@ function UserTable() {
         showLoaderOnConfirm: true,
         allowOutsideClick: () => !Swal.isLoading(),
       });
-  
+
       if (password) {
         let roleIdToSend;
         switch (roleId) {
@@ -590,16 +625,16 @@ function UserTable() {
           default:
             return;
         }
-  
+
         console.log(
           `Assigning role ${roleIdToSend} to user ${selectedUser.user_id} with password ${password}`
         );
-  
+
         const response = await axios.put(
           `http://localhost:8085/updateUserRole/${selectedUser.user_id}/${roleIdToSend}`,
           { password }
         );
-  
+
         if (response.status === 200) {
           Swal.fire("Success!", "User role updated successfully", "success");
           // Update the local state to reflect the newly added role
@@ -623,7 +658,7 @@ function UserTable() {
       Swal.fire("Error!", "Failed to update user role", "error");
     }
   };
-  
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -657,7 +692,6 @@ function UserTable() {
             <TableCell align="center">Roles</TableCell>
             <TableCell align="center">Grant permissions</TableCell>
             <TableCell align="left">Upload image</TableCell>
-           
           </TableRow>
         </TableHead>
         <TableBody>
@@ -707,8 +741,9 @@ function UserTable() {
                   </div>
                 )}
               </TableCell>
-              <TableCell align="right"><UserImageUpload username={user.username}/></TableCell>
-              
+              <TableCell align="right">
+                <UserImageUpload username={user.username} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
