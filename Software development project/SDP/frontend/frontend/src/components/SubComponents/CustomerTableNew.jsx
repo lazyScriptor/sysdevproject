@@ -264,7 +264,7 @@ export function CustomerPageMiddle() {
 
   const schema = yup.object().shape({
     fname: yup.string().required().min(3).max(15),
-    lname: yup.string().min(3).max(25),
+    lname: yup.string().max(25),
     nic: yup
       .string()
       .required()
@@ -290,8 +290,8 @@ export function CustomerPageMiddle() {
           return validFormatCheck1.test(value) || validFormatCheck2.test(value);
         }
       ),
-    address1: yup.string().required().min(5).max(15),
-    address2: yup.string().min(3),
+    address1: yup.string().required().min(5).max(30),
+    address2: yup.string().max(30),
   });
   const {
     register,

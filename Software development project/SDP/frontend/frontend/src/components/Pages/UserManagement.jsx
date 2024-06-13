@@ -127,7 +127,7 @@ export default function UserManagement({ username }) {
           sx={{
             borderRadius: "0 0 10px 10px", // Rounded corners at the bottom, adjust as needed
             height: "auto",
-            backgroundColor: "#f2fdfe",
+            backgroundColor: "#ffffff",
             display: "flex",
             justifyContent: "flex-end", // Adjust alignment as needed
             p: 4,

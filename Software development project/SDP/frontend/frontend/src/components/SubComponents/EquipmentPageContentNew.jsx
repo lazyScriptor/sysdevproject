@@ -108,9 +108,7 @@ function Row(props) {
         <TableCell sx={cellStyles}>
           {highlightText(row.eq_cost, searchValue)}
         </TableCell>
-        <TableCell sx={cellStyles}>
-          <Button>View</Button>
-        </TableCell>
+       
         <TableCell sx={cellStyles}>
           {highlightText(row.eq_description, searchValue)}
         </TableCell>
@@ -226,14 +224,14 @@ export default function EquipmentTableNew() {
                 Machine Cost{" "}
                 {orderBy === "eq_cost" && (order === "asc" ? "↑" : "↓")}
               </TableCell>
-              <TableCell align="center">Machine image</TableCell>
+             
               <TableCell align="center">Description</TableCell>
               <TableCell
                 align="center"
                 onClick={() => handleSort("eq_defected_status")}
                 sx={headerStyles}
               >
-                Defective status{" "}
+                Defected Qty{" "}
                 {orderBy === "eq_defected_status" &&
                   (order === "asc" ? "↑" : "↓")}
               </TableCell>

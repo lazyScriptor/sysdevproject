@@ -9,6 +9,7 @@ import Chart2 from "./Dashboard/Chart2";
 import Chart3 from "./Dashboard/Chart3";
 import { Box, Paper } from "@mui/material";
 import "../Stylings/rootstyles.css";
+import Chart4 from "./Dashboard/Chart4";
 
 function DasboardMain() {
   const { setIsAuthenticated, userRole } = useContext(AuthContext);
@@ -39,6 +40,9 @@ function DasboardMain() {
               </Paper>
               <Paper elevation={5} sx={paperStyling}>
                 <Chart3 />
+              </Paper>
+              <Paper elevation={5} sx={paperStyling}>
+                <Chart4 />
               </Paper>
             </Box>
           </Box>
