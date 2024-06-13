@@ -1,19 +1,21 @@
-import * as React from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { useContext } from "react";
-import { Box, Switch, Typography } from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  Box,
+  Paper,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
-import { InvoiceContext } from "../../../Contexts/Contexts";
-import { useState } from "react";
 import AppRegistrationTwoToneIcon from "@mui/icons-material/AppRegistrationTwoTone";
+import { InvoiceContext } from "../../../Contexts/Contexts";
 
-export default function InvoicePaymentsTable() {
+function InvoicePaymentsTable() {
   const {
     invoiceObject,
     setInvoiceObject,
@@ -30,7 +32,12 @@ export default function InvoicePaymentsTable() {
   };
 
   const [editToggle, setEditToggle] = useState(false);
-
+  useEffect(() => {
+    // Disable editToggle and switch off when invoiceSearchBtnStatus is true
+    if (invoiceSearchBtnStatus) {
+      setEditToggle(false);
+    }
+  }, [invoiceSearchBtnStatus]);
   const handleDelete = (payId) => {
     // Filter out the payment with the corresponding payId
     const updatedPayments = invoiceObject.payments.filter(
@@ -40,7 +47,6 @@ export default function InvoicePaymentsTable() {
       ...prevInvoiceObject,
       payments: updatedPayments,
     }));
-    // Update the invoiceObject state with the filtered array
   };
 
   const handleDeleteAdvance = () => {
@@ -80,6 +86,7 @@ export default function InvoicePaymentsTable() {
               >
                 <Switch
                   disabled={invoiceSearchBtnStatus}
+                  checked={editToggle}
                   onChange={(e) => setEditToggle(e.target.checked)}
                 />
                 <Typography
@@ -97,7 +104,7 @@ export default function InvoicePaymentsTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {invoiceObject.advance ? (
+          {invoiceObject.advance && (
             <TableRow
               sx={{
                 "&:last-child td, &:last-child th": { border: 0 },
@@ -117,7 +124,7 @@ export default function InvoicePaymentsTable() {
                 )}
               </TableCell>
             </TableRow>
-          ) : null}
+          )}
 
           {invoiceObject.payments.map((payment, index) => (
             <TableRow
@@ -127,12 +134,14 @@ export default function InvoicePaymentsTable() {
                 height: "40px",
                 backgroundColor: (theme) => theme.palette.primary[25],
                 "&:hover": {
-                  backgroundColor: (theme) => theme.palette.primary[50], // Change to your desired hover color
+                  backgroundColor: (theme) => theme.palette.primary[50],
                 },
               }}
             >
               <TableCell align="center">
-                {payment.invpay_payment_date ? new Date(payment.invpay_payment_date).toLocaleDateString():''}
+                {payment.invpay_payment_date
+                  ? new Date(payment.invpay_payment_date).toLocaleDateString()
+                  : ""}
               </TableCell>
               <TableCell align="center">{payment.invpay_amount}</TableCell>
               <TableCell align="center">
@@ -167,3 +176,5 @@ export default function InvoicePaymentsTable() {
     </TableContainer>
   );
 }
+
+export default InvoicePaymentsTable;

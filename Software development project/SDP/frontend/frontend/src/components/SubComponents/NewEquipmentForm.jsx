@@ -361,20 +361,24 @@ export function NewEquipmentForm(props) {
                 </Typography>
               </FormControl> */}
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <Button type="submit" variant="contained">
+            <Grid item xs={12} sm={6} sx={{display:"flex",ml:-14.5}} gap={2}>
+              <Button
+                variant="contained"
+                type="submit"
+                customvariant="custom"
+                color="success"
+              >
                 Submit
               </Button>
-              <Button
-                type="button"
-                onClick={handleClear}
-                variant="contained"
-                sx={{ ml: 2 }}
-              >
-                Clear
-              </Button>
+
               {userRole == "admin" && (
-                <Button type="button" onClick={() => handleDelete(eq_id)}>
+                <Button
+                  type="button"
+                  customvariant="custom"
+                  color="error"
+                  variant="contained"
+                  onClick={() => handleDelete(eq_id)}
+                >
                   Delete
                 </Button>
               )}

@@ -108,7 +108,7 @@ function Row(props) {
         <TableCell sx={cellStyles}>
           {highlightText(row.eq_cost, searchValue)}
         </TableCell>
-       
+
         <TableCell sx={cellStyles}>
           {highlightText(row.eq_description, searchValue)}
         </TableCell>
@@ -137,6 +137,7 @@ export default function EquipmentTableNew() {
   const [searchValue, setSearchValue] = useState("");
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("");
+  const [filterValue, setFilterValue] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -174,13 +175,36 @@ export default function EquipmentTableNew() {
     transition: "background-color 0.3s ease",
   };
 
+  // Filter data by equipment ID
+  const filteredData = data.filter((row) => {
+    return row.eq_id.toString().includes(filterValue.toLowerCase());
+  });
+
   return (
     <>
       <CustomerPageUpper setData={setData} setSearchValue={setSearchValue} />
-      <TableContainer component={Paper} sx={{ mt: 45 }}>
+      <TextField
+        component={Paper}
+        elevation={5}
+        label="Filter by Equipment ID"
+        variant="outlined"
+        fullWidth
+        value={filterValue}
+        onChange={(e) => setFilterValue(e.target.value)}
+        sx={{ mt: 40, mb: 2, ml: 2, width: "200px" }}
+      />
+      <TableContainer component={Paper} sx={{}}>
         <Table aria-label="collapsible table">
           <TableHead>
-            <TableRow>
+            <TableRow
+              sx={{
+                color: "wh",
+                position: "sticky",
+                top: 0,
+                zIndex: 1000, // Adjust the z-index as needed
+                backgroundColor: (theme) => theme.palette.primary[600], // Optional: Customize the header background color
+              }}
+            >
               <TableCell align="center" />
               <TableCell
                 align="center"
@@ -224,7 +248,7 @@ export default function EquipmentTableNew() {
                 Machine Cost{" "}
                 {orderBy === "eq_cost" && (order === "asc" ? "↑" : "↓")}
               </TableCell>
-             
+
               <TableCell align="center">Description</TableCell>
               <TableCell
                 align="center"
@@ -239,7 +263,7 @@ export default function EquipmentTableNew() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row) => (
+            {filteredData.map((row) => (
               <Row key={row.eq_id} row={row} searchValue={searchValue} />
             ))}
           </TableBody>
@@ -274,22 +298,21 @@ export function CustomerPageUpper(props) {
 
   return (
     <>
-      <Box sx={{ height: "350px", width: "100%" }}>
+      <Box sx={{ height: "200px", width: "100%" }}>
         <Stack
           direction="column"
           justifyContent="space-between"
           alignItems="stretch"
           spacing={8}
         >
-          <Box></Box>
           <Box display="flex" justifyContent="center">
-            <TextField
+            {/* <TextField
               label={[<ManageSearchIcon />, " Search by anything"]}
               onChange={(e) => {
                 trimvariablesForAdvanceSearch(e.target.value);
               }}
               sx={{ width: "420px" }}
-            />
+            /> */}
           </Box>
           <Box display="flex" justifyContent="flex-start">
             <Box>
@@ -451,7 +474,6 @@ export function CustomerPageMiddle() {
                   />
                 </LocalizationProvider>
                 <Box sx={{ flexGrow: 1 }} />
-                <Button variant="contained">Upload an image</Button>
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -552,7 +574,6 @@ export function CustomerPageMiddle() {
             </Grid>
           </form>
         </Box>
-        <hr />
       </Collapse>
     </>
   );

@@ -117,7 +117,7 @@ function Chart3() {
   }, [chartData]);
 
   return (
-    <div style={{ width: "700px" }}>
+    <div style={{ width: "500px"}}>
       <canvas ref={chartRef} id="myChart"></canvas>
       <h3>Today's Revenue: ${todaysRevenue.toFixed(2)}</h3>
     </div>

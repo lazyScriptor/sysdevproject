@@ -18,26 +18,35 @@ function DasboardMain() {
   const paperStyling = {
     p: 3,
     borderRadius: 1,
+    ml: 5,
   };
   return (
     <>
       <Box id="main-body">
         <Box id="body" sx={{ display: "flex" }}>
           <Box
+            sx={{}}
             gap={3}
             display={"flex"}
-            alignItems={"flex-end"}
-            justifyContent={"end"}
+            alignItems={"start"}
+            justifyContent={"start"}
             height={"100vh"}
             width={"100vw"}
           >
-            <Paper elevation={5} sx={paperStyling}>
-              <Chart1 />
-            </Paper>
-            <Box display={"flex"} flexDirection={"column"} gap={3}>
+            <Box display={"flex"} gap={3} sx={{ mt: 5 }}>
               <Paper elevation={5} sx={paperStyling}>
-                <Chart2 />
+                `<Chart2 />`
               </Paper>
+              <Paper elevation={5} sx={paperStyling}>
+                <Chart1 />
+              </Paper>
+            </Box>
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              gap={7}
+              sx={{ mt: 5 }}
+            >
               <Paper elevation={5} sx={paperStyling}>
                 <Chart3 />
               </Paper>

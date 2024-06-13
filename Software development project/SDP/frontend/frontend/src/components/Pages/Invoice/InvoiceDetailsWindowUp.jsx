@@ -1,46 +1,19 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  Paper,
-  Switch,
-  Typography,
-} from "@mui/material";
-import React, {
-  useContext,
-  useDeferredValue,
-  useEffect,
-  useState,
-} from "react";
-import { InvoiceContext } from "../../../Contexts/Contexts";
+import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import { Box, Button, Paper, Switch, Typography } from "@mui/material";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import AppRegistrationTwoToneIcon from "@mui/icons-material/AppRegistrationTwoTone";
+import { InvoiceContext } from "../../../Contexts/Contexts";
 
 function InvoiceDetailsWindowUp() {
   const {
-    fullDetailsEquipmentArray,
-    setFullDetailsEquipmentArray,
-    checkState,
-    responseManageToogle,
-    setResponseManageToogle,
-    setCheckState,
-    eqObject,
-    setEqObject,
-    invoiceSearchBtnStatus,
-    setInvoiceSearchBtnStatus,
     invoiceObject,
     setInvoiceObject,
-    clearObject,
-    updateValue,
-    updateEqObject,
+    invoiceSearchBtnStatus,
+    Total,
   } = useContext(InvoiceContext);
 
-  const [toogle, setToogle] = useState(false);
-
-  const Total = localStorage.getItem("Total");
-  useEffect(() => {
-    // setResponseManageToogle(!responseManageToogle);
-  }, [eqObject]);
+  const [toggleSwitch, setToggleSwitch] = useState(!invoiceSearchBtnStatus);
 
   const deleteButtonStyles = {
     width: "100%",
@@ -49,18 +22,23 @@ function InvoiceDetailsWindowUp() {
     borderRadius: 6,
     backgroundColor: "red",
   };
+
   const handleDelete = (id) => {
-    // Filter out the item with the corresponding eq_id
     const updatedEqObject = invoiceObject.eqdetails.filter(
       (item) => item.eq_id !== id
     );
-
-    // Update the invoiceObject with the filtered eqdetails array
     setInvoiceObject((prevInvoiceObject) => ({
       ...prevInvoiceObject,
       eqdetails: updatedEqObject,
     }));
   };
+
+  useEffect(() => {
+    // When invoiceSearchBtnStatus changes to true, turn off and disable the switch
+    if (invoiceSearchBtnStatus) {
+      setToggleSwitch(false);
+    }
+  }, [invoiceSearchBtnStatus]);
 
   return (
     <>
@@ -78,18 +56,22 @@ function InvoiceDetailsWindowUp() {
       >
         <Box
           sx={{
-            backgroundColor: toogle
+            backgroundColor: toggleSwitch
               ? (theme) => theme.palette.primary[100]
               : (theme) => theme.palette.primary[50],
             borderRadius: 3,
             width: "90px",
           }}
         >
-          <Switch disabled={invoiceSearchBtnStatus} onChange={(e) => setToogle(e.target.checked)} />
+          <Switch
+            disabled={invoiceSearchBtnStatus}
+            checked={toggleSwitch}
+            onChange={(e) => setToggleSwitch(e.target.checked)}
+          />
           <Typography
             variant="caption"
             color={
-              toogle
+              toggleSwitch
                 ? (theme) => theme.palette.primary[25]
                 : (theme) => theme.palette.primary[400]
             }
@@ -117,7 +99,7 @@ function InvoiceDetailsWindowUp() {
               key={index}
               sx={{
                 backgroundColor: item.inveq_return_date
-                  ? (theme)=>theme.palette.primary[50]
+                  ? (theme) => theme.palette.primary[50]
                   : "white",
                 display: "flex",
                 height: "70px",
@@ -140,7 +122,6 @@ function InvoiceDetailsWindowUp() {
                   ml: 2,
                 }}
               >
-                {/* <Typography variant="h6">Advance</Typography> */}
                 <Typography variant="caption">{item.eq_id}</Typography>
                 <Typography variant="body">{item.eq_name}</Typography>
               </Box>
@@ -155,10 +136,6 @@ function InvoiceDetailsWindowUp() {
                   pr: 2,
                 }}
               >
-                {/* <Typography variant="h6" sx={{ textAlign: "end",mb:3 }}>
-          2000 LKR
-        </Typography> */}
-
                 <Typography variant="body" sx={{ textAlign: "end" }}>
                   Rentalx {item.eq_rental}
                 </Typography>
@@ -166,18 +143,15 @@ function InvoiceDetailsWindowUp() {
                   Quantityx {item.inveq_borrowqty}
                 </Typography>
               </Box>
-              {toogle && (
-                <>
-                  {" "}
-                  <Box sx={{ width: "40px" }}>
-                    <button
-                      style={deleteButtonStyles}
-                      onClick={() => handleDelete(item.eq_id)}
-                    >
-                      <DeleteTwoToneIcon sx={{ color: "white" }} />
-                    </button>
-                  </Box>
-                </>
+              {toggleSwitch && (
+                <Box sx={{ width: "40px" }}>
+                  <Button
+                    style={deleteButtonStyles}
+                    onClick={() => handleDelete(item.eq_id)}
+                  >
+                    <DeleteTwoToneIcon sx={{ color: "white" }} />
+                  </Button>
+                </Box>
               )}
             </Paper>
           ))}

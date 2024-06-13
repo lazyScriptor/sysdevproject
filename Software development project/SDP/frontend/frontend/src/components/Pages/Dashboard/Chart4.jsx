@@ -58,7 +58,7 @@ const Chart4 = () => {
   }
 
   return (
-    <div style={{ height: "500px", width: "800px" }}>
+    <div style={{ height: "350px", width: "550px" }}>
       <h2>Top 10 Defective Equipment</h2>
       <Bar
         data={chartData}

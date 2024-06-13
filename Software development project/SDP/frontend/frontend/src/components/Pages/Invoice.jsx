@@ -42,6 +42,7 @@ import AddIcCallOutlinedIcon from "@mui/icons-material/AddIcCallOutlined";
 import ContactMailOutlinedIcon from "@mui/icons-material/ContactMailOutlined";
 import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
 import { InvoicePdfWarehouseHandler } from "../RoleBasedAccess/Warehouse handler/Invoice/InvoiceWarehouseHandler.jsx";
+
 const textFieldStyle = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "12px",
@@ -238,7 +239,7 @@ function Invoice() {
   };
 
   const handleInvoiceSearch = async (invoiceIdSearch) => {
-    setInvoiceSearchBtnStatus(true);
+    
     clearObject();
 
     try {
@@ -248,6 +249,7 @@ function Invoice() {
       );
 
       if (response.status === 200) {
+        setInvoiceSearchBtnStatus(true);
         console.log("Invoice details:", response.data);
         updateValue("advance", response.data.advance);
         updateValue("createdDate", response.data.createdDate);
@@ -470,7 +472,7 @@ function Invoice() {
               >
                 <Box
                   sx={{
-                    backgroundColor: "#f0f0f0",
+                    border: `${theme.palette.primary[200]} solid 3px`,
                     display: "flex",
                     justifyContent: "start",
                     alignItems: "center",
