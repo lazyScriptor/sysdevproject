@@ -1196,7 +1196,7 @@ GROUP BY
       SELECT 
         i.inv_id AS invoice_id,
         CONCAT(c.cus_fname, ' ', c.cus_lname) AS customer_name,
-        SUM((DATEDIFF(COALESCE(ie.inveq_return_date, CURRENT_DATE()), ie.inveq_borrow_date) * ie.inveq_borrowqty * e.eq_rental)) AS total_income
+        SUM((ie.duration_in_days * ie.inveq_borrowqty * e.eq_rental)) AS total_income
       FROM 
         invoice i
       JOIN 

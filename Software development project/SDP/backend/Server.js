@@ -446,8 +446,6 @@ app.post('/createUser', async (req, res) => {
     res.status(500).json({ error: 'Failed to create user' });
   }
 });
-
-
 app.delete("/deleteUserRole/:userId/:role", async (req, res) => {
   const { userId, role } = req.params;
   try {
@@ -501,7 +499,6 @@ app.get(`/reports/getCustomerInvoiceDetails`, async (req, res) => {
     });
   }
 });
-// Updated API endpoint
 app.get("/reports/getEquipmentUtilizationDetails", async (req, res) => {
   const { startDate, endDate } = req.query;
 

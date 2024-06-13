@@ -109,8 +109,8 @@ function InvoiceItem2() {
               <TableCell align="center">Invoice ID</TableCell>
               <TableCell align="center">Customer Name</TableCell>
               <TableCell align="center">Created Date</TableCell>
-              <TableCell align="center">Total payments done</TableCell>
-              <TableCell align="center">Invoice Total Amount</TableCell>
+              <TableCell align="center">Total payments done (LKR)</TableCell>
+              <TableCell align="center">Invoice Total Amount (LKR)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

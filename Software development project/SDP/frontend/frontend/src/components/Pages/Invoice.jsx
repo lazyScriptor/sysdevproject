@@ -677,7 +677,7 @@ function Invoice() {
           </Box>
         </Box>
       </Box>
-      <InvoicePdfWarehouseHandler/>
+      {/* <InvoicePdfWarehouseHandler/> */}
       <OverlayDialogBox>
         <Payments />
       </OverlayDialogBox>
