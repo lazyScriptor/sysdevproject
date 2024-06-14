@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
@@ -13,34 +14,9 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { useEffect, useState } from "react";
+import { Button, Stack, TextField } from "@mui/material";
 import axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCheckDouble,
-  faInfo,
-  faTriangleExclamation,
-} from "@fortawesome/free-solid-svg-icons";
-import {
-  Button,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-} from "@mui/material";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
-import * as yup from "yup";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import Checkbox from "@mui/material/Checkbox";
-import Swal from "sweetalert2";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 
 function Row(props) {
@@ -51,11 +27,11 @@ function Row(props) {
     padding: "6px 8px",
     height: "30px",
     width: "auto",
-    textAlign: "center", // Ensure text alignment is centered
+    textAlign: "center",
   };
 
   const highlightText = (text, highlight) => {
-    if (typeof text !== "string") return text; // Ensure text is a string
+    if (typeof text !== "string") return text;
     if (!highlight) return text;
     const parts = text.split(new RegExp(`(${highlight})`, "gi"));
     return parts.map((part, index) =>
@@ -121,8 +97,14 @@ function Row(props) {
   );
 }
 
+Row.propTypes = {
+  row: PropTypes.object.isRequired,
+  searchValue: PropTypes.string,
+};
+
 export default function EquipmentWarehouseHandler() {
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("");
@@ -132,6 +114,7 @@ export default function EquipmentWarehouseHandler() {
       try {
         const res = await axios.get("http://localhost:8085/equipment");
         setData(res.data);
+        setFilteredData(res.data);
       } catch (error) {
         console.error("error occurred while fetching data:", error);
       }
@@ -144,7 +127,7 @@ export default function EquipmentWarehouseHandler() {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(column);
 
-    const sortedData = [...data].sort((a, b) => {
+    const sortedData = [...filteredData].sort((a, b) => {
       if (isAsc) {
         return a[column] < b[column] ? -1 : 1;
       } else {
@@ -152,7 +135,7 @@ export default function EquipmentWarehouseHandler() {
       }
     });
 
-    setData(sortedData);
+    setFilteredData(sortedData);
   };
 
   const headerStyles = {
@@ -163,15 +146,21 @@ export default function EquipmentWarehouseHandler() {
     transition: "background-color 0.3s ease",
   };
 
+  const searchByVariable = (variable) => {
+    const trimmedVariable = variable.replace(/[\s-+]/g, "").trim();
+    const filtered = data.filter((item) =>
+      item.eq_id.toString().includes(trimmedVariable)
+    );
+    setFilteredData(filtered);
+    setSearchValue(variable);
+  };
+
   return (
     <>
       <Box id="main-body">
         <Box id="body">
-          <CustomerPageUpper
-            setData={setData}
-            setSearchValue={setSearchValue}
-          />
-          <TableContainer component={Paper} sx={{  }}>
+          <CustomerPageUpper setSearchValue={searchByVariable} />
+          <TableContainer component={Paper}>
             <Table aria-label="collapsible table">
               <TableHead>
                 <TableRow>
@@ -233,7 +222,7 @@ export default function EquipmentWarehouseHandler() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.map((row) => (
+                {filteredData.map((row) => (
                   <Row key={row.eq_id} row={row} searchValue={searchValue} />
                 ))}
               </TableBody>
@@ -245,53 +234,33 @@ export default function EquipmentWarehouseHandler() {
   );
 }
 
-export function CustomerPageUpper(props) {
-  const { setData, setSearchValue } = props;
-
-  const trimvariablesForAdvanceSearch = (variable) => {
-    const cleanedVariable = variable.replace(/[\s-+]/g, ""); // Replace all whitespace characters, hyphens, and plus signs with an empty string
-    const trimmedvariable = cleanedVariable.trim();
-    searchByVariable(trimmedvariable);
-  };
-
-  const searchByVariable = (variable) => {
-    try {
-      axios
-        .get(`http://localhost:8085/searchCustomerByValue/${variable}`)
-        .then((res) => {
-          setData(res.data);
-          console.log(res.data);
-        });
-      setSearchValue(variable);
-    } catch (error) {
-      console.error("error occurred in the try catch block", error);
-    }
-  };
+function CustomerPageUpper(props) {
+  const { setSearchValue } = props;
 
   return (
-    <>
-      <Box sx={{  width: "100%" }}>
-        <Stack
-          direction="column"
-          justifyContent="space-between"
-          alignItems="stretch"
-          spacing={8}
-        >
-          <Box></Box>
-          <Box display="flex" justifyContent="center">
-            <TextField
-              label={[<ManageSearchIcon />, " Search by anything"]}
-              onChange={(e) => {
-                trimvariablesForAdvanceSearch(e.target.value);
-              }}
-              sx={{ width: "420px" }}
-            />
-          </Box>
-          <Box display="flex" justifyContent="flex-start">
-          </Box>
-        </Stack>
-      </Box>
-    </>
+    <Box sx={{ width: "100%" }}>
+      <Stack
+        direction="column"
+        justifyContent="space-between"
+        alignItems="stretch"
+        spacing={8}
+      >
+        <Box></Box>
+        <Box display="flex" justifyContent="center">
+          <TextField
+            component={Paper}
+            elevation={5}
+            label={[<ManageSearchIcon />, " Search by id"]}
+            onChange={(e) => setSearchValue(e.target.value)}
+            sx={{ width: "420px" }}
+          />
+        </Box>
+        <Box display="flex" justifyContent="flex-start"></Box>
+      </Stack>
+    </Box>
   );
 }
 
+CustomerPageUpper.propTypes = {
+  setSearchValue: PropTypes.func.isRequired,
+};

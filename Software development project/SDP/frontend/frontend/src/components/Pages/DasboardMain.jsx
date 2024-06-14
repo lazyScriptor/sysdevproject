@@ -35,7 +35,7 @@ function DasboardMain() {
           >
             <Box display={"flex"} gap={3} sx={{ mt: 5 }}>
               <Paper elevation={5} sx={paperStyling}>
-                `<Chart2 />`
+                <Chart2 />
               </Paper>
               <Paper elevation={5} sx={paperStyling}>
                 <Chart1 />

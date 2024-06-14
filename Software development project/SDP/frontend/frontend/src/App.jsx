@@ -377,7 +377,7 @@ export default function App() {
                   <>
                     <CashierAuth>
                       <SidebarCashier />
-                      <CashierDashBoard />
+                      <DashboardMain/>
                     </CashierAuth>
                   </>
                 }

@@ -118,7 +118,7 @@ function LoginFormMUI() {
             const userRole = parseJwt(res.data.token).userRole;
             console.log(userRole);
             if (userRole == "warehouse handler") {
-              navigate("/WH-customers");
+              navigate("/WH-dashboard");
             } else if (userRole == "cashier") {
               navigate("/C-dashboard");
             } else if (userRole == "admin") {

@@ -142,12 +142,7 @@ export default function SidebarCashier() {
               icon={faToolbox}
               destination="/C-equipment"
             />
-            <DashboardCategoryBtn
-              handlefunction={handleShow}
-              name="Reports"
-              icon={faNewspaper}
-              destination="/Reports"
-            />
+           
             <hr />
             <DashboardCategoryBtn
               handlefunction={handleShow}
