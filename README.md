@@ -23,4 +23,5 @@
 
 ![Screenshot 2024-06-11 at 23 05 10](https://github.com/user-attachments/assets/78f41f2c-5c1c-4f5a-ab72-229c83807399)
 <h2>User page</h2>
+
 ![Screenshot 2024-06-11 at 22 57 49](https://github.com/user-attachments/assets/bd4335e9-1629-418b-abdc-e7e48e84c496)
