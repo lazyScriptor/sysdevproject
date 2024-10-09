@@ -37,7 +37,7 @@ export function EquipmentItem5() {
                 <TableCell>Invoice ID</TableCell>
                 <TableCell>Invoice Created Date</TableCell>
                 <TableCell>Duration in Days</TableCell>
-                <TableCell>Not Completed</TableCell>
+                {/* <TableCell>Not Completed</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -48,7 +48,7 @@ export function EquipmentItem5() {
                   <TableCell>{row.inv_id}</TableCell>
                   <TableCell>{formatDate(row.inv_createddate)}</TableCell>
                   <TableCell>{row.duration_in_days}</TableCell>
-                  <TableCell>{row.not_completed}</TableCell>
+                  {/* <TableCell>{row.not_completed}</TableCell> */}
                 </TableRow>
               ))}
             </TableBody>

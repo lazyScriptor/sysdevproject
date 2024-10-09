@@ -108,6 +108,7 @@ function InvoiceDetailsWindowUp() {
                 borderRadius: 6,
                 "&:hover": {
                   backgroundColor: (theme) => theme.palette.primary[100], // Change to your desired hover color
+                  cursor:"not-allowed"
                 },
               }}
             >

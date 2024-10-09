@@ -67,7 +67,7 @@ export function NewEquipmentForm(props) {
       .typeError("Rental must be a number")
       .required("Rental is required")
       .positive("Rental must be positive"),
-    eq_description: yup.string().required("Description is required"),
+    eq_description: yup.string(),
     eq_defected_status: yup.number().required("Defective status is required"),
     eq_completestock: yup
       .number()
@@ -148,40 +148,47 @@ export function NewEquipmentForm(props) {
     setToggle(false); // Reset toggle state
     console.log(equipment.eq_catid);
   };
-  const handleDelete = (id) => {
-    console.log("id", id);
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axios
-          .delete(`http://localhost:8085/deleteEquipmentbyId/${id}`)
-          .then((response) => {
-            Swal.fire({
-              title: "Deleted!",
-              text: response.data.message,
-              icon: "success",
-            });
-          })
-          .catch((error) => {
-            console.error("Error deleting equipment:", error);
-            Swal.fire({
-              title: "Error!",
-              text:
-                error.response?.data?.message ||
-                "Something went wrong. Please try again.",
-              icon: "error",
-            });
+
+const handleDelete = (id) => {
+  console.log("id", id);
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const token = localStorage.getItem("token"); // Get the token from local storage
+
+      axios
+        .delete(`http://localhost:8085/deleteEquipmentbyId/${id}`, {
+          headers: {
+            'x-access-token': token, // Pass the token in the headers
+          },
+        })
+        .then((response) => {
+          Swal.fire({
+            title: "Deleted!",
+            text: response.data.message,
+            icon: "success",
           });
-      }
-    });
-  };
+        })
+        .catch((error) => {
+          console.error("Error deleting equipment:", error);
+          Swal.fire({
+            title: "Error!",
+            text:
+              error.response?.data?.message ||
+              "Something went wrong. Please try again.",
+            icon: "error",
+          });
+        });
+    }
+  });
+};
 
   const onSubmit = async (data) => {
     data.eq_defected_status = defectedStock;

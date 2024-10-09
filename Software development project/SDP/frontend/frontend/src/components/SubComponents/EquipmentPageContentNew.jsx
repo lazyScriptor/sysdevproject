@@ -110,7 +110,7 @@ function Row(props) {
         </TableCell>
 
         <TableCell sx={cellStyles}>
-          {highlightText(row.eq_description, searchValue)}
+          {row.eq_description == 0 ? "" : row.eq_description}
         </TableCell>
         <TableCell sx={cellStyles}>
           {highlightText(row.eq_defected_status, searchValue)}
@@ -364,7 +364,7 @@ export function CustomerPageMiddle() {
       .typeError("Rental must be a number")
       .required("Rental is required")
       .positive("Rental must be positive"),
-    eq_description: yup.string().required("Description is required"),
+    eq_description: yup.string(),
     eq_completestock: yup
       .number()
       .typeError("Complete stock must be a number")
@@ -541,7 +541,7 @@ export function CustomerPageMiddle() {
                   >
                     <MenuItem value={1}>Power tools</MenuItem>
                     <MenuItem value={2}>Construction equipment</MenuItem>
-                    <MenuItem value={3}>Category 3</MenuItem>
+                    <MenuItem value={3}>Other</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>

@@ -17,6 +17,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import HealthAndSafetyTwoToneIcon from "@mui/icons-material/HealthAndSafetyTwoTone";
 import { SnackbarProvider, useSnackbar } from "notistack";
+import SearchIcon from "@mui/icons-material/Search";
 
 function parseJwt(token) {
   var base64Url = token.split(".")[1];
@@ -150,13 +151,20 @@ function LoginFormMUI() {
     <>
       <Paper
         elevation={10}
-        sx={{ display: "inline-block", p: 5, pt: 0, borderRadius: 4 }}
+        sx={{
+          display: "inline-block",
+          p: 5,
+          pt: 4,
+          borderRadius: 4,
+          borderTop: 5,
+          borderColor: (theme) => theme.palette.primary[400],
+        }}
       >
-        <Typography variant="h2" sx={{ textAlign: "center" }}>
+        {/* <Typography variant="h2" sx={{ textAlign: "center" }}>
           <HealthAndSafetyTwoToneIcon
             sx={{ fontSize: 48, color: (theme) => theme.palette.primary[800] }}
           />
-        </Typography>
+        </Typography> */}
 
         <h1 style={{ textAlign: "center", marginBottom: 50 }}>Login</h1>
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -189,7 +197,8 @@ function LoginFormMUI() {
               <LoadingButton
                 loading={isLoading}
                 onClick={() => handleLoadingButton(LoadUsername)}
-                sx={{ minHeight: "55px", ml: 2, borderRadius: 3 }}
+                startIcon={<SearchIcon />}
+                sx={{ minHeight: "55px", ml: 2, pr: 0, borderRadius: 3 }}
                 variant="outlined"
               ></LoadingButton>
             </Box>

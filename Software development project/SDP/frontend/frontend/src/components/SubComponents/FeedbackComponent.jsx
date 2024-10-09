@@ -79,7 +79,7 @@ export default function FeedBack(props) {
     let rating = null; // Default rating value
 
     const setRating = (newRating) => {
-      rating = newRating;
+      if(newRating)rating = newRating;
     };
 
     createRoot(ratingContainer).render(
@@ -103,7 +103,7 @@ export default function FeedBack(props) {
 
         try {
           console.log(rating, comments);
-          if(rating!=null){invoiceObject.inv_rating = rating;}
+          if(rating){invoiceObject.inv_rating = rating;}
           
           invoiceObject.inv_special_message = comments;
           // Assume axios is properly configured

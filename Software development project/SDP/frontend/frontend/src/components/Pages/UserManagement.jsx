@@ -213,8 +213,8 @@ function UserPaper({ user, imageUrl }) {
             src={imageUrl}
             alt={user.username}
             style={{
-              maxWidth: "100%", // Set maximum width to ensure the image fits within the box
-              maxHeight: "100%", // Set maximum height to ensure the image fits within the box
+              height: "100px",
+              width: "100px",
               borderRadius: "50%",
               boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
             }}

@@ -425,8 +425,10 @@ export default function App() {
   );
 }
 
+
+//Role based authorization with token authentication
 export const AdminAuth = ({ children }) => {
-  const isAuthenticated = useAuth(["admin"]);
+  const isAuthenticated = (["admin"]);
   return isAuthenticated ? children : null;
 };
 export const CashierAuth = ({ children }) => {

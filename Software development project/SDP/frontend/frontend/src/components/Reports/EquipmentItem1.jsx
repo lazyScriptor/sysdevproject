@@ -77,7 +77,7 @@ function EquipmentItem1() {
                 <TableCell>Equipment ID</TableCell>
                 <TableCell>Equipment Name</TableCell>
                 <TableCell>Total Rentals</TableCell>
-                <TableCell>Total Rental Days</TableCell>
+                {/* <TableCell>Total Rental Days</TableCell> */}
                 <TableCell>Average Rental Duration</TableCell>
               </TableRow>
             </TableHead>
@@ -87,7 +87,7 @@ function EquipmentItem1() {
                   <TableCell>{row.eq_id}</TableCell>
                   <TableCell>{row.eq_name}</TableCell>
                   <TableCell>{row.total_rentals}</TableCell>
-                  <TableCell>{row.total_rental_days}</TableCell>
+                  {/* <TableCell>{row.total_rental_days}</TableCell> */}
                   <TableCell>{row.average_rental_duration}</TableCell>
                 </TableRow>
               ))}

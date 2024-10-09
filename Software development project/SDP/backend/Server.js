@@ -106,7 +106,6 @@ const verifyJWT = (req, res, next) => {
 app.get("/isUserAuth", verifyJWT, (req, res) => {
   return res.json({ auth: true, message: "You have a valid token" });
 });
-
 app.get("/loginValidate", async (req, res) => {
   try {
     const response = await loginValidate(req.query);
@@ -115,6 +114,9 @@ app.get("/loginValidate", async (req, res) => {
     const userRole = response[1][0].ur_role;
     const userName = response[1][0].username;
     console.log("id is", id, "Role is ", userRole);
+
+    //create the token with payload -userole
+    
     const token = jwt.sign({ userRole }, "jwtSecret", {
       expiresIn: 60 * 60 * 24,
     });
@@ -130,7 +132,6 @@ app.get("/loginValidate", async (req, res) => {
     return res.json({ auth: false, message: "express failed auth false" });
   }
 });
-
 app.get("/customers", async (req, res) => {
   try {
     console.log(req);
@@ -150,7 +151,6 @@ app.get("/searchCustomerByValue/:value", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 app.get("/equipment", async (req, res) => {
   try {
     const equipment = await getEquipment();
@@ -170,10 +170,7 @@ app.get("/getEquipmentbyID/:equipmentID", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-
-
-app.delete('/deleteEquipmentbyId/:id', async (req, res) => {
+app.delete('/deleteEquipmentbyId/:id', verifyAdmin, async (req, res) => {
   const equipmentId = req.params.id;
   const result = await deleteEquipmentById(equipmentId);
 
@@ -189,7 +186,6 @@ app.delete('/deleteEquipmentbyId/:id', async (req, res) => {
     });
   }
 });
-
 app.get("/getEquipmentbyName/:equipmentName", async (req, res) => {
   try {
     console.log("Server side getEquipmentbyName", req.params.equipmentName);
@@ -200,7 +196,6 @@ app.get("/getEquipmentbyName/:equipmentName", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 app.get("/getCustomerbyNIC/:nic", async (req, res) => {
   try {
     console.log("Server side getCustomerbyNIC", req.params.nic);
@@ -235,7 +230,6 @@ app.post("/setEquipment", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 app.post("/createCustomer", async (req, res) => {
   try {
     const customerDetails = await setCustomer(req.body);
@@ -248,7 +242,6 @@ app.post("/createCustomer", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 app.get("/getCustomerbyID/:id", async (req, res) => {
   try {
     console.log("Server side getCustomerbyID", req.params.id);
@@ -294,7 +287,6 @@ app.get("/getCustomerbyPhoneNumber/:trimmedPhoneNumber", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 app.get("/getCustomerbyPhoneNumberOrNic/:phoneNumber", async (req, res) => {
   try {
     console.log("Server side getCustomerbyphoneNumber", req.params.phoneNumber);
@@ -307,7 +299,6 @@ app.get("/getCustomerbyPhoneNumberOrNic/:phoneNumber", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 app.get("/getCustomerbyAddress1/:SAddress1", async (req, res) => {
   try {
     console.log("Server side getCustomerbySAddress1", req.params.SAddress1);
@@ -337,7 +328,6 @@ app.get("/getUserRole/:userName", async (req, res) => {
     console.log("Error occured in express", error);
   }
 });
-
 app.delete("/deleteCustomers/:customerId", async (req, res) => {
   try {
     const customerData = await deleteCustomer(req.params.customerId);
@@ -347,7 +337,6 @@ app.delete("/deleteCustomers/:customerId", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 app.delete("/deleteEquipment/:eq_id", async (req, res) => {
   try {
     console.log("This is the server ", req.params.eq_id);
@@ -358,7 +347,6 @@ app.delete("/deleteEquipment/:eq_id", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 app.post("/updateCustomerDetails", async (req, res) => {
   try {
     const customerDetails = await updateCustomerDetails(req.body);
@@ -371,7 +359,6 @@ app.post("/updateCustomerDetails", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 app.get("/invoiceIdRetrieve", async (req, res) => {
   try {
     console.log("req");
@@ -399,7 +386,6 @@ app.get("/invoiceDataRetrieve/:invoiceIdSearch", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 app.post("/createInvoiceDetails", async (req, res) => {
   try {
     const customerDetails = await createInvoiceDetails(req.body);
@@ -411,7 +397,6 @@ app.post("/createInvoiceDetails", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 app.post("/updateInvoiceDetails", async (req, res) => {
   try {
     const customerDetails = await updateInvoiceDetails(req.body);
@@ -423,7 +408,6 @@ app.post("/updateInvoiceDetails", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 app.get("/fetchUserDetails", async (req, res) => {
   try {
     const userDetails = await getUserDetails();
@@ -432,7 +416,6 @@ app.get("/fetchUserDetails", async (req, res) => {
     console.log("Error occured in express fetchUser details");
   }
 });
-
 app.post('/createUser', async (req, res) => {
   try {
     const userDetails = req.body;
@@ -475,7 +458,6 @@ app.put("/updateUserRole/:userId/:role", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
-
 app.get(`/reports/getCustomerRatings`, async (req, res) => {
   try {
     const response = await reportsGetCustomerRatings();
@@ -529,8 +511,6 @@ app.get("/reports/getEquipmentUtilizationDetails", async (req, res) => {
     });
   }
 });
-
-
 app.get("/reports/getEquipmentRevenueDetails", async (req, res) => {
   const { startDate, endDate } = req.query;
 
@@ -564,7 +544,6 @@ app.get("/reports/getEquipmentRevenueDetails", async (req, res) => {
     });
   }
 });
-
 app.get("/reports/getUnderutilizedEquipment", async (req, res) => {
   console.log("calling");
   const { startDate, endDate } = req.query;
@@ -593,8 +572,6 @@ app.get("/reports/getUnderutilizedEquipment", async (req, res) => {
     });
   }
 });
-
-
 app.get("/reports/getEquipmentRentalDetails", async (req, res) => {
   console.log("calling");
   const { startDate, endDate } = req.query;
@@ -623,8 +600,6 @@ app.get("/reports/getEquipmentRentalDetails", async (req, res) => {
     });
   }
 });
-
-
 app.get("/reports/getIncompleteRentals", async (req, res) => {
   console.log("calling");
 
@@ -640,7 +615,6 @@ app.get("/reports/getIncompleteRentals", async (req, res) => {
     });
   }
 });
-
 app.get('/reports/getDeletedInvoices', async (req, res) => {
   let { start_date, end_date } = req.query;
 
@@ -661,7 +635,6 @@ app.get('/reports/getDeletedInvoices', async (req, res) => {
     res.status(500).json({ status: false, error: "Failed to retrieve deleted invoices" });
   }
 });
-
 app.get('/reports/getCombinedInvoiceReports', async (req, res) => {
   let { start_date, end_date } = req.query;
 

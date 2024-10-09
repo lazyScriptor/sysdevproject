@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Box, Paper, Button, TextField, colors, useTheme } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Button,
+  TextField,
+  colors,
+  useTheme,
+  Typography,
+} from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionActions from "@mui/material/AccordionActions";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -70,7 +78,14 @@ export default function ReportsBackground() {
   return (
     <>
       <Box component={Paper} sx={{ width: "100%", height: "auto" }}>
-        <Box sx={{ height: "20vh" }}></Box>
+        <Box sx={{ height: "20vh" }}>
+          <Typography
+            variant="h2"
+            sx={{ color: "grey", textAlign: "center", mt: 5 }}
+          >
+            This is the equipment reports section
+          </Typography>
+        </Box>
         <Box sx={{ height: "10vh", display: "flex", width: "100%" }}>
           <ReportsNavBar />
         </Box>
@@ -142,3 +157,7 @@ export default function ReportsBackground() {
     </>
   );
 }
+
+<Typography variant="h2" sx={{ color: "grey", textAlign: "center", mt: 5 }}>
+  This is the reports section
+</Typography>;

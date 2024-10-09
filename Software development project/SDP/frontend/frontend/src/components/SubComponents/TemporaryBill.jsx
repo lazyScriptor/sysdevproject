@@ -17,6 +17,7 @@ import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 
 
 const TemporaryBill = () => {
+  const cashierName=localStorage.getItem('username')
   const { invoiceObject } = useContext(InvoiceContext);
   const billRef = useRef(null);
 
@@ -77,12 +78,16 @@ const TemporaryBill = () => {
                 ? new Date(invoiceObject.createdDate).toLocaleString()
                 : ""}
             </Typography>
-            <br />
-            <Typography align="right">
-              Customer name:{invoiceObject.customerDetails.cus_fname}{" "}
+           
+            <Typography align="left">
+              Customer name: {invoiceObject.customerDetails.cus_fname}{" "}
               {invoiceObject.customerDetails.cus_lname}
             </Typography>
             <br />
+            <Typography>
+              Cashier name: {cashierName}
+            </Typography>
+            <br/>
             <Table>
               <TableHead>
                 <TableRow>

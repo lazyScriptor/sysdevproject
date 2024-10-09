@@ -5,10 +5,23 @@ import bcrypt, { hash } from "bcrypt";
 dotenv.config();
 
 const saltRound = 10;
+//there are multiple ways to connect to the database through mysql 
+
+// 1.createconection
+// 2.createpool
+// 3.createclusterpool
+// 4.createserver
 
 // insted of createconnection, Overall, using createPool simplifies connection
 // management by handling the opening, closing, and reuse of connections automatically,
 // which can improve the efficiency and scalability of your application.
+
+// throw 
+  // we can pass the error to the catch block with this and terminate the program from the error occured
+  // if there is no catch block then the program crash
+
+// return 
+  // pass the mentioned thing to the callback
 
 const pool = mysql
   .createPool({
@@ -22,7 +35,13 @@ const port = process.env.PORT || 8085;
 
 export async function loginValidate(userObject) {
   const [user] = await pool.query(
-    `SELECT users.* ,userRole.ur_role,userRoleMap.urm_password FROM users JOIN userRoleMap ON users.user_id=userRoleMap.urm_userid JOIN userRole ON userRoleMap.urm_roleid=userRole.ur_roleid WHERE username=? AND ur_role= ?`,
+    `SELECT users.* ,userRole.ur_role,userRoleMap.urm_password 
+     FROM users 
+     JOIN userRoleMap 
+     ON users.user_id=userRoleMap.urm_userid 
+     JOIN userRole 
+     ON userRoleMap.urm_roleid=userRole.ur_roleid 
+     WHERE username=? AND ur_role= ?`,
     [userObject.username, userObject.role]
   );
   const id = user[0].user_id;
@@ -839,7 +858,7 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
 }
 export async function getUserDetails() {
   try {
-    const [userDetails] = await pool.query(`SELECT users.* FROM users`);
+    const [userDetails] = await pool.query(`SELECT * FROM users`);
 
     for (const user of userDetails) {
       const [addRoleDetails] = await pool.query(
@@ -871,6 +890,10 @@ export async function setUserDetails(object) {
   } = object;
 
   try {
+    // Hash the password using bcrypt
+    const hashedPassword = await bcrypt.hash(password, saltRound);
+
+    // Insert user details into the users table
     const [response] = await pool.query(
       `
       INSERT INTO users (user_first_name, user_last_name, username, nic, user_phone_number, user_address1, user_address2)
@@ -889,13 +912,14 @@ export async function setUserDetails(object) {
 
     const userId = response.insertId;
 
+    // Insert each user role into the userRoleMap table with the hashed password
     for (const role of userRole) {
       await pool.query(
         `
         INSERT INTO userRoleMap (urm_userid, urm_roleid, urm_password)
         VALUES (?, ?, ?)
         `,
-        [userId, role, password]
+        [userId, role, hashedPassword]
       );
     }
 

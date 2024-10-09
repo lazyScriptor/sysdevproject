@@ -42,6 +42,7 @@ import AddIcCallOutlinedIcon from "@mui/icons-material/AddIcCallOutlined";
 import ContactMailOutlinedIcon from "@mui/icons-material/ContactMailOutlined";
 import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
 import { InvoicePdfWarehouseHandler } from "../RoleBasedAccess/Warehouse handler/Invoice/InvoiceWarehouseHandler.jsx";
+import InvoiceHandOver from "./Invoice/InvoiceHandOver.jsx";
 
 const textFieldStyle = {
   "& .MuiOutlinedInput-root": {
@@ -228,13 +229,13 @@ function Invoice() {
     setUpdateBtnStatus(false);
     try {
       await axios.get("http://localhost:8085/invoiceIdRetrieve").then((res) => {
-        console.log(res.data);
+     
         setInvoiceId(res.data);
         updateValue("InvoiceID", res.data);
         updateValue("createdDate", currentDate);
       });
     } catch (error) {
-      console.log("handleSearch Createinvoice error", error);
+      
     }
   };
 
@@ -243,21 +244,21 @@ function Invoice() {
     clearObject();
 
     try {
-      console.log(invoiceIdSearch);
+      
       const response = await axios.get(
         `http://localhost:8085/invoiceDataRetrieve/${invoiceIdSearch}`
       );
 
       if (response.status === 200) {
         setInvoiceSearchBtnStatus(true);
-        console.log("Invoice details:", response.data);
+      
         updateValue("advance", response.data.advance);
         updateValue("createdDate", response.data.createdDate);
         response.data.payments.forEach((payment) => {
           // Pass each payment object to the updateValue function
           updateValue("payments", payment);
         });
-        console.log(response.data.customerDetails.length);
+     
         updateValue("customerDetails", response.data.customerDetails);
         response.data.eqdetails.forEach((eqdetail) => {
           // Pass each payment object to the updateValue function
@@ -265,10 +266,10 @@ function Invoice() {
         });
         updateValue("InvoiceID", response.data.InvoiceID);
         updateValue("iDstatus", response.data.idStatus);
-        console.log("object", response.data.eqdetails);
+       
         setUpdateBtnStatus(true);
       } else if (response.status == 404) {
-        console.log("Invoice not found");
+        
       } else {
         console.log("Unexpected response status:", response.status);
       }
@@ -399,7 +400,8 @@ function Invoice() {
             }}
           >
             {updateBtnStatus == true ? (
-              <InvoiceHandOverForm />
+              // 
+              <InvoiceHandOver/>
             ) : (
               <InvoiceRightSideNew />
             )}
@@ -416,6 +418,7 @@ function Invoice() {
             <Paper
               elevation={3}
               sx={{
+                position:"relative",
                 width: "95%",
                 height: "100%",
                 display: "flex",
@@ -423,13 +426,14 @@ function Invoice() {
                 pt: 3,
                 pb: 3,
                 borderRadius: 3,
+                
               }}
             >
               <Box
                 width={"100px"}
                 height={"100px"}
-                position={"inherit"}
-                sx={{ mt: -1, ml: -22 }}
+                position={"absolute"}
+                sx={{ left:20}}
               >
                 <FontAwesomeIcon
                   icon={faAddressCard}

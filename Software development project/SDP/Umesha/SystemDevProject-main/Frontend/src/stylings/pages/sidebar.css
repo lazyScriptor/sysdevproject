@@ -1,0 +1,58 @@
+#sidebar {
+  width: 18vw;
+  border: solid 1px;
+  /* border-radius: 0px 10px 10px 0px; */
+}
+
+.sidebar-header {
+  background-color: #1d242e;
+  width: vw;
+  height: 80px;
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  /* border-radius: 0px 10px 0px 0px; */
+}
+.sidebar-body{
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  gap: 0;
+  background-color:#283342 ;
+  /* border-radius: 0px 0px 10px 0px; */
+}
+.sidebar-body .top{
+  display: flex;
+  padding-top: 10px;
+  justify-content: space-between;
+  height: 100px;
+
+}
+.sidebar-body .top h5, .top p{
+  color: white;
+  margin: 0;
+}
+.sidebar-body .top p{
+  color: #FED600;
+  margin: 0;
+}
+.button-group{
+  padding-left: 40px;
+  height: 100px;
+  transition: height 0.3 ease-in-out;
+}
+.sidebar-header img {
+  max-width: 70%; /* Ensure image doesn't exceed container width */
+  max-height: 100%; /* Ensure image doesn't exceed container height */
+  width: auto;
+  top: 0; /* Position image at the top of container */
+  left: 0; /* Position image at the left of container */
+  bottom: 0; /* Position image at the bottom of container */
+  right: 0; /* Position image at the right of container */
+  margin: auto; /* Center the image within the container */
+}
+
+/* Add this to sidebar.css */
+.no-transition {
+  transition: none !important;
+}
