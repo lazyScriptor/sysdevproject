@@ -69,10 +69,10 @@ function InvoicePaymentsTable() {
         <TableHead sx={{ height: "80px" }}>
           <TableRow>
             <TableCell variant="caption" align="center">
-              Payment Id
+              දිනය
             </TableCell>
             <TableCell variant="caption" align="center">
-              Payment
+              මුදල
             </TableCell>
             <TableCell variant="caption" align="center">
               <Box

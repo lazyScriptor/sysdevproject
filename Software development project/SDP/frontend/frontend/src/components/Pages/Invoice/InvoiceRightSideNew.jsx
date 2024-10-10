@@ -87,6 +87,7 @@ function InvoiceRightSideNew() {
     setEqQuantity("");
     setEqObject([]);
     setFormData({ name: "", quantity: "" });
+    setIdFormData({ id: "" });
   };
 
   const handleSubmitId = async (e) => {
@@ -95,9 +96,9 @@ function InvoiceRightSideNew() {
     const validationErrors = {};
 
     if (!idFormData.id.trim()) {
-      validationErrors.id = "ID is required";
+      validationErrors.id = "අංකයක් ඇතුලත් කරන්න";
     } else if (!/^\d+$/.test(idFormData.id.trim())) {
-      validationErrors.id = "ID should be a number";
+      validationErrors.id = "අකුරු සහ අනෙකුත් ලකුනු ඉවත් කරන්න";
     }
     setIdErrors(validationErrors);
 
@@ -136,18 +137,18 @@ function InvoiceRightSideNew() {
   const validateForm = () => {
     const validationErrors = {};
     if (!idFormData.id.trim()) {
-      validationErrors.id = "ID is required";
+      validationErrors.id = "අංකය ඇතුලත් කරන්න";
     }
     if (!eqName.trim()) {
-      validationErrors.quantity = "Please search an equipment";
+      validationErrors.quantity = "ප්‍රථමයෙන් භාණ්ඩය search කරන්න";
     } else if (!formData.quantity.trim()) {
-      validationErrors.quantity = "Quantity is required";
-    } else if (!/^\d+$/.test(formData.quantity.trim())) {
-      validationErrors.quantity = "Quantity should be a number";
+      validationErrors.quantity = "කරුනාකර ලබාගන්න භාණ්ඩ ප්‍රමානය සඳහන් ";
     } else if (parseInt(formData.quantity.trim(), 10) > eqQuantity) {
-      validationErrors.quantity = "Quantity should not exceed the stock limit";
+      validationErrors.quantity = "ලබාගන්නා භාණ්ඩ ප්‍රමාණය තොගය ඉක්මවිය නොහැක";
+    } else if (!/^\d+$/.test(formData.quantity.trim())) {
+      validationErrors.quantity = "කරුණාකර අංක පමණක් ඇතුලත් කරන්න";
     } else if (formData.quantity <= 0) {
-      validationErrors.quantity = "Quantity should be greater than zero";
+      validationErrors.quantity = "ලබාගන්නා භාණ්ඩ ප්‍රමාණය 0 ට වැඩි විය යුතුය";
     }
     return validationErrors;
   };
@@ -178,7 +179,13 @@ function InvoiceRightSideNew() {
 
   return (
     <Paper
-      sx={{ height: "55vh", width: "100%", p: 4, borderRadius: 4 }}
+      sx={{
+        height: "55vh",
+        width: "100%",
+        p: 4,
+        borderRadius: 4,
+        position: "relative",
+      }}
       elevation={3}
     >
       <form noValidate onSubmit={handleSubmitId}>
@@ -200,13 +207,13 @@ function InvoiceRightSideNew() {
             }}
             htmlFor="id"
           >
-            ID
+            අංකය
           </FormLabel>
           <TextField
             sx={textFieldStyle}
             id="id"
-            label="ID"
             name="id"
+            value={idFormData.id}
             type="text"
             onChange={handleIdChange}
             error={!!idErrors.id}
@@ -238,15 +245,14 @@ function InvoiceRightSideNew() {
               }}
               htmlFor="name"
             >
-              Name
+              නම
             </FormLabel>
             <TextField
               disabled={true}
               fullWidth
               id="name"
               sx={textFieldStyle}
-
-              label={eqName || "Name"}
+              label={eqName}
               name="name"
               type="text"
               value={eqName}
@@ -264,15 +270,16 @@ function InvoiceRightSideNew() {
               }}
               htmlFor="quantity"
             >
-              Quantity
+              ප්‍රමාණය
             </FormLabel>
             <TextField
               fullWidth
               sx={textFieldStyle}
               size=""
+              value={formData.quantity}
               disabled={addButtonDisable}
               id="quantity"
-              label={["remaining : ", eqQuantity || "No equipment found"]}
+              label={["ලබාගන්නා භාණ්ඩ ප්‍රමානය ඇතුලත් කරන්න"]}
               name="quantity"
               type="number"
               onChange={handleChange}
@@ -291,43 +298,50 @@ function InvoiceRightSideNew() {
             color={stockTextColor}
             textAlign={"left"}
           >
-            Remaining Stock: {eqQuantity}
+            මුලු භාණ්ඩ ප්‍රමාණය: {eqQuantity}
           </Typography>
+
           <Box
-            sx={{ display: "flex", justifyContent: "space-evenly", pt: 2.5 }}
+            position={"absolute"}
+            display={"flex"}
+            flexDirection={""}
+            alignItems={"center"}
+            sx={{
+              gap: 2,
+              bottom: 20,
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
           >
-            <Box
-              display={"flex"}
-              flexDirection={"column"}
-              alignItems={"center"}
-              sx={{mt:7}}
+            <Button
+              disabled={addButtonDisable}
+              variant="contained"
+              customvariant="custom"
+              type="submit"
             >
-              <Button
-                disabled={addButtonDisable}
-                variant="contained"
-                customvariant="custom"
-                type="submit"
-              >
-                Add
-              </Button>
-              {addButtonDisable && (
-                <MousePopOver
-                  message={
-                    <InfoOutlinedIcon
-                      fontSize="2"
-                      sx={{
-                        borderRadius: 2,
-                        border: "solid 1px",
-                        color: (theme) => theme.palette.primary[200],
-                        transition: "1900 ease-in-out",
-                      }}
-                    />
-                  }
-                  popOverContent={`Search an equipment first`}
-                />
-              )}
-            </Box>
-            {/* <Button
+              ඇතුලත් කරන්න
+            </Button>
+            {addButtonDisable && (
+              <MousePopOver
+                message={
+                  <InfoOutlinedIcon
+                    fontSize="2"
+                    sx={{
+                      borderRadius: 2,
+                      border: "solid 1px",
+                      color: (theme) => theme.palette.primary[200],
+                      transition: "1900 ease-in-out",
+                    }}
+                  />
+                }
+                popOverContent={`ප්‍රථමයෙන් උපකරණ අංකය ඇතුලත් කරන්න`}
+              />
+            )}
+            <Button color="error" customvariant="custom" onClick={handleReset}>
+              ඉවත් කරන්න
+            </Button>
+          </Box>
+          {/* <Button
               variant="contained"
               color="warning"
               customvariant="custom"
@@ -335,16 +349,6 @@ function InvoiceRightSideNew() {
             >
               Handover
             </Button> */}
-            <Button
-             sx={{mt:7}}
-              variant="contained"
-              color="error"
-              customvariant="custom"
-              onClick={handleReset}
-            >
-              Clear
-            </Button>
-          </Box>
         </Stack>
       </form>
     </Paper>

@@ -291,12 +291,12 @@ function InvoiceDetailsWindowDown(props) {
           <Box sx={{ height: "100%", width: "100%" }}></Box>
         </Box>
       </Paper>
-      <Box display={"flex"} alignItems={"center"} gap={1}>
+      <Box display={"flex"} alignItems={"center"} gap={1} sx={{}}>
         {invoiceSearchBtnStatus == true ? (
           <Button
             fullWidth
             variant="contained"
-            sx={{ mt: 1, borderRadius: 0, height: "60px", width: "17vw" }}
+            sx={{ mt: 1, borderRadius: 0, height: "60px", width: "15vw" }}
             onClick={handleInvoiceUpdate}
           >
             Update Invoice
@@ -305,7 +305,7 @@ function InvoiceDetailsWindowDown(props) {
           <Button
             color="success"
             variant="contained"
-            sx={{ mt: 1, borderRadius: 0, height: "60px", width: "17vw" }}
+            sx={{ mt: 1, borderRadius: 0, height: "60px", width: "15vw" }}
             onClick={handleInvoiceSubmit}
           >
             Create Invoice

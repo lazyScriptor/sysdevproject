@@ -416,7 +416,7 @@ function Invoice() {
             }}
           >
             <Paper
-              elevation={3}
+              elevation={0}
               sx={{
                 position:"relative",
                 width: "95%",
@@ -612,7 +612,7 @@ function Invoice() {
                     variant="contained"
                     onClick={handleProceedPayment}
                   >
-                    Payments
+                    ගෙවීම්
                   </Button>
 
                   {/* <Fab variant="extended" onClick={handleFeedback}>

@@ -14,17 +14,18 @@ function IdCardStatus() {
     eqObject,
     setEqObject,
     invoiceObject,
+    invoiceSearchBtnStatus,
     setInvoiceObject,
     updateValue,
   } = useContext(InvoiceContext);
 
   const handleIdAdd = () => {
     console.log("prev checkstate", checkState);
-    setCheckState((prevCheckState)=>{
-      const newCheckState=!prevCheckState
-      updateValue("iDstatus",newCheckState)
-      return newCheckState
-    })
+    setCheckState((prevCheckState) => {
+      const newCheckState = !prevCheckState;
+      updateValue("iDstatus", newCheckState);
+      return newCheckState;
+    });
     //handleAddEquipment description eka wagema methanath EquipmentObject kiyana context eke thyena object ekata
     //aluthin idData eka add wela,checkState eka change krna parak gane value eka change wela object ekata
     //append wenawa
@@ -78,7 +79,9 @@ function IdCardStatus() {
             />
             <Typography variant="body">Keep ID card</Typography>
           </Box>
-          <Button onClick={handleIdAdd}>Add</Button>
+          <Button disabled={invoiceSearchBtnStatus} onClick={handleIdAdd}>
+            {invoiceObject.iDstatus == true ? "ඉවත් කරන්න" : "ඇතුලත් කරන්න"}
+          </Button>
           <Checkbox
             checked={invoiceObject.iDstatus}
             sx={{ "& .MuiSvgIcon-root": { fontSize: 25 } }}
