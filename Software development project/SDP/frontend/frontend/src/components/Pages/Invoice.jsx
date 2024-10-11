@@ -135,7 +135,7 @@ function Invoice() {
       !isValidPhoneNumber(trimmedValue) &&
       !isValidId(trimmedValue)
     ) {
-      setValidationMessage("Invalid phone number, NIC, or ID format");
+      setValidationMessage("වැරදි අංකයකි, නැවත ඇතුලත් කරන්න");
       return;
     }
 
@@ -160,7 +160,7 @@ function Invoice() {
         updateValue("customerDetails", data[0]);
       } else if (data.message) {
         setValidationMessage(
-          "No customer found with this ID, phone number, or NIC"
+          "ඉහත අංකය කිසිදු අයෙකුගේ: පා.භෝ අංකය | දු.ක අංකය | ජා.හැ අංකය හා නොගැලපේ - ප්‍රථමයෙන් පාරිභෝගිකයා ඇතුලත් කරන්න"
         );
         setData({
           cus_fname: "",
@@ -351,6 +351,7 @@ function Invoice() {
             }}
           >
             <TextField
+              
               onChange={(e) => setInvoiceIdSearch(e.target.value)}
               sx={[{ width: "350px" }, textFieldStyle]}
               id="outlined-basic"
@@ -476,7 +477,7 @@ function Invoice() {
               >
                 <Box
                   sx={{
-                    border: `${theme.palette.primary[200]} solid 3px`,
+                    
                     display: "flex",
                     justifyContent: "start",
                     alignItems: "center",
@@ -487,6 +488,7 @@ function Invoice() {
                   }}
                 >
                   <TextField
+                  disabled={invoiceSearchBtnStatus}
                     onChange={(e) => {
                       setPhoneNumberorNic(e.target.value);
                       setValidationMessage("");
@@ -494,12 +496,13 @@ function Invoice() {
                     value={phoneNumberorNic}
                     sx={[{ width: "350px" }, textFieldStyle]}
                     id="outlined-basic"
-                    label="Search with phone number or NIC"
+                    label="දුරකථන අංකය හෝ ජාතික හැඳුනුම්පත මගින් සොයන්න"
                     variant="outlined"
                     error={!!validationMessage}
                     helperText={validationMessage}
                   />
                   <Button
+                  disabled={invoiceSearchBtnStatus}
                     sx={{ height: "35px" }}
                     onClick={handleSearchPhoneNumberorNic}
                   >
@@ -507,6 +510,7 @@ function Invoice() {
                   </Button>
 
                   <Button
+                  disabled={invoiceSearchBtnStatus}
                     onClick={() => {
                       setData(clearData);
                       setPhoneNumberorNic("");
@@ -548,7 +552,7 @@ function Invoice() {
                         ? `${invoiceObject.customerDetails.cus_fname} ${invoiceObject.customerDetails.cus_lname}`
                         : invoiceObject.customerDetails.cus_fname || ""
                     }
-                    label="Customer Full Name"
+                    label="පාරිභෝගික : සම්පූර්න නම"
                     variant="outlined"
                   />
                 </Box>
@@ -557,7 +561,7 @@ function Invoice() {
                   <TextField
                     sx={[textFieldStyle]}
                     fullWidth
-                    label="Customer Address"
+                    label="පාරිභෝගික : ලිපිනය"
                     disabled
                     value={
                       invoiceObject.customerDetails.cus_address1 &&
@@ -572,7 +576,7 @@ function Invoice() {
                 <Box sx={{ display: "flex", gap: 4 }}>
                   <TextField
                     disabled
-                    label="Customer NIC"
+                    label="පාරිභෝගික : ජා.හැ අංකය"
                     sx={[textFieldStyle]}
                     value={
                       invoiceObject.customerDetails.nic == undefined
@@ -595,7 +599,7 @@ function Invoice() {
                         : invoiceObject.customerDetails.cus_phone_number
                     }
                     id="outlined-basic"
-                    label="Customer Phone number"
+                    label="පාරිභෝගික : දුරකතන අංකය"
                     variant="outlined"
                   />
                 </Box>

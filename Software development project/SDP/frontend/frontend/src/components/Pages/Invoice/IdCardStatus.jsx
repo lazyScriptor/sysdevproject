@@ -75,7 +75,7 @@ function IdCardStatus() {
           <Box display="inline-flex" sx={{ alignItems: "center" }}>
             <MousePopOver
               message={<InfoOutlinedIcon fontSize="2" sx={{ mr: 1 }} />}
-              popOverContent={`Press Add button to select`}
+              popOverContent={`ජාතික හැඳුනුම්පත තබාගැනීමට සහ ඉවත් කිරීමට දකුනුපස button එක press කරන්න`}
             />
             <Typography variant="body">Keep ID card</Typography>
           </Box>

@@ -19,6 +19,7 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 function InvoiceDetailsWindowDown(props) {
   const [openDialog, setOpenDialog] = useState(false);
   const [openOtherDialog, setOpenOtherDialog] = useState(false);
+  const [totalPayments, setTotalPayments] = useState(0);
   const handlePdfButtonClick = () => {
     setOpenDialog(true);
   };
@@ -50,8 +51,6 @@ function InvoiceDetailsWindowDown(props) {
     updateValue,
     updateEqObject,
   } = useContext(InvoiceContext);
-
-  useEffect(() => {}, [invoiceObject]);
 
   const handleInvoiceSubmit = async () => {
     // localStorage.setItem("CIObject", JSON.stringify(invoiceObject));
@@ -218,6 +217,35 @@ function InvoiceDetailsWindowDown(props) {
       console.log("Invoice object is undefined");
     }
   };
+  function calculateTotalPayments() {
+    try {
+      let total = 0;
+      invoiceObject.payments.forEach((item) => {
+        total = total + item.invpay_amount;
+      });
+
+      return total;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  function calculateTotalAdvanceAndPayments() {
+    try {
+      if (invoiceObject.advance || totalPayments) {
+        let total = 0;
+        total = invoiceObject.advance + totalPayments;
+        return total;
+      }else{
+        return " - "
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    setTotalPayments(calculateTotalPayments);
+  }, [invoiceObject]);
+
   return (
     <>
       <Paper
@@ -253,27 +281,32 @@ function InvoiceDetailsWindowDown(props) {
                 width: "30%",
                 display: "flex",
                 flexDirection: "column",
-                gap: 3,
                 height: "100%",
               }}
             >
-              <Typography variant="h6">Advance</Typography>
+              <Typography variant="h7">Advance</Typography>
               <Typography variant="h7">Payments</Typography>
+              <hr />
+              <Typography variant="h7">Total payment</Typography>
             </Box>
             <Box sx={{ flexGrow: 1, height: "50%" }} />
             <Box
               sx={{
-                width: "30%",
+                width: "40%",
                 display: "flex",
                 flexDirection: "column",
                 height: "100%",
+                justifyContent: "start",
               }}
             >
-              <Typography variant="h6" sx={{ textAlign: "end", mb: 2.5 }}>
-                {!!invoiceObject.advance ? invoiceObject.advance : ""}
-                {!!invoiceObject.advance ? " LKR" : ""}
+              <Typography sx={{ textAlign: "end" }}>
+                {!!invoiceObject.advance
+                  ? [invoiceObject.advance, " LKR"]
+                  : " - "}
               </Typography>
 
+              {/* 
+              //This is the payments array filtered values
               {invoiceObject.payments &&
                 invoiceObject.payments.map((item, index) => (
                   <Typography
@@ -285,7 +318,16 @@ function InvoiceDetailsWindowDown(props) {
                     {item.invpay_amount && item.invpay_amount}
                     {item.invpay_amount && " LKR"}
                   </Typography>
-                ))}
+                ))} */}
+              <Typography sx={{ textAlign: "end" }}>
+                {invoiceObject.payments.length > 0
+                  ? [totalPayments, " LKR"]
+                  : "-"}
+              </Typography>
+              <hr />
+              <Typography align="right">
+                {[calculateTotalAdvanceAndPayments(), " LKR "]}
+              </Typography>
             </Box>
           </Box>
           <Box sx={{ height: "100%", width: "100%" }}></Box>
