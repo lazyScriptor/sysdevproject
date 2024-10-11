@@ -14,7 +14,7 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons";
 function CompleteInvoiceTable() {
   const theme = useTheme();
   const [totalCost, setTotalCost] = useState(0);
-  const { invoiceObject } = useContext(InvoiceContext);
+  const { invoiceObject, setMachineTotalCost } = useContext(InvoiceContext);
 
   useEffect(() => {
     if (invoiceObject.eqdetails) {
@@ -26,9 +26,11 @@ function CompleteInvoiceTable() {
         }
         return acc;
       }, 0);
+      
       setTotalCost(newTotalCost);
+      setMachineTotalCost(newTotalCost);
     }
-  }, [invoiceObject.eqdetails]);
+  }, [invoiceObject.eqdetails, setMachineTotalCost]);
 
   const colorFunction = (durationNumber) => {
     if (durationNumber == null) return theme.palette.primary[50];
@@ -41,77 +43,22 @@ function CompleteInvoiceTable() {
         elevation={4}
         sx={{
           borderRadius: 3,
-       
-          overflowY: "auto"
+          overflowY: "auto",
         }}
       >
         <Table sx={{ minWidth: 650 }} stickyHeader aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell
-                variant="caption"
-                align="center"
-                sx={{ position: "sticky", top: 0, backgroundColor: theme.palette.background.paper, zIndex: 1 }}
-              >
-                තීර අංකය
-              </TableCell>
-              <TableCell
-                variant="caption"
-                align="center"
-                sx={{ position: "sticky", top: 0, backgroundColor: theme.palette.background.paper, zIndex: 1 }}
-              >
-                භාණ්ඩයේ අංකය
-              </TableCell>
-              <TableCell
-                variant="caption"
-                align="center"
-                sx={{ position: "sticky", top: 0, backgroundColor: theme.palette.background.paper, zIndex: 1 }}
-              >
-                භාණ්ඩයේ නම
-              </TableCell>
-              <TableCell
-                variant="caption"
-                align="center"
-                sx={{ position: "sticky", top: 0, backgroundColor: theme.palette.background.paper, zIndex: 1 }}
-              >
-                ගාස්තුව
-                <br /> (දිනකට)
-              </TableCell>
-              <TableCell
-                variant="caption"
-                align="center"
-                sx={{ position: "sticky", top: 0, backgroundColor: theme.palette.background.paper, zIndex: 1 }}
-              >
-                ගෙන ආ දිනය
-              </TableCell>
-              <TableCell
-                variant="caption"
-                align="center"
-                sx={{ position: "sticky", top: 0, backgroundColor: theme.palette.background.paper, zIndex: 1 }}
-              >
-                ගෙනගිය ප්‍රමාණය
-              </TableCell>
-              <TableCell
-                variant="caption"
-                align="center"
-                sx={{ position: "sticky", top: 0, backgroundColor: theme.palette.background.paper, zIndex: 1 }}
-              >
-                තබාගත් දින ගනන
-              </TableCell>
-              <TableCell
-                variant="caption"
-                align="center"
-                sx={{ position: "sticky", top: 0, backgroundColor: theme.palette.background.paper, zIndex: 1 }}
-              >
-                ගෙනදුන් ප්‍රමාණය
-              </TableCell>
-              <TableCell
-                variant="caption"
-                align="center"
-                sx={{ position: "sticky", top: 0, backgroundColor: theme.palette.background.paper, zIndex: 1 }}
-              >
-                භාණ්ඩය සඳහා මුලු අයකිරීම
-              </TableCell>
+              {/* Header Cells */}
+              <TableCell align="center">තීර අංකය</TableCell>
+              <TableCell align="center">භාණ්ඩයේ අංකය</TableCell>
+              <TableCell align="center">භාණ්ඩයේ නම</TableCell>
+              <TableCell align="center">ගාස්තුව (දිනකට)</TableCell>
+              <TableCell align="center">ගෙන ආ දිනය</TableCell>
+              <TableCell align="center">ගෙනගිය ප්‍රමාණය</TableCell>
+              <TableCell align="center">තබාගත් දින ගනන</TableCell>
+              <TableCell align="center">ගෙනදුන් ප්‍රමාණය</TableCell>
+              <TableCell align="center">භාණ්ඩය සඳහා මුලු අයකිරීම</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -128,9 +75,7 @@ function CompleteInvoiceTable() {
                     }}
                   >
                     <TableCell align="center">{index + 1}#</TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      {row.eq_id}
-                    </TableCell>
+                    <TableCell align="center">{row.eq_id}</TableCell>
                     <TableCell align="center">{row.eq_name}</TableCell>
                     <TableCell align="center">{row.eq_rental}</TableCell>
                     <TableCell align="center">
@@ -147,25 +92,28 @@ function CompleteInvoiceTable() {
                     <TableCell align="center">{row.inveq_borrowqty}</TableCell>
                     <TableCell align="center">{row.duration_in_days}</TableCell>
                     <TableCell align="center">
-                      {row.inveq_return_quantity == 0
+                      {row.inveq_return_quantity === 0
                         ? ""
                         : row.inveq_return_quantity}
                     </TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{
-                        backgroundColor: theme.palette.primary[50],
-                      }}
-                    >
+                    <TableCell align="center" sx={{ backgroundColor: theme.palette.primary[50] }}>
                       {row.duration_in_days ? `රු. ${itemCost}` : ""}
                     </TableCell>
                   </TableRow>
                 );
               })}
+            {/* Row to display total */}
+            <TableRow>
+              <TableCell colSpan={8} align="right" sx={{ fontWeight: 'bold' }}>
+                මුලු අයකිරීම
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold', backgroundColor: theme.palette.primary[100] }}>
+                {`රු. ${totalCost}`}
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
-
     </Box>
   );
 }

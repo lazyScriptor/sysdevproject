@@ -99,14 +99,22 @@ export default function FeedBack(props) {
         document.getElementById("rating-container").appendChild(container);
       },
       preConfirm: async () => {
-        const comments = document.getElementById("feedback-text").value || "";
-
+        const comments = document.getElementById("feedback-text").value.trim();
+      
         try {
           console.log(rating, comments);
-          if(rating){invoiceObject.inv_rating = rating;}
           
-          invoiceObject.inv_special_message = comments;
-          // Assume axios is properly configured
+          // Only set the rating if it has a value
+          if (rating) {
+            invoiceObject.inv_rating = rating;
+          }
+          
+          // Only add comments to the object if there is a non-empty value
+          if (comments) {
+            invoiceObject.inv_special_message = comments;
+          }
+      
+          // Assume axios is properly configured for API call
           return Swal.fire({
             title: "Thank you for your feedback!",
             icon: "success",
@@ -115,7 +123,9 @@ export default function FeedBack(props) {
           console.error("Error submitting feedback:", error);
           Swal.showValidationMessage(`Request failed: ${error}`);
         }
-      },
+      }
+      
+      
     });
   };
 

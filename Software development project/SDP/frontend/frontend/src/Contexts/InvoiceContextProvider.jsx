@@ -16,6 +16,7 @@ export default function InvoiceContextProvider({ children }) {
     payments: [],
     InvoiceID: 0,
   });
+  const [machineTotalCost, setMachineTotalCost] = useState();
   const [responseManageToggle, setResponseManageToggle] = useState(false);
   const [paymentArray, setPaymentArray] = useState([]);
   const [paymentId, setPaymentId] = useState(0);
@@ -43,7 +44,10 @@ export default function InvoiceContextProvider({ children }) {
         // const updatedEqDetails = prevObject.eqdetails.filter(
         //   (item) => item.eq_id !== newValue.eq_id
         // );
-        return { ...prevObject, eqdetails: [...prevObject.eqdetails, newValue] };
+        return {
+          ...prevObject,
+          eqdetails: [...prevObject.eqdetails, newValue],
+        };
       } else if (key === "payments") {
         const updatedPayments = prevObject.payments.filter(
           (item) => item.invpay_payment_id !== newValue.invpay_payment_id
@@ -117,6 +121,8 @@ export default function InvoiceContextProvider({ children }) {
         setInvoiceObject,
         updateValue,
         updateEqObject,
+        machineTotalCost,
+        setMachineTotalCost,
         clearObject,
       }}
     >

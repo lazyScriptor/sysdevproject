@@ -9,6 +9,7 @@ import {
   FormLabel,
   Paper,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -229,36 +230,31 @@ function Invoice() {
     setUpdateBtnStatus(false);
     try {
       await axios.get("http://localhost:8085/invoiceIdRetrieve").then((res) => {
-     
         setInvoiceId(res.data);
         updateValue("InvoiceID", res.data);
         updateValue("createdDate", currentDate);
       });
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   };
 
   const handleInvoiceSearch = async (invoiceIdSearch) => {
-    
     clearObject();
 
     try {
-      
       const response = await axios.get(
         `http://localhost:8085/invoiceDataRetrieve/${invoiceIdSearch}`
       );
 
       if (response.status === 200) {
         setInvoiceSearchBtnStatus(true);
-      
+
         updateValue("advance", response.data.advance);
         updateValue("createdDate", response.data.createdDate);
         response.data.payments.forEach((payment) => {
           // Pass each payment object to the updateValue function
           updateValue("payments", payment);
         });
-     
+
         updateValue("customerDetails", response.data.customerDetails);
         response.data.eqdetails.forEach((eqdetail) => {
           // Pass each payment object to the updateValue function
@@ -266,10 +262,9 @@ function Invoice() {
         });
         updateValue("InvoiceID", response.data.InvoiceID);
         updateValue("iDstatus", response.data.idStatus);
-       
+        updateValue("comments", response.data.invoiceSpecialmessage);
         setUpdateBtnStatus(true);
       } else if (response.status == 404) {
-        
       } else {
         console.log("Unexpected response status:", response.status);
       }
@@ -351,7 +346,6 @@ function Invoice() {
             }}
           >
             <TextField
-              
               onChange={(e) => setInvoiceIdSearch(e.target.value)}
               sx={[{ width: "350px" }, textFieldStyle]}
               id="outlined-basic"
@@ -401,8 +395,8 @@ function Invoice() {
             }}
           >
             {updateBtnStatus == true ? (
-              // 
-              <InvoiceHandOver/>
+              //
+              <InvoiceHandOver />
             ) : (
               <InvoiceRightSideNew />
             )}
@@ -419,7 +413,7 @@ function Invoice() {
             <Paper
               elevation={0}
               sx={{
-                position:"relative",
+                position: "relative",
                 width: "95%",
                 height: "100%",
                 display: "flex",
@@ -427,14 +421,13 @@ function Invoice() {
                 pt: 3,
                 pb: 3,
                 borderRadius: 3,
-                
               }}
             >
               <Box
                 width={"100px"}
                 height={"100px"}
                 position={"absolute"}
-                sx={{ left:20}}
+                sx={{ left: 20 }}
               >
                 <FontAwesomeIcon
                   icon={faAddressCard}
@@ -477,7 +470,6 @@ function Invoice() {
               >
                 <Box
                   sx={{
-                    
                     display: "flex",
                     justifyContent: "start",
                     alignItems: "center",
@@ -488,7 +480,7 @@ function Invoice() {
                   }}
                 >
                   <TextField
-                  disabled={invoiceSearchBtnStatus}
+                    disabled={invoiceSearchBtnStatus}
                     onChange={(e) => {
                       setPhoneNumberorNic(e.target.value);
                       setValidationMessage("");
@@ -502,7 +494,7 @@ function Invoice() {
                     helperText={validationMessage}
                   />
                   <Button
-                  disabled={invoiceSearchBtnStatus}
+                    disabled={invoiceSearchBtnStatus}
                     sx={{ height: "35px" }}
                     onClick={handleSearchPhoneNumberorNic}
                   >
@@ -510,7 +502,7 @@ function Invoice() {
                   </Button>
 
                   <Button
-                  disabled={invoiceSearchBtnStatus}
+                    disabled={invoiceSearchBtnStatus}
                     onClick={() => {
                       setData(clearData);
                       setPhoneNumberorNic("");
@@ -623,7 +615,17 @@ function Invoice() {
                     <NavigationIcon sx={{ mr: 1 }} />
                     Feedback
                   </Fab> */}
-                  {invoiceSearchBtnStatus && <FeedbackComponent />}
+
+                  <Tooltip
+                    title={
+                      <Typography variant="h5">
+                        {invoiceObject.comments || "No comments available"}
+                      </Typography>
+                    }
+                    arrow
+                  >
+                    <div>{invoiceSearchBtnStatus && <FeedbackComponent />}</div>
+                  </Tooltip>
                 </Box>
               </Box>
             </Paper>

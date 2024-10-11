@@ -108,73 +108,74 @@ function InvoiceDetailsWindowUp() {
             </Tooltip>
           </div>
         </div>
-        <div style={{ height:"85%", overflowY: 'auto' }}> {/* Set your desired height */}
-  {invoiceObject.eqdetails &&
-    invoiceObject.eqdetails.map((item, index) => (
-      <Paper
-        elevation={1}
-        key={index}
-        sx={{
-          backgroundColor: item.inveq_return_date
-            ? (theme) => theme.palette.primary[50]
-            : "white",
-          display: "flex",
-          height: "70px",
-          p: 1,
-          m: 1,
-          borderRadius: 6,
-          "&:hover": {
-            backgroundColor: (theme) => theme.palette.primary[100], // Change to your desired hover color
-            cursor: "not-allowed",
-          },
-        }}
-      >
-        <Box
-          sx={{
-            width: "50%",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "start",
-            alignItems: "start",
-            gap: 2,
-            ml: 2,
-          }}
-        >
-          <Typography variant="caption">{item.eq_id}</Typography>
-          <Typography variant="body">{item.eq_name}</Typography>
-        </Box>
-        <Box sx={{ flexGrow: 1 }} />
-        <Box
-          sx={{
-            width: "50%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "start",
-            alignItems: "end",
-            pr: 2,
-          }}
-        >
-          <Typography variant="body" sx={{ textAlign: "end" }}>
-            Rentalx {item.eq_rental}
-          </Typography>
-          <Typography variant="caption" sx={{ textAlign: "end" }}>
-            Quantityx {item.inveq_borrowqty}
-          </Typography>
-        </Box>
-        {toggleSwitch && (
-          <Box sx={{ width: "40px" }}>
-            <Button
-              style={deleteButtonStyles}
-              onClick={() => handleDelete(item.eq_id)}
-            >
-              <DeleteTwoToneIcon sx={{ color: "white" }} />
-            </Button>
-          </Box>
-        )}
-      </Paper>
-    ))}
-</div>
-
+        <div style={{ height: "85%", overflowY: "auto" }}>
+          {" "}
+          {/* Set your desired height */}
+          {invoiceObject.eqdetails &&
+            invoiceObject.eqdetails.map((item, index) => (
+              <Paper
+                elevation={1}
+                key={index}
+                sx={{
+                  backgroundColor: item.inveq_return_date
+                    ? (theme) => theme.palette.primary[50]
+                    : "white",
+                  display: "flex",
+                  height: "70px",
+                  p: 1,
+                  m: 1,
+                  borderRadius: 6,
+                  "&:hover": {
+                    backgroundColor: (theme) => theme.palette.primary[100], // Change to your desired hover color
+                    cursor: "not-allowed",
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: "50%",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "start",
+                    alignItems: "start",
+                    gap: 2,
+                    ml: 2,
+                  }}
+                >
+                  <Typography variant="caption">{item.eq_id}</Typography>
+                  <Typography variant="body">{item.eq_name}</Typography>
+                </Box>
+                <Box sx={{ flexGrow: 1 }} />
+                <Box
+                  sx={{
+                    width: "50%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "start",
+                    alignItems: "end",
+                    pr: 2,
+                  }}
+                >
+                  <Typography variant="body" sx={{ textAlign: "end" }}>
+                    Rentalx {item.eq_rental}
+                  </Typography>
+                  <Typography variant="caption" sx={{ textAlign: "end" }}>
+                    Quantityx {item.inveq_borrowqty}
+                  </Typography>
+                </Box>
+                {toggleSwitch && (
+                  <Box sx={{ width: "50px" }}>
+                    <button
+                      style={deleteButtonStyles}
+                      onClick={() => handleDelete(item.eq_id)}
+                    >
+                      <DeleteTwoToneIcon sx={{ color: "white" }} />
+                    </button>
+                  </Box>
+                )}
+              </Paper>
+            ))}
+        </div>
       </Paper>
     </>
   );
