@@ -41,7 +41,6 @@ import Swal from "sweetalert2";
 import Lottie from "react-lottie";
 import CustomerPage from "../../assets/CustomerPage.json";
 
-
 function Row(props) {
   const { row, searchValue } = props;
   const [open, setOpen] = useState(false);
@@ -152,22 +151,22 @@ export default function CustomerTableNew() {
             >
               <TableCell />
               <TableCell sx={{ color: "white" }} align="center">
-                Customer Id
+                පාරිභෝගික අංකය
               </TableCell>
               <TableCell sx={{ color: "white" }} align="center">
-                Customer Name
+                පාරිභෝගික නාමය
               </TableCell>
               <TableCell sx={{ color: "white" }} align="center">
-                Customer Phone number
+                පාරිභෝගික දුරකතන අංකය
               </TableCell>
               <TableCell sx={{ color: "white" }} align="center">
-                Customer NIC
+                පාරිභෝගික ජාතික හැඳුනුම්පත් අංකය
               </TableCell>
               <TableCell sx={{ color: "white" }} align="center">
-                Customer Address line 1
+                පාරිභෝගික ලිපිනය 1
               </TableCell>
               <TableCell sx={{ color: "white" }} align="center">
-                Customer Address line 2
+                පාරිභෝගික ලිපිනය 2
               </TableCell>
             </TableRow>
           </TableHead>

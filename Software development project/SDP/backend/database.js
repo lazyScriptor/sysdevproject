@@ -5,7 +5,7 @@ import bcrypt, { hash } from "bcrypt";
 dotenv.config();
 
 const saltRound = 10;
-//there are multiple ways to connect to the database through mysql 
+//there are multiple ways to connect to the database through mysql
 
 // 1.createconection
 // 2.createpool
@@ -16,12 +16,12 @@ const saltRound = 10;
 // management by handling the opening, closing, and reuse of connections automatically,
 // which can improve the efficiency and scalability of your application.
 
-// throw 
-  // we can pass the error to the catch block with this and terminate the program from the error occured
-  // if there is no catch block then the program crash
+// throw
+// we can pass the error to the catch block with this and terminate the program from the error occured
+// if there is no catch block then the program crash
 
-// return 
-  // pass the mentioned thing to the callback
+// return
+// pass the mentioned thing to the callback
 
 const pool = mysql
   .createPool({
@@ -118,7 +118,13 @@ export async function getEquipment() {
 }
 export async function getEquipmentbyID(id) {
   const [equipment] = await pool.query(
-    "SELECT * FROM equipment WHERE eq_id =? AND eq_delete_status = 0",
+    ` SELECT equipment.*,specialEquipment.*  ,equipmentCategory.*
+      FROM equipment 
+      LEFT JOIN equipmentCategory
+      ON equipment.eq_catid=equipmentCategory.eqcat_id
+      LEFT JOIN specialEquipment 
+      ON equipment.eq_id = specialEquipment.spe_eqid
+      WHERE equipment.eq_id =? AND equipment.eq_delete_status = 0`,
     [id]
   );
   console.log(equipment);
@@ -568,11 +574,13 @@ export async function getInvoiceDetails(invoiceIdSearch) {
   try {
     // Fetch customer, invoice, equipment, and additional invoice details
     const [invoiceDetails] = await pool.query(
-      `SELECT customer.*, invoice.*, invoiceEquipment.*, equipment.*, invoice.inv_advance, invoice.inv_special_message, invoice.inv_idcardstatus, invoice.inv_createddate
+      `SELECT customer.*, invoiceEquipment.*, equipment.*, invoice.inv_advance, invoice.inv_special_message, invoice.inv_idcardstatus, invoice.inv_createddate ,invoice.inv_completed_datetime ,equipmentCategory.* ,specialEquipment.*
        FROM invoice
        LEFT JOIN customer ON customer.cus_id = invoice.inv_cusid
        LEFT JOIN invoiceEquipment ON invoice.inv_id = invoiceEquipment.inveq_invid
        LEFT JOIN equipment ON invoiceEquipment.inveq_eqid = equipment.eq_id
+       LEFT JOIN equipmentCategory ON equipment.eq_catid=equipmentCategory.eqcat_id
+       LEFT JOIN specialEquipment ON equipment.eq_id = specialEquipment.spe_eqid
        WHERE invoice.inv_id = ?`,
       [invoiceIdSearch]
     );
@@ -655,6 +663,10 @@ export async function getInvoiceDetails(invoiceIdSearch) {
         eq_completestock: record.eq_completestock,
         eq_delete_status: record.eq_delete_status,
         eq_catid: record.eq_catid,
+        eqcat_dataset: record.eqcat_dateset,
+        eqcat_id: record.eqcat_id,
+        eqcat_name: record.eqcat_name,
+        spe_singleday_rent: record.spe_singleday_rent,
         inveq_borrow_date: record.inveq_borrow_date,
         inveq_return_date: record.inveq_return_date,
         duration_in_days: record.duration_in_days,
@@ -686,7 +698,8 @@ export async function getInvoiceDetails(invoiceIdSearch) {
       invoiceObject.invoiceSpecialmessage =
         invoiceDetails[0].inv_special_message;
       invoiceObject.idStatus = !!invoiceDetails[0].inv_idcardstatus; // converting to boolean
-
+      invoiceObject.inv_completed_datetime =
+        invoiceDetails[0].inv_completed_datetime;
       return invoiceObject;
     } else {
       console.error("No invoice details found");
@@ -697,14 +710,129 @@ export async function getInvoiceDetails(invoiceIdSearch) {
     return false;
   }
 }
-export async function updateInvoiceDetails(InvoiceCompleteDetail) {
-  // Update invoice details
+
+export async function getInvoiceDetailsAll() {
   try {
+    // Fetch customer, invoice, equipment, and additional invoice details
+    const [invoiceDetails] = await pool.query(
+      `SELECT customer.*, invoice.*, invoiceEquipment.*, equipment.*, equipmentCategory.*, specialEquipment.*
+       FROM invoice
+       LEFT JOIN customer ON customer.cus_id = invoice.inv_cusid
+       LEFT JOIN invoiceEquipment ON invoice.inv_id = invoiceEquipment.inveq_invid
+       LEFT JOIN equipment ON invoiceEquipment.inveq_eqid = equipment.eq_id
+       LEFT JOIN equipmentCategory ON equipment.eq_catid = equipmentCategory.eqcat_id
+       LEFT JOIN specialEquipment ON equipment.eq_id = specialEquipment.spe_eqid`
+    );
+
+    if (invoiceDetails.length > 0) {
+      // Create a map to group equipment by invoice ID
+      const invoicesMap = {};
+
+      invoiceDetails.forEach((record) => {
+        const invoiceId = record.inv_id;
+
+        if (!invoicesMap[invoiceId]) {
+          invoicesMap[invoiceId] = {
+            InvoiceID: invoiceId,
+            customerDetails: {},
+            createdDate: record.inv_createddate,
+            eqdetails: [],
+            payments: [],
+            advance: record.inv_advance,
+            invoiceSpecialmessage: record.inv_special_message,
+            idStatus: !!record.inv_idcardstatus,
+            inv_completed_datetime: record.inv_completed_datetime,
+          };
+
+          // Set customer details for each invoice
+          invoicesMap[invoiceId].customerDetails = Object.keys(record)
+            .filter((key) => key.startsWith("cus_") || key === "nic")
+            .reduce((obj, key) => {
+              obj[key] = record[key];
+              return obj;
+            }, {});
+        }
+
+        // Add equipment details to the corresponding invoice
+        invoicesMap[invoiceId].eqdetails.push({
+          eq_id: record.eq_id,
+          eq_name: record.eq_name,
+          eq_rental: record.eq_rental,
+          eq_description: record.eq_description,
+          eq_dofpurchase: record.eq_dofpurchase,
+          eq_warranty_expire: record.eq_warranty_expire,
+          eq_image: record.eq_image,
+          eq_cost: record.eq_cost,
+          eq_defected_status: record.eq_defected_status,
+          eq_completestock: record.eq_completestock,
+          eq_delete_status: record.eq_delete_status,
+          eq_catid: record.eq_catid,
+          eqcat_dataset: record.eqcat_dateset,
+          eqcat_id: record.eqcat_id,
+          eqcat_name: record.eqcat_name,
+          spe_singleday_rent: record.spe_singleday_rent,
+          inveq_borrow_date: record.inveq_borrow_date,
+          inveq_return_date: record.inveq_return_date,
+          duration_in_days: record.duration_in_days,
+          inveq_borrowqty: record.inveq_borrowqty,
+          inveq_return_quantity: record.inveq_returned_quantity,
+          inveq_updated_status: record.inveq_updated_status,
+        });
+      });
+
+      // Fetch payment details for all invoices
+      const [invoicePayments] = await pool.query(
+        `SELECT invpay_payment_id, invpay_payment_date, invpay_amount, invpay_inv_id 
+         FROM invoicePayments`
+      );
+
+      // Map payments to corresponding invoices
+      invoicePayments.forEach((payment) => {
+        if (invoicesMap[payment.invpay_inv_id]) {
+          invoicesMap[payment.invpay_inv_id].payments.push({
+            invpay_payment_id: payment.invpay_payment_id,
+            invpay_payment_date: payment.invpay_payment_date,
+            invpay_amount: payment.invpay_amount,
+          });
+        }
+      });
+
+      // Convert the map to an array of invoices
+      const invoicesArray = Object.values(invoicesMap);
+
+      return invoicesArray;
+    } else {
+      console.error("No invoice details found");
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching all invoice details:", error);
+    return [];
+  }
+}
+
+export async function updateInvoiceDetails(InvoiceCompleteDetail) {
+  function formatDateForSQL(date) {
+    if (date) {
+      const d = new Date(date);
+      const pad = (n) => (n < 10 ? "0" + n : n);
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(
+        d.getDate()
+      )} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+  }
+
+  try {
+    const formattedCompletedDateTime = formatDateForSQL(
+      InvoiceCompleteDetail.completedDateTime
+    );
+
     await pool.query(
-      "UPDATE invoice SET inv_special_message = ?,inv_rating = ? WHERE inv_id = ?",
+      "UPDATE invoice SET inv_special_message = ?, inv_rating = ?, inv_completed_datetime = ? WHERE inv_id = ?",
       [
         InvoiceCompleteDetail.inv_special_message,
         InvoiceCompleteDetail.inv_rating,
+        formattedCompletedDateTime, // Use the formatted date here
         InvoiceCompleteDetail.InvoiceID,
       ]
     );
@@ -899,15 +1027,7 @@ export async function setUserDetails(object) {
       INSERT INTO users (user_first_name, user_last_name, username, nic, user_phone_number, user_address1, user_address2)
       VALUES (?, ?, ?, ?, ?, ?, ?)
       `,
-      [
-        firstname,
-        lastname,
-        username,
-        nic,
-        phonenumber,
-        address1,
-        address2,
-      ]
+      [firstname, lastname, username, nic, phonenumber, address1, address2]
     );
 
     const userId = response.insertId;
@@ -925,7 +1045,7 @@ export async function setUserDetails(object) {
 
     return { success: true, userId };
   } catch (error) {
-    console.error('Error occurred in setUserDetails:', error);
+    console.error("Error occurred in setUserDetails:", error);
     throw error; // Rethrow the error to be caught by the caller
   }
 }

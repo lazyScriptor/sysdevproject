@@ -5,6 +5,7 @@ export default function InvoiceContextProvider({ children }) {
   const [fullDetailsEquipmentArray, setFullDetailsEquipmentArray] = useState(
     []
   );
+  const [totalPayments, setTotalPayments] = useState(0);
   const [checkState, setCheckState] = useState(false);
   const [eqObject, setEqObject] = useState([]);
   const [invoiceSearchBtnStatus, setInvoiceSearchBtnStatus] = useState(false);
@@ -72,8 +73,20 @@ export default function InvoiceContextProvider({ children }) {
   const updateEqObject = (newValue) => {
     setEqObject((prev) => [...prev, newValue]);
   };
+  
+  const calculateTotalPayments = () => {
+    let total = 0;
+    if (invoiceObject?.payments) {
+      invoiceObject.payments.forEach((item) => {
+        total += item.invpay_amount;
+      });
+    }
+    return total;
+  };
+
   useEffect(() => {
     console.log("context useEffect invoice objetct", invoiceObject);
+    setTotalPayments(calculateTotalPayments());
   }, [invoiceObject]);
   // useEffect(() => {
   //   if (updateFlag) {
@@ -116,6 +129,7 @@ export default function InvoiceContextProvider({ children }) {
         checkState,
         setCheckState,
         eqObject,
+        totalPayments, setTotalPayments,
         setEqObject,
         invoiceObject,
         setInvoiceObject,

@@ -43,6 +43,7 @@ import {
   getDeletedInvoices,
   deleteEquipmentById,
   getCombinedInvoiceReports,
+  getInvoiceDetailsAll,
 } from "./database.js";
 
 const app = express();
@@ -116,10 +117,8 @@ app.get("/loginValidate", async (req, res) => {
     console.log("id is", id, "Role is ", userRole);
 
     //create the token with payload -userole
-    
-    const token = jwt.sign({ userRole }, "jwtSecret", {
-      expiresIn: 60 * 60 * 24,
-    });
+
+    const token = jwt.sign({ userRole }, "jwtSecret");
 
     return res.json({
       auth: true,
@@ -170,7 +169,7 @@ app.get("/getEquipmentbyID/:equipmentID", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-app.delete('/deleteEquipmentbyId/:id', verifyAdmin, async (req, res) => {
+app.delete("/deleteEquipmentbyId/:id", verifyAdmin, async (req, res) => {
   const equipmentId = req.params.id;
   const result = await deleteEquipmentById(equipmentId);
 
@@ -379,7 +378,7 @@ app.get("/invoiceDataRetrieve/:invoiceIdSearch", async (req, res) => {
       return res.json(completeInvoiceDetails);
     } else {
       console.error("No invoice details found");
-      return res.status(404).json({ error: "Invoice not found" });
+      return res.json({ error: "Invoice not found" });
     }
   } catch (error) {
     console.error("Error:", error);
@@ -416,7 +415,7 @@ app.get("/fetchUserDetails", async (req, res) => {
     console.log("Error occured in express fetchUser details");
   }
 });
-app.post('/createUser', async (req, res) => {
+app.post("/createUser", async (req, res) => {
   try {
     const userDetails = req.body;
 
@@ -425,8 +424,8 @@ app.post('/createUser', async (req, res) => {
     // Respond with success message or data if needed
     res.status(200).json(response);
   } catch (error) {
-    console.error('Error occurred in createUser API:', error);
-    res.status(500).json({ error: 'Failed to create user' });
+    console.error("Error occurred in createUser API:", error);
+    res.status(500).json({ error: "Failed to create user" });
   }
 });
 app.delete("/deleteUserRole/:userId/:role", async (req, res) => {
@@ -499,7 +498,10 @@ app.get("/reports/getEquipmentUtilizationDetails", async (req, res) => {
     }
 
     // Call the report function with parsed dates
-    response = await getEquipmentUtilizationReport(parsedStartDate.toISOString(), parsedEndDate.toISOString());
+    response = await getEquipmentUtilizationReport(
+      parsedStartDate.toISOString(),
+      parsedEndDate.toISOString()
+    );
 
     console.log(response);
     res.json({ status: true, message: "Value retrieved", response });
@@ -523,11 +525,17 @@ app.get("/reports/getEquipmentRevenueDetails", async (req, res) => {
     }
     // If only start date is provided
     else if (startDate && !endDate) {
-      response = await getEquipmentRevenueReport(startDate, new Date().toISOString());
+      response = await getEquipmentRevenueReport(
+        startDate,
+        new Date().toISOString()
+      );
     }
     // If only end date is provided
     else if (!startDate && endDate) {
-      response = await getEquipmentRevenueReport(new Date(0).toISOString(), endDate);
+      response = await getEquipmentRevenueReport(
+        new Date(0).toISOString(),
+        endDate
+      );
     }
     // If both start date and end date are missing
     else {
@@ -557,7 +565,10 @@ app.get("/reports/getUnderutilizedEquipment", async (req, res) => {
 
     // Call the report function with parsed dates
     if (parsedStartDate && parsedEndDate) {
-      response = await getUnderutilizedEquipment(parsedStartDate, parsedEndDate);
+      response = await getUnderutilizedEquipment(
+        parsedStartDate,
+        parsedEndDate
+      );
     } else {
       response = await getUnderutilizedEquipment(); // If start date or end date is missing, retrieve all data
     }
@@ -585,7 +596,10 @@ app.get("/reports/getEquipmentRentalDetails", async (req, res) => {
 
     // Call the report function with parsed dates
     if (parsedStartDate && parsedEndDate) {
-      response = await getEquipmentRentalDetails(parsedStartDate, parsedEndDate);
+      response = await getEquipmentRentalDetails(
+        parsedStartDate,
+        parsedEndDate
+      );
     } else {
       response = await getEquipmentRentalDetails(); // If start date or end date is missing, retrieve all data
     }
@@ -615,45 +629,58 @@ app.get("/reports/getIncompleteRentals", async (req, res) => {
     });
   }
 });
-app.get('/reports/getDeletedInvoices', async (req, res) => {
+app.get("/reports/getDeletedInvoices", async (req, res) => {
   let { start_date, end_date } = req.query;
 
   // If start_date is not provided, set it to the Unix epoch (1970-01-01)
   if (!start_date) {
-    start_date = new Date(0).toISOString().split('T')[0];
+    start_date = new Date(0).toISOString().split("T")[0];
   }
 
   // If end_date is not provided, set it to today's date
   if (!end_date) {
-    end_date = new Date().toISOString().split('T')[0];
+    end_date = new Date().toISOString().split("T")[0];
   }
 
   try {
     const data = await getDeletedInvoices(start_date, end_date);
     res.json({ status: true, response: data });
   } catch (error) {
-    res.status(500).json({ status: false, error: "Failed to retrieve deleted invoices" });
+    res
+      .status(500)
+      .json({ status: false, error: "Failed to retrieve deleted invoices" });
   }
 });
-app.get('/reports/getCombinedInvoiceReports', async (req, res) => {
+app.get("/reports/getCombinedInvoiceReports", async (req, res) => {
   let { start_date, end_date } = req.query;
 
   // If start_date is not provided, set it to the Unix epoch (1970-01-01)
   if (!start_date) {
-    start_date = new Date(0).toISOString().split('T')[0];
+    start_date = new Date(0).toISOString().split("T")[0];
   }
 
   // If end_date is not provided, set it to today's date
   if (!end_date) {
-    end_date = new Date().toISOString().split('T')[0];
+    end_date = new Date().toISOString().split("T")[0];
   }
 
   try {
     const data = await getCombinedInvoiceReports(start_date, end_date);
     res.json({ status: true, response: data });
   } catch (error) {
-    res.status(500).json({ status: false, error: "Failed to retrieve combined invoice reports" });
+    res
+      .status(500)
+      .json({
+        status: false,
+        error: "Failed to retrieve combined invoice reports",
+      });
   }
+});
+
+app.get("/reports/getRevenueForInvoiceReport", async (req, res) => {
+  const response = await getInvoiceDetailsAll();
+  console.log(response);
+  res.json(response);
 });
 dotenv.config();
 const port = process.env.PORT;

@@ -88,8 +88,7 @@ function InvoiceHandOver() {
         p: 2,
         height: "100%",
         borderRadius: 4,
-        border: 2,
-        borderColor: (theme) => theme.palette.primary[300],
+      
       }}
       elevation={3}
     >
@@ -133,7 +132,7 @@ function InvoiceHandOver() {
           </Paper>
         ))
       ) : (
-        <div style={{ display: "flex", color: "red" }}>
+        <div style={{ display: "flex", color: "green" }}>
           සියලුම භාණ්ඩ ලබාදී ඇත.
         </div>
       )}

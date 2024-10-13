@@ -75,6 +75,7 @@ function Invoice() {
   const { setIsAuthenticated } = useContext(AuthContext);
   const [phoneNumberorNic, setPhoneNumberorNic] = useState("");
   const [invoiceId, setInvoiceId] = useState("0000");
+  const [invoiceSearchError, setInvoiceSearchError] = useState("");
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   const [currentDate, setCurrentDate] = useState(
@@ -223,6 +224,8 @@ function Invoice() {
   const handleCreateNew = async () => {
     localStorage.removeItem("CIObject");
     setInvoiceSearchBtnStatus(false);
+    setInvoiceSearchError("");
+    setInvoiceIdSearch("");
     setData(clearData);
     setEqObject("");
     clearObject();
@@ -239,39 +242,50 @@ function Invoice() {
 
   const handleInvoiceSearch = async (invoiceIdSearch) => {
     clearObject();
-
+    setInvoiceSearchError("");
     try {
       const response = await axios.get(
         `http://localhost:8085/invoiceDataRetrieve/${invoiceIdSearch}`
       );
-
-      if (response.status === 200) {
+      if (response && response.status === 200) {
         setInvoiceSearchBtnStatus(true);
 
         updateValue("advance", response.data.advance);
         updateValue("createdDate", response.data.createdDate);
         response.data.payments.forEach((payment) => {
-          // Pass each payment object to the updateValue function
           updateValue("payments", payment);
         });
 
         updateValue("customerDetails", response.data.customerDetails);
         response.data.eqdetails.forEach((eqdetail) => {
-          // Pass each payment object to the updateValue function
           updateValue("eqdetails", eqdetail);
         });
         updateValue("InvoiceID", response.data.InvoiceID);
         updateValue("iDstatus", response.data.idStatus);
         updateValue("comments", response.data.invoiceSpecialmessage);
+        updateValue("completedDateTime", response.data.inv_completed_datetime);
         setUpdateBtnStatus(true);
-      } else if (response.status == 404) {
+      } else if (response.status === 404) {
+        setInvoiceSearchError("මෙම අංකයෙන් බිල්පතක් නොමැත");
       } else {
-        console.log("Unexpected response status:", response.status);
+        console.log("Unexpected response status:", response?.status);
+        setInvoiceSearchError(
+          "මෘදුකාංග දෝශයක් හටගෙන ඇත.පරිපාලකවරයෙකු සම්බන්ද කරගන්න"
+        );
       }
     } catch (error) {
-      console.log("Error:", error);
+      // Check if there's no response from the server
+      if (error.response == undefined) {
+        setInvoiceSearchError("මෙම අංකයෙන් බිල්පතක් නොමැත.");
+        console.log("Network error or server not responding:", error.message);
+      } else {
+        // Other error types can be handled here
+        // setInvoiceSearchError("ප්‍රතිචාර විකාශනයේ දෝෂයක්s");
+        console.log("Error:", error.message);
+      }
     }
   };
+
   const handleAdvanceSearch = () => {
     Swal.fire({
       title: "Redirect to the customer page?",
@@ -349,8 +363,12 @@ function Invoice() {
               onChange={(e) => setInvoiceIdSearch(e.target.value)}
               sx={[{ width: "350px" }, textFieldStyle]}
               id="outlined-basic"
+              value={invoiceIdSearch}
+              type="number"
               label="Search with invoice Id"
               variant="outlined"
+              error={!!invoiceSearchError}
+              helperText={invoiceSearchError}
             />
             <Button onClick={() => handleInvoiceSearch(invoiceIdSearch)}>
               <YoutubeSearchedForIcon />
