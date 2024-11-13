@@ -133,7 +133,7 @@ function InvoiceItem2() {
     }
     return total;
   };
-  
+
   return (
     <Box>
       <Box
@@ -171,6 +171,7 @@ function InvoiceItem2() {
               <TableCell align="center">Created Date</TableCell>
               <TableCell align="center">Total payments done (LKR)</TableCell>
               <TableCell align="center">Invoice Total Amount (LKR)</TableCell>
+              <TableCell align="center">Balance</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -187,13 +188,18 @@ function InvoiceItem2() {
                 }}
               >
                 <TableCell align="center">{row.InvoiceID}</TableCell>
-                <TableCell align="center">{row.customer_name}</TableCell>
+                <TableCell align="center">
+                  {row.customerDetails.cus_fname}
+                </TableCell>
                 <TableCell align="center">
                   {dayjs(row.inv_createddate).format("YYYY-MM-DD HH:mm:ss")}
                 </TableCell>
                 <TableCell align="center">{calculatePayments(row)}</TableCell>
                 <TableCell align="center">
                   {rentalCalculation(row.eqdetails)}
+                </TableCell>
+                <TableCell align="center">
+                  {rentalCalculation(row.eqdetails)-calculatePayments(row)}
                 </TableCell>
               </TableRow>
             ))}

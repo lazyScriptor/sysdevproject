@@ -574,7 +574,7 @@ export async function getInvoiceDetails(invoiceIdSearch) {
   try {
     // Fetch customer, invoice, equipment, and additional invoice details
     const [invoiceDetails] = await pool.query(
-      `SELECT customer.*, invoiceEquipment.*, equipment.*, invoice.inv_advance, invoice.inv_special_message, invoice.inv_idcardstatus, invoice.inv_createddate ,invoice.inv_completed_datetime ,equipmentCategory.* ,specialEquipment.*
+      `SELECT customer.*, invoiceEquipment.*, equipment.*, invoice.inv_advance, invoice.inv_special_message, invoice.inv_idcardstatus,invoice.inv_discount, invoice.inv_createddate ,invoice.inv_completed_datetime ,equipmentCategory.* ,specialEquipment.*
        FROM invoice
        LEFT JOIN customer ON customer.cus_id = invoice.inv_cusid
        LEFT JOIN invoiceEquipment ON invoice.inv_id = invoiceEquipment.inveq_invid
@@ -592,6 +592,7 @@ export async function getInvoiceDetails(invoiceIdSearch) {
         eqdetails: [],
         payments: [],
         advance: null,
+        discount: null,
         invoiceSpecialmessage: null,
         idStatus: null,
       };
@@ -697,9 +698,10 @@ export async function getInvoiceDetails(invoiceIdSearch) {
       invoiceObject.advance = invoiceDetails[0].inv_advance;
       invoiceObject.invoiceSpecialmessage =
         invoiceDetails[0].inv_special_message;
-      invoiceObject.idStatus = !!invoiceDetails[0].inv_idcardstatus; // converting to boolean
+      invoiceObject.idStatus = !!invoiceDetails[0].inv_idcardstatus;
       invoiceObject.inv_completed_datetime =
         invoiceDetails[0].inv_completed_datetime;
+      invoiceObject.discount = invoiceDetails[0].inv_discount;
       return invoiceObject;
     } else {
       console.error("No invoice details found");
@@ -742,6 +744,7 @@ export async function getInvoiceDetailsAll() {
             invoiceSpecialmessage: record.inv_special_message,
             idStatus: !!record.inv_idcardstatus,
             inv_completed_datetime: record.inv_completed_datetime,
+            discount: record.inv_discount,
           };
 
           // Set customer details for each invoice
@@ -828,8 +831,9 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
     );
 
     await pool.query(
-      "UPDATE invoice SET inv_special_message = ?, inv_rating = ?, inv_completed_datetime = ? WHERE inv_id = ?",
+      "UPDATE invoice SET inv_discount=?, inv_special_message = ?, inv_rating = ?, inv_completed_datetime = ? WHERE inv_id = ?",
       [
+        InvoiceCompleteDetail.inv_discount,
         InvoiceCompleteDetail.inv_special_message,
         InvoiceCompleteDetail.inv_rating,
         formattedCompletedDateTime, // Use the formatted date here

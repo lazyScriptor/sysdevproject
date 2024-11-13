@@ -289,8 +289,8 @@ export function CustomerPageMiddle() {
           return validFormatCheck1.test(value) || validFormatCheck2.test(value);
         }
       ),
-    address1: yup.string().required().min(5).max(30),
-    address2: yup.string().max(30),
+    address1: yup.string().required().min(5).max(100),
+    address2: yup.string().max(50),
   });
   const {
     register,

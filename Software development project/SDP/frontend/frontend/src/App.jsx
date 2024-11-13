@@ -15,7 +15,7 @@ import Inbox from "./components/Pages/Inbox.jsx";
 import Invoice from "./components/Pages/Invoice.jsx";
 import Reports from "./components/Pages/Reports.jsx";
 import Notfoundd from "../additionalcomponents/Notfoundd.jsx";
-// import './index.css';
+// import './index.css'; 
 import { useState, createContext, useEffect } from "react";
 import { ThemeProvider, createTheme } from "@mui/material";
 import NewLogin from "./components/Pages/NewLogin.jsx";
@@ -28,11 +28,10 @@ import InvoiceWarehouseHandler from "./components/RoleBasedAccess/Warehouse hand
 import EquipmentWarehouseHandler from "./components/RoleBasedAccess/Warehouse handler/EquipmentWarehouseHandler.jsx";
 import ReportsBackgroundInvoices from "./components/Reports/ReportsBackgroundInvoices.jsx";
 import ReportsBackgroundCustomers from "./components/Reports/ReportsBackgroundCustomers.jsx";
-import CashierDashBoard from "./components/RoleBasedAccess/Cashier/CashierDashboard.jsx";
 import SidebarCashier from "./components/RoleBasedAccess/Cashier/SidebarCashier.jsx";
 import CashierCustomers from "./components/RoleBasedAccess/Cashier/CashierCustomers.jsx";
 import Swal from "sweetalert2";
-
+import Appa from './Appa.jsx'
 export const AppCustomContext = createContext();
 
 function parseJwt(token) {
@@ -245,6 +244,14 @@ export default function App() {
                       <Sidebar />
                       <DashboardMain />
                     </AdminAuth>
+                  </>
+                }
+              />
+              <Route
+                path="/abc"
+                element={
+                  <>
+                    <Appa/>
                   </>
                 }
               />

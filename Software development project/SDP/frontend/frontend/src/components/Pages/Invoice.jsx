@@ -264,6 +264,7 @@ function Invoice() {
         updateValue("iDstatus", response.data.idStatus);
         updateValue("comments", response.data.invoiceSpecialmessage);
         updateValue("completedDateTime", response.data.inv_completed_datetime);
+        updateValue("discount", response.data.discount);
         setUpdateBtnStatus(true);
       } else if (response.status === 404) {
         setInvoiceSearchError("මෙම අංකයෙන් බිල්පතක් නොමැත");

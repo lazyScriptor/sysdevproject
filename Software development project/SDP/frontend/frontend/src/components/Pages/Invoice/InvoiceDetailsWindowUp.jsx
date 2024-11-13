@@ -64,7 +64,7 @@ function InvoiceDetailsWindowUp() {
             sx={{ paddingTop: 2, paddingBottom: 1 }}
           >
             {" "}
-            ගෙනගිය / තවම බාර නොදුන් උපකරණ
+            බාර දුන් උපකරණ
           </Typography>
           <div>
             {/* Show tooltip only if invoiceSearchBtnStatus is true */}
@@ -112,69 +112,72 @@ function InvoiceDetailsWindowUp() {
           {" "}
           {/* Set your desired height */}
           {invoiceObject.eqdetails &&
-            invoiceObject.eqdetails.map((item, index) => (
-              <Paper
-                elevation={1}
-                key={index}
-                sx={{
-                  backgroundColor: item.inveq_return_date
-                    ? (theme) => theme.palette.primary[50]
-                    : "white",
-                  display: "flex",
-                  height: "70px",
-                  p: 1,
-                  m: 1,
-                  borderRadius: 6,
-                  "&:hover": {
-                    backgroundColor: (theme) => theme.palette.primary[100], // Change to your desired hover color
-                    cursor: "not-allowed",
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    width: "50%",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "start",
-                    alignItems: "start",
-                    gap: 2,
-                    ml: 2,
-                  }}
-                >
-                  <Typography variant="caption">{item.eq_id}</Typography>
-                  <Typography variant="body">{item.eq_name}</Typography>
-                </Box>
-                <Box sx={{ flexGrow: 1 }} />
-                <Box
-                  sx={{
-                    width: "50%",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "start",
-                    alignItems: "end",
-                    pr: 2,
-                  }}
-                >
-                  <Typography variant="body" sx={{ textAlign: "end" }}>
-                    Rentalx {item.eq_rental}
-                  </Typography>
-                  <Typography variant="caption" sx={{ textAlign: "end" }}>
-                    Quantityx {item.inveq_borrowqty}
-                  </Typography>
-                </Box>
-                {toggleSwitch && (
-                  <Box sx={{ width: "50px" }}>
-                    <button
-                      style={deleteButtonStyles}
-                      onClick={() => handleDelete(item.eq_id)}
+            invoiceObject.eqdetails.map(
+              (item, index) =>
+                (item.inveq_return_quantity) ? ( // Use conditional rendering directly here
+                  <Paper
+                    elevation={1}
+                    key={index}
+                    sx={{
+                      backgroundColor: item.inveq_return_date
+                        ? (theme) => theme.palette.primary[50]
+                        : "white",
+                      display: "flex",
+                      height: "70px",
+                      p: 1,
+                      m: 1,
+                      borderRadius: 6,
+                      "&:hover": {
+                        backgroundColor: (theme) => theme.palette.primary[100],
+                        cursor: "not-allowed",
+                      },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: "50%",
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "start",
+                        alignItems: "start",
+                        gap: 2,
+                        ml: 2,
+                      }}
                     >
-                      <DeleteTwoToneIcon sx={{ color: "white" }} />
-                    </button>
-                  </Box>
-                )}
-              </Paper>
-            ))}
+                      <Typography variant="caption">{item.eq_id}</Typography>
+                      <Typography variant="body">{item.eq_name}</Typography>
+                    </Box>
+                    <Box sx={{ flexGrow: 1 }} />
+                    <Box
+                      sx={{
+                        width: "50%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "start",
+                        alignItems: "end",
+                        pr: 2,
+                      }}
+                    >
+                      <Typography variant="body" sx={{ textAlign: "end" }}>
+                        Rentalx {item.eq_rental}
+                      </Typography>
+                      <Typography variant="caption" sx={{ textAlign: "end" }}>
+                        Quantityx {item.inveq_return_quantity}
+                      </Typography>
+                    </Box>
+                    {toggleSwitch && (
+                      <Box sx={{ width: "50px" }}>
+                        <button
+                          style={deleteButtonStyles}
+                          onClick={() => handleDelete(item.eq_id)}
+                        >
+                          <DeleteTwoToneIcon sx={{ color: "white" }} />
+                        </button>
+                      </Box>
+                    )}
+                  </Paper>
+                ) :''
+            )}
         </div>
       </Paper>
     </>

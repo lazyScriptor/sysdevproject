@@ -6,6 +6,7 @@ import {
   Button,
   Dialog,
   DialogContent,
+  TextField,
 } from "@mui/material";
 import Swal from "sweetalert2";
 import PictureAsPdfRoundedIcon from "@mui/icons-material/PictureAsPdfRounded";
@@ -16,12 +17,20 @@ import { InvoicePdfWarehouseHandler } from "../../RoleBasedAccess/Warehouse hand
 import TemporaryBill from "../../SubComponents/TemporaryBill";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import debounce from "lodash.debounce";
 
+const formatNumber = (numString) => {
+  return new Intl.NumberFormat("en-US").format(Number(numString));
+};
+
+const handleDiscountChange = debounce((e) => {
+  handleDiscount(e.target.value);
+}, 1);
 
 function InvoiceDetailsWindowDown(props) {
   const [openDialog, setOpenDialog] = useState(false);
   const [openOtherDialog, setOpenOtherDialog] = useState(false);
-
+  
   const { updateBtnStatus, setUpdateBtnStatus, handleCreateNew } = props;
   const {
     invoiceObject,
@@ -39,7 +48,9 @@ function InvoiceDetailsWindowDown(props) {
     setOpenDialog(false);
     setOpenOtherDialog(false);
   };
-
+  const handleDiscount = (discount) => {
+    invoiceObject.discount = discount;
+  };
   const calculateTotalAdvanceAndPayments = () => {
     return (invoiceObject?.advance || 0) + totalPayments || " - ";
   };
@@ -147,12 +158,11 @@ function InvoiceDetailsWindowDown(props) {
           <Box
             sx={{
               position: "absolute",
-              bottom: 0,
+              bottom: -20,
               width: "100%",
               display: "flex",
               justifyContent: "space-between", // Adjusts space between text and button
               alignItems: "center",
-              padding: "0 16px", // Optional padding for spacing
               backgroundColor: "#e0e0e0",
               padding: 1,
               borderRadius: 3,
@@ -186,50 +196,87 @@ function InvoiceDetailsWindowDown(props) {
             )}
           </Box>
         )}
-
-        <Box sx={{ display: "flex", width: "100%" }}>
-          <Box
-            sx={{
-              width: "30%",
-              display: "flex",
-              flexDirection: "column",
-              height: "100%",
-            }}
-          >
-            <Typography variant="body2">Advance</Typography>
-            <Typography variant="body2">Payments</Typography>
-            <hr />
-            <Typography variant="h7">Total </Typography>
-            <Typography variant="h7">Total cost</Typography>
-            <hr />
-            <Typography variant="h7">Balance</Typography>
-          </Box>
-          <Box sx={{ flexGrow: 1, height: "50%" }} />
-          <Box
-            sx={{
-              width: "40%",
-              display: "flex",
-              flexDirection: "column",
-              height: "100%",
-              justifyContent: "start",
-            }}
-          >
-            <Typography sx={{ textAlign: "end" }}>
-              {invoiceObject.advance ? `${invoiceObject.advance} LKR` : " - "}
-            </Typography>
-            <Typography sx={{ textAlign: "end" }}>
-              {invoiceObject.payments?.length ? `${totalPayments} LKR` : "-"}
-            </Typography>
-            <hr />
-            <Typography align="right">{`${calculateTotalAdvanceAndPayments()} LKR`}</Typography>
-            <Typography sx={{ textAlign: "end" }}>
-              {machineTotalCost ? `( ${machineTotalCost} LKR )` : "-"}
-            </Typography>
-            <hr />
-            <Typography align="right">{`${calculateBalance(
-              calculateTotalAdvanceAndPayments(),
-              machineTotalCost
-            )} `}</Typography>
+        <Box sx={{}}>
+          <Box sx={{ display: "flex", width: "100%" }}>
+            <Box
+              sx={{
+                width: "50%",
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+              }}
+            >
+              <Typography variant="body2">අත්තිකාරම් මුදල</Typography>
+              <Typography variant="body2">ගෙවූ අනෙකුත් මුදල්</Typography>
+              <hr />
+              <Typography variant="body2">ගෙවූ මුලු මුදල </Typography>
+              <Typography variant="body2">භාණ්ඩ සඳහා මුලු මුදල</Typography>
+              <hr />
+              <Typography variant="body2">Discount</Typography>
+              <Typography variant="body2">ශේෂය</Typography>
+            </Box>
+            <Box sx={{ flexGrow: 1, height: "100%" }} />
+            <Box
+              sx={{
+                width: "40%",
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+              }}
+            >
+              <Typography variant="body2" sx={{ textAlign: "end" }}>
+                {invoiceObject.advance
+                  ? `${formatNumber(invoiceObject.advance)} LKR`
+                  : " - "}
+              </Typography>
+              <Typography variant="body2" sx={{ textAlign: "end" }}>
+                {invoiceObject.payments?.length
+                  ? `${formatNumber(totalPayments)} LKR`
+                  : "-"}
+              </Typography>
+              <hr />
+              <Typography variant="body2" align="right">{`${formatNumber(
+                calculateTotalAdvanceAndPayments()
+              )} LKR`}</Typography>
+              <Typography variant="body2" sx={{ textAlign: "end" }}>
+                {machineTotalCost
+                  ? `( ${formatNumber(machineTotalCost)} LKR )`
+                  : "-"}
+              </Typography>
+              <hr />
+              <Typography variant="body2" sx={{ textAlign: "end" }}>
+                <input
+                  value={invoiceObject?.discount}
+                  type="number"
+                  disabled={invoiceObject?.completedDateTime}
+                  style={{ textAlign: "right", width: "70%" }}
+                  onChange={handleDiscountChange}
+                />
+              </Typography>
+              <Typography
+                variant="body2"
+                align="right"
+                sx={{
+                  color:
+                    calculateBalance(
+                      calculateTotalAdvanceAndPayments(),
+                      machineTotalCost
+                    ) < 0
+                      ? "red"
+                      : "black", // Conditionally set color
+                }}
+              >
+                {typeof calculateBalance(
+                  calculateTotalAdvanceAndPayments(),
+                  machineTotalCost
+                ) === "number"
+                  ? `${calculateBalance(
+                      calculateTotalAdvanceAndPayments(),
+                      machineTotalCost
+                    )} LKR`
+                  : " - "}
+              </Typography>
+            </Box>
           </Box>
         </Box>
       </Box>
@@ -240,9 +287,19 @@ function InvoiceDetailsWindowDown(props) {
     try {
       const income = calculateTotalAdvanceAndPayments();
       const totalCost = machineTotalCost;
-
-      if (typeof income === "number" && typeof totalCost === "number") {
+      const discount = parseInt(invoiceObject?.discount);
+      if (
+        typeof income === "number" &&
+        typeof totalCost === "number" &&
+        !discount
+      ) {
         return income - totalCost;
+      } else if (
+        typeof income === "number" &&
+        typeof totalCost === "number" &&
+        typeof discount === "number"
+      ) {
+        return income - totalCost + discount;
       } else {
         throw new Error("-");
       }
@@ -252,16 +309,23 @@ function InvoiceDetailsWindowDown(props) {
   };
 
   const handleCompleteBtn = () => {
-    const balance = calculateBalance();
+    const machineHandoverStatus = invoiceObject?.eqdetails
+    console.log(machineHandoverStatus)
+    const totalAdvanceAndPayments =
+      typeof calculateTotalAdvanceAndPayments() == "number"
+        ? calculateTotalAdvanceAndPayments()
+        : 0;
+    const totalMachineCost =
+      typeof machineTotalCost == "number" ? machineTotalCost : 0;
 
-    if (balance < 0) {
+    if (totalAdvanceAndPayments < totalMachineCost) {
       Swal.fire({
-        title: "Customer has to pay more",
-        text: "The balance is negative. Do you wish to continue?",
+        title: "පාරිභෝගිකයා තව මුදල් ශේෂයක් ගෙවීමට ඇත.",
+        text: " එය නොසලකා ඉදිරියට යනවාද?",
         icon: "warning",
         showCancelButton: true,
-        confirmButtonText: "Yes, continue",
-        cancelButtonText: "No, go back",
+        confirmButtonText: "ඔව්, ඉදිරියට යන්න",
+        cancelButtonText: "නැවත පෙර මෙනුවට යන්න",
       }).then((result) => {
         if (result.isConfirmed) {
           // Set the completed date and update the invoice only if the user confirms
@@ -273,8 +337,8 @@ function InvoiceDetailsWindowDown(props) {
       });
     } else {
       // If balance is not negative, proceed directly with updating the invoice
-      invoiceObject.completedDateTime = new Date();
-      handleInvoiceUpdate();
+      // invoiceObject.completedDateTime = new Date();
+      // handleInvoiceUpdate();
     }
   };
 
@@ -282,14 +346,17 @@ function InvoiceDetailsWindowDown(props) {
     <Box display={"flex"} alignItems={"center"} gap={1} sx={{}}>
       {invoiceSearchBtnStatus ? (
         <>
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{ mt: 1, borderRadius: 0, height: "60px", width: "10vw" }}
-            onClick={handleInvoiceUpdate}
-          >
-            Update Invoice
-          </Button>
+          {!invoiceObject.completedDateTime && (
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{ mt: 1, borderRadius: 0, height: "60px", width: "10vw" }}
+              onClick={handleInvoiceUpdate}
+            >
+              Update Invoice
+            </Button>
+          )}
+
           <Button
             onClick={handlePdfButtonClick}
             variant="contained"
