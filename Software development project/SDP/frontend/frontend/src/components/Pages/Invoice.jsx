@@ -103,8 +103,8 @@ function Invoice() {
     nic: "",
     cus_phone_number: "",
     cus_id: "",
-  });
-
+  }) ;
+    
   const [clearData, setClearData] = useState({
     cus_fname: "",
     cus_address1: "",
@@ -126,9 +126,9 @@ function Invoice() {
       setValidationMessage("Phone number, NIC, or customer ID is required");
       return;
     }
-
+    
     const trimmedValue = phoneNumberorNic.trim();
-
+    
     if (
       !isValidNIC(trimmedValue) &&
       !isValidPhoneNumber(trimmedValue) &&
@@ -137,9 +137,9 @@ function Invoice() {
       setValidationMessage("Invalid phone number, NIC, or ID format");
       return;
     }
-
+    
     setValidationMessage("");
-
+    
     try {
       let res;
       if (isValidId(trimmedValue)) {

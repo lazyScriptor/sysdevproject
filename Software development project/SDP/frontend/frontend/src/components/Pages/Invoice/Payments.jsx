@@ -8,6 +8,12 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { v4 as uuidv4 } from "uuid";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const Buttonstyles = {
   display: "flex",
@@ -83,20 +89,13 @@ export function PaymentForm() {
     const milliseconds = ("00" + date.getMilliseconds()).slice(-3);
     const amountFormatted = amount.toFixed(2).replace(".", "").padStart(5, "0");
     const uniquePart = uuidv4().slice(0, 3);
-
     return `${invoiceId}${month}${day}${milliseconds}${amountFormatted}${uniquePart}`;
   };
 
   function dateformatter() {
-    const createdDate = new Date();
-    const year = createdDate.getFullYear();
-    const month = String(createdDate.getMonth() + 1).padStart(2, "0");
-    const day = String(createdDate.getDate()).padStart(2, "0");
-    const hours = String(createdDate.getHours()).padStart(2, "0");
-    const minutes = String(createdDate.getMinutes()).padStart(2, "0");
-    const seconds = String(createdDate.getSeconds()).padStart(2, "0");
-
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    const formattedDate = new Date();
+    
+    return  (formattedDate);
   }
 
   const schema = yup.object().shape({

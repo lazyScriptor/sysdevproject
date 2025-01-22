@@ -1,9 +1,13 @@
 import mysql from "mysql2";
 import dotenv from "dotenv";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc.js";
+import timezone from "dayjs/plugin/timezone.js";
 import bcrypt, { hash } from "bcrypt";
-dotenv.config();
 
+dotenv.config();
+dayjs.extend(utc);
+dayjs.extend(timezone);
 const saltRound = 10;
 
 // insted of createconnection, Overall, using createPool simplifies connection
@@ -690,24 +694,24 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
       ]
     );
   } catch (error) {
-    console.log("Error occurred in backend invoice details update", error);
+    console.log("Error occurred in backend invoice details update1", error);
   }
 
   // Update invoice payment table
   try {
     for (const payment of InvoiceCompleteDetail.payments) {
-      // Convert payment date to SQL format
-      const formattedDate = new Date(payment.invpay_payment_date)
-        .toISOString()
-        .slice(0, 10);
-
-      console.log("This is the payID", formattedDate);
-
+      // Format the date
+      const formattedDate = dayjs(payment.invpay_payment_date)
+        .tz("Asia/Colombo")
+        .format("YYYY-MM-DD HH:mm:ss");
+      console.log(formattedDate);
+  
+      // Use the formatted date in the query
       await pool.query(
         `INSERT INTO invoicePayments (invpay_payment_id, invpay_inv_id, invpay_amount, invpay_payment_date)
-           VALUES (?, ?, ?, ?)
-           ON DUPLICATE KEY UPDATE
-           invpay_inv_id = VALUES(invpay_inv_id), invpay_amount = VALUES(invpay_amount), invpay_payment_date = VALUES(invpay_payment_date)`,
+         VALUES (?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE
+         invpay_inv_id = VALUES(invpay_inv_id), invpay_amount = VALUES(invpay_amount), invpay_payment_date = VALUES(invpay_payment_date)`,
         [
           payment.invpay_payment_id,
           InvoiceCompleteDetail.InvoiceID,
@@ -717,8 +721,9 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
       );
     }
   } catch (error) {
-    console.log("Error occurred in backend invoice details update:", error);
+    console.log("Error occurred in backend invoice details update2:", error);
   }
+  
 
   // Update invoice equipment details
 
@@ -876,15 +881,7 @@ export async function setUserDetails(object) {
       INSERT INTO users (user_first_name, user_last_name, username, nic, user_phone_number, user_address1, user_address2)
       VALUES (?, ?, ?, ?, ?, ?, ?)
       `,
-      [
-        firstname,
-        lastname,
-        username,
-        nic,
-        phonenumber,
-        address1,
-        address2,
-      ]
+      [firstname, lastname, username, nic, phonenumber, address1, address2]
     );
 
     const userId = response.insertId;
@@ -901,7 +898,7 @@ export async function setUserDetails(object) {
 
     return { success: true, userId };
   } catch (error) {
-    console.error('Error occurred in setUserDetails:', error);
+    console.error("Error occurred in setUserDetails:", error);
     throw error; // Rethrow the error to be caught by the caller
   }
 }
