@@ -6,6 +6,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  TextField,
 } from "@mui/material";
 import { Button } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
@@ -17,6 +18,7 @@ import { InvoicePdfWarehouseHandler } from "../../RoleBasedAccess/Warehouse hand
 import TemporaryBill from "../../SubComponents/TemporaryBill";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 function InvoiceDetailsWindowDown(props) {
+  const [discount, setDiscount] = useState(0);
   const [openDialog, setOpenDialog] = useState(false);
   const [openOtherDialog, setOpenOtherDialog] = useState(false);
   const handlePdfButtonClick = () => {
@@ -51,8 +53,20 @@ function InvoiceDetailsWindowDown(props) {
     updateEqObject,
   } = useContext(InvoiceContext);
 
-  useEffect(() => {}, [invoiceObject]);
+  const calculateTotalPayments = () => {
+    let total = 0;
+    for (const payment of invoiceObject.payments) {
+      total = payment.invpay_amount + total;
+    }
+    total = total + invoiceObject.advance;
+    return total;
+  };
 
+  const handlediscount = (value) => {
+    console.log(calculateTotalPayments(), value);
+    setDiscount(calculateTotalPayments() - value);
+    return discount;
+  };
   const handleInvoiceSubmit = async () => {
     // localStorage.setItem("CIObject", JSON.stringify(invoiceObject));
     // const localInvoiceObject = localStorage.getItem("CIObject");
@@ -259,6 +273,7 @@ function InvoiceDetailsWindowDown(props) {
             >
               <Typography variant="h6">Advance</Typography>
               <Typography variant="h7">Payments</Typography>
+              <Typography variant="h6">Total payments</Typography>
             </Box>
             <Box sx={{ flexGrow: 1, height: "50%" }} />
             <Box
@@ -286,9 +301,62 @@ function InvoiceDetailsWindowDown(props) {
                     {item.invpay_amount && " LKR"}
                   </Typography>
                 ))}
+              <br />
+              <Typography
+                align="right"
+                variant="h6"
+                sx={{
+                  display: "inline-block",
+                  "& span": {
+                    position: "relative",
+                    paddingBottom: "8px", // Adjust for spacing between text and lines
+                    "&:after, &:before": {
+                      content: '""',
+                      position: "absolute",
+                      left: 0,
+                      right: 0,
+                      height: "2px", // Thickness of the underline
+                      backgroundColor: "currentColor", // Matches text color
+                    },
+                    "&:after": {
+                      bottom: "0", // Position of the second underline
+                    },
+                    "&:before": {
+                      bottom: "-6px", // Position of the first underline (creates gap)
+                    },
+                  },
+                }}
+              >
+                <span>{[calculateTotalPayments(), " LKR"]}</span>
+              </Typography>
             </Box>
           </Box>
-          <Box sx={{ height: "100%", width: "100%" }}></Box>
+          <Box
+            sx={{ height: "100%", width: "100%" }}
+            display={"flex"}
+            justifyContent={"end"}
+            alignItems={"end"}
+          >
+            {invoiceSearchBtnStatus && (
+              <Typography
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "end",
+                  gap: 2,
+                }}
+              >
+                <TextField
+                  sx={{ alignSelf: "end" }}
+                  onChange={(e) => handlediscount(e.target.value)}
+                  id="outlined-basic"
+                  label="Discount"
+                  variant="outlined"
+                />
+                {discount}
+              </Typography>
+            )}
+          </Box>
         </Box>
       </Paper>
       <Box display={"flex"} alignItems={"center"} gap={1}>

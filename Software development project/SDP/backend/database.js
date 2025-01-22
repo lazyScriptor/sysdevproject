@@ -553,11 +553,13 @@ export async function getInvoiceDetails(invoiceIdSearch) {
   try {
     // Fetch customer, invoice, equipment, and additional invoice details
     const [invoiceDetails] = await pool.query(
-      `SELECT customer.*, invoice.*, invoiceEquipment.*, equipment.*, invoice.inv_advance, invoice.inv_special_message, invoice.inv_idcardstatus, invoice.inv_createddate
+      `SELECT customer.*, invoiceEquipment.*, equipment.*, invoice.inv_advance, invoice.inv_special_message, invoice.inv_idcardstatus,invoice.inv_discount, invoice.inv_createddate ,invoice.inv_completed_datetime ,equipmentCategory.* ,specialEquipment.*
        FROM invoice
        LEFT JOIN customer ON customer.cus_id = invoice.inv_cusid
        LEFT JOIN invoiceEquipment ON invoice.inv_id = invoiceEquipment.inveq_invid
        LEFT JOIN equipment ON invoiceEquipment.inveq_eqid = equipment.eq_id
+       LEFT JOIN equipmentCategory ON equipment.eq_catid=equipmentCategory.eqcat_id
+       LEFT JOIN specialEquipment ON equipment.eq_id = specialEquipment.spe_eqid
        WHERE invoice.inv_id = ?`,
       [invoiceIdSearch]
     );
@@ -569,6 +571,7 @@ export async function getInvoiceDetails(invoiceIdSearch) {
         eqdetails: [],
         payments: [],
         advance: null,
+        discount: null,
         invoiceSpecialmessage: null,
         idStatus: null,
       };
@@ -640,6 +643,10 @@ export async function getInvoiceDetails(invoiceIdSearch) {
         eq_completestock: record.eq_completestock,
         eq_delete_status: record.eq_delete_status,
         eq_catid: record.eq_catid,
+        eqcat_dataset: record.eqcat_dateset,
+        eqcat_id: record.eqcat_id,
+        eqcat_name: record.eqcat_name,
+        spe_singleday_rent: record.spe_singleday_rent,
         inveq_borrow_date: record.inveq_borrow_date,
         inveq_return_date: record.inveq_return_date,
         duration_in_days: record.duration_in_days,
@@ -670,8 +677,10 @@ export async function getInvoiceDetails(invoiceIdSearch) {
       invoiceObject.advance = invoiceDetails[0].inv_advance;
       invoiceObject.invoiceSpecialmessage =
         invoiceDetails[0].inv_special_message;
-      invoiceObject.idStatus = !!invoiceDetails[0].inv_idcardstatus; // converting to boolean
-
+      invoiceObject.idStatus = !!invoiceDetails[0].inv_idcardstatus;
+      invoiceObject.inv_completed_datetime =
+        invoiceDetails[0].inv_completed_datetime;
+      invoiceObject.discount = invoiceDetails[0].inv_discount;
       return invoiceObject;
     } else {
       console.error("No invoice details found");
@@ -682,6 +691,7 @@ export async function getInvoiceDetails(invoiceIdSearch) {
     return false;
   }
 }
+
 export async function updateInvoiceDetails(InvoiceCompleteDetail) {
   // Update invoice details
   try {
