@@ -54,6 +54,8 @@ function InvoiceHandOverForm() {
     setInvoiceObject,
     updateValue,
     updateEqObject,
+    buttonDesable,
+    setButtonDisable,
     clearObject,
   } = useContext(InvoiceContext);
 
@@ -305,6 +307,7 @@ function InvoiceHandOverForm() {
             sx={{ display: "flex", justifyContent: "space-evenly", pt: "45px" }}
           >
             <Button
+              disabled={buttonDesable}
               sx={{ mt: 2.5 }}
               variant="contained"
               color="warning"
@@ -315,6 +318,7 @@ function InvoiceHandOverForm() {
               Handover
             </Button>
             <Button
+              disabled={buttonDesable}
               sx={{ mt: 2.5 }}
               variant="contained"
               color="error"

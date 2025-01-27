@@ -15,7 +15,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import BrowserUpdatedIcon from "@mui/icons-material/BrowserUpdated";
 import logo from "../../assets/logo.png";
-import dayjs from 'dayjs'
+import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 
@@ -31,6 +31,22 @@ const TemporaryBill = () => {
   const calculateTotalAdvanceAndPayments = () => {
     return (invoiceObject?.advance || 0) + totalPayments || " - ";
   };
+
+
+
+  const handleDurationinDays = (duration) => {
+    if (duration > 0) {
+      return duration
+    } else {
+      const today=dayjs(new Date());
+      const createdDate = dayjs(invoiceObject.createdDate);
+
+      let diffInDays = today.diff(createdDate,'day')
+      diffInDays=diffInDays+1;
+      return diffInDays
+    }
+  };
+
 
   const handleDownload = (name, invoiceid) => {
     const capture = billRef.current;
@@ -81,11 +97,19 @@ const TemporaryBill = () => {
             }}
           >
             <img style={{ width: "50px" }} src={logo} alt="" />
-            <Typography variant="h5" align="center" sx={{ fontSize: "0.75rem" }}>
+            <Typography
+              variant="h5"
+              align="center"
+              sx={{ fontSize: "0.75rem" }}
+            >
               Enterprises
             </Typography>
           </div>
-          <Typography align="center" variant="caption" sx={{ fontSize: "0.75rem" }}>
+          <Typography
+            align="center"
+            variant="caption"
+            sx={{ fontSize: "0.75rem" }}
+          >
             භාණ්ඩ රැගෙන යාම/ බාර දීම/ මුදල් ගෙවීම සඳහා නිකුත් කරන
           </Typography>
           <Typography align="center" sx={{ fontSize: "0.75rem" }}>
@@ -156,14 +180,14 @@ const TemporaryBill = () => {
                           : "බාර දී නැත"}
                       </TableCell>
 
-                      <TableCell  align="center" sx={{ fontSize: "0.75rem"}}>
+                      <TableCell align="center" sx={{ fontSize: "0.75rem" }}>
                         {row.eq_name}
                       </TableCell>
                       <TableCell align="center" sx={{ fontSize: "0.75rem" }}>
                         {row.inveq_borrowqty}
                       </TableCell>
                       <TableCell align="center" sx={{ fontSize: "0.75rem" }}>
-                        {row.duration_in_days}
+                        {handleDurationinDays(row.duration_in_days)}
                       </TableCell>
                       <TableCell align="center" sx={{ fontSize: "0.75rem" }}>
                         {row.eq_rental}
@@ -171,7 +195,11 @@ const TemporaryBill = () => {
                     </TableRow>
                   ))}
                 <TableRow>
-                  <TableCell colSpan={4} align="right" sx={{ fontSize: "0.75rem" }}>
+                  <TableCell
+                    colSpan={4}
+                    align="right"
+                    sx={{ fontSize: "0.75rem" }}
+                  >
                     බාරදුන් භාණ්ඩ සඳහා මුලු මුදල :
                   </TableCell>
                   <TableCell align="center" sx={{ fontSize: "0.75rem" }}>
@@ -206,9 +234,10 @@ const TemporaryBill = () => {
 
                 {invoiceObject.payments.map((payment, index) => (
                   <TableRow key={index}>
-                   
                     <TableCell align="center" sx={{ fontSize: "0.75rem" }}>
-                      {dayjs(payment.invpay_payment_date).tz("Asia/Colombo").format(`DD/MM | HH:mm`)} 
+                      {dayjs(payment.invpay_payment_date)
+                        .tz("Asia/Colombo")
+                        .format(`DD/MM | HH:mm`)}
                     </TableCell>
 
                     <TableCell align="center" sx={{ fontSize: "0.75rem" }}>
@@ -217,7 +246,11 @@ const TemporaryBill = () => {
                   </TableRow>
                 ))}
                 <TableRow>
-                  <TableCell colSpan={1} align="right" sx={{ fontSize: "0.75rem" }}>
+                  <TableCell
+                    colSpan={1}
+                    align="right"
+                    sx={{ fontSize: "0.75rem" }}
+                  >
                     ගෙවූ මුලු මුදල :
                   </TableCell>
                   <TableCell align="center" sx={{ fontSize: "0.75rem" }}>
@@ -228,13 +261,15 @@ const TemporaryBill = () => {
             </Table>
 
             <div>
-              <Typography align="center" sx={{ padding: 2, fontSize: "0.75rem" }}>
+              <Typography
+                align="center"
+                sx={{ padding: 2, fontSize: "0.75rem" }}
+              >
                 {invoiceObject.customerDetails.cus_fname}{" "}
                 {invoiceObject.customerDetails.cus_lname} වන මා ඉහත සඳහන් දිනදී
-                මෙම භාණ්ඩ ගෙනගිය බවටත්, මෙම ගෙවීම් අනුමත කර බවටත්,
-                මම සනාථ කරමි.
+                මෙම භාණ්ඩ ගෙනගිය බවටත්, මෙම ගෙවීම් අනුමත කර බවටත්, මම සනාථ කරමි.
               </Typography>
-              <Typography align="center" sx={{paddingTop:5}}>
+              <Typography align="center" sx={{ paddingTop: 5 }}>
                 ................................................
               </Typography>
             </div>
@@ -244,7 +279,12 @@ const TemporaryBill = () => {
       <Button
         sx={{ mt: 2, fontSize: "0.75rem" }}
         variant="contained"
-        onClick={() => handleDownload(invoiceObject.customerDetails.cus_fname, invoiceObject.InvoiceID)}
+        onClick={() =>
+          handleDownload(
+            invoiceObject.customerDetails.cus_fname,
+            invoiceObject.InvoiceID
+          )
+        }
       >
         <BrowserUpdatedIcon sx={{ mr: 1 }} />
         PDF එකක් බාගත කරන්න

@@ -79,19 +79,7 @@ function InvoiceDetailsWindowUp() {
             <AppRegistrationTwoToneIcon />
           </Typography>
         </Box>
-        <Box
-          sx={{
-            position: "relative",
-            height: "50px",
-            top: "92%",
-            m: 2,
-            display: "flex",
-          }}
-        >
-          <Typography variant="body">Sub Total</Typography>
-          <Box sx={{ flexGrow: 1 }} />
-          <Typography variant="body">{Total} LKR</Typography>
-        </Box>
+      
         {invoiceObject.eqdetails &&
           invoiceObject.eqdetails.map((item, index) => (
             <Paper

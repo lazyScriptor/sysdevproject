@@ -9,6 +9,8 @@ export default function InvoiceContextProvider({ children }) {
   const [checkState, setCheckState] = useState(false);
   const [eqObject, setEqObject] = useState([]);
   const [invoiceSearchBtnStatus, setInvoiceSearchBtnStatus] = useState(false);
+  const [buttonDesable, setButtonDisable] = useState(false);
+
   const [invoiceObject, setInvoiceObject] = useState({
     iDstatus: false,
     eqdetails: [],
@@ -73,7 +75,7 @@ export default function InvoiceContextProvider({ children }) {
   const updateEqObject = (newValue) => {
     setEqObject((prev) => [...prev, newValue]);
   };
-  
+
   const calculateTotalPayments = () => {
     let total = 0;
     if (invoiceObject?.payments) {
@@ -129,7 +131,8 @@ export default function InvoiceContextProvider({ children }) {
         checkState,
         setCheckState,
         eqObject,
-        totalPayments, setTotalPayments,
+        totalPayments,
+        setTotalPayments,
         setEqObject,
         invoiceObject,
         setInvoiceObject,
@@ -138,6 +141,8 @@ export default function InvoiceContextProvider({ children }) {
         machineTotalCost,
         setMachineTotalCost,
         clearObject,
+        buttonDesable,
+        setButtonDisable,
       }}
     >
       {children}

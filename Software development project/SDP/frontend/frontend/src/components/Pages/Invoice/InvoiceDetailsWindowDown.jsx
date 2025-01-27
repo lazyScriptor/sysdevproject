@@ -17,8 +17,9 @@ import PictureAsPdfRoundedIcon from "@mui/icons-material/PictureAsPdfRounded";
 import { InvoicePdfWarehouseHandler } from "../../RoleBasedAccess/Warehouse handler/Invoice/InvoiceWarehouseHandler";
 import TemporaryBill from "../../SubComponents/TemporaryBill";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+
 function InvoiceDetailsWindowDown(props) {
-  const [discount, setDiscount] = useState(0);
+  const [discount, setDiscount] = useState();
   const [openDialog, setOpenDialog] = useState(false);
   const [openOtherDialog, setOpenOtherDialog] = useState(false);
   const handlePdfButtonClick = () => {
@@ -33,7 +34,12 @@ function InvoiceDetailsWindowDown(props) {
     setOpenOtherDialog(false);
   };
 
-  const { updateBtnStatus, setUpdateBtnStatus, handleCreateNew } = props;
+  const {
+    updateBtnStatus,
+    setUpdateBtnStatus,
+    handleCreateNew,
+    handleInvoiceSearch,
+  } = props;
   const {
     fullDetailsEquipmentArray,
     setFullDetailsEquipmentArray,
@@ -51,6 +57,10 @@ function InvoiceDetailsWindowDown(props) {
     clearObject,
     updateValue,
     updateEqObject,
+    machineTotalCost,
+    setMachineTotalCost,
+    buttonDesable,
+    setButtonDisable,
   } = useContext(InvoiceContext);
 
   const calculateTotalPayments = () => {
@@ -62,10 +72,34 @@ function InvoiceDetailsWindowDown(props) {
     return total;
   };
 
+  useEffect(() => {
+    if (invoiceObject.inv_completed_datetime != null) {
+      console.log("type is", invoiceObject.inv_completed_datetime);
+      console.log("completed date has a value");
+
+      setButtonDisable(true);
+    } else {
+      setButtonDisable(false);
+      console.log("type is", invoiceObject.inv_completed_datetime);
+
+      console.log("completed date is null");
+    }
+    setDiscount(machineTotalCost - calculateTotalPayments());
+  }, [machineTotalCost, invoiceObject]);
+
   const handlediscount = (value) => {
     console.log(calculateTotalPayments(), value);
-    setDiscount(calculateTotalPayments() - value);
-    return discount;
+    if (value > machineTotalCost - calculateTotalPayments()) {
+      setDiscount(machineTotalCost - calculateTotalPayments());
+      Swal.fire({
+        title: "Cost Error?",
+        text: "Please enter the discount lower than the cost",
+        icon: "error",
+      });
+    } else {
+      setDiscount(machineTotalCost - calculateTotalPayments() - value);
+      return machineTotalCost - calculateTotalPayments() - value;
+    }
   };
   const handleInvoiceSubmit = async () => {
     // localStorage.setItem("CIObject", JSON.stringify(invoiceObject));
@@ -160,7 +194,6 @@ function InvoiceDetailsWindowDown(props) {
         ) {
           if (invoiceObject.eqdetails.length > 0) {
             if (invoiceObject.advance > 0) {
-              console.log("Local storage retrieval", invoiceObject);
               try {
                 // Send the object to the backend
                 await axios.post(
@@ -172,11 +205,11 @@ function InvoiceDetailsWindowDown(props) {
                   icon: "success",
                   title: "Your work has been saved",
                   showConfirmButton: false,
-                  timer: 1500,
+                  timer: 500,
                 });
-                handleCreateNew();
                 setUpdateBtnStatus(false);
-                console.log("Invoice details updated successfully");
+
+                handleInvoiceSearch(invoiceObject.InvoiceID);
               } catch (error) {
                 Swal.fire({
                   icon: "error",
@@ -232,11 +265,43 @@ function InvoiceDetailsWindowDown(props) {
       console.log("Invoice object is undefined");
     }
   };
+  const handleCompletedButtonClick = async () => {
+    try {
+      invoiceObject.eqdetails.forEach((element) => {
+        if (element.inveq_return_date == null) {
+          Swal.fire({
+            title: "Some items has not returned?",
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "It is okay",
+            denyButtonText: `Then wait`,
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+              Swal.fire("Saved!", "", "success");
+              invoiceObject.invoiceCompletedDate = new Date()
+              handleInvoiceUpdate();
+              setButtonDisable(true);
+            } else if (result.isDenied) {
+              Swal.fire("Changes are not saved", " ", "info");
+            }
+          });
+        } else {
+          invoiceObject.invoiceCompletedDate = new Date()
+          handleInvoiceUpdate();
+          setButtonDisable(true);
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <>
       <Paper
         elevation={3}
         sx={{
+          position: "relative",
           width: "100%",
           display: "flex",
           justifyContent: "start",
@@ -245,6 +310,26 @@ function InvoiceDetailsWindowDown(props) {
           height: "80%",
         }}
       >
+        <Box position={"absolute"} bottom={5} width={"100%"} paddingRight={6}>
+          {invoiceSearchBtnStatus && (
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <TextField
+                defaultValue={0}
+                sx={{ alignSelf: "end" }}
+                onChange={(e) => handlediscount(e.target.value)}
+                id="outlined-basic"
+                label="Discount"
+                variant="outlined"
+              />
+              <Typography>Payment amount : {discount} LKR</Typography>
+            </Box>
+          )}
+        </Box>
+
         {/* <Box width="60%" sx={{display:"flex",flexDirection:"column",gap:3}}>
             <Typography variant='h6'>Advance</Typography>
             <Typography variant='h7'>Payments</Typography>
@@ -271,7 +356,8 @@ function InvoiceDetailsWindowDown(props) {
                 height: "100%",
               }}
             >
-              <Typography variant="h6">Advance</Typography>
+              <Typography variant="h6">Machine Cost </Typography>
+              <Typography variant="h7">Advance</Typography>
               <Typography variant="h7">Payments</Typography>
               <Typography variant="h6">Total payments</Typography>
             </Box>
@@ -284,7 +370,12 @@ function InvoiceDetailsWindowDown(props) {
                 height: "100%",
               }}
             >
-              <Typography variant="h6" sx={{ textAlign: "end", mb: 2.5 }}>
+              {invoiceSearchBtnStatus && (
+                <Typography variant="h6" sx={{ textAlign: "end", mb: 2.5 }}>
+                  {[machineTotalCost, " LKR"]}
+                </Typography>
+              )}
+              <Typography variant="h7" sx={{ textAlign: "end", mb: 2.5 }}>
                 {!!invoiceObject.advance ? invoiceObject.advance : ""}
                 {!!invoiceObject.advance ? " LKR" : ""}
               </Typography>
@@ -302,33 +393,13 @@ function InvoiceDetailsWindowDown(props) {
                   </Typography>
                 ))}
               <br />
-              <Typography
-                align="right"
-                variant="h6"
-                sx={{
-                  display: "inline-block",
-                  "& span": {
-                    position: "relative",
-                    paddingBottom: "8px", // Adjust for spacing between text and lines
-                    "&:after, &:before": {
-                      content: '""',
-                      position: "absolute",
-                      left: 0,
-                      right: 0,
-                      height: "2px", // Thickness of the underline
-                      backgroundColor: "currentColor", // Matches text color
-                    },
-                    "&:after": {
-                      bottom: "0", // Position of the second underline
-                    },
-                    "&:before": {
-                      bottom: "-6px", // Position of the first underline (creates gap)
-                    },
-                  },
-                }}
-              >
-                <span>{[calculateTotalPayments(), " LKR"]}</span>
-              </Typography>
+              {invoiceObject.advance | invoiceObject.payments && (
+                <Typography align="right" variant="h6">
+                  <span style={{ textDecoration: "underline" }}>
+                    ( {[calculateTotalPayments(), " LKR"]} ){" "}
+                  </span>
+                </Typography>
+              )}
             </Box>
           </Box>
           <Box
@@ -336,35 +407,16 @@ function InvoiceDetailsWindowDown(props) {
             display={"flex"}
             justifyContent={"end"}
             alignItems={"end"}
-          >
-            {invoiceSearchBtnStatus && (
-              <Typography
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "end",
-                  gap: 2,
-                }}
-              >
-                <TextField
-                  sx={{ alignSelf: "end" }}
-                  onChange={(e) => handlediscount(e.target.value)}
-                  id="outlined-basic"
-                  label="Discount"
-                  variant="outlined"
-                />
-                {discount}
-              </Typography>
-            )}
-          </Box>
+          ></Box>
         </Box>
       </Paper>
       <Box display={"flex"} alignItems={"center"} gap={1}>
         {invoiceSearchBtnStatus == true ? (
           <Button
+            disabled={buttonDesable}
             fullWidth
             variant="contained"
-            sx={{ mt: 1, borderRadius: 0, height: "60px", width: "17vw" }}
+            sx={{ mt: 1, borderRadius: 0, height: "60px", width: "13vw" }}
             onClick={handleInvoiceUpdate}
           >
             Update Invoice
@@ -373,7 +425,7 @@ function InvoiceDetailsWindowDown(props) {
           <Button
             color="success"
             variant="contained"
-            sx={{ mt: 1, borderRadius: 0, height: "60px", width: "17vw" }}
+            sx={{ mt: 1, borderRadius: 0, height: "60px", width: "13vw" }}
             onClick={handleInvoiceSubmit}
           >
             Create Invoice
@@ -381,6 +433,7 @@ function InvoiceDetailsWindowDown(props) {
         )}
         <Button
           onClick={handlePdfButtonClick}
+          disabled={buttonDesable}
           variant="contained"
           sx={{ height: "60px", width: "20px", mt: 1 }}
         >
@@ -388,10 +441,21 @@ function InvoiceDetailsWindowDown(props) {
         </Button>
         <Button
           onClick={handleOtherDialogButtonClick}
+          disabled={buttonDesable}
           variant="outlined"
           sx={{ height: "60px", width: "20px", mt: 1 }}
         >
           <ReceiptIcon />
+        </Button>
+
+        <Button
+          color="success"
+          onClick={handleCompletedButtonClick}
+          disabled={buttonDesable}
+          variant="outlined"
+          sx={{ height: "60px", width: "20px", mt: 1 }}
+        >
+          O
         </Button>
       </Box>
       <Dialog

@@ -42,7 +42,13 @@ import AddIcCallOutlinedIcon from "@mui/icons-material/AddIcCallOutlined";
 import ContactMailOutlinedIcon from "@mui/icons-material/ContactMailOutlined";
 import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
 import { InvoicePdfWarehouseHandler } from "../RoleBasedAccess/Warehouse handler/Invoice/InvoiceWarehouseHandler.jsx";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
+           
 const textFieldStyle = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "12px",
@@ -65,6 +71,8 @@ function Invoice() {
     clearObject,
     updateValue,
     clearValues,
+    buttonDesable,
+    setButtonDisable,
     updateEqObject,
   } = useContext(InvoiceContext);
   const { showAlert } = useContext(SwalContext);
@@ -82,6 +90,7 @@ function Invoice() {
   const [validationMessage, setValidationMessage] = useState("");
   const [updateBtnStatus, setUpdateBtnStatus] = useState(false);
 
+  
   useEffect(() => {}, [invoiceObject]);
   //Create new invoice
   useEffect(() => {
@@ -103,8 +112,8 @@ function Invoice() {
     nic: "",
     cus_phone_number: "",
     cus_id: "",
-  }) ;
-    
+  });
+
   const [clearData, setClearData] = useState({
     cus_fname: "",
     cus_address1: "",
@@ -126,9 +135,9 @@ function Invoice() {
       setValidationMessage("Phone number, NIC, or customer ID is required");
       return;
     }
-    
+
     const trimmedValue = phoneNumberorNic.trim();
-    
+
     if (
       !isValidNIC(trimmedValue) &&
       !isValidPhoneNumber(trimmedValue) &&
@@ -137,9 +146,9 @@ function Invoice() {
       setValidationMessage("Invalid phone number, NIC, or ID format");
       return;
     }
-    
+
     setValidationMessage("");
-    
+
     try {
       let res;
       if (isValidId(trimmedValue)) {
@@ -239,7 +248,6 @@ function Invoice() {
   };
 
   const handleInvoiceSearch = async (invoiceIdSearch) => {
-    
     clearObject();
 
     try {
@@ -265,6 +273,10 @@ function Invoice() {
         });
         updateValue("InvoiceID", response.data.InvoiceID);
         updateValue("iDstatus", response.data.idStatus);
+        updateValue(
+          "inv_completed_datetime",
+          response.data.inv_completed_datetime
+        );
         console.log("object", response.data.eqdetails);
         setUpdateBtnStatus(true);
       } else if (response.status == 404) {
@@ -337,7 +349,15 @@ function Invoice() {
               alignItems: "center",
               width: "23.6%",
             }}
-          ></Box>
+          >
+            {invoiceObject.inv_completed_datetime ? (<>
+            <Typography> Completed Date and Time </Typography>
+              <Typography>{new Date(invoiceObject.inv_completed_datetime).toLocaleString()}</Typography>
+            </>
+            ) : (
+              ""
+            )}
+          </Box>
           <Box
             sx={{
               display: "flex",
@@ -604,6 +624,7 @@ function Invoice() {
                   }}
                 >
                   <Button
+                    disabled={buttonDesable}
                     customvariant="custom"
                     variant="contained"
                     onClick={handleProceedPayment}
@@ -675,13 +696,14 @@ function Invoice() {
               handleCreateNew={handleCreateNew}
               updateBtnStatus={updateBtnStatus}
               setUpdateBtnStatus={setUpdateBtnStatus}
+              handleInvoiceSearch={handleInvoiceSearch}
             />
           </Box>
         </Box>
       </Box>
       {/* <InvoicePdfWarehouseHandler/> */}
       <OverlayDialogBox>
-        <Payments />
+        <Payments handleInvoiceSearch={handleInvoiceSearch} />
       </OverlayDialogBox>
       {/* {isInvoiceUpdateFormShow && (
         <InvoiceUpdateForm

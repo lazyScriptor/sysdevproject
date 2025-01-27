@@ -43,7 +43,7 @@ const textFieldStyle = {
   },
 };
 
-export default function Payments() {
+export default function Payments({ handleInvoiceSearch }) {
   const { invoiceSearchBtnStatus } = useContext(InvoiceContext);
   const [buttonToogle, setButtonToogle] = useState(true);
 
@@ -68,7 +68,7 @@ export default function Payments() {
 
       <Box sx={{ height: "273px", width: "300px" }}>
         {invoiceSearchBtnStatus ? (
-          <PaymentForm />
+          <PaymentForm handleInvoiceSearch={handleInvoiceSearch} />
         ) : buttonToogle ? (
           <AdvancePayment />
         ) : (
@@ -79,7 +79,7 @@ export default function Payments() {
   );
 }
 
-export function PaymentForm() {
+export function PaymentForm({ handleInvoiceSearch }) {
   const { updateValue, invoiceObject } = useContext(InvoiceContext);
 
   const generatePaymentId = (invoiceId, amount) => {
@@ -94,8 +94,8 @@ export function PaymentForm() {
 
   function dateformatter() {
     const formattedDate = new Date();
-    
-    return  (formattedDate);
+
+    return formattedDate;
   }
 
   const schema = yup.object().shape({
@@ -124,6 +124,7 @@ export function PaymentForm() {
     };
 
     updateValue("payments", newPayment);
+    
   };
 
   return (
@@ -141,9 +142,7 @@ export function PaymentForm() {
         helperText={errors.payment?.message}
       />
       <Box sx={{ flexGrow: 1 }} />
-      <Box
-        sx={{ display: "flex", justifyContent: "center" }}
-      >
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
         <Button variant="contained" sx={ButtonstylesSubmit} type="submit">
           Pay
         </Button>

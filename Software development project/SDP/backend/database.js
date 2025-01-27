@@ -693,13 +693,22 @@ export async function getInvoiceDetails(invoiceIdSearch) {
 }
 
 export async function updateInvoiceDetails(InvoiceCompleteDetail) {
-  // Update invoice details
+  let createdDate;
+  if (InvoiceCompleteDetail.invoiceCompletedDate) {
+     createdDate = dayjs(InvoiceCompleteDetail.invoiceCompletedDate)
+      .tz("Asia/Colombo")
+      .format("YYYY-MM-DD HH:mm:ss");
+    // Update invoice details
+  }else{
+    createdDate = null;
+  }
   try {
     await pool.query(
-      "UPDATE invoice SET inv_special_message = ?,inv_rating = ? WHERE inv_id = ?",
+      "UPDATE invoice SET inv_special_message = ?,inv_rating = ?,inv_completed_datetime=? WHERE inv_id = ?",
       [
         InvoiceCompleteDetail.inv_special_message,
         InvoiceCompleteDetail.inv_rating,
+        createdDate,
         InvoiceCompleteDetail.InvoiceID,
       ]
     );
@@ -715,7 +724,7 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
         .tz("Asia/Colombo")
         .format("YYYY-MM-DD HH:mm:ss");
       console.log(formattedDate);
-  
+
       // Use the formatted date in the query
       await pool.query(
         `INSERT INTO invoicePayments (invpay_payment_id, invpay_inv_id, invpay_amount, invpay_payment_date)
@@ -733,7 +742,6 @@ export async function updateInvoiceDetails(InvoiceCompleteDetail) {
   } catch (error) {
     console.log("Error occurred in backend invoice details update2:", error);
   }
-  
 
   // Update invoice equipment details
 
